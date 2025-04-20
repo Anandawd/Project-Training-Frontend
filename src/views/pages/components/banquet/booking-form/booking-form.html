@@ -1,0 +1,74 @@
+<div id="reservationFormElement" class="reservation-form">
+  <div class="card">
+    <div class="card-body">
+      <div class="mb-1 d-flex justify-content-between">
+        <div>
+          <h5><span>{{ title }}</span></h5>
+        </div>
+        <button @click="onClose" label="close" title="close" class="btn" type="button" aria-expanded="true">
+          <i class="fa fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <transition name="slide-fade">
+        <div>
+          <b-tabs content-class="mt-3" v-model="tabIndex">
+            <!--  :disabled="isUpdateResBV" -->
+            <b-tab @click="onTabClick('B')" :title="$t('tabs.bookingInformation')">
+              <booking-information-form :focus="bFocus" @save="handleSave" :isUpdateResBV="isUpdateResBV"
+                :isSaved="isSaved" :formType="formType" :modeData="modeData" :disabledEditData="disabledEditData"
+                ref="bookingInformationForm" />
+            </b-tab>
+            <!--  :disabled="modeData != $global.modeData.edit"  -->
+            <b-tab @click="onTabClick('R')" :disabled="!isSaved" :title="$t('tabs.reservationList')">
+              <reservation-list-form ref="reservationListElement" :user-access="userAccessDeposit" :formType="formType"
+                :reservation-number="reservationNumber" :isUpdateResBV="isUpdateResBV" />
+            </b-tab>
+            <!-- :disabled=" modeData != $global.modeData.edit || !getUserAccessUtility(
+                userAccessCI,
+                $global.frontDeskAccessOrder.accessWalkIn.deposit
+              )"  -->
+            <b-tab @click="onTabClick('D')"
+              :disabled="formType == $global.formType.banquetInProgress || modeData == $global.modeData.checkIn || !isSaved || isUpdateResBV"
+              :title="$t('tabs.deposit')">
+              <div id="deposit-form" class="accordion">
+                <div class="accordion-item">
+                  <h3 class="accordion-header" id="deposit-header">
+                    <button type="button" class="accordion-button" aria-expanded="true" aria-controls="deposit"
+                      data-bs-target="#deposit" data-bs-toggle="collapse">
+                      {{ $t('title.deposit') }}
+                    </button>
+                  </h3>
+                  <div class="accordion-collapse collapse show" id="deposit" aria-labelledby="deposit-header"
+                    data-bs-parent="#deposit-form">
+                    <div class="accordion-body row">
+                      <deposit :focus="dFocus" ref="depositForm" :bnqFormType="formType" :isBanquet="isBanquet"
+                        :user-access="userAccessDeposit" :reservation-number="reservationNumber"
+                        @refresh="onRefreshTable" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </b-tab>
+            <!--  -->
+            <b-tab @click="onTabClick('C')"
+              :disabled="formType == $global.formType.banquetInProgress || modeData == $global.modeData.checkIn || !isSaved || isUpdateResBV"
+              :title="$t('tabs.charge')">
+              <charge-form ref="chargeFormElement" :formType="formType"
+                :bookingNumber="reservationNumber"></charge-form>
+            </b-tab>
+            <!-- :disabled=" modeData != $global.modeData.edit || !getUserAccessUtility(
+              userAccessCI,
+              $global.frontDeskAccessOrder.accessWalkIn.remark
+            )"  -->
+            <b-tab @click="onTabClick('K')"
+              :disabled="formType == $global.formType.banquetInProgress || modeData == $global.modeData.checkIn"
+              :title="$t('tabs.remark')">
+              <remark-form :focus="kFocus" ref="remarkFormElement" @save="handleSaveRemark" :modeData="modeData" />
+            </b-tab>
+          </b-tabs>
+          <save-close-button :isSaving="isSaving" @save="onSubmit" @close="onClose"></save-close-button>
+        </div>
+      </transition>
+    </div>
+  </div>
+</div>

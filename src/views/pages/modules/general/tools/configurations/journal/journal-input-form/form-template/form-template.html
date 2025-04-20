@@ -1,0 +1,158 @@
+<!-- <Form @submit="onSave" ref="inputFormElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit" -->
+<div id="parrentAccordion" class="accordion">
+  <v-form
+    @submit="onSaveGrid()"
+    ref="formElement"
+    @invalid-submit="onInvalidSubmit"
+    :validation-schema="schemaCredit"
+    class="input-form"
+    v-slot="{resetForm}"
+  >
+    <div class="accordion-item">
+      <h6 class="accordion-header" id="itemInformationHeader">
+        <button
+          type="button"
+          class="accordion-button"
+          data-bs-toggle="collapse"
+          data-bs-target="#itemInformation"
+          aria-controls="itemInformation"
+          aria-expanded="false"
+        >
+          {{ formType === $global.formType.debit ? $t('title.debitInformation')
+          : $t('title.creditInformation') }}
+        </button>
+      </h6>
+      <div
+        id="itemInformation1"
+        class="accordion-collapse p-3"
+        aria-labelledby="itemInformationHeader1"
+      >
+        <div class="accordion-body card-block">
+          <div class="row mb-3">
+            <div class="col-md-6 mb-1">
+              <c-select
+                required
+                id="sub_department"
+                customLabelClass="col-3"
+                customClass="col-9"
+                class="mb-1"
+                :options="listDropdown.SubDepartment"
+                labelName="name"
+                v-model="formDetail.sub_department"
+                :label="$t('labels.subDepartment')"
+                @change="onChangeSubDepartment"
+                name="sub_department"
+                ><template #append-end>
+                  <span class="input-group-text"
+                    ><i class="fa fa-search" aria-hidden="true"></i
+                  ></span>
+                </template>
+              </c-select>
+              <c-select
+                required
+                id="gl_account"
+                customLabelClass="col-3"
+                customClass="col-9"
+                class="mb-1"
+                :options="listDropdownGL"
+                labelName="name"
+                v-model="formDetail.gl_account"
+                :label="$t('labels.account')"
+                name="gl_account"
+                @change="onChangeGLAccount"
+                ><template #append-end>
+                  <span class="input-group-text"
+                    ><i class="fa fa-search" aria-hidden="true"></i
+                  ></span>
+                </template>
+              </c-select>
+              <c-input
+                required
+                v-model="formDetail.amount"
+                :label="$t('labels.amount')"
+                id="amount"
+                customLabelClass="col-3"
+                customClass="col-9"
+                type="number"
+                formatted
+                showZeroNumber
+                name="amount"
+              />
+            </div>
+
+            <div class="col-md-6 mb-1">
+              <c-input
+                :disabled="true"
+                v-model="formDetail.balance"
+                id="balance"
+                :label="$t('labels.balance')"
+                customLabelClass="col-3"
+                customClass="col-9"
+                class="mb-1"
+                type="text"
+                name="balance"
+              />
+              <c-input
+                v-model="formDetail.remark"
+                :label="$t('labels.remark')"
+                id="remark"
+                customLabelClass="col-3"
+                customClass="col-9"
+                type="text"
+                name="remark"
+              />
+            </div>
+
+            <div class="d-flex justify-content-end mb-2 mt-3">
+              <div>
+                <button
+                  type="button"
+                  class="btn btn-primary mr-1"
+                  @click="handleSaveGrid"
+                >
+                  <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{isSave ?
+                  $t('buttons.save') : $t('buttons.insert') }}
+                </button>
+                <button
+                  v-if="isSave"
+                  type="button"
+                  class="btn btn-danger mr-1"
+                  @click="gridFormCancel"
+                >
+                  <i class="fa fa-times" aria-hidden="true"></i>
+                  {{$t('buttons.cancel')}}
+                </button>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div v-show="isSave" class="disabled-grid"></div>
+              <ag-grid-vue
+                disabled
+                :style="agGridSetting.styleAgGridFrame1"
+                :class="agGridSetting.themeAgGrid"
+                :columnDefs="columnDefs"
+                :rowData="rowData"
+                :paginationPageSize="paginationPageSize"
+                :gridOptions="gridOptions"
+                :context="context"
+                :frameworkComponents="frameworkComponents"
+                :enableCellChangeFlash="true"
+                :rowSelection="rowSelection"
+                :getContextMenuItems="getContextMenu"
+                :defaultColDef="agGridSetting.defColDef"
+                :suppressDragLeaveHidesColumns="true"
+                :suppressMakeColumnVisibleAfterUnGroup="true"
+                :statusBar="statusBar"
+                @grid-ready="onGridReady"
+                @cellContextMenu="handleRowRightClicked"
+                @rowDataUpdated="getRowData"
+                :getRowNodeId="getRowNodeId"
+                @cellValueChanged="cellValueChanged"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </v-form>
+</div>

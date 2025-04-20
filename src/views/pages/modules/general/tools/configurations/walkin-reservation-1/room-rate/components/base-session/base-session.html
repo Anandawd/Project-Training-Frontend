@@ -1,0 +1,96 @@
+<!-- Main content -->
+<section class="content">
+  <transition name="slide-fade-right">
+    <div v-show="showForm">
+      <div class="card h-100">
+        <div class="card-header">
+          <h3 class="card-title">
+            {{ title }}
+            <button type="button" class="close-button btn" @click="onClose">
+              <i class="fas fa-times"></i>
+            </button>
+          </h3>
+        </div>
+        <div class="card-body">
+          <v-form
+            @submit="handleSave"
+            ref="formElement"
+            :validation-schema="schema"
+            @invalid-submit="onInvalidSubmit"
+            class="input-form row"
+            v-slot="{resetForm}"
+          >
+            <div class="row">
+              <div class="col-md-6">
+                <c-datepicker
+                  :focus="focus"
+                  required
+                  id="startDate"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                  class="mb-1"
+                  v-model="form.start_date"
+                  :label="$t('labels.startDate')"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="Start Date"
+                  @change="onChangeStartDate"
+                />
+                <div class="row">
+                  <div class="col-9">
+                    <c-input
+                      :disabled="disableForm"
+                      required
+                      class=""
+                      v-model="form.amount"
+                      :label="$t('labels.amount')"
+                      showZeroNumber
+                      formatted
+                      type="number"
+                      name="Amount"
+                      customLabelClass="col-4"
+                      customClass="col-8"
+                    />
+                  </div>
+                  <div class="col-3">
+                    <c-checkbox
+                      @change="onChangeIsDefault"
+                      class="mb-1"
+                      :label="$t('labels.defaultRate')"
+                      v-model="form.is_default"
+                      customClass="pl-0 prx-75"
+                      name="Default Rate"
+                    >
+                    </c-checkbox>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mb-2">
+                <c-datepicker
+                  required
+                  id="endDate"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                  class="mb-1"
+                  v-model="form.end_date"
+                  :label="$t('labels.endDate')"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="End Date"
+                  @change="onChangeEndDate"
+                />
+              </div>
+            </div>
+          </v-form>
+        </div>
+        <save-close-button
+          :isSaving="isSaving"
+          @save="onSubmit"
+          @close="onClose"
+        ></save-close-button>
+      </div>
+    </div>
+  </transition>
+</section>

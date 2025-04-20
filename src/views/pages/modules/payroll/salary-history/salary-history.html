@@ -1,0 +1,85 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- filter -->
+    <search-filter
+      date-range
+      :options="searchOptions"
+      :searchDefault="searchDefault"
+      @search="refreshData"
+    >
+      <template v-slot="{search}">
+        <div class="col-md-6 d-flex mb-md-4">
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="all"
+              id="all"
+              v-model="search.filter[0]"
+              value="0"
+              @change="onRefresh"
+            />
+            <label for="all">{{ $t('commons.filter.checkList.all') }}</label>
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showActive"
+              id="showActive"
+              v-model="search.filter[0]"
+              value="1"
+              @change="onRefresh"
+            />
+            <label for="showActive"
+              >{{ $t('commons.filter.checkList.showActive') }}</label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showInactive"
+              id="showInactive"
+              v-model="search.filter[0]"
+              value="2"
+              @change="onRefresh"
+            />
+            <label for="showInactive"
+              >{{ $t('commons.filter.checkList.showInactive') }}</label
+            >
+          </div>
+        </div>
+      </template>
+    </search-filter>
+
+    <!-- content -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{$t('title.salaryHistory')}}</h3>
+      </div>
+      <div class="card-body">
+        <ag-grid-vue
+          :style="agGridSetting.styleAgGridFrame"
+          :class="agGridSetting.themeAgGrid"
+          :columnDefs="columnDefs"
+          :rowData="rowData"
+          :paginationPageSize="paginationPageSize"
+          :gridOptions="gridOptions"
+          :context="context"
+          :frameworkComponents="frameworkComponents"
+          :enableCellChangeFlash="true"
+          :rowSelection="rowSelection"
+          :getContextMenuItems="getContextMenu"
+          :defaultColDef="agGridSetting.defColDef"
+          :rowGroupPanelShow="rowGroupPanelShow"
+          :suppressDragLeaveHidesColumns="true"
+          :suppressMakeColumnVisibleAfterUnGroup=" true"
+          :statusBar="statusBar"
+          @grid-ready="onGridReady"
+          @cellContextMenu="handleRowRightClicked"
+        ></ag-grid-vue>
+      </div>
+    </div>
+  </div>
+</section>

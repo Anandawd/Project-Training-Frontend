@@ -1,0 +1,67 @@
+<!-- <Form @submit="onSave" ref="inputFormElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit" -->
+
+<div class="modal-mask custom-modal">
+  <div class="modal-wrapper">
+    <div class="modal-container">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width: 1200px !important;" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="modal-title">Customize Report</h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="onClose">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <Form @submit="onSave" ref="inputFormValidation" :validation-schema="schema"
+              @invalid-submit="onInvalidSubmit" class="input-form row" v-slot="{resetForm}">
+              <div id="parrentAccordion" class="accordion pr-4 mb-1">
+
+              </div>
+              <div class="row">
+                <div class="col-4">
+                  <div class="card">
+                    <div class="card-header">
+                      {{ $t('title.reportList') }}
+                    </div>
+                    <c-input id="search" class="mb-1" type="text" placeholder="Search..." v-model="form.search"
+                      name="search" @input="onFilterTextBoxChanged()" customLabelClass="col-4"
+                      customClass="col-12 mt-1">
+                    </c-input>
+                    <div id="tooltip" class="card-body">
+                      <!-- //Table -->
+                      <ag-grid-vue style="width:100%; height:320px" :class="agGridSetting.themeAgGrid"
+                        :columnDefs="columnDefs" :rowData="rowData" :paginationPageSize="paginationPageSize"
+                        :gridOptions="gridOptions" :context="context" :frameworkComponents="frameworkComponents"
+                        :enableCellChangeFlash="true" :rowSelection="rowSelection"
+                        :rowGroupPanelShow="rowGroupPanelShow" :getContextMenuItems="getContextMenu"
+                        :defaultColDef="agGridSetting.defColDef" :masterDetail="true"
+                        :detailCellRenderer="detailCellRenderer" :detailRowAutoHeight="detailRowAutoHeight"
+                        :suppressMakeColumnVisibleAfterUnGroup="true" :statusBar="statusBar"
+                        :getRowNodeId="getRowNodeId" @grid-ready="onGridReady"
+                        @cellContextMenu="handleRowRightClicked" />
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <DailyReport ref="dailyElement" :schema="schema" :modeData="modeData" />
+                </div>
+                <div class="col-md-2">
+                  <MonthlyReport ref="monthlyElement" :schema="schema" :modeData="modeData" />
+                </div>
+                <div class="col-md-2">
+                  <YearlyReport ref="yearlyElement" :schema="schema" :modeData="modeData" />
+                </div>
+                <div class="col-md-2">
+                  <FavoriteReport ref="favoriteElement" :schema="schema" :modeData="modeData" />
+                </div>
+              </div>
+
+            </Form>
+
+          </div>
+          <save-close-button :isSaving="isSaving" @save="onSave" @close="onClose"></save-close-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

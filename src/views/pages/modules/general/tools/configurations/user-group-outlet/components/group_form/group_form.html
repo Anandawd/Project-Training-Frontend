@@ -1,0 +1,22 @@
+<Form :form="defaultForm" @submit="onSave" ref="groupFormElement" :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit" class="group-form row" v-slot="{resetForm}">
+  <div class="card">
+    <div class="card-header">
+      {{ title }}
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <CSelect filter required :disabled="this.modeData == $global.modeData.edit" id="userGroup" class="row mb-1"
+            v-model="form.UserGroupCode" :options="listDropdown.UserGroup" @load="repeatLoadDropdownList" keyName="code"
+            labelName="code" :label="$t('labels.userGroup')" name="User Group" customLabelClass="col-3"
+            customClass="col-9" />
+          <CSelect multiple id="outlet" class="row mb-1" v-model="form.OutletCodeList" :options="listDropdown.Outlet"
+            @load="repeatLoadDropdownList" keyName="code" labelName="name" :label="$t('labels.outlet')" name="Outlet"
+            customLabelClass="col-3" customClass="col-9" />
+        </div>
+      </div>
+      <save-close-button :isSaving="isSaving" @save="onSubmit" @close="onClose"></save-close-button>
+    </div>
+  </div>
+</Form>

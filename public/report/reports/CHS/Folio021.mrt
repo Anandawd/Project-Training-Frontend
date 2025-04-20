@@ -1,0 +1,789 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="0" />
+    <DataSources isList="true" count="3">
+      <root_CompanyInformation Ref="2" type="DataTableSource" isKey="true">
+        <Alias>root_CompanyInformation</Alias>
+        <Columns isList="true" count="9">
+          <value>image_url,System.String</value>
+          <value>name,System.String</value>
+          <value>street,System.String</value>
+          <value>city,System.String</value>
+          <value>state,System.String</value>
+          <value>country,System.String</value>
+          <value>postal_code,System.String</value>
+          <value>phone1,System.String</value>
+          <value>fax,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>db4a6ab2-4b03-4207-aa31-5c50881fcd76</Key>
+        <Name>root_CompanyInformation</Name>
+        <NameInSource>json.root_company</NameInSource>
+      </root_CompanyInformation>
+      <root_Folio Ref="3" type="DataTableSource" isKey="true">
+        <Alias>root_Folio</Alias>
+        <Columns isList="true" count="10">
+          <value>ORIGINAL,number,number,number,System.String,f332b1a3aa5240fb94f665a195043878</value>
+          <value>ORIGINAL,room_number,room_number,room_number,System.String,_x0031_bad7e72e741402aa4699483d62248e3</value>
+          <value>ORIGINAL,RoomType,RoomType,RoomType,System.String,a974cde5ee4a40c1abaa7ae00ec90a6f</value>
+          <value>ORIGINAL,Arrival,Arrival,Arrival,System.DateTime,_x0038_4a353916d34438694fc7213248a1def</value>
+          <value>ORIGINAL,Departure,Departure,Departure,System.DateTime,_x0032_824f29724a84a708c642a5f2a52e214</value>
+          <value>ORIGINAL,adult,adult,adult,System.String,_x0031_fb6af305dd4477e89c61f082ce84c15</value>
+          <value>ORIGINAL,child,child,child,System.String,_x0035_7fc953dcb404f5d88304a3075434f14</value>
+          <value>ORIGINAL,Market,Market,Market,System.String,cde5c8125eba43f6af67014e84f54078</value>
+          <value>ORIGINAL,created_by,created_by,created_by,System.String,ffc66d64d66a498d96cfcbad588f0a6c</value>
+          <value>ORIGINAL,check_out_by,check_out_by,check_out_by,System.String,_x0031_fe8f6bcc3294415915180dccc473e85</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>2fefc90b-6e08-4d07-9302-47f4f2cac27f</Key>
+        <Name>root_Folio</Name>
+        <NameInSource>json.root_data_Folio</NameInSource>
+      </root_Folio>
+      <root_SubFolio Ref="4" type="DataTableSource" isKey="true">
+        <Alias>root_SubFolio</Alias>
+        <Columns isList="true" count="4">
+          <value>ORIGINAL,audit_date,audit_date,audit_date,System.DateTime,a994f6730e6a418db2ac5999e550eee9</value>
+          <value>Account,System.String</value>
+          <value>Debit,System.String</value>
+          <value>Credit,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>24b830cb-b591-4116-bfbc-505505f7a280</Key>
+        <Name>root_SubFolio</Name>
+        <NameInSource>json.root_data_SubFolio</NameInSource>
+      </root_SubFolio>
+    </DataSources>
+    <Relations isList="true" count="0" />
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <UserFunctions isList="true" count="0" />
+    <Variables isList="true" count="3">
+      <value>,Date,Date,,System.String,,False,False,False,False</value>
+      <value>,FolioFooter,FolioFooter,,System.String,,False,False,False,False</value>
+      <value>,GuestName,GuestName,,System.String,,False,False,False,False</value>
+    </Variables>
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>9df1f64dcb1a4412b30e5a6d171ea0d8</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="5" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="7">
+        <ReportTitle1 Ref="6" type="ReportTitleBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,0.4,9.5,0</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>ReportTitle1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+        </ReportTitle1>
+        <PageFooter1 Ref="7" type="PageFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,23.9,9.5,3.7</ClientRectangle>
+          <Components isList="true" count="3">
+            <Memo31 Ref="8" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,9.5,2.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo31</Name>
+              <Page isRef="5" />
+              <Parent isRef="7" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{FolioFooter}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo31>
+            <Memo32 Ref="9" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,3.2,6.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo32</Name>
+              <Page isRef="5" />
+              <Parent isRef="7" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Guest Signature</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo32>
+            <Memo38 Ref="10" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,2.4,6.2,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo38</Name>
+              <Page isRef="5" />
+              <Parent isRef="7" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{GuestName}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Bottom</VertAlignment>
+            </Memo38>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageFooter1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+        </PageFooter1>
+        <PageHeader1 Ref="11" type="PageHeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,1.2,9.5,12</ClientRectangle>
+          <Components isList="true" count="27">
+            <Memo11 Ref="12" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,10.9,1.4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9,Underline</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo11</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>DATE</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo11>
+            <MemoFullName Ref="13" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,10.1,9.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoFullName</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{GuestName}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoFullName>
+            <Picture1 Ref="14" type="Image" isKey="true">
+              <Brush>White</Brush>
+              <ClientRectangle>0,0,3.3,2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <DataColumn>root_CompanyInformation.image_url</DataColumn>
+              <Enabled>False</Enabled>
+              <Expressions isList="true" count="0" />
+              <IconColor>68, 114, 196</IconColor>
+              <Margins>2,2,2,2</Margins>
+              <Name>Picture1</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+            </Picture1>
+            <Memo1 Ref="15" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0,6.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Enabled>False</Enabled>
+              <Expressions isList="true" count="0" />
+              <Font>Arial,12,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo1</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.name}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo1>
+            <Memo2 Ref="16" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0.7,6.2,1.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Enabled>False</Enabled>
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo2</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.street}, {root_CompanyInformation.city}
+{root_CompanyInformation.state} {root_CompanyInformation.country}. {root_CompanyInformation.postal_code}
+Phone: {root_CompanyInformation.phone1}  Fax: {root_CompanyInformation.fax}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo2>
+            <MemoHeaderLine Ref="17" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,2.1,9.5,0.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Enabled>False</Enabled>
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoHeaderLine</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoHeaderLine>
+            <Memo12 Ref="18" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,4.4,9.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo12</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>GUEST FOLIO BILL</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo12>
+            <Memo28 Ref="19" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,4.9,9.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo28</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:MM.dd.yyyy}", Date)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo28>
+            <Memo33 Ref="20" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,6.3,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo33</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Folio Number</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo33>
+            <Memo34 Ref="21" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,6.8,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo34</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Room No</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo34>
+            <Memo35 Ref="22" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,7.3,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo35</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Room Type</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo35>
+            <Memo36 Ref="23" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,7.8,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo36</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Check In Date</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo36>
+            <Memo37 Ref="24" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,8.3,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo37</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Check Out Date</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo37>
+            <Memo41 Ref="25" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,8.8,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo41</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Adults / Child</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo41>
+            <Memo42 Ref="26" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,9.3,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo42</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Booking Agent</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo42>
+            <Memo43 Ref="27" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3,6.3,6.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo43</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>: {root_Folio.number}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo43>
+            <Memo44 Ref="28" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3,6.8,6.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo44</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>: {root_Folio.room_number}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo44>
+            <Memo45 Ref="29" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3,7.3,6.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo45</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>: {root_Folio.RoomType}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo45>
+            <Memo46 Ref="30" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3,7.8,6.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo46</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>: {Format("{0:dd-MM-yyyy}", root_Folio.Arrival)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo46>
+            <Memo47 Ref="31" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3,8.3,6.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo47</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>: {Format("{0:dd-MM-yyyy}", root_Folio.Departure)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo47>
+            <Memo48 Ref="32" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3,8.8,6.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo48</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>: {decimal.Parse(root_Folio.adult) } / {root_Folio.child}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo48>
+            <Memo49 Ref="33" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3,9.3,6.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo49</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>: {root_Folio.Market}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo49>
+            <Memo3 Ref="34" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>1.4,10.9,5.9,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9,Underline</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo3</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>DESCRIPTION</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo3>
+            <Memo4 Ref="35" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>7.3,10.9,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9,Underline</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo4</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>AMOUNT</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo4>
+            <Memo7 Ref="36" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,11.5,9.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo7</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total Amount Include 21% Service Charge &amp; GS</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo7>
+            <Memo5 Ref="37" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,5.4,1.8,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo5</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Check In By
+Check Out By</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo5>
+            <Memo6 Ref="38" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>1.6,5.4,7.8,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo6</Name>
+              <Page isRef="5" />
+              <Parent isRef="11" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text> : {root_Folio.created_by}
+ : {root_Folio.check_out_by}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo6>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageHeader1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+        </PageHeader1>
+        <MasterData1 Ref="39" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,14,9.5,0</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_Folio</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+          <Sort isList="true" count="0" />
+        </MasterData1>
+        <Header1 Ref="40" type="HeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,14.8,9.5,0</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepHeaderTogether>False</KeepHeaderTogether>
+          <Name>Header1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+        </Header1>
+        <DetailData1 Ref="41" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,15.6,9.5,0.5</ClientRectangle>
+          <Components isList="true" count="3">
+            <Memo20 Ref="42" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>0,0,1.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo20</Name>
+              <Page isRef="5" />
+              <Parent isRef="41" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:dd/MM/yyyy}", root_SubFolio.audit_date)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo20>
+            <Memo22 Ref="43" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>1.4,0,5.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo22</Name>
+              <Page isRef="5" />
+              <Parent isRef="41" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_SubFolio.Account}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo22>
+            <Memo23 Ref="44" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>7.3,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo23</Name>
+              <Page isRef="5" />
+              <Parent isRef="41" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_SubFolio.Debit) - decimal.Parse(root_SubFolio.Credit)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="45" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo23>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_SubFolio</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <MasterComponent isRef="39" />
+          <Name>DetailData1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+          <Sort isList="true" count="0" />
+        </DetailData1>
+        <Footer1 Ref="46" type="FooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,16.9,9.5,0.8</ClientRectangle>
+          <Components isList="true" count="2">
+            <Memo15 Ref="47" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,7,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo15</Name>
+              <Page isRef="5" />
+              <Parent isRef="46" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>BALANCE : </Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo15>
+            <Memo16 Ref="48" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>7,0,2.5,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial Narrow,11,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo16</Name>
+              <Page isRef="5" />
+              <Parent isRef="46" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:N2}", Sum(DetailData1,decimal.Parse(root_SubFolio.Debit)-decimal.Parse(root_SubFolio.Credit)))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo16>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepFooterTogether>False</KeepFooterTogether>
+          <Name>Footer1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+        </Footer1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>9edb5b47e7d445d798f6416e5cc99c96</Guid>
+      <Margins>0.5,0.5,1,0.5</Margins>
+      <Name>Page1</Name>
+      <PageHeight>24.5</PageHeight>
+      <PageWidth>10.5</PageWidth>
+      <Report isRef="0" />
+      <TitleBeforeHeader>True</TitleBeforeHeader>
+    </Page1>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>12/10/2024 3:19:59 PM</ReportChanged>
+  <ReportCreated>12/10/2024 2:54:31 PM</ReportCreated>
+  <ReportFile>C:\Users\David Geri\Documents\GitHub\chs_cloud_frontend\public\report\reports\CHS\Folio021.mrt</ReportFile>
+  <ReportGuid>7c49aae476414dffbca25180241163e0</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Centimeters</ReportUnit>
+  <ReportVersion>2024.1.4.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="0" />
+</StiSerializer>

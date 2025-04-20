@@ -1,0 +1,54 @@
+
+        <div id="parrentAccordion" class="accordion mb-2">
+            <Form @submit="onSaveGrid()" ref="formElement" @invalid-submit="onInvalidSubmit" :validation-schema="schemaForm"
+            class="input-form" v-slot="{resetForm}">
+            <div class="accordion-item">
+                <h6 class="accordion-header" id="itemInformationHeader">
+                    <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+                    aria-controls="itemInformation" aria-expanded="false">
+                    {{ formType === $global.formType.supplier  ? $t('title.supplier') : $t('title.shipping') }} Information
+                    </button>
+                </h6>
+                <div id="itemInformation1" class="accordion-collapse p-3" aria-labelledby="itemInformationHeader1">
+                <div class="accordion-body card-block">
+                        <div class="row mb-2 ">
+                        <!-- input code -->
+                        <div class="col-md-4 col-sm-6 mb-1">
+                        <c-select required id="supply_shipping" @change="onChangeSupplyShipping" customLabelClass="col-3" customClass="col-9" class="mb-1" keyName="code" labelName="name"
+                        v-model="form.supply_shipping" :options="formType === $global.formType.supplier ? listDropdown.Supplier : listDropdown.Shipping" :label="formType === $global.formType.supplier ? 'Supplier' : 'Shipping' " name="supply_shipping">
+                        <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        </c-select>
+                        <c-input v-model="form.contact_person" :label="$t('labels.contactPerson')" :disabled="formType === $global.formType.supplier ? true : false" id="contact_person" customLabelClass="col-3" customClass="col-9" type="text"
+                        name="contact_person" />
+                        <c-input v-model="form.address" :label="$t('labels.address')" :disabled="formType === $global.formType.supplier ? true : false" id="address" customLabelClass="col-3" customClass="col-9" class="mb-1" type="text"
+                        name="address" />
+                        <c-select keyName="code" :label="$t('labels.country')" :options="listDropdown.Country" :disabled="formType === $global.formType.supplier ? true : false" labelName="name" v-model="form.country_code" id="country_code" customLabelClass="col-3" customClass="col-9" 
+                        @change="onChangeCountry" name="country_code" />
+                        </div>
+
+                        <div class="col-md-4 col-sm-6 mb-1">
+                        <c-select keyName="code" :label="$t('labels.state')" :options="stateDropdown" :disabled="formType === $global.formType.supplier ? true : false" labelName="name" v-model="form.state_code" id="state_code" customLabelClass="col-3" customClass="col-9" class="mb-1"
+                        name="state_code" />
+                        <c-input v-model="form.city" :label="$t('labels.city')" :disabled="formType === $global.formType.supplier ? true : false" id="city" customLabelClass="col-3" customClass="col-9" class="mb-1" type="text"
+                        name="city" />
+                        <c-input v-model="form.postal_code" :label="$t('labels.postalCode')" :disabled="formType === $global.formType.supplier ? true : false" id="postal_code" customLabelClass="col-3" customClass="col-9" class="mb-1" type="text"
+                        name="postal_code" />
+                        <c-input v-model="form.phone1" :label="$t('labels.phone1')" :disabled="formType === $global.formType.supplier ? true : false" id="phone1" customLabelClass="col-3" customClass="col-9" type="text"
+                        name="phone1" />
+                        </div>
+
+                        <div class="col-md-4 col-sm-6 mb-1">
+                        <c-input v-model="form.phone2" :label="$t('labels.phone2')" :disabled="formType === $global.formType.supplier ? true : false" id="phone2" customLabelClass="col-3" customClass="col-9" class="mb-1" type="text" 
+                        name="phone2" />
+                        <c-input v-model="form.fax" :label="$t('labels.fax')" :disabled="formType === $global.formType.supplier ? true : false" id="fax" customLabelClass="col-3" customClass="col-9" class="mb-1" type="text"  
+                        name="fax" />
+                        <c-input v-model="form.email" :label="$t('labels.email')" :disabled="formType === $global.formType.supplier ? true : false" id="email" customLabelClass="col-3" customClass="col-9" type="text"
+                        name="email" />
+                        </div>
+
+                    </div> 
+                </div>
+                </div>
+                </div>
+            </Form>
+            </div>

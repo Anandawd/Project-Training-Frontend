@@ -1,0 +1,94 @@
+<!-- Main content -->
+<section class="content">
+  <!-- Default box -->
+  <div class="container-fluid">
+    <div class="row mb-1 justify-content-end">
+      <button
+        type="button"
+        class="mr-1 col-1 btn btn-outline-primary"
+        @click="handlePrintRemittance"
+      >
+        <img src="/images/icons/print_icon32.png" height="16" width="16" />
+        Cash Remittance
+      </button>
+      <button
+        type="button"
+        class="mr-1 btn col-1 btn-outline-primary"
+        @click="handlePrintCashierReport"
+      >
+        <img src="/images/icons/print_icon32.png" height="16" width="16" />
+        Cashier <br />Report
+      </button>
+      <button
+        type="button"
+        class="mr-1 btn col-1 btn-danger"
+        @click="handleCloseShift"
+      >
+        <i class="fa fa-times-circle"></i>
+        Close Shift
+      </button>
+    </div>
+    <div class="card">
+      <div class="card-header">Cash Count</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <ag-grid-vue
+              :style="$global.agGrid.styleAgGridFrame2"
+              :class="$global.agGrid.themeAgGrid"
+              :columnDefs="columnDefs"
+              :rowData="rowData"
+              :paginationPageSize="paginationPageSize"
+              :gridOptions="gridOptions"
+              :context="context"
+              :frameworkComponents="frameworkComponents"
+              :enableCellChangeFlash="true"
+              :rowSelection="rowSelection"
+              :defaultColDef="$global.agGrid.defColDef"
+              :getRowId="getRowId"
+              @cellContextMenu="handleRowRightClicked"
+              @grid-ready="onGridReady"
+            />
+            <div class="mt-2 row">
+              <div class="col">{{$t('labels.openingBalanceCash')}}</div>
+              <div class="col text-end">
+                {{ formatCurrency(shiftInformation.opening_balance) }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">{{$t('labels.currentBalanceCash')}}</div>
+              <div class="col text-end">
+                {{ formatCurrency(balance.Balance) }}
+              </div>
+            </div>
+            <div class="text-divider p-0 m-1"></div>
+            <div class="row">
+              <div class="col text-bold">
+                {{$t('labels.closingBalanceCash')}}
+              </div>
+              <div class="col text-end text-bold">{{ closingBalance }}</div>
+            </div>
+          </div>
+          <div class="col">
+            <remittance-report
+              ref="remittanceReportElement"
+              v-if="showRemittance"
+              :reportData="reportData"
+            ></remittance-report>
+          </div>
+        </div>
+      </div>
+      <!-- /.card-body -->
+      <!-- /.card-footer-->
+    </div>
+  </div>
+  <c-dialog v-if="showDialog" @confirm="closeShift" @cancel="showDialog=false">
+    <template #body>
+      <span>Are you sure?</span>
+      <br />
+      <span>Your cashier reports will be reset when you log in again.</span>
+    </template></c-dialog
+  >
+  <!-- /.card -->
+</section>
+<!-- /.content -->

@@ -1,0 +1,27 @@
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg">
+        <!-- <search-filter :options="searchOptions" :defaultSearchBy="1" @search="refreshData"></search-filter> -->
+        <div class="card h-100">
+          <div class="card-header">
+            <h3 class="card-title">{{ $t('title.detail') }} {{ $t('commons.list') }}</h3>
+          </div>
+          <div class="card-body">
+            <!-- //Table -->
+            <ag-grid-vue disabled :style="agGridSetting.styleAgGridFrame" :class="agGridSetting.themeAgGrid"
+            :columnDefs="columnDefs" :rowData="rowData" :paginationPageSize="paginationPageSize"
+            :gridOptions="gridOptions" :context="context" :frameworkComponents="frameworkComponents"
+            :enableCellChangeFlash="true" :rowSelection="rowSelection" :rowGroupPanelShow="rowGroupPanelShow"
+            :getContextMenuItems="getContextMenu" :defaultColDef="agGridSetting.defColDef" :masterDetail="true"
+            :detailCellRenderer="detailCellRenderer" :suppressDragLeaveHidesColumns="true" 
+            :detailRowAutoHeight="detailRowAutoHeight" :suppressMakeColumnVisibleAfterUnGroup="true"
+            :statusBar="statusBar" @grid-ready="onGridReady" @cellContextMenu="handleRowRightClicked"
+            @edit="handleEdit" @selection-changed="onSelectionChanged" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

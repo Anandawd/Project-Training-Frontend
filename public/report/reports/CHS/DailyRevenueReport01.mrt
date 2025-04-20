@@ -1,0 +1,3269 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="0" />
+    <DataSources isList="true" count="5">
+      <root_CompanyInformation Ref="2" type="DataTableSource" isKey="true">
+        <Alias>root_CompanyInformation</Alias>
+        <Columns isList="true" count="9">
+          <value>image_url,System.String</value>
+          <value>name,System.String</value>
+          <value>street,System.String</value>
+          <value>city,System.String</value>
+          <value>state,System.String</value>
+          <value>country,System.String</value>
+          <value>postal_code,System.String</value>
+          <value>phone1,System.String</value>
+          <value>fax,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>f86f6762-4590-436e-81f4-99d7fb957339</Key>
+        <Name>root_CompanyInformation</Name>
+        <NameInSource>json.hotel_information</NameInSource>
+      </root_CompanyInformation>
+      <root_DRRRevenue Ref="3" type="DataTableSource" isKey="true">
+        <Alias>root_DRRRevenue</Alias>
+        <Columns isList="true" count="8">
+          <value>AccountSubGroup,System.String</value>
+          <value>TDYRevenue,System.String</value>
+          <value>TDYRevenueBudget,System.String</value>
+          <value>MTDRevenue,System.String</value>
+          <value>MTDRevenueBudget,System.String</value>
+          <value>YTDRevenue,System.String</value>
+          <value>YTDRevenueBudget,System.String</value>
+          <value>Account,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>ae61c20d-81cc-40ba-b722-caa9c6cacc5b</Key>
+        <Name>root_DRRRevenue</Name>
+        <NameInSource>json.DRRRevenue</NameInSource>
+      </root_DRRRevenue>
+      <root_DRRLiability Ref="4" type="DataTableSource" isKey="true">
+        <Alias>root_DRRLiability</Alias>
+        <Columns isList="true" count="7">
+          <value>Account,System.String</value>
+          <value>TDYLiability,System.String</value>
+          <value>TDYLiabilityBudget,System.String</value>
+          <value>MTDLiability,System.String</value>
+          <value>MTDLiabilityBudget,System.String</value>
+          <value>YTDLiability,System.String</value>
+          <value>YTDLiabilityBudget,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>787f77cb-07a8-4bf3-bc4b-337f7310763a</Key>
+        <Name>root_DRRLiability</Name>
+        <NameInSource>json.DRRLiability</NameInSource>
+      </root_DRRLiability>
+      <root_DRRPayment Ref="5" type="DataTableSource" isKey="true">
+        <Alias>root_DRRPayment</Alias>
+        <Columns isList="true" count="5">
+          <value>AccountSubGroup,System.String</value>
+          <value>TDYPayment,System.String</value>
+          <value>MTDPayment,System.String</value>
+          <value>YTDPayment,System.String</value>
+          <value>Account,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>6ffab768-5ddf-4683-bd5c-bef47a780f3f</Key>
+        <Name>root_DRRPayment</Name>
+        <NameInSource>json.DRRPayment</NameInSource>
+      </root_DRRPayment>
+      <root_DRRYesterday Ref="6" type="DataTableSource" isKey="true">
+        <Alias>root_DRRYesterday</Alias>
+        <Columns isList="true" count="3">
+          <value>TDYYesterday,System.String</value>
+          <value>MTDYesterday,System.String</value>
+          <value>YTDYesterday,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>b7acfba7-c142-49ed-9c5f-c52beb0fad10</Key>
+        <Name>root_DRRYesterday</Name>
+        <NameInSource>json.DRRYesterday</NameInSource>
+      </root_DRRYesterday>
+    </DataSources>
+    <Relations isList="true" count="0" />
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <UserFunctions isList="true" count="0" />
+    <Variables isList="true" count="1">
+      <value>,Description,Description,,System.String,,False,False,False,False</value>
+    </Variables>
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>1edbc4df70ba4d21b0ade86a4c22404f</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="7" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="19">
+        <ReportTitle1 Ref="8" type="ReportTitleBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,0.4,19.5,4.1</ClientRectangle>
+          <Components isList="true" count="6">
+            <Picture1 Ref="9" type="Image" isKey="true">
+              <Brush>White</Brush>
+              <ClientRectangle>0,0,2,2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <DataColumn>root_CompanyInformation.image_url</DataColumn>
+              <Expressions isList="true" count="0" />
+              <IconColor>68, 114, 196</IconColor>
+              <Margins>2,2,2,2</Margins>
+              <Name>Picture1</Name>
+              <Page isRef="7" />
+              <Parent isRef="8" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+            </Picture1>
+            <Memo1 Ref="10" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2,0,16.7,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,12,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo1</Name>
+              <Page isRef="7" />
+              <Parent isRef="8" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.name}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo1>
+            <Memo2 Ref="11" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2,0.7,16.7,1.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo2</Name>
+              <Page isRef="7" />
+              <Parent isRef="8" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.street}, {root_CompanyInformation.city}
+{root_CompanyInformation.state} {root_CompanyInformation.country}. {root_CompanyInformation.postal_code}
+Phone: {root_CompanyInformation.phone1}  Fax: {root_CompanyInformation.fax}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo2>
+            <MemoHeaderLine Ref="12" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,2.2,19.5,0.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoHeaderLine</Name>
+              <Page isRef="7" />
+              <Parent isRef="8" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoHeaderLine>
+            <MemoReportTitle Ref="13" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>6,2.5,7.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Copperplate Gothic Bold,10,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoReportTitle</Name>
+              <Page isRef="7" />
+              <Parent isRef="8" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Daily Revenue Report</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </MemoReportTitle>
+            <MemoDescription Ref="14" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.15,3.1,19.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoDescription</Name>
+              <Page isRef="7" />
+              <Parent isRef="8" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Description}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </MemoDescription>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>ReportTitle1</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+        </ReportTitle1>
+        <PageFooter1 Ref="15" type="PageFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,43.92,19.5,0.4</ClientRectangle>
+          <Components isList="true" count="2">
+            <Memo5 Ref="16" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,9.7,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo5</Name>
+              <Page isRef="7" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Printed: {Format("{0:dd/MM/yyyy hh:mm:ss}",Time)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo5>
+            <Memo6 Ref="17" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.2,0,9.3,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo6</Name>
+              <Page isRef="7" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Page {PageNumberThrough} of {TotalPageCount}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo6>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageFooter1</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+        </PageFooter1>
+        <PageHeader1 Ref="18" type="PageHeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,5.3,19.5,1.5</ClientRectangle>
+          <Components isList="true" count="13">
+            <Memo3 Ref="19" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,3.3,1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo3</Name>
+              <Page isRef="7" />
+              <Parent isRef="18" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Description</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo3>
+            <Memo4 Ref="20" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0.5,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo4</Name>
+              <Page isRef="7" />
+              <Parent isRef="18" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Actual</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo4>
+            <Memo142 Ref="21" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.5,0.5,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo142</Name>
+              <Page isRef="7" />
+              <Parent isRef="18" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Budget</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo142>
+            <Memo7 Ref="22" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>7.7,0.5,1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo7</Name>
+              <Page isRef="7" />
+              <Parent isRef="18" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>%</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo7>
+            <Memo9 Ref="23" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0.5,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo9</Name>
+              <Page isRef="7" />
+              <Parent isRef="18" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Actual</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo9>
+            <Memo10 Ref="24" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.9,0.5,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo10</Name>
+              <Page isRef="7" />
+              <Parent isRef="18" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Budget</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo10>
+            <Memo11 Ref="25" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.1,0.5,1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo11</Name>
+              <Page isRef="7" />
+              <Parent isRef="18" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>%</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo11>
+            <Memo12 Ref="26" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0.5,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo12</Name>
+              <Page isRef="7" />
+              <Parent isRef="18" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Actual</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo12>
+            <Memo15 Ref="27" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>16.3,0.5,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo15</Name>
+              <Page isRef="7" />
+              <Parent isRef="18" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Budget</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo15>
+            <Memo17 Ref="28" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>18.5,0.5,1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo17</Name>
+              <Page isRef="7" />
+              <Parent isRef="18" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>%</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo17>
+            <Memo46 Ref="29" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0,5.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo46</Name>
+              <Page isRef="7" />
+              <Parent isRef="18" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Today</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo46>
+            <Memo47 Ref="30" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0,5.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo47</Name>
+              <Page isRef="7" />
+              <Parent isRef="18" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Month To Date</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo47>
+            <Memo49 Ref="31" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0,5.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo49</Name>
+              <Page isRef="7" />
+              <Parent isRef="18" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Year To Date</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo49>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageHeader1</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+        </PageHeader1>
+        <Header1 Ref="32" type="HeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,7.6,19.5,0.6</ClientRectangle>
+          <Components isList="true" count="1">
+            <Memo43 Ref="33" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,19.5,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo43</Name>
+              <Page isRef="7" />
+              <Parent isRef="32" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Revenue</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo43>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepHeaderTogether>False</KeepHeaderTogether>
+          <Name>Header1</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+        </Header1>
+        <GroupHeader1 Ref="34" type="GroupHeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,9,19.5,0.6</ClientRectangle>
+          <Components isList="true" count="1">
+            <MGroup1 Ref="35" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,19.5,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>MGroup1</Name>
+              <Page isRef="7" />
+              <Parent isRef="34" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRRevenue.AccountSubGroup}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MGroup1>
+          </Components>
+          <Condition>{root_DRRRevenue.AccountSubGroup}</Condition>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupHeader1</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+          <SortDirection>None</SortDirection>
+        </GroupHeader1>
+        <MasterData1 Ref="36" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,10.4,19.5,0.5</ClientRectangle>
+          <Components isList="true" count="10">
+            <M1 Ref="37" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.3,0,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>M1</Name>
+              <Page isRef="7" />
+              <Parent isRef="36" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRRevenue.Account}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M1>
+            <Memo8 Ref="38" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo8</Name>
+              <Page isRef="7" />
+              <Parent isRef="36" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRRevenue.TDYRevenue}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="39" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo8>
+            <Memo13 Ref="40" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.5,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo13</Name>
+              <Page isRef="7" />
+              <Parent isRef="36" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRRevenue.TDYRevenueBudget}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="41" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo13>
+            <Memo14 Ref="42" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>7.7,0,1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo14</Name>
+              <Page isRef="7" />
+              <Parent isRef="36" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_DRRRevenue.TDYRevenueBudget)==0?0:decimal.Parse(root_DRRRevenue.TDYRevenue)/decimal.Parse(root_DRRRevenue.TDYRevenueBudget)*100}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="43" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo14>
+            <Memo16 Ref="44" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo16</Name>
+              <Page isRef="7" />
+              <Parent isRef="36" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRRevenue.MTDRevenue}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="45" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo16>
+            <Memo18 Ref="46" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.9,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo18</Name>
+              <Page isRef="7" />
+              <Parent isRef="36" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRRevenue.MTDRevenueBudget}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="47" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo18>
+            <Memo19 Ref="48" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.1,0,1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo19</Name>
+              <Page isRef="7" />
+              <Parent isRef="36" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_DRRRevenue.MTDRevenueBudget)==0?0:decimal.Parse(root_DRRRevenue.MTDRevenue)/decimal.Parse(root_DRRRevenue.MTDRevenueBudget)*100}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="49" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo19>
+            <Memo20 Ref="50" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo20</Name>
+              <Page isRef="7" />
+              <Parent isRef="36" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRRevenue.YTDRevenue}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="51" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo20>
+            <Memo21 Ref="52" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>16.3,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo21</Name>
+              <Page isRef="7" />
+              <Parent isRef="36" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRRevenue.YTDRevenueBudget}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="53" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo21>
+            <Memo22 Ref="54" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>18.5,0,1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo22</Name>
+              <Page isRef="7" />
+              <Parent isRef="36" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_DRRRevenue.YTDRevenueBudget)==0?0:decimal.Parse(root_DRRRevenue.YTDRevenue)/decimal.Parse(root_DRRRevenue.YTDRevenueBudget)*100}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="55" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo22>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_DRRRevenue</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData1</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+          <Sort isList="true" count="0" />
+        </MasterData1>
+        <GroupFooter1 Ref="56" type="GroupFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,11.7,19.5,0.6</ClientRectangle>
+          <Components isList="true" count="10">
+            <Memo23 Ref="57" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,3.3,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo23</Name>
+              <Page isRef="7" />
+              <Parent isRef="56" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total {root_DRRRevenue.AccountSubGroup}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo23>
+            <Memo24 Ref="58" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo24</Name>
+              <Page isRef="7" />
+              <Parent isRef="56" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.TDYRevenue))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="59" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo24>
+            <Memo25 Ref="60" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.5,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo25</Name>
+              <Page isRef="7" />
+              <Parent isRef="56" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.TDYRevenueBudget))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="61" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo25>
+            <Memo26 Ref="62" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>7.7,0,1,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo26</Name>
+              <Page isRef="7" />
+              <Parent isRef="56" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.TDYRevenueBudget))==0?0:(Sum(decimal.Parse(root_DRRRevenue.TDYRevenue))/Sum(decimal.Parse(root_DRRRevenue.TDYRevenueBudget))*100)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="63" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo26>
+            <Memo27 Ref="64" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo27</Name>
+              <Page isRef="7" />
+              <Parent isRef="56" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.MTDRevenue))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="65" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo27>
+            <Memo28 Ref="66" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.9,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo28</Name>
+              <Page isRef="7" />
+              <Parent isRef="56" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.MTDRevenueBudget))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="67" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo28>
+            <Memo29 Ref="68" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.1,0,1,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo29</Name>
+              <Page isRef="7" />
+              <Parent isRef="56" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.MTDRevenueBudget))==0?0:(Sum(decimal.Parse(root_DRRRevenue.MTDRevenue))/Sum(decimal.Parse(root_DRRRevenue.MTDRevenueBudget))*100)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="69" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo29>
+            <Memo30 Ref="70" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo30</Name>
+              <Page isRef="7" />
+              <Parent isRef="56" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.YTDRevenue))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="71" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo30>
+            <Memo31 Ref="72" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>16.3,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo31</Name>
+              <Page isRef="7" />
+              <Parent isRef="56" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.YTDRevenueBudget))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="73" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo31>
+            <Memo32 Ref="74" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>18.5,0,1,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo32</Name>
+              <Page isRef="7" />
+              <Parent isRef="56" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.YTDRevenueBudget))==0?0:(Sum(decimal.Parse(root_DRRRevenue.YTDRevenue))/Sum(decimal.Parse(root_DRRRevenue.YTDRevenueBudget))*100)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="75" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo32>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupFooter1</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+        </GroupFooter1>
+        <Footer1 Ref="76" type="FooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,13.1,19.5,1</ClientRectangle>
+          <Components isList="true" count="11">
+            <Memo33 Ref="77" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,3.3,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo33</Name>
+              <Page isRef="7" />
+              <Parent isRef="76" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total Revenue</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo33>
+            <Memo34 Ref="78" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo34</Name>
+              <Page isRef="7" />
+              <Parent isRef="76" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.TDYRevenue))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="79" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo34>
+            <Memo35 Ref="80" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.5,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo35</Name>
+              <Page isRef="7" />
+              <Parent isRef="76" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.TDYRevenueBudget))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="81" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo35>
+            <Memo36 Ref="82" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>7.7,0,1,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo36</Name>
+              <Page isRef="7" />
+              <Parent isRef="76" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.TDYRevenueBudget))==0?0:(Sum(decimal.Parse(root_DRRRevenue.TDYRevenue))/Sum(decimal.Parse(root_DRRRevenue.TDYRevenueBudget))*100)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="83" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo36>
+            <Memo37 Ref="84" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo37</Name>
+              <Page isRef="7" />
+              <Parent isRef="76" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.MTDRevenue))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="85" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo37>
+            <Memo38 Ref="86" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.9,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo38</Name>
+              <Page isRef="7" />
+              <Parent isRef="76" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.MTDRevenueBudget))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="87" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo38>
+            <Memo39 Ref="88" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.1,0,1,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo39</Name>
+              <Page isRef="7" />
+              <Parent isRef="76" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.MTDRevenueBudget))==0?0:(Sum(decimal.Parse(root_DRRRevenue.MTDRevenue))/Sum(decimal.Parse(root_DRRRevenue.MTDRevenueBudget))*100)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="89" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo39>
+            <Memo40 Ref="90" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo40</Name>
+              <Page isRef="7" />
+              <Parent isRef="76" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.YTDRevenue))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="91" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo40>
+            <Memo41 Ref="92" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>16.3,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo41</Name>
+              <Page isRef="7" />
+              <Parent isRef="76" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.YTDRevenueBudget))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="93" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo41>
+            <Memo42 Ref="94" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>18.5,0,1,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo42</Name>
+              <Page isRef="7" />
+              <Parent isRef="76" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRRevenue.YTDRevenueBudget))==0?0:(Sum(decimal.Parse(root_DRRRevenue.YTDRevenue))/Sum(decimal.Parse(root_DRRRevenue.YTDRevenueBudget))*100)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="95" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo42>
+            <Memo117 Ref="96" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.6,19.5,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo117</Name>
+              <Page isRef="7" />
+              <Parent isRef="76" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="97" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo117>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepFooterTogether>False</KeepFooterTogether>
+          <Name>Footer1</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+        </Footer1>
+        <Header3 Ref="98" type="HeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,14.9,19.5,0.6</ClientRectangle>
+          <Components isList="true" count="1">
+            <Memo97 Ref="99" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,19.5,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo97</Name>
+              <Page isRef="7" />
+              <Parent isRef="98" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Liability</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo97>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepHeaderTogether>False</KeepHeaderTogether>
+          <Name>Header3</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+        </Header3>
+        <MasterData3 Ref="100" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,16.3,19.5,0.5</ClientRectangle>
+          <Components isList="true" count="10">
+            <Memo76 Ref="101" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.3,0,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo76</Name>
+              <Page isRef="7" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRLiability.Account}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo76>
+            <Memo77 Ref="102" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo77</Name>
+              <Page isRef="7" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRLiability.TDYLiability}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="103" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo77>
+            <Memo78 Ref="104" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.5,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo78</Name>
+              <Page isRef="7" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRLiability.TDYLiabilityBudget}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="105" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo78>
+            <Memo79 Ref="106" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>7.7,0,1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo79</Name>
+              <Page isRef="7" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_DRRLiability.TDYLiabilityBudget)==0?0:decimal.Parse(root_DRRLiability.TDYLiability)/decimal.Parse(root_DRRLiability.TDYLiabilityBudget)*100}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="107" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo79>
+            <Memo80 Ref="108" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo80</Name>
+              <Page isRef="7" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRLiability.MTDLiability}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="109" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo80>
+            <Memo81 Ref="110" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.9,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo81</Name>
+              <Page isRef="7" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRLiability.MTDLiabilityBudget}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="111" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo81>
+            <Memo82 Ref="112" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.1,0,1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo82</Name>
+              <Page isRef="7" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_DRRLiability.MTDLiabilityBudget)==0?0:decimal.Parse(root_DRRLiability.MTDLiability)/decimal.Parse(root_DRRLiability.MTDLiabilityBudget)*100}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="113" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo82>
+            <Memo83 Ref="114" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo83</Name>
+              <Page isRef="7" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRLiability.YTDLiability}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="115" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo83>
+            <Memo84 Ref="116" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>16.3,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo84</Name>
+              <Page isRef="7" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRLiability.YTDLiabilityBudget}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="117" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo84>
+            <Memo85 Ref="118" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>18.5,0,1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo85</Name>
+              <Page isRef="7" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_DRRLiability.YTDLiabilityBudget)==0?0:decimal.Parse(root_DRRLiability.YTDLiability)/decimal.Parse(root_DRRLiability.YTDLiabilityBudget)*100}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="119" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo85>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_DRRLiability</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData3</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+          <Sort isList="true" count="0" />
+        </MasterData3>
+        <Footer3 Ref="120" type="FooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,17.6,19.5,1.7</ClientRectangle>
+          <Components isList="true" count="20">
+            <Memo98 Ref="121" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,3.3,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo98</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total Liability</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo98>
+            <Memo99 Ref="122" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo99</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRLiability.TDYLiability))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="123" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo99>
+            <Memo100 Ref="124" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.5,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo100</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRLiability.TDYLiabilityBudget))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="125" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo100>
+            <Memo101 Ref="126" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>7.7,0,1,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo101</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRLiability.TDYLiabilityBudget))==0?0:(Sum(decimal.Parse(root_DRRLiability.TDYLiability))/Sum(decimal.Parse(root_DRRLiability.TDYLiabilityBudget))*100)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="127" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo101>
+            <Memo102 Ref="128" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo102</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRLiability.MTDLiability))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="129" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo102>
+            <Memo103 Ref="130" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.9,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo103</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRLiability.MTDLiabilityBudget))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="131" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo103>
+            <Memo104 Ref="132" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.1,0,1,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo104</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRLiability.MTDLiabilityBudget))==0?0:(Sum(decimal.Parse(root_DRRLiability.MTDLiability))/Sum(decimal.Parse(root_DRRLiability.MTDLiabilityBudget))*100)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="133" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo104>
+            <Memo105 Ref="134" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo105</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRLiability.YTDLiability))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="135" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo105>
+            <Memo106 Ref="136" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>16.3,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo106</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRLiability.YTDLiabilityBudget))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="137" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo106>
+            <Memo107 Ref="138" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>18.5,0,1,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo107</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRLiability.YTDLiabilityBudget))==0?0:(Sum(decimal.Parse(root_DRRLiability.YTDLiability))/Sum(decimal.Parse(root_DRRLiability.YTDLiabilityBudget))*100)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="139" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo107>
+            <Memo86 Ref="140" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.6,3.3,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo86</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total Revenue + Liability</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo86>
+            <Memo87 Ref="141" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0.6,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo87</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.TDYRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.TDYLiability))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="142" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo87>
+            <Memo90 Ref="143" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0.6,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo90</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.MTDRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.MTDLiability))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="144" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo90>
+            <Memo93 Ref="145" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0.6,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo93</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.YTDRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.YTDLiability))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="146" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo93>
+            <Memo88 Ref="147" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.5,0.6,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo88</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.TDYRevenueBudget))+Sum(MasterData3,decimal.Parse(root_DRRLiability.TDYLiabilityBudget))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="148" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo88>
+            <Memo89 Ref="149" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>7.7,0.6,1,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo89</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:N2}", (Sum(MasterData1,decimal.Parse(root_DRRRevenue.TDYRevenueBudget))+Sum(MasterData3,decimal.Parse(root_DRRLiability.TDYLiabilityBudget)))==0?0:((Sum(MasterData1,decimal.Parse(root_DRRRevenue.TDYRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.TDYLiability)))/(Sum(MasterData1,decimal.Parse(root_DRRRevenue.TDYRevenueBudget))+Sum(MasterData3,decimal.Parse(root_DRRLiability.TDYLiabilityBudget)))*100))}  
+</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="150" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo89>
+            <Memo91 Ref="151" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.9,0.6,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo91</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.MTDRevenueBudget))+Sum(MasterData3,decimal.Parse(root_DRRLiability.MTDLiabilityBudget))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="152" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo91>
+            <Memo92 Ref="153" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.1,0.6,1,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo92</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:N2}", Sum(MasterData1,decimal.Parse(root_DRRRevenue.MTDRevenueBudget))+Sum(MasterData3,decimal.Parse(root_DRRLiability.MTDLiabilityBudget))==0?0:((Sum(MasterData1,decimal.Parse(root_DRRRevenue.MTDRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.MTDLiability)))/(Sum(MasterData1,decimal.Parse(root_DRRRevenue.MTDRevenueBudget))+Sum(MasterData3,decimal.Parse(root_DRRLiability.MTDLiabilityBudget)))*100))}
+</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="154" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo92>
+            <Memo94 Ref="155" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>16.3,0.6,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo94</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.YTDRevenueBudget))+Sum(MasterData3,decimal.Parse(root_DRRLiability.YTDLiabilityBudget))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="156" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo94>
+            <Memo95 Ref="157" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>18.5,0.6,1,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo95</Name>
+              <Page isRef="7" />
+              <Parent isRef="120" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:N2}", Sum(MasterData1,decimal.Parse(root_DRRRevenue.YTDRevenueBudget))+Sum(MasterData3,decimal.Parse(root_DRRLiability.YTDLiabilityBudget))==0?0:((Sum(MasterData1,decimal.Parse(root_DRRRevenue.YTDRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.YTDLiability)))/(Sum(MasterData1,decimal.Parse(root_DRRRevenue.YTDRevenueBudget))+Sum(MasterData3,decimal.Parse(root_DRRLiability.YTDLiabilityBudget)))*100))} 
+</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="158" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo95>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepFooterTogether>False</KeepFooterTogether>
+          <Name>Footer3</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+        </Footer3>
+        <Header2 Ref="159" type="HeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,20.1,19.5,0.6</ClientRectangle>
+          <Components isList="true" count="1">
+            <Memo65 Ref="160" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,19.5,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo65</Name>
+              <Page isRef="7" />
+              <Parent isRef="159" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Payment</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo65>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepHeaderTogether>False</KeepHeaderTogether>
+          <Name>Header2</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+        </Header2>
+        <GroupHeader2 Ref="161" type="GroupHeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,21.5,19.5,0.6</ClientRectangle>
+          <Components isList="true" count="1">
+            <Memo54 Ref="162" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,19.5,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo54</Name>
+              <Page isRef="7" />
+              <Parent isRef="161" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRPayment.AccountSubGroup}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo54>
+          </Components>
+          <Condition>{root_DRRPayment.AccountSubGroup}</Condition>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupHeader2</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+          <SortDirection>None</SortDirection>
+        </GroupHeader2>
+        <MasterData2 Ref="163" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,22.9,19.5,0.5</ClientRectangle>
+          <Components isList="true" count="4">
+            <Memo44 Ref="164" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.3,0,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo44</Name>
+              <Page isRef="7" />
+              <Parent isRef="163" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRPayment.Account}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo44>
+            <Memo45 Ref="165" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo45</Name>
+              <Page isRef="7" />
+              <Parent isRef="163" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRPayment.TDYPayment}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="166" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo45>
+            <Memo48 Ref="167" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo48</Name>
+              <Page isRef="7" />
+              <Parent isRef="163" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRPayment.MTDPayment}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="168" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo48>
+            <Memo51 Ref="169" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo51</Name>
+              <Page isRef="7" />
+              <Parent isRef="163" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRPayment.YTDPayment}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="170" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo51>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_DRRPayment</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData2</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+          <Sort isList="true" count="0" />
+        </MasterData2>
+        <GroupFooter2 Ref="171" type="GroupFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,24.2,19.5,0.6</ClientRectangle>
+          <Components isList="true" count="4">
+            <Memo55 Ref="172" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,3.3,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo55</Name>
+              <Page isRef="7" />
+              <Parent isRef="171" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total {root_DRRPayment.AccountSubGroup}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo55>
+            <Memo56 Ref="173" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo56</Name>
+              <Page isRef="7" />
+              <Parent isRef="171" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRPayment.TDYPayment))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="174" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo56>
+            <Memo59 Ref="175" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo59</Name>
+              <Page isRef="7" />
+              <Parent isRef="171" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRPayment.MTDPayment))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="176" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo59>
+            <Memo62 Ref="177" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo62</Name>
+              <Page isRef="7" />
+              <Parent isRef="171" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRPayment.YTDPayment))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="178" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo62>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupFooter2</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+        </GroupFooter2>
+        <Footer2 Ref="179" type="FooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,25.6,19.5,1.3</ClientRectangle>
+          <Components isList="true" count="14">
+            <Memo66 Ref="180" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,3.3,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo66</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total Payment</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo66>
+            <Memo67 Ref="181" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo67</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRPayment.TDYPayment))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="182" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo67>
+            <Memo68 Ref="183" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.5,0,3.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo68</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo68>
+            <Memo70 Ref="184" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo70</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRPayment.MTDPayment))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="185" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo70>
+            <Memo71 Ref="186" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.9,0,3.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo71</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo71>
+            <Memo73 Ref="187" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0,2.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo73</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_DRRPayment.YTDPayment))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="188" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo73>
+            <Memo74 Ref="189" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>16.3,0,3.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo74</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo74>
+            <Memo96 Ref="190" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.6,3.3,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo96</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Net Today</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo96>
+            <Memo108 Ref="191" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0.6,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo108</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.TDYRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.TDYLiability))+Sum(MasterData2,decimal.Parse(root_DRRPayment.TDYPayment))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="192" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo108>
+            <Memo109 Ref="193" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0.6,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo109</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.MTDRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.MTDLiability))+Sum(MasterData2,decimal.Parse(root_DRRPayment.MTDPayment))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="194" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo109>
+            <Memo110 Ref="195" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0.6,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo110</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.YTDRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.YTDLiability))+Sum(MasterData2,decimal.Parse(root_DRRPayment.YTDPayment))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="196" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo110>
+            <Memo111 Ref="197" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.5,0.6,3.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo111</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo111>
+            <Memo113 Ref="198" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.9,0.6,3.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo113</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo113>
+            <Memo115 Ref="199" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>16.3,0.6,3.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo115</Name>
+              <Page isRef="7" />
+              <Parent isRef="179" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo115>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepFooterTogether>False</KeepFooterTogether>
+          <Name>Footer2</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+        </Footer2>
+        <MasterData4 Ref="200" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,27.7,19.5,0</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <DataSourceName>MasterData4</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData4</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+          <Sort isList="true" count="0" />
+        </MasterData4>
+        <Footer4 Ref="201" type="FooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,28.5,19.5,0</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepFooterTogether>False</KeepFooterTogether>
+          <Name>Footer4</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+        </Footer4>
+        <ReportSummary1 Ref="202" type="ReportSummaryBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,29.3,19.5,5.2</ClientRectangle>
+          <Components isList="true" count="24">
+            <Memo118 Ref="203" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.7,3.3,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo118</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>    Net Today</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo118>
+            <Memo119 Ref="204" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0.7,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo119</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.TDYRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.TDYLiability))+Sum(MasterData2,decimal.Parse(root_DRRPayment.TDYPayment))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="205" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo119>
+            <Memo120 Ref="206" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0.7,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo120</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.MTDRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.MTDLiability))+Sum(MasterData2,decimal.Parse(root_DRRPayment.MTDPayment))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="207" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo120>
+            <Memo121 Ref="208" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0.7,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo121</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.YTDRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.YTDLiability))+Sum(MasterData2,decimal.Parse(root_DRRPayment.YTDPayment))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="209" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo121>
+            <Memo128 Ref="210" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,3.3,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo128</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Yesterday Balance</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo128>
+            <Memo129 Ref="211" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,0,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo129</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRYesterday.TDYYesterday}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="212" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo129>
+            <Memo130 Ref="213" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,0,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo130</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRYesterday.MTDYesterday}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="214" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo130>
+            <Memo131 Ref="215" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo131</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_DRRYesterday.YTDYesterday}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="216" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo131>
+            <Memo132 Ref="217" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.5,0,3.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo132</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo132>
+            <Memo134 Ref="218" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.9,0,3.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo134</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo134>
+            <Memo136 Ref="219" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>16.3,0,3.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo136</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo136>
+            <Memo138 Ref="220" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,1.4,3.3,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo138</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Today Balance</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo138>
+            <Memo139 Ref="221" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.3,1.4,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo139</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.TDYRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.TDYLiability))+Sum(MasterData2,decimal.Parse(root_DRRPayment.TDYPayment))+decimal.Parse(root_DRRYesterday.TDYYesterday)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="222" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo139>
+            <Memo140 Ref="223" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.7,1.4,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo140</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.MTDRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.MTDLiability))+Sum(MasterData2,decimal.Parse(root_DRRPayment.MTDPayment))+decimal.Parse(root_DRRYesterday.MTDYesterday)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="224" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo140>
+            <Memo141 Ref="225" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,1.4,2.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo141</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(MasterData1,decimal.Parse(root_DRRRevenue.YTDRevenue))+Sum(MasterData3,decimal.Parse(root_DRRLiability.YTDLiability))+Sum(MasterData2,decimal.Parse(root_DRRPayment.YTDPayment))+decimal.Parse(root_DRRYesterday.YTDYesterday)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="226" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo141>
+            <Memo143 Ref="227" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.5,1.4,3.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo143</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo143>
+            <Memo145 Ref="228" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.9,1.4,3.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,7,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo145</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo145>
+            <Memo147 Ref="229" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>16.3,1.4,3.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo147</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo147>
+            <MemoTitlePreparedBy Ref="230" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.5,2.4,5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoTitlePreparedBy</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Prepared By</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoTitlePreparedBy>
+            <MemoPreparedBy Ref="231" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.5,4.5,5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoPreparedBy</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Night Audit</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoPreparedBy>
+            <MemoTitleCheckedBy Ref="232" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>7.2,2.4,5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoTitleCheckedBy</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Checked By</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoTitleCheckedBy>
+            <MemoCheckedBy Ref="233" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>7.2,4.5,5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoCheckedBy</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>F.O Manager</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoCheckedBy>
+            <MemoTitleApprovedBy Ref="234" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14,2.4,5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoTitleApprovedBy</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Approved By</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoTitleApprovedBy>
+            <MemoApprovedBy Ref="235" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14,4.5,5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoApprovedBy</Name>
+              <Page isRef="7" />
+              <Parent isRef="202" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Accounting</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoApprovedBy>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepReportSummaryTogether>False</KeepReportSummaryTogether>
+          <Name>ReportSummary1</Name>
+          <Page isRef="7" />
+          <Parent isRef="7" />
+        </ReportSummary1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>8ae02807bef344ffa7e9d48d35e0d591</Guid>
+      <Margins>0.9,0.6,1,1</Margins>
+      <Name>Page1</Name>
+      <PageHeight>29.7</PageHeight>
+      <PageWidth>21</PageWidth>
+      <Report isRef="0" />
+      <TitleBeforeHeader>True</TitleBeforeHeader>
+    </Page1>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>9/4/2024 10:43:22 AM</ReportChanged>
+  <ReportCreated>9/3/2024 11:57:39 AM</ReportCreated>
+  <ReportFile>C:\Users\David Geri\Documents\GitHub\chs_cloud_frontend\public\report\reports\CHS\DailyRevenueReport01.mrt</ReportFile>
+  <ReportGuid>680166a4fc9940fd86865f7ac8e49e08</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Centimeters</ReportUnit>
+  <ReportVersion>2024.1.4.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="0" />
+</StiSerializer>

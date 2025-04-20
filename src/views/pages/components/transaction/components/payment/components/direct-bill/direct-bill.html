@@ -1,0 +1,148 @@
+<form class="direct-bill-form">
+  <div class="payment-form mt-3">
+    <div class="row">
+      <div class="col-4">
+        <c-select
+          half
+          required
+          class="row mb-1"
+          :label="$t('transaction.subFolio')"
+          name="subFolioGroup"
+          v-model="form.subFolioGroupCode"
+          :options="$global.subFolioGroup"
+        ></c-select>
+      </div>
+      <div v-show="folioTransfer" class="col-md-4">
+        <c-checkbox
+          class="row mb-1"
+          :label="$t('transaction.automaticTransfer')"
+          name="automaticTransfer"
+          v-model="form.automaticTransfer"
+        >
+        </c-checkbox>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md">
+        <c-select
+          required
+          half
+          class="row mb-1"
+          :label="$t('transaction.currency')"
+          labelName="code"
+          keyName="code"
+          name="currency"
+          v-model="form.currencyCode"
+          :options="options.currencies"
+          @change="onChangeCurrency"
+        ></c-select>
+        <c-input
+          required
+          disabled
+          formatted
+          half
+          class="row mb-1"
+          type="number"
+          :label="$t('transaction.excRate')"
+          name="excRate"
+          v-model="form.exchangeRate"
+        ></c-input>
+        <c-select
+          required
+          class="row mb-1"
+          :label="$t('transaction.subDept')"
+          labelName="name"
+          keyName="code"
+          name="subDepartment"
+          v-model="form.subDepartmentCode"
+          :options="options.subDepartments"
+          @change="$emit('changeSubDepartment', $event)"
+        ></c-select>
+        <c-select
+          required
+          class="row mb-1"
+          :label="$t('transaction.account')"
+          labelName="name"
+          keyName="code"
+          name="account"
+          v-model="form.accountCode"
+          :options="options.accounts"
+          @change="$emit('changeAccount', $event)"
+        ></c-select>
+      </div>
+      <div class="col-md">
+        <c-input
+          focus
+          showZeroNumber
+          required
+          class="row mb-1"
+          type="number"
+          formatted
+          :label="$t('transaction.amount') + ' ' +form.currencyCode"
+          name="amountForeign"
+          v-model="form.amountForeign"
+          @input="onChangeAmount"
+        ></c-input>
+        <c-input
+          showZeroNumber
+          required
+          disabled
+          class="row mb-1"
+          type="number"
+          formatted
+          :label="$t('transaction.amount') +' '+defaultCurrency"
+          name="amount"
+          v-model="form.amount"
+        ></c-input>
+        <c-select
+          required
+          class="row mb-1"
+          :label="$t('transaction.directBill')"
+          labelName="name"
+          keyName="code"
+          name="directBill"
+          v-model="form.directBillCode"
+          :options="options.directBills"
+          @change="onChangeDirectBill"
+        ></c-select>
+        <c-input
+          showZeroNumber
+          disabled
+          class="row mb-1"
+          type="number"
+          formatted
+          :label="$t('transaction.outstanding')"
+          name="outstanding"
+          v-model="form.outstanding"
+        ></c-input>
+      </div>
+      <div class="col-md">
+        <c-input
+          showZeroNumber
+          disabled
+          class="row mb-1"
+          type="number"
+          formatted
+          :label="$t('transaction.arLimit')"
+          name="arLimit"
+          v-model="form.arLimit"
+        ></c-input>
+        <div class="row mb-1">
+          <label for="remarkDirectBill" class="col-md-3 col-form-label"
+            >{{ $t("transaction.remark") }}</label
+          >
+          <div class="col-md-9">
+            <textarea
+              type="text"
+              class="form-control"
+              rows="2"
+              id="remarkDirectBill"
+              name="remark"
+              v-model="form.remark"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

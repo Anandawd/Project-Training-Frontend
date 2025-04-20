@@ -1,0 +1,2337 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="0" />
+    <DataSources isList="true" count="7">
+      <root_CompanyInformation Ref="2" type="DataTableSource" isKey="true">
+        <Alias>root_CompanyInformation</Alias>
+        <Columns isList="true" count="9">
+          <value>image_url,System.String</value>
+          <value>name,System.String</value>
+          <value>street,System.String</value>
+          <value>city,System.String</value>
+          <value>state,System.String</value>
+          <value>country,System.String</value>
+          <value>postal_code,System.String</value>
+          <value>phone1,System.String</value>
+          <value>fax,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>10b68d46-1902-4b62-8c7b-a7e17670cd6a</Key>
+        <Name>root_CompanyInformation</Name>
+        <NameInSource>json.CompanyInformation</NameInSource>
+      </root_CompanyInformation>
+      <root_InventoryReconciliationSalesMonthly Ref="3" type="DataTableSource" isKey="true">
+        <Alias>root_InventoryReconciliationSalesMonthly</Alias>
+        <Columns isList="true" count="3">
+          <value>SubDepartment,System.String</value>
+          <value>LastMonth,System.String</value>
+          <value>ThisMonth,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>f9a1b4e3-c066-44a5-8ff0-729764829f8a</Key>
+        <Name>root_InventoryReconciliationSalesMonthly</Name>
+        <NameInSource>json.InventoryReconciliationSalesMonthly</NameInSource>
+      </root_InventoryReconciliationSalesMonthly>
+      <root_InventoryReconciliationOpeningMonthly Ref="4" type="DataTableSource" isKey="true">
+        <Alias>root_InventoryReconciliationOpeningMonthly</Alias>
+        <Columns isList="true" count="2">
+          <value>ThisMonth,System.String</value>
+          <value>LastMonth,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>c631cb78-b2cb-4c86-9aef-a8402c7de894</Key>
+        <Name>root_InventoryReconciliationOpeningMonthly</Name>
+        <NameInSource>json.InventoryReconciliationOpeningMonthly</NameInSource>
+      </root_InventoryReconciliationOpeningMonthly>
+      <root_InventoryReconciliationAvailableMonthly Ref="5" type="DataTableSource" isKey="true">
+        <Alias>root_InventoryReconciliationAvailableMonthly</Alias>
+        <Columns isList="true" count="4">
+          <value>Description,System.String</value>
+          <value>LastMonth,System.String</value>
+          <value>ThisMonth,System.String</value>
+          <value>IDSort,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>f8981680-7340-4fed-a82f-a6396ef67c5b</Key>
+        <Name>root_InventoryReconciliationAvailableMonthly</Name>
+        <NameInSource>json.InventoryReconciliationAvailableMonthly</NameInSource>
+      </root_InventoryReconciliationAvailableMonthly>
+      <root_InventoryReconciliationCostExpenseMonthly Ref="6" type="DataTableSource" isKey="true">
+        <Alias>root_InventoryReconciliationCostExpenseMonthly</Alias>
+        <Columns isList="true" count="5">
+          <value>ThisMonth,System.String</value>
+          <value>LastMonth,System.String</value>
+          <value>CostingType,System.String</value>
+          <value>Description,System.String</value>
+          <value>SubDepartment,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>89949aea-9404-4efe-89d1-7622889cd43e</Key>
+        <Name>root_InventoryReconciliationCostExpenseMonthly</Name>
+        <NameInSource>json.InventoryReconciliationCostExpenseMonthly</NameInSource>
+      </root_InventoryReconciliationCostExpenseMonthly>
+      <root_NonInventoryReconciliationCostExpenseMonthly Ref="7" type="DataTableSource" isKey="true">
+        <Alias>root_NonInventoryReconciliationCostExpenseMonthly</Alias>
+        <Columns isList="true" count="4">
+          <value>CostingType,System.String</value>
+          <value>ThisMonth,System.String</value>
+          <value>LastMonth,System.String</value>
+          <value>Description,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>66176076-e741-4ced-9409-0b39b34e1df6</Key>
+        <Name>root_NonInventoryReconciliationCostExpenseMonthly</Name>
+        <NameInSource>json.NonInventoryReconciliationCostExpenseMonthly</NameInSource>
+      </root_NonInventoryReconciliationCostExpenseMonthly>
+      <root_InventoryReconciliationAddCostMonthly Ref="8" type="DataTableSource" isKey="true">
+        <Alias>root_InventoryReconciliationAddCostMonthly</Alias>
+        <Columns isList="true" count="3">
+          <value>Description,System.String</value>
+          <value>LastMonth,System.String</value>
+          <value>ThisMonth,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>6bcf432f-2896-4de8-ac04-ce06801b0143</Key>
+        <Name>root_InventoryReconciliationAddCostMonthly</Name>
+        <NameInSource>json.InventoryReconciliationAddCostMonthly</NameInSource>
+      </root_InventoryReconciliationAddCostMonthly>
+    </DataSources>
+    <Relations isList="true" count="0" />
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <Variables isList="true" count="0" />
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>02d171bd6ec44c3b8faef1727c3074f9</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="9" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="23">
+        <ReportTitle1 Ref="10" type="ReportTitleBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,0.4,19,3.6</ClientRectangle>
+          <Components isList="true" count="6">
+            <Picture1 Ref="11" type="Image" isKey="true">
+              <Brush>White</Brush>
+              <ClientRectangle>0,0,2,2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <DataColumn>root_CompanyInformation.image_url</DataColumn>
+              <Expressions isList="true" count="0" />
+              <IconColor>68, 114, 196</IconColor>
+              <Margins>2,2,2,2</Margins>
+              <Name>Picture1</Name>
+              <Page isRef="9" />
+              <Parent isRef="10" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+            </Picture1>
+            <Memo1 Ref="12" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2,0,16.7,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,12,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo1</Name>
+              <Page isRef="9" />
+              <Parent isRef="10" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.name}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo1>
+            <Memo2 Ref="13" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2,0.7,16.7,1.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo2</Name>
+              <Page isRef="9" />
+              <Parent isRef="10" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.street}, {root_CompanyInformation.city}
+{root_CompanyInformation.state} {root_CompanyInformation.country}. {root_CompanyInformation.postal_code}
+Phone: {root_CompanyInformation.phone1}  Fax: {root_CompanyInformation.fax}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo2>
+            <MemoHeaderLine Ref="14" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,2.2,19,0.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoHeaderLine</Name>
+              <Page isRef="9" />
+              <Parent isRef="10" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoHeaderLine>
+            <MemoReportTitle Ref="15" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.75,2.5,7.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoReportTitle</Name>
+              <Page isRef="9" />
+              <Parent isRef="10" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>DAILY INVENTORY RECONCILIATION</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoReportTitle>
+            <MemoDescription Ref="16" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.5,3.1,2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoDescription</Name>
+              <Page isRef="9" />
+              <Parent isRef="10" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Description</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoDescription>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>ReportTitle1</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </ReportTitle1>
+        <PageFooter1 Ref="17" type="PageFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,49.46,19,0.4</ClientRectangle>
+          <Components isList="true" count="2">
+            <Memo5 Ref="18" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,9.7,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo5</Name>
+              <Page isRef="9" />
+              <Parent isRef="17" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Printed: {Format("{0:dd/MM/yyyy hh:mm:ss}",Time)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo5>
+            <Memo6 Ref="19" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>9.7,0,9.3,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo6</Name>
+              <Page isRef="9" />
+              <Parent isRef="17" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Page {PageNumberThrough} of {TotalPageCount}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo6>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageFooter1</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </PageFooter1>
+        <Header1 Ref="20" type="HeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,4.8,19,1.3</ClientRectangle>
+          <Components isList="true" count="6">
+            <H1 Ref="21" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>H1</Name>
+              <Page isRef="9" />
+              <Parent isRef="20" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Description</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </H1>
+            <H2 Ref="22" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>H2</Name>
+              <Page isRef="9" />
+              <Parent isRef="20" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Today</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </H2>
+            <H3 Ref="23" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>H3</Name>
+              <Page isRef="9" />
+              <Parent isRef="20" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>This Month</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </H3>
+            <Memo8 Ref="24" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.7,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo8</Name>
+              <Page isRef="9" />
+              <Parent isRef="20" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Sales by Sub Department</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo8>
+            <Memo9 Ref="25" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0.7,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo9</Name>
+              <Page isRef="9" />
+              <Parent isRef="20" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo9>
+            <Memo10 Ref="26" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0.7,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo10</Name>
+              <Page isRef="9" />
+              <Parent isRef="20" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo10>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepHeaderTogether>False</KeepHeaderTogether>
+          <Name>Header1</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </Header1>
+        <MasterData1 Ref="27" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,6.9,19,0.53</ClientRectangle>
+          <Components isList="true" count="3">
+            <M1 Ref="28" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>M1</Name>
+              <Page isRef="9" />
+              <Parent isRef="27" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>      {root_InventoryReconciliationSalesMonthly.SubDepartment}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M1>
+            <M3 Ref="29" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>M3</Name>
+              <Page isRef="9" />
+              <Parent isRef="27" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_InventoryReconciliationSalesMonthly.LastMonth}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M3>
+            <Memo17 Ref="30" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo17</Name>
+              <Page isRef="9" />
+              <Parent isRef="27" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_InventoryReconciliationSalesMonthly.ThisMonth}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo17>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_InventoryReconciliationSalesMonthly</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData1</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+          <Sort isList="true" count="0" />
+        </MasterData1>
+        <Footer1 Ref="31" type="FooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,8.23,19,1.2</ClientRectangle>
+          <Components isList="true" count="6">
+            <Memo14 Ref="32" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo14</Name>
+              <Page isRef="9" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total Sales by Sub Department</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo14>
+            <Memo15 Ref="33" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo15</Name>
+              <Page isRef="9" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_InventoryReconciliationSalesMonthly.ThisMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo15>
+            <Memo16 Ref="34" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo16</Name>
+              <Page isRef="9" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_InventoryReconciliationSalesMonthly.LastMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo16>
+            <Memo21 Ref="35" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.6,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo21</Name>
+              <Page isRef="9" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo21>
+            <Memo22 Ref="36" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0.6,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo22</Name>
+              <Page isRef="9" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo22>
+            <Memo23 Ref="37" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0.6,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo23</Name>
+              <Page isRef="9" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo23>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepFooterTogether>False</KeepFooterTogether>
+          <Name>Footer1</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </Footer1>
+        <Header2 Ref="38" type="HeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,10.23,19,0.6</ClientRectangle>
+          <Components isList="true" count="3">
+            <Memo18 Ref="39" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo18</Name>
+              <Page isRef="9" />
+              <Parent isRef="38" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Opening Inventory</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo18>
+            <Memo19 Ref="40" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo19</Name>
+              <Page isRef="9" />
+              <Parent isRef="38" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_InventoryReconciliationOpeningMonthly.ThisMonth}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo19>
+            <Memo20 Ref="41" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo20</Name>
+              <Page isRef="9" />
+              <Parent isRef="38" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_InventoryReconciliationOpeningMonthly.LastMonth}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo20>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepHeaderTogether>False</KeepHeaderTogether>
+          <Name>Header2</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </Header2>
+        <MasterData2 Ref="42" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,11.63,19,0.53</ClientRectangle>
+          <Components isList="true" count="3">
+            <Memo24 Ref="43" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo24</Name>
+              <Page isRef="9" />
+              <Parent isRef="42" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>   {root_InventoryReconciliationAvailableMonthly.Description}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo24>
+            <Memo25 Ref="44" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo25</Name>
+              <Page isRef="9" />
+              <Parent isRef="42" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_InventoryReconciliationAvailableMonthly.LastMonth}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo25>
+            <Memo26 Ref="45" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo26</Name>
+              <Page isRef="9" />
+              <Parent isRef="42" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_InventoryReconciliationAvailableMonthly.ThisMonth}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo26>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_InventoryReconciliationAvailableMonthly</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData2</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+          <Sort isList="true" count="0" />
+        </MasterData2>
+        <MasterData5 Ref="46" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,12.96,19,0</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <DataSourceName>MasterData5</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData5</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+          <Sort isList="true" count="0" />
+        </MasterData5>
+        <Footer2 Ref="47" type="FooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,13.76,19,2.4</ClientRectangle>
+          <Components isList="true" count="12">
+            <Memo27 Ref="48" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo27</Name>
+              <Page isRef="9" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Available Inventory</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo27>
+            <Memo28 Ref="49" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo28</Name>
+              <Page isRef="9" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_InventoryReconciliationOpeningMonthly.ThisMonth)+Sum(decimal.Parse(root_InventoryReconciliationAvailableMonthly.IDSort)==2?-decimal.Parse(root_InventoryReconciliationAvailableMonthly.ThisMonth):decimal.Parse(root_InventoryReconciliationAvailableMonthly.ThisMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo28>
+            <Memo29 Ref="50" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo29</Name>
+              <Page isRef="9" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_InventoryReconciliationOpeningMonthly.LastMonth)+Sum(decimal.Parse(root_InventoryReconciliationAvailableMonthly.IDSort)==2?-decimal.Parse(root_InventoryReconciliationAvailableMonthly.LastMonth):decimal.Parse(root_InventoryReconciliationAvailableMonthly.LastMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo29>
+            <Memo30 Ref="51" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,1.8,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo30</Name>
+              <Page isRef="9" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo30>
+            <Memo31 Ref="52" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,1.8,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo31</Name>
+              <Page isRef="9" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo31>
+            <Memo32 Ref="53" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,1.8,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo32</Name>
+              <Page isRef="9" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo32>
+            <Memo72 Ref="54" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.6,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo72</Name>
+              <Page isRef="9" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>   Ending Inventory</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo72>
+            <Memo73 Ref="55" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0.6,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo73</Name>
+              <Page isRef="9" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_InventoryReconciliationOpeningMonthly.ThisMonth)+Sum(decimal.Parse(root_InventoryReconciliationAvailableMonthly.IDSort)==2?-decimal.Parse(root_InventoryReconciliationAvailableMonthly.ThisMonth):decimal.Parse(root_InventoryReconciliationAvailableMonthly.ThisMonth))-Sum(decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.ThisMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo73>
+            <Memo74 Ref="56" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0.6,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo74</Name>
+              <Page isRef="9" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_InventoryReconciliationOpeningMonthly.LastMonth)+Sum(decimal.Parse(root_InventoryReconciliationAvailableMonthly.IDSort)==2?-decimal.Parse(root_InventoryReconciliationAvailableMonthly.LastMonth):decimal.Parse(root_InventoryReconciliationAvailableMonthly.LastMonth))-Sum(decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.LastMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo74>
+            <Memo75 Ref="57" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,1.2,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo75</Name>
+              <Page isRef="9" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total Inventory Consumption</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo75>
+            <Memo76 Ref="58" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,1.2,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo76</Name>
+              <Page isRef="9" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.ThisMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo76>
+            <Memo77 Ref="59" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,1.2,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo77</Name>
+              <Page isRef="9" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.LastMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo77>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepFooterTogether>False</KeepFooterTogether>
+          <Name>Footer2</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </Footer2>
+        <Header3 Ref="60" type="HeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,16.96,19,0.6</ClientRectangle>
+          <Components isList="true" count="3">
+            <Memo33 Ref="61" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo33</Name>
+              <Page isRef="9" />
+              <Parent isRef="60" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Inventory Consumption Breakdown</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo33>
+            <Memo34 Ref="62" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo34</Name>
+              <Page isRef="9" />
+              <Parent isRef="60" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo34>
+            <Memo35 Ref="63" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo35</Name>
+              <Page isRef="9" />
+              <Parent isRef="60" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo35>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepHeaderTogether>False</KeepHeaderTogether>
+          <Name>Header3</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </Header3>
+        <GroupHeader2 Ref="64" type="GroupHeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,18.36,19,0.6</ClientRectangle>
+          <Components isList="true" count="3">
+            <Memo45 Ref="65" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo45</Name>
+              <Page isRef="9" />
+              <Parent isRef="64" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>   {root_InventoryReconciliationCostExpenseMonthly.CostingType}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo45>
+            <Memo46 Ref="66" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo46</Name>
+              <Page isRef="9" />
+              <Parent isRef="64" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo46>
+            <Memo47 Ref="67" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo47</Name>
+              <Page isRef="9" />
+              <Parent isRef="64" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo47>
+          </Components>
+          <Condition>{root_InventoryReconciliationCostExpenseMonthly.CostingType}</Condition>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupHeader2</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </GroupHeader2>
+        <MasterData3 Ref="68" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,19.76,19,0.53</ClientRectangle>
+          <Components isList="true" count="4">
+            <Memo43 Ref="69" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo43</Name>
+              <Page isRef="9" />
+              <Parent isRef="68" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_InventoryReconciliationCostExpenseMonthly.LastMonth}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo43>
+            <Memo44 Ref="70" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo44</Name>
+              <Page isRef="9" />
+              <Parent isRef="68" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_InventoryReconciliationCostExpenseMonthly.ThisMonth}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo44>
+            <Memo42 Ref="71" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>4.5,0,6.5,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo42</Name>
+              <Page isRef="9" />
+              <Parent isRef="68" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text> {root_InventoryReconciliationCostExpenseMonthly.Description}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo42>
+            <Memo102 Ref="72" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,4.5,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo102</Name>
+              <Page isRef="9" />
+              <Parent isRef="68" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text> {root_InventoryReconciliationCostExpenseMonthly.SubDepartment}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo102>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_InventoryReconciliationCostExpenseMonthly</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData3</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+          <Sort isList="true" count="0" />
+        </MasterData3>
+        <GroupFooter2 Ref="73" type="GroupFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,21.09,19,0.6</ClientRectangle>
+          <Components isList="true" count="3">
+            <Memo48 Ref="74" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo48</Name>
+              <Page isRef="9" />
+              <Parent isRef="73" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>   Total {root_InventoryReconciliationCostExpenseMonthly.CostingType}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo48>
+            <Memo49 Ref="75" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo49</Name>
+              <Page isRef="9" />
+              <Parent isRef="73" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.ThisMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo49>
+            <Memo50 Ref="76" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo50</Name>
+              <Page isRef="9" />
+              <Parent isRef="73" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.LastMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo50>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupFooter2</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </GroupFooter2>
+        <Footer3 Ref="77" type="FooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,22.49,19,1.2</ClientRectangle>
+          <Components isList="true" count="6">
+            <Memo36 Ref="78" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo36</Name>
+              <Page isRef="9" />
+              <Parent isRef="77" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total Inventory Consumption</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo36>
+            <Memo37 Ref="79" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo37</Name>
+              <Page isRef="9" />
+              <Parent isRef="77" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.ThisMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo37>
+            <Memo38 Ref="80" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo38</Name>
+              <Page isRef="9" />
+              <Parent isRef="77" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.LastMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo38>
+            <Memo39 Ref="81" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.6,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo39</Name>
+              <Page isRef="9" />
+              <Parent isRef="77" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo39>
+            <Memo40 Ref="82" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0.6,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo40</Name>
+              <Page isRef="9" />
+              <Parent isRef="77" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo40>
+            <Memo41 Ref="83" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0.6,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo41</Name>
+              <Page isRef="9" />
+              <Parent isRef="77" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo41>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepFooterTogether>False</KeepFooterTogether>
+          <Name>Footer3</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </Footer3>
+        <Header5 Ref="84" type="HeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,24.49,19,0.6</ClientRectangle>
+          <Components isList="true" count="3">
+            <Memo78 Ref="85" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo78</Name>
+              <Page isRef="9" />
+              <Parent isRef="84" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Non Inventory Consumption Breakdown</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo78>
+            <Memo79 Ref="86" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo79</Name>
+              <Page isRef="9" />
+              <Parent isRef="84" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo79>
+            <Memo80 Ref="87" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo80</Name>
+              <Page isRef="9" />
+              <Parent isRef="84" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo80>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepHeaderTogether>False</KeepHeaderTogether>
+          <Name>Header5</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </Header5>
+        <GroupHeader3 Ref="88" type="GroupHeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,25.89,19,0.6</ClientRectangle>
+          <Components isList="true" count="3">
+            <Memo87 Ref="89" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo87</Name>
+              <Page isRef="9" />
+              <Parent isRef="88" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>   {root_InventoryReconciliationCostExpenseMonthly.CostingType}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo87>
+            <Memo88 Ref="90" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo88</Name>
+              <Page isRef="9" />
+              <Parent isRef="88" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo88>
+            <Memo89 Ref="91" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo89</Name>
+              <Page isRef="9" />
+              <Parent isRef="88" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo89>
+          </Components>
+          <Condition>{root_NonInventoryReconciliationCostExpenseMonthly.CostingType}</Condition>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupHeader3</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </GroupHeader3>
+        <MasterData6 Ref="92" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,27.29,19,0.53</ClientRectangle>
+          <Components isList="true" count="3">
+            <Memo90 Ref="93" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo90</Name>
+              <Page isRef="9" />
+              <Parent isRef="92" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>      {root_NonInventoryReconciliationCostExpenseMonthly.Description}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo90>
+            <Memo91 Ref="94" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo91</Name>
+              <Page isRef="9" />
+              <Parent isRef="92" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_NonInventoryReconciliationCostExpenseMonthly.LastMonth}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo91>
+            <Memo92 Ref="95" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo92</Name>
+              <Page isRef="9" />
+              <Parent isRef="92" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_NonInventoryReconciliationCostExpenseMonthly.ThisMonth}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo92>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_NonInventoryReconciliationCostExpenseMonthly</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData6</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+          <Sort isList="true" count="0" />
+        </MasterData6>
+        <GroupFooter3 Ref="96" type="GroupFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,28.62,19,0.6</ClientRectangle>
+          <Components isList="true" count="3">
+            <Memo93 Ref="97" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo93</Name>
+              <Page isRef="9" />
+              <Parent isRef="96" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>   Total {root_NonInventoryReconciliationCostExpenseMonthly.CostingType}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo93>
+            <Memo94 Ref="98" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo94</Name>
+              <Page isRef="9" />
+              <Parent isRef="96" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_NonInventoryReconciliationCostExpenseMonthly.ThisMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo94>
+            <Memo95 Ref="99" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo95</Name>
+              <Page isRef="9" />
+              <Parent isRef="96" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_NonInventoryReconciliationCostExpenseMonthly.LastMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo95>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupFooter3</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </GroupFooter3>
+        <Footer5 Ref="100" type="FooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,30.02,19,1.2</ClientRectangle>
+          <Components isList="true" count="6">
+            <Memo81 Ref="101" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo81</Name>
+              <Page isRef="9" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total Non Inventory Consumption</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo81>
+            <Memo82 Ref="102" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo82</Name>
+              <Page isRef="9" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_NonInventoryReconciliationCostExpenseMonthly.ThisMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo82>
+            <Memo83 Ref="103" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo83</Name>
+              <Page isRef="9" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_NonInventoryReconciliationCostExpenseMonthly.LastMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo83>
+            <Memo84 Ref="104" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.6,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo84</Name>
+              <Page isRef="9" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo84>
+            <Memo85 Ref="105" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0.6,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo85</Name>
+              <Page isRef="9" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo85>
+            <Memo86 Ref="106" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0.6,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo86</Name>
+              <Page isRef="9" />
+              <Parent isRef="100" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo86>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepFooterTogether>False</KeepFooterTogether>
+          <Name>Footer5</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </Footer5>
+        <Header4 Ref="107" type="HeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,32.02,19,0.6</ClientRectangle>
+          <Components isList="true" count="3">
+            <Memo51 Ref="108" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo51</Name>
+              <Page isRef="9" />
+              <Parent isRef="107" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Add Cost</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo51>
+            <Memo52 Ref="109" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo52</Name>
+              <Page isRef="9" />
+              <Parent isRef="107" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo52>
+            <Memo53 Ref="110" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo53</Name>
+              <Page isRef="9" />
+              <Parent isRef="107" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo53>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepHeaderTogether>False</KeepHeaderTogether>
+          <Name>Header4</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </Header4>
+        <MasterData4 Ref="111" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,33.42,19,0.53</ClientRectangle>
+          <Components isList="true" count="3">
+            <Memo60 Ref="112" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo60</Name>
+              <Page isRef="9" />
+              <Parent isRef="111" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>   {root_InventoryReconciliationAddCostMonthly.Description}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo60>
+            <Memo61 Ref="113" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo61</Name>
+              <Page isRef="9" />
+              <Parent isRef="111" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_InventoryReconciliationAddCostMonthly.LastMonth}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo61>
+            <Memo62 Ref="114" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo62</Name>
+              <Page isRef="9" />
+              <Parent isRef="111" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_InventoryReconciliationAddCostMonthly.ThisMonth}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo62>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_InventoryReconciliationAddCostMonthly</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData4</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+          <Sort isList="true" count="0" />
+        </MasterData4>
+        <Footer4 Ref="115" type="FooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,34.75,19,1.2</ClientRectangle>
+          <Components isList="true" count="6">
+            <Memo54 Ref="116" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo54</Name>
+              <Page isRef="9" />
+              <Parent isRef="115" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total Add Cost</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo54>
+            <Memo55 Ref="117" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo55</Name>
+              <Page isRef="9" />
+              <Parent isRef="115" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_InventoryReconciliationAddCostMonthly.ThisMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo55>
+            <Memo56 Ref="118" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo56</Name>
+              <Page isRef="9" />
+              <Parent isRef="115" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_InventoryReconciliationAddCostMonthly.LastMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo56>
+            <Memo57 Ref="119" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.6,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo57</Name>
+              <Page isRef="9" />
+              <Parent isRef="115" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo57>
+            <Memo58 Ref="120" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0.6,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo58</Name>
+              <Page isRef="9" />
+              <Parent isRef="115" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo58>
+            <Memo59 Ref="121" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0.6,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo59</Name>
+              <Page isRef="9" />
+              <Parent isRef="115" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo59>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepFooterTogether>False</KeepFooterTogether>
+          <Name>Footer4</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </Footer4>
+        <ReportSummary1 Ref="122" type="ReportSummaryBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,36.75,19,3</ClientRectangle>
+          <Components isList="true" count="15">
+            <Memo63 Ref="123" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,1.2,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo63</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Cost of Goods Sold</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo63>
+            <Memo64 Ref="124" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,1.2,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo64</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{(Sum(root_InventoryReconciliationCostExpenseMonthly.CostingType == "Cost" ? decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.ThisMonth) : 0)) +
+(Sum(root_NonInventoryReconciliationCostExpenseMonthly.CostingType == "Cost" ? decimal.Parse(root_NonInventoryReconciliationCostExpenseMonthly.ThisMonth) : 0)) +
+Sum(decimal.Parse(root_InventoryReconciliationAddCostMonthly.ThisMonth))
+}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo64>
+            <Memo65 Ref="125" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,1.2,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo65</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(
+  (root_InventoryReconciliationCostExpenseMonthly.CostingType == "Cost" ? decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.LastMonth) : 0)
+  +
+  (root_NonInventoryReconciliationCostExpenseMonthly.CostingType == "Cost" ? decimal.Parse(root_NonInventoryReconciliationCostExpenseMonthly.LastMonth) : 0)
+  +
+  decimal.Parse(root_InventoryReconciliationAddCostMonthly.LastMonth)
+)
+}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo65>
+            <Memo66 Ref="126" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,2.4,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo66</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Cost Percentage</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo66>
+            <Memo67 Ref="127" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,2.4,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo67</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{(
+  (Sum(root_InventoryReconciliationCostExpenseMonthly.CostingType == "Cost" ? decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.ThisMonth) : 0))
+  +
+  (Sum(root_NonInventoryReconciliationCostExpenseMonthly.CostingType == "Cost" ? decimal.Parse(root_NonInventoryReconciliationCostExpenseMonthly.ThisMonth) : 0))
+  +
+  Sum(decimal.Parse(root_InventoryReconciliationAddCostMonthly.ThisMonth))
+)
+/
+(
+  (Sum(decimal.Parse(root_InventoryReconciliationSalesMonthly.ThisMonth)) == 0 ? 1 : Sum(decimal.Parse(root_InventoryReconciliationSalesMonthly.ThisMonth)))
+  * 100
+)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo67>
+            <Memo68 Ref="128" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,2.4,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo68</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{(
+  (Sum(root_InventoryReconciliationCostExpenseMonthly.CostingType == "Cost" ? decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.LastMonth) : 0))
+  +
+  (Sum(root_NonInventoryReconciliationCostExpenseMonthly.CostingType == "Cost" ? decimal.Parse(root_NonInventoryReconciliationCostExpenseMonthly.LastMonth) : 0))
+  +
+  Sum(decimal.Parse(root_InventoryReconciliationAddCostMonthly.LastMonth))
+)
+/
+(
+  (Sum(decimal.Parse(root_InventoryReconciliationSalesMonthly.LastMonth)) == 0 ? 1 : Sum(decimal.Parse(root_InventoryReconciliationSalesMonthly.LastMonth)))
+  * 100
+
+)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo68>
+            <Memo69 Ref="129" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,1.8,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo69</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo69>
+            <Memo70 Ref="130" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,1.8,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo70</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo70>
+            <Memo71 Ref="131" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,1.8,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo71</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo71>
+            <Memo96 Ref="132" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo96</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total Consumption</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo96>
+            <Memo97 Ref="133" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo97</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.ThisMonth))+Sum(decimal.Parse(root_NonInventoryReconciliationCostExpenseMonthly.ThisMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo97>
+            <Memo98 Ref="134" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo98</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_InventoryReconciliationCostExpenseMonthly.LastMonth))+Sum(decimal.Parse(root_NonInventoryReconciliationCostExpenseMonthly.LastMonth))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo98>
+            <Memo99 Ref="135" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.6,11,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo99</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo99>
+            <Memo100 Ref="136" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11,0.6,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo100</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo100>
+            <Memo101 Ref="137" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0.6,4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>0,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo101</Name>
+              <Page isRef="9" />
+              <Parent isRef="122" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo101>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepReportSummaryTogether>False</KeepReportSummaryTogether>
+          <Name>ReportSummary1</Name>
+          <Page isRef="9" />
+          <Parent isRef="9" />
+        </ReportSummary1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>d200a17abd334d83bedb0c8aeed3cb2c</Guid>
+      <Margins>1,1,1,1</Margins>
+      <Name>Page1</Name>
+      <PageHeight>29.7</PageHeight>
+      <PageWidth>21</PageWidth>
+      <Report isRef="0" />
+      <TitleBeforeHeader>True</TitleBeforeHeader>
+    </Page1>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>12/8/2023 12:00:13 PM</ReportChanged>
+  <ReportCreated>6/21/2023 10:04:09 AM</ReportCreated>
+  <ReportFile>E:\GitHub\chs_cloud_frontend\public\report\reports\CAMS\InventoryReconciliationDaily01.mrt</ReportFile>
+  <ReportGuid>9eb75f5033eb436fb26ae95c8cb93960</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Centimeters</ReportUnit>
+  <ReportVersion>2023.1.8.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="0" />
+</StiSerializer>

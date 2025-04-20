@@ -1,0 +1,26 @@
+<modal confirm class="payment-menu" @close="$emit('close')" :title="title">
+  <template #body>
+    <div class="menu p-md-2">
+      <div class="row">
+        <button type="button" class="btn btn-outline-primary text-left mb-1" @click="$emit('checkIn')">
+          <img border="0" width="16" height="16" src="/images/icons/cash_icon24.png"/>
+          <span class="ml-2">{{$t('buttons.cash')}}</span>
+        </button>
+        <button type="button" class="btn btn-outline-primary text-left mb-1" @click="$emit('checkIn')">
+          <img border="0" width="16" height="16" src="/images/icons/card_icon24.png"/>
+          <span class="ml-2">{{$t('buttons.card')}}</span>
+        </button>
+      </div>
+      <div class="row">
+        <button type="button" class="btn btn-outline-primary text-left mb-1" @click="$emit('checkIn')">
+          <img border="0" width="16" height="16" src="/images/icons/cash_refund_icon24.png"/>
+          <span class="ml-2">{{$t('buttons.cashRefund')}}</span>
+        </button>
+        <button type="button" class="btn btn-outline-primary text-left mb-1" @click="$emit('checkIn')">
+          <img border="0" width="16" height="16" src="/images/icons/other_payment_icon24.png"/>
+          <span class="ml-2">{{$t('buttons.otherPayment')}}</span>
+        </button>
+      </div>
+    </div>
+  </template>
+</modal>

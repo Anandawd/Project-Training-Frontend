@@ -1,0 +1,34 @@
+.save-settings {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  background: black;
+  bottom: 20px;
+  z-index: 999;
+
+  button {
+    min-width: 90px;
+  }
+}
+
+.settings {
+  .sidebar {
+    padding-bottom: 50px;
+  }
+  .ps {
+    height: calc(100vh - (149.23px + 53.67px));
+  }
+}
+//72.56+56.67
+@supports not (-webkit-touch-callout: none) {
+  .sidebar {
+    height: calc(100vh - (149.23px)) !important;
+  }
+}
+.search {
+  .form-control {
+    height: auto;
+  }
+}

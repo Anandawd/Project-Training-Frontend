@@ -1,0 +1,104 @@
+<!-- <Form @submit="onSave" ref="inputFormElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit" -->
+
+<div class="modal-mask custom-modal">
+  <div class="modal-wrapper">
+    <div class="modal-container">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width: 1200px !important;" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="modal-title">{{title}} Create Default Field</h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="onClose">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <Form @submit="onSave" ref="inputFormValidation" :validation-schema="schema"
+              @invalid-submit="onInvalidSubmit" class="input-form row" v-slot="{resetForm}">
+              <div id="parrentAccordion" class="accordion pr-4 mb-1">
+              </div>
+              <div class="row">
+                <div class="col-md-8">
+                <p>Query</p>
+                <c-input v-model="form.query" id="templateName" required class="mb-1" type="textarea" rows="33"
+                name="templateName" customClass="col-12" />
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex">
+                    Default Field
+                    <div class="ml-auto">
+                      <button
+                        v-show="!showFormInput"
+                        title="Insert Field"
+                        type="button"
+                        class="btn btn-primary mb-2 ml-1"
+                        @click="handleShowFormInput()"
+                      >
+                        <i class="fa fa-plus mr-1" aria-hidden="true"></i>
+                        {{ $t('buttons.insert') }}
+                      </button>
+                    </div>
+                  </div>                  
+                <ag-grid-vue
+                :style="agGridSetting.styleAgGridFrame"
+                :class="agGridSetting.themeAgGrid"
+                :columnDefs="columnDefs"
+                :rowData="rowData"
+                :paginationPageSize="paginationPageSize"
+                :gridOptions="gridOptions"
+                :context="context"
+                :frameworkComponents="frameworkComponents"
+                :enableCellChangeFlash="true"
+                :rowSelection="rowSelection"
+                :rowGroupPanelShow="rowGroupPanelShow"
+                :getContextMenuItems="getContextMenu"
+                :defaultColDef="agGridSetting.defColDef"
+                :masterDetail="true"
+                :detailCellRenderer="detailCellRenderer"
+                :detailRowAutoHeight="detailRowAutoHeight"
+                :rowDragManaged="true"
+                :suppressMakeColumnVisibleAfterUnGroup="true"
+                @grid-ready="onGridReady"
+                @cellContextMenu="handleRowRightClicked"
+                @selectionChanged="onSelectionChanged"
+              />
+                </div>
+              </div>
+            </Form>
+
+          </div>
+          <div class="card-footer">
+            <div class="d-flex justify-content-end">
+              <button
+              title="Save Default Field"
+              type="button"
+              class="btn btn-primary ml-1"
+              @click="onSubmit"
+            >
+              <i class="fa fa-save mr-1" aria-hidden="true"></i>{{
+              $t('buttons.saveQueryAndFieldList') }}
+            </button>
+              <button
+              title="Close"
+              type="button"
+              class="btn btn-danger ml-1"
+              @click="onClose"
+            >
+              <i class="fa fa-times mr-1" aria-hidden="true"></i>{{
+              $t('buttons.close') }}
+            </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <InsertForm
+  ref="inputFormElement"
+  :reportCode="reportCode"
+  v-show="showFormInput"
+  :schema="schema"
+  :modeData="modeData"
+  @save="handleSaveInsertForm"
+  @close="showFormInput=false"
+/>
+</div>

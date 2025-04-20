@@ -1,0 +1,22 @@
+<div class="c-select"
+    :class="{ 'has-error': !!errorMessage}"> 
+    <label v-if="label" :for="ID" class="col-form-label" 
+    :class="[ 'col-md-3', {'required': required} ]">{{ label }}</label>
+    <div :class="[half ? 'col-md-4' : 'col-md-9']"> 
+        <select
+            :class="{'form-control': type === 'default', 'custom-select': type === 'custom'}"
+            :id="ID"
+            :name="ID"
+            :disabled="disabled"
+        >
+            <option :selected="isNoneSelected">None</option>
+            <option
+                v-for="option in options"
+                :value="option.RoomNumber"
+                :selected="modelValue === option.RoomNumber"
+            >
+                {{option.RoomNumber}}
+            </option>
+        </select>
+    </div>
+</div>

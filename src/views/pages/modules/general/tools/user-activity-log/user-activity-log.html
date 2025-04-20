@@ -1,0 +1,24 @@
+<section class="content" ref="userActivityLog">
+  <div class="container-fluid">
+    <div class="card">
+      <!-- <div no-body> -->
+        <transition name="slide-fade">
+        <b-tabs content-class="mt-1" v-model="tabIndex">
+          <b-tab :title="$t('labels.userLog')" active>
+              <user-log-grid ref="userLogElement"></user-log-grid>
+          </b-tab>
+          <b-tab :title="$t('labels.specialAccessLog')">
+              <special-access-log-grid ref="specialAccessLogElement"></special-access-log-grid>
+          </b-tab>
+          <b-tab :title="$t('labels.keylockLog')">
+              <keylock-log-grid ref="keylockLogElement"></keylock-log-grid>
+          </b-tab>
+          <b-tab :title="$t('labels.tableLog')">
+            <table-log-grid ref="tableLogElement"></table-log-grid>
+          </b-tab>
+        </b-tabs>
+        </transition>
+      <!-- </div> -->
+    </div>
+  </div>
+</section>

@@ -1,0 +1,41 @@
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="d-flex justify-content-end mb-2">
+      <button v-if="!showForm" title="Generate From Room" type="button" class="btn btn-secondary mr-1"
+        @click="handleShowDialog('', updateGenerate)">{{ $t('buttons.generateFromRoom') }}</button>
+      <button v-if="!showForm" title="Insert Table" type="button" class="btn btn-primary mr-1"
+        @click="handleShowForm('', $global.modeData.insert)"><i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insert') }}</button>
+    </div>
+    <transition>
+      <div class="pl-2 pr-2">
+        <InputForm ref="inputFormElement" :isSaving="isSaving" :maxLengthNumber="10" :defaultForm="form"
+          v-show="showForm" :schema="schema" :formType="$global.formType.table" :modeData="modeData" @save="handleSave"
+          @close="showForm=false" @repeatLoadDropdown="loadDropdown" />
+      </div>
+    </transition>
+    <search-filter :options="searchOptions" :searchDefault="searchDefault" @search="refreshData"></search-filter>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{ $t('title.table') }}</h3>
+      </div>
+      <div id="tooltip" class="card-body">
+        <!-- //Table -->
+        <ag-grid-vue :style="agGridSetting.styleAgGridFrame" :class="agGridSetting.themeAgGrid" :columnDefs="columnDefs"
+          :rowData="rowData" :paginationPageSize="paginationPageSize" :gridOptions="gridOptions" :context="context"
+          :frameworkComponents="frameworkComponents" :enableCellChangeFlash="true" :rowSelection="rowSelection"
+          :getContextMenuItems="getContextMenu" :defaultColDef="agGridSetting.defColDef"
+          :suppressDragLeaveHidesColumns="true" :suppressMakeColumnVisibleAfterUnGroup="true" :statusBar="statusBar"
+          @grid-ready="onGridReady" @cellContextMenu="handleRowRightClicked" :rowGroupPanelShow="rowGroupPanelShow" @rowDoubleClicked="rowDoubleClicked"   />
+      </div>
+    </div>
+    <CDialog v-show="showDialog" w100 dialogTitle="Confirm" @confirm="deleteData" @cancel="showDialog= false" confirm>
+      <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+    </CDialog>
+    <CDialog v-show="showDialogGenerate" w100 dialogTitle="Confirm" @confirm="generateFromRoom"
+      @cancel="showDialogGenerate = false" confirm>
+      <template #body> {{ $t('messages.areYouSureGenerateFromRoom')}} </template>
+    </CDialog>
+  </div>
+</section>

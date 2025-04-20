@@ -1,0 +1,194 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- button insert -->
+    <div class="d-flex justify-content-end mb-2">
+      <button
+        title="Insert Organization"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleShowForm('', $global.modeData.insert)"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insert') }}
+      </button>
+    </div>
+
+    <!-- insert form -->
+    <transition>
+      <div class="px-2">
+        <c-input-form
+          ref="inputFormElement"
+          v-show="showForm"
+          :schema="schema"
+          :modeData="modeData"
+          @save="handleSave"
+          @close="showForm=false"
+        />
+      </div>
+    </transition>
+
+    <!-- content -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{$t('title.organization')}}</h3>
+      </div>
+      <div class="card-body">
+        <div class="tabs">
+          <!-- tab nav -->
+          <div>
+            <ul class="nav nav-tabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button
+                  id="department-tab"
+                  class="nav-link active"
+                  role="tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#table-department"
+                  aria-controls="table-department"
+                  aria-selected="true"
+                  tabindex="-1"
+                >
+                  {{$t('labels.payroll.employee.department')}}
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  id="position-tab"
+                  class="nav-link"
+                  role="tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#table-position"
+                  aria-controls="table-position"
+                  aria-selected="false"
+                  tabindex="-1"
+                >
+                  {{$t('labels.payroll.employee.position')}}
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  id="placement-tab"
+                  class="nav-link"
+                  role="tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#table-placement"
+                  aria-controls="table-placement"
+                  aria-selected="false"
+                  tabindex="-1"
+                >
+                  {{$t('labels.payroll.employee.placement')}}
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- tab content -->
+          <div class="tab-content mt-3">
+            <!-- table department -->
+            <div
+              id="table-department"
+              class="tab-pane active show fade"
+              role="tabpanel"
+              aria-labelledby="department-tab"
+            >
+              <p class="h3 py-2">Department</p>
+              <ag-grid-vue
+                :style="agGridSetting.styleAgGridFrame"
+                :class="agGridSetting.themeAgGrid"
+                :columnDefs="columnDepartmentDefs"
+                :rowData="rowDepartmentData"
+                :paginationPageSize="paginationPageSize"
+                :gridOptions="gridOptions"
+                :context="context"
+                :frameworkComponents="frameworkComponents"
+                :enableCellChangeFlash="true"
+                :rowSelection="rowSelection"
+                :getContextMenuItems="getContextMenu"
+                :defaultColDef="agGridSetting.defColDef"
+                :rowGroupPanelShow="rowGroupPanelShow"
+                :suppressDragLeaveHidesColumns="true"
+                :suppressMakeColumnVisibleAfterUnGroup=" true"
+                :statusBar="statusBar"
+                @grid-ready="onGridReady"
+                @cellContextMenu="handleRowRightClicked"
+              ></ag-grid-vue>
+            </div>
+
+            <!-- table position -->
+            <div
+              id="table-position"
+              class="tab-pane fade"
+              role="tabpanel"
+              aria-labelledby="position-tab"
+            >
+              <p class="h3 py-2">Position</p>
+              <ag-grid-vue
+                :style="agGridSetting.styleAgGridFrame"
+                :class="agGridSetting.themeAgGrid"
+                :columnDefs="columnPositionDefs"
+                :rowData="rowPositionData"
+                :paginationPageSize="paginationPageSize"
+                :gridOptions="gridOptions"
+                :context="context"
+                :frameworkComponents="frameworkComponents"
+                :enableCellChangeFlash="true"
+                :rowSelection="rowSelection"
+                :getContextMenuItems="getContextMenu"
+                :defaultColDef="agGridSetting.defColDef"
+                :rowGroupPanelShow="rowGroupPanelShow"
+                :suppressDragLeaveHidesColumns="true"
+                :suppressMakeColumnVisibleAfterUnGroup=" true"
+                :statusBar="statusBar"
+                @grid-ready="onGridReady"
+                @cellContextMenu="handleRowRightClicked"
+              ></ag-grid-vue>
+            </div>
+
+            <!-- table placement -->
+            <div
+              id="table-placement"
+              class="tab-pane fade"
+              role="tabpanel"
+              aria-labelledby="placement-tab"
+            >
+              <p class="h3 py-2">Placement</p>
+              <ag-grid-vue
+                :style="agGridSetting.styleAgGridFrame"
+                :class="agGridSetting.themeAgGrid"
+                :columnDefs="columnPlacementDefs"
+                :rowData="rowPlacementData"
+                :paginationPageSize="paginationPageSize"
+                :gridOptions="gridOptions"
+                :context="context"
+                :frameworkComponents="frameworkComponents"
+                :enableCellChangeFlash="true"
+                :rowSelection="rowSelection"
+                :getContextMenuItems="getContextMenu"
+                :defaultColDef="agGridSetting.defColDef"
+                :rowGroupPanelShow="rowGroupPanelShow"
+                :suppressDragLeaveHidesColumns="true"
+                :suppressMakeColumnVisibleAfterUnGroup=" true"
+                :statusBar="statusBar"
+                @grid-ready="onGridReady"
+                @cellContextMenu="handleRowRightClicked"
+              ></ag-grid-vue>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- dialog -->
+    <c-dialog
+      v-show="showDialog"
+      dialogTitle="Confirm"
+      size="sm"
+      @confirm="deleteData"
+      @cancel="showDialog=false"
+    >
+      <template #body> Are you sure to delete this data? </template>
+    </c-dialog>
+
+    <!-- modal -->
+  </div>
+</section>

@@ -1,0 +1,34 @@
+<div class="card-footer">
+  <div class="d-flex justify-content-end">
+    <slot name="append-start"></slot>
+    <slot name="btn-save">
+      <button
+        :disabled="isSaving || saveDisabled"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="onSave"
+      >
+        <span
+          v-if="isSaving"
+          class="spinner-border spinner-border-sm"
+          role="status"
+          aria-hidden="true"
+        ></span>
+        <i v-else class="fas fa-save"></i>
+        {{ $t(`buttons.${saveText}`) }}
+      </button>
+    </slot>
+    <slot name="btn-close">
+      <button
+        v-if="!save"
+        :disabled="isSaving"
+        type="button"
+        class="btn btn-danger"
+        @click="$emit('close',false)"
+      >
+        <i class="fa fa-times" aria-hidden="true"></i>
+        {{$t('buttons.close')}}
+      </button>
+    </slot>
+  </div>
+</div>

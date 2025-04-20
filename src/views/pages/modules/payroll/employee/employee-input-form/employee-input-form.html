@@ -1,0 +1,661 @@
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">{{title}}</div>
+    <div class="card-body">
+      <!-- form accordian -->
+      <div id="parrentAccordion" class="accordion">
+        <!-- personal information -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemPersonalInformationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#personalInformation"
+              aria-controls="personalInformation"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.employee.personalInformation')}}
+            </button>
+          </h6>
+          <div
+            id="personalInformation"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="personalInformationHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="text"
+                    name="EmployeeId"
+                    id="EmployeeId"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.employeeId')"
+                    v-model="form.employeeId"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    id="Firstname"
+                    class="row mb-1"
+                    type="text"
+                    name="firstname"
+                    v-model="form.firstname"
+                    :label="$t('labels.payroll.employee.firstname')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    id="Lastname"
+                    class="row mb-1"
+                    type="text"
+                    name="lastname"
+                    v-model="form.lastname"
+                    :label="$t('labels.payroll.employee.lastname')"
+                  />
+                </div>
+                <div class="col-md-4 mb-sm-1">
+                  <div class="row">
+                    <div class="col-sm-3 col-md-4">
+                      <label
+                        class="form-label"
+                        style="font-size: 13px; font-weight: 700; color: red"
+                        >{{$t('labels.gender')}}</label
+                      >
+                    </div>
+                    <div
+                      class="col-sm-9 col-md-8 d-flex align-items-center p-0"
+                    >
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.male')"
+                        v-model="form.gender"
+                        value="M"
+                      ></c-radio>
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.female')"
+                        v-model="form.gender"
+                        value="F"
+                      ></c-radio>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-1">
+                  <c-datepicker
+                    id="Birthdate"
+                    customLabelClass="col-3"
+                    label="Birthdate"
+                    type="date"
+                    valueType="YYYY-MM-DD"
+                    format="DD/MM/YYYY"
+                    name="birthdate"
+                    v-model="form.birthdate"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    id="Email"
+                    class="row mb-1"
+                    type="email"
+                    name="email"
+                    v-model="form.email"
+                    :label="$t('labels.email')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    id="PhoneNumber"
+                    class="row mb-1"
+                    type="text"
+                    name="phoneNumber"
+                    v-model="form.phoneNumber"
+                    :label="$t('labels.payroll.employee.phoneNumber')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    id="Address"
+                    class="row mb-1"
+                    type="text"
+                    name="address"
+                    v-model="form.address"
+                    :label="$t('labels.address')"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- employee information -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemEmployeeInformationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#employeeInformation"
+              aria-controls="employeeInformation"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.employee.employeeInformation')}}
+            </button>
+          </h6>
+          <div
+            id="employeeInformation"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="employeeInformationHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4 mb-1">
+                  <c-datepicker
+                    id="HireDate"
+                    customLabelClass="col-3"
+                    label="Hire Date"
+                    type="date"
+                    valueType="YYYY-MM-DD"
+                    format="DD/MM/YYYY"
+                    name="hiredate"
+                    v-model="form.hireDate"
+                  />
+                </div>
+                <div class="col-md-4 mb-1">
+                  <c-datepicker
+                    :disabled="isEndDateDisabled"
+                    id="EndDate"
+                    customLabelClass="col-3"
+                    label="End Date"
+                    type="date"
+                    valueType="YYYY-MM-DD"
+                    format="DD/MM/YYYY"
+                    name="endDate"
+                    v-model="form.endDate"
+                  />
+                </div>
+                <div class="col-md-4 mb-sm-1">
+                  <div class="row">
+                    <div class="col-sm-3 col-md-4">
+                      <label
+                        class="form-label"
+                        style="font-size: 12px; font-weight: 700; color: red"
+                        >{{$t('labels.payroll.employee.employeeStatus')}}</label
+                      >
+                    </div>
+                    <div
+                      class="col-sm-9 col-md-8 d-flex align-items-center p-0"
+                    >
+                      <c-radio
+                        :active="form.employeeStatus === 1"
+                        class="me-3"
+                        :label="$t('labels.active')"
+                        v-model="form.employeeStatus"
+                        :value="1"
+                      ></c-radio>
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.inactive')"
+                        v-model="form.employeeStatus"
+                        value="0"
+                      ></c-radio>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="employeeType"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.employeeType"
+                    :label="$t('labels.payroll.employee.employeeType')"
+                    :columnOptions="columnOptions"
+                    :options="employeeTypeOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="department"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.department"
+                    :label="$t('labels.payroll.employee.department')"
+                    :columnOptions="columnOptions"
+                    :options="departmentOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="position"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.position"
+                    :label="$t('labels.payroll.employee.position')"
+                    :columnOptions="columnOptions"
+                    :options="positionOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="placement"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.placement"
+                    :label="$t('labels.payroll.employee.placement')"
+                    :columnOptions="columnOptions"
+                    :options="positionOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="supervisor"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.supervisor"
+                    :label="$t('labels.payroll.employee.supervisor')"
+                    :columnOptions="columnOptions"
+                    :options="supervisorOptions"
+                  >
+                  </c-select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- financial information -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemFinancialInformationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#personalInformation"
+              aria-controls="personalInformation"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.employee.financialInformation')}}
+            </button>
+          </h6>
+          <div
+            id="financialInformation"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="financialInformationHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="number"
+                    name="BaseSalary"
+                    id="BaseSalary"
+                    class="row mb-1"
+                    :max="9999999999"
+                    :min="0"
+                    :label="$t('labels.payroll.employee.baseSalary')"
+                    v-model="form.baseSalary"
+                    formatted
+                    showZeroNumber
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    multiple
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="benefitComponent"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.benefitComponent"
+                    :label="$t('labels.payroll.employee.benefitComponent')"
+                    :columnOptions="columnOptions"
+                    :options="benefitComponentOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="salaryType"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.salaryType"
+                    :label="$t('labels.payroll.employee.salaryType')"
+                    :columnOptions="columnOptions"
+                    :options="salaryTypeOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="paymentMethod"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.paymentMethod"
+                    :label="$t('labels.payroll.employee.paymentMethod')"
+                    :columnOptions="columnOptions"
+                    :options="paymentMethodOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="bankName"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.bankName"
+                    :label="$t('labels.payroll.employee.bankName')"
+                    :columnOptions="columnOptions"
+                    :options="bankNameOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="number"
+                    name="bankAccountNumber"
+                    id="bankAccountNumber"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.bankAccountNumber')"
+                    v-model="form.bankAccountNumber"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="number"
+                    name="bankAccountHolder"
+                    id="bankAccountHolder"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.bankAccountHolder')"
+                    v-model="form.bankAccountHolder"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- tax and identification information -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemTaxAndIdentificationDataHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#taxAndIdentificationData"
+              aria-controls="taxAndIdentificationData"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.employee.taxAndIdentificationData')}}
+            </button>
+          </h6>
+          <div
+            id="taxAndIdentificationData"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="taxAndIdentificationDataHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="taxNumber"
+                    id="taxNumber"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.taxNumber')"
+                    v-model="form.taxNumber"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="maritialStatus"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.maritialStatus"
+                    :label="$t('labels.payroll.employee.maritialStatus')"
+                    :columnOptions="columnOptions"
+                    :options="maritialStatusOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="identifyNumber"
+                    id="identifyNumber"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.identityNumber')"
+                    v-model="form.identifyNumber"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="bpjsHealthNumber"
+                    id="bpjsHealthNumber"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.bpjsHealthNumber')"
+                    v-model="form.bpjsHealthNumber"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="bpjsEmployeeNumber"
+                    id="bpjsEmployeeNumber"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.bpjsEmployeeNumber')"
+                    v-model="form.bpjsEmployeeNumber"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- supporting documents -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemSupportingDocumentHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#supportingDocument"
+              aria-controls="supportingDocument"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.employee.supportingDocument')}}
+            </button>
+          </h6>
+          <div
+            id="supportingDocument"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="supportingDocumentHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="identityCardFile"
+                    id="identityCardFile"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.identityCardFile')"
+                    v-model="form.identityCardFile"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="taxCardFile"
+                    id="taxCardFile"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.taxCardFile')"
+                    v-model="form.taxCardFile"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="cvFile"
+                    id="cvFile"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.cvFile')"
+                    v-model="form.cvFile"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="employeeContractFile"
+                    id="employeeContractFile"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.employeeContractFile')"
+                    v-model="form.employeeContractFile"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="otherDocuments"
+                    id="otherDocuments"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.otherDocuments')"
+                    v-model="form.otherDocuments"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attendance and Leave Data -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemAttendanceAndLeaveDataHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#attendanceAndLeaveData"
+              aria-controls="attendanceAndLeaveData"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.employee.attendanceAndLeaveData')}}
+            </button>
+          </h6>
+          <div
+            id="attendanceAndLeaveData"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="attendanceAndLeaveDataHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="workSchedule"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.workSchedule"
+                    :label="$t('labels.payroll.employee.workSchedule')"
+                    :columnOptions="columnOptions"
+                    :options="workScheduleOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="number"
+                    name="annualLeaveQuota"
+                    id="annualLeaveQuota"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.annualLeaveQuota')"
+                    v-model="form.annualLeaveQuota"
+                    showZeroNumber
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="number"
+                    name="remainingLeave"
+                    id="remainingLeave"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.remainingLeave')"
+                    v-model="form.remainingLeave"
+                    showZeroNumber
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- buttons -->
+      <div class="d-flex justify-content-end mt-2">
+        <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.close')}}
+        </button>
+        <button type="button" class="btn btn-primary px-3" @click="onSubmit">
+          <i class="fa fa-save"></i>
+          {{$t('buttons.save')}}
+        </button>
+      </div>
+    </div>
+  </div>
+</c-form>

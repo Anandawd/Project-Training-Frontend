@@ -1,0 +1,786 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="0" />
+    <DataSources isList="true" count="1">
+      <root_JournalVoucher Ref="2" type="DataTableSource" isKey="true">
+        <Alias>root_JournalVoucher</Alias>
+        <Columns isList="true" count="12">
+          <value>ORIGINAL,date,date,date,System.DateTime,e97057834b6b45a6bee18d014247c521</value>
+          <value>ORIGINAL,ref_number,ref_number,ref_number,System.String,_x0030_39044125abb44b8a352bdb4cedcdc3d</value>
+          <value>ORIGINAL,name_1,name_1,name_1,System.String,fd7d13cff9694717a63531f0d770ea00</value>
+          <value>ORIGINAL,memo,memo,memo,System.String,_x0031_13eecccd4754ebaaa0ddd1865d8c28e</value>
+          <value>ORIGINAL,name_2,name_2,name_2,System.String,_x0035_34b5de692ac44d686a818d3ad672b87</value>
+          <value>ORIGINAL,Debit,Debit,Debit,System.String,e0bbdabbae244f74acb26da24a2017eb</value>
+          <value>ORIGINAL,Credit,Credit,Credit,System.String,d7ede3ddbaa14bffb96a81ac7b6aa071</value>
+          <value>ORIGINAL,account_code,account_code,account_code,System.String,aefe4bea3f3345f885580d321e9273fd</value>
+          <value>ORIGINAL,journal_name,name,name,System.String,a6614846b5d043cbb200125a43fc4a85</value>
+          <value>remark,System.String</value>
+          <value>Company,System.String</value>
+          <value>SubDepartment,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>d4a13e03-599d-4d0c-a5cb-52c68975c321</Key>
+        <Name>root_JournalVoucher</Name>
+        <NameInSource>json.root_data</NameInSource>
+      </root_JournalVoucher>
+    </DataSources>
+    <Relations isList="true" count="0" />
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <UserFunctions isList="true" count="0" />
+    <Variables isList="true" count="0" />
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>c102737eafce40f98d2a6130ef06838b</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="3" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="5">
+        <ReportTitle1 Ref="4" type="ReportTitleBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,0.4,20,1</ClientRectangle>
+          <Components isList="true" count="1">
+            <Memo1 Ref="5" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,20,1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,20</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo1</Name>
+              <Page isRef="3" />
+              <Parent isRef="4" />
+              <Text>JOURNAL VOUCHER</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo1>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>ReportTitle1</Name>
+          <Page isRef="3" />
+          <Parent isRef="3" />
+        </ReportTitle1>
+        <GroupHeader1 Ref="6" type="GroupHeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,2.2,20,2.2</ClientRectangle>
+          <Components isList="true" count="16">
+            <Memo5 Ref="7" type="Text" isKey="true">
+              <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,20,2.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo5</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo5>
+            <Memo2 Ref="8" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.3,0.2,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo2</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>Ref. Number</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo2>
+            <Memo3 Ref="9" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>7.15,0.2,5.7,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo3</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>Date : {Format("{0:dd/MM/yyyy}", root_JournalVoucher.date)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo3>
+            <Memo6 Ref="10" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.1,1.6,0.9,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo6</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>No</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo6>
+            <Memo7 Ref="11" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>1,1.6,2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo7</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>Acc. Code</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo7>
+            <Memo8 Ref="12" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3,1.6,5.4,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo8</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>Name</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo8>
+            <Memo9 Ref="13" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.4,1.6,2.7,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo9</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>Debit</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo9>
+            <Memo10 Ref="14" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11.1,1.6,2.7,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo10</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>Credit</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo10>
+            <Memo11 Ref="15" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.8,1.6,6.1,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo11</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>Remark</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo11>
+            <Memo26 Ref="16" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2.7,0.2,3.8,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo26</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>{root_JournalVoucher.ref_number}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo26>
+            <Memo25 Ref="17" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.2,0.7,6.5,0.9</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo25</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>Company : {root_JournalVoucher.Company}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo25>
+            <Memo28 Ref="18" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2.5,0.2,0.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo28</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo28>
+            <Memo23 Ref="19" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.3,0.7,2.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo23</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>Memo</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo23>
+            <Memo27 Ref="20" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2.7,0.7,10.2,0.9</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo27</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>{root_JournalVoucher.memo}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo27>
+            <Memo29 Ref="21" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2.5,0.7,0.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo29</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo29>
+            <Memo30 Ref="22" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.25,0.2,6.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo30</Name>
+              <Page isRef="3" />
+              <Parent isRef="6" />
+              <Text>Sub Dept : {root_JournalVoucher.SubDepartment}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo30>
+          </Components>
+          <Condition>{root_JournalVoucher.ref_number}</Condition>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupHeader1</Name>
+          <Page isRef="3" />
+          <Parent isRef="3" />
+        </GroupHeader1>
+        <MasterData1 Ref="23" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,5.2,20,0.5</ClientRectangle>
+          <Components isList="true" count="7">
+            <Memo17 Ref="24" type="Text" isKey="true">
+              <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,20,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo17</Name>
+              <Page isRef="3" />
+              <Parent isRef="23" />
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo17>
+            <Memo4 Ref="25" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.1,0,0.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo4</Name>
+              <Page isRef="3" />
+              <Parent isRef="23" />
+              <Text>{Line}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo4>
+            <Memo12 Ref="26" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>1,0,2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo12</Name>
+              <Page isRef="3" />
+              <Parent isRef="23" />
+              <Text>{root_JournalVoucher.account_code}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo12>
+            <Memo13 Ref="27" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3,0,5.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo13</Name>
+              <Page isRef="3" />
+              <Parent isRef="23" />
+              <Text>{root_JournalVoucher.journal_name}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo13>
+            <Memo14 Ref="28" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.4,0,2.7,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo14</Name>
+              <Page isRef="3" />
+              <Parent isRef="23" />
+              <Text>{root_JournalVoucher.Debit}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="29" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>DataColumn</Type>
+            </Memo14>
+            <Memo15 Ref="30" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11.1,0,2.7,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo15</Name>
+              <Page isRef="3" />
+              <Parent isRef="23" />
+              <Text>{root_JournalVoucher.Credit}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="31" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>DataColumn</Type>
+            </Memo15>
+            <Memo16 Ref="32" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>13.8,0,6.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo16</Name>
+              <Page isRef="3" />
+              <Parent isRef="23" />
+              <Text>{root_JournalVoucher.remark}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo16>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_JournalVoucher</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData1</Name>
+          <Page isRef="3" />
+          <Parent isRef="3" />
+          <Sort isList="true" count="0" />
+        </MasterData1>
+        <GroupFooter1 Ref="33" type="GroupFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,6.5,20,0.6</ClientRectangle>
+          <Components isList="true" count="5">
+            <Memo24 Ref="34" type="Text" isKey="true">
+              <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,20,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo24</Name>
+              <Page isRef="3" />
+              <Parent isRef="33" />
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo24>
+            <Memo18 Ref="35" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.1,0,8.3,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo18</Name>
+              <Page isRef="3" />
+              <Parent isRef="33" />
+              <Text>Total</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo18>
+            <Memo19 Ref="36" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.4,0,2.7,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo19</Name>
+              <Page isRef="3" />
+              <Parent isRef="33" />
+              <Text>{Sum(decimal.Parse(root_JournalVoucher.Debit))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="37" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo19>
+            <Memo20 Ref="38" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11.1,0,2.7,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo20</Name>
+              <Page isRef="3" />
+              <Parent isRef="33" />
+              <Text>{Sum(decimal.Parse(root_JournalVoucher.Credit))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="39" type="NumberFormat" isKey="true">
+                <DecimalDigits>0</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo20>
+            <Memo21 Ref="40" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.8,0,6.1,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Tahoma,8,Bold</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo21</Name>
+              <Page isRef="3" />
+              <Parent isRef="33" />
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo21>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupFooter1</Name>
+          <Page isRef="3" />
+          <Parent isRef="3" />
+        </GroupFooter1>
+        <ReportSummary1 Ref="41" type="ReportSummaryBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,7.9,20,3.3</ClientRectangle>
+          <Components isList="true" count="9">
+            <Memo22 Ref="42" type="Text" isKey="true">
+              <Border>Left, Right, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,20,3.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo22</Name>
+              <Page isRef="3" />
+              <Parent isRef="41" />
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo22>
+            <MemoA1 Ref="43" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.4,0.3,4.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoA1</Name>
+              <Page isRef="3" />
+              <Parent isRef="41" />
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoA1>
+            <MemoB1 Ref="44" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.5,2.1,4.3,1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoB1</Name>
+              <Page isRef="3" />
+              <Parent isRef="41" />
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoB1>
+            <MemoA2 Ref="45" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.3,0.3,4.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoA2</Name>
+              <Page isRef="3" />
+              <Parent isRef="41" />
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoA2>
+            <MemoB2 Ref="46" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.3,2.1,4.3,1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoB2</Name>
+              <Page isRef="3" />
+              <Parent isRef="41" />
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoB2>
+            <MemoA3 Ref="47" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.3,0.3,4.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoA3</Name>
+              <Page isRef="3" />
+              <Parent isRef="41" />
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoA3>
+            <MemoB3 Ref="48" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.3,2.1,4.3,1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoB3</Name>
+              <Page isRef="3" />
+              <Parent isRef="41" />
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoB3>
+            <MemoA4 Ref="49" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.8,0.3,4.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoA4</Name>
+              <Page isRef="3" />
+              <Parent isRef="41" />
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoA4>
+            <MemoB4 Ref="50" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.8,2.1,4.9,1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoB4</Name>
+              <Page isRef="3" />
+              <Parent isRef="41" />
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoB4>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepReportSummaryTogether>False</KeepReportSummaryTogether>
+          <Name>ReportSummary1</Name>
+          <Page isRef="3" />
+          <Parent isRef="3" />
+        </ReportSummary1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>09fd6d099f9349daa59e5928d5806a0b</Guid>
+      <Margins>0.5,0.5,0.5,0.5</Margins>
+      <Name>Page1</Name>
+      <PageHeight>14.85</PageHeight>
+      <PageWidth>21</PageWidth>
+      <Report isRef="0" />
+      <TitleBeforeHeader>True</TitleBeforeHeader>
+    </Page1>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>11/29/2024 3:00:09 PM</ReportChanged>
+  <ReportCreated>6/17/2023 11:02:24 AM</ReportCreated>
+  <ReportFile>C:\Users\David Geri\Documents\GitHub\chs_cloud_frontend\public\report\reports\JournalVoucher002.mrt</ReportFile>
+  <ReportGuid>241d401781834c679a84f020b11d74a7</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Centimeters</ReportUnit>
+  <ReportVersion>2024.1.4.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="0" />
+</StiSerializer>

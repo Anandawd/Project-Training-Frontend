@@ -1,0 +1,1128 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="0" />
+    <DataSources isList="true" count="2">
+      <root_CompanyInformation Ref="2" type="DataTableSource" isKey="true">
+        <Alias>root_CompanyInformation</Alias>
+        <Columns isList="true" count="9">
+          <value>image_url,System.String</value>
+          <value>name,System.String</value>
+          <value>street,System.String</value>
+          <value>city,System.String</value>
+          <value>state,System.String</value>
+          <value>country,System.String</value>
+          <value>postal_code,System.String</value>
+          <value>phone1,System.String</value>
+          <value>fax,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>0a5da448-1023-4fb9-ae9d-a4c84e2c1bf7</Key>
+        <Name>root_CompanyInformation</Name>
+        <NameInSource>json.hotel_information</NameInSource>
+      </root_CompanyInformation>
+      <root_RoomSales Ref="3" type="DataTableSource" isKey="true">
+        <Alias>root_RoomSales</Alias>
+        <Columns isList="true" count="13">
+          <value>ORIGINAL,audit_date,audit_date,audit_date,System.DateTime,_x0036_f067b4401294ceabf5496edfe026df0</value>
+          <value>room_type01,System.String</value>
+          <value>room_type02,System.String</value>
+          <value>room_type03,System.String</value>
+          <value>room_type04,System.String</value>
+          <value>room_type05,System.String</value>
+          <value>room_type06,System.String</value>
+          <value>room_type07,System.String</value>
+          <value>room_type08,System.String</value>
+          <value>room_type09,System.String</value>
+          <value>room_type10,System.String</value>
+          <value>adult,System.String</value>
+          <value>child,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>f37b7ecc-25d7-4f27-84e3-6c093f5beebd</Key>
+        <Name>root_RoomSales</Name>
+        <NameInSource>json.RoomSales</NameInSource>
+      </root_RoomSales>
+    </DataSources>
+    <Relations isList="true" count="0" />
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <UserFunctions isList="true" count="0" />
+    <Variables isList="true" count="11">
+      <value>,Description,Description,,System.String,,False,False,False,False,,fc491e3096c54accb601294d0a6f4cff</value>
+      <value>,RoomType01,RoomType01,,System.String,,False,False,False,False,,_x0038_4fd80a93be1489a854b9a5134cd42fa</value>
+      <value>,RoomType02,RoomType02,,System.String,,False,False,False,False,,_x0037_7876819c73b4aa79e41b61546908fdc</value>
+      <value>,RoomType03,RoomType03,,System.String,,False,False,False,False,,a1a3f12b379b446fb7d603d44d89e701</value>
+      <value>,RoomType04,RoomType04,,System.String,,False,False,False,False,,f499bf63fa984c979220762efbd33234</value>
+      <value>,RoomType05,RoomType05,,System.String,,False,False,False,False,,_x0036_051a42f61264582a94c5087a26194f2</value>
+      <value>,RoomType06,RoomType06,,System.String,,False,False,False,False</value>
+      <value>,RoomType07,RoomType07,,System.String,,False,False,False,False</value>
+      <value>,RoomType08,RoomType08,,System.String,,False,False,False,False</value>
+      <value>,RoomType09,RoomType09,,System.String,,False,False,False,False</value>
+      <value>,RoomType10,RoomType10,,System.String,,False,False,False,False</value>
+    </Variables>
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>9172c0acd6724fb1809746835113609c</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="4" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="5">
+        <ReportTitle1 Ref="5" type="ReportTitleBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,0.4,27.7,4.1</ClientRectangle>
+          <Components isList="true" count="6">
+            <Picture1 Ref="6" type="Image" isKey="true">
+              <Brush>White</Brush>
+              <ClientRectangle>0,0,2,2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <DataColumn>root_CompanyInformation.image_url</DataColumn>
+              <Expressions isList="true" count="0" />
+              <IconColor>68, 114, 196</IconColor>
+              <Margins>2,2,2,2</Margins>
+              <Name>Picture1</Name>
+              <Page isRef="4" />
+              <Parent isRef="5" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+            </Picture1>
+            <Memo1 Ref="7" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2,0,16.7,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,12,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo1</Name>
+              <Page isRef="4" />
+              <Parent isRef="5" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.name}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo1>
+            <Memo2 Ref="8" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2,0.7,16.7,1.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo2</Name>
+              <Page isRef="4" />
+              <Parent isRef="5" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.street}, {root_CompanyInformation.city}
+{root_CompanyInformation.state} {root_CompanyInformation.country}. {root_CompanyInformation.postal_code}
+Phone: {root_CompanyInformation.phone1}  Fax: {root_CompanyInformation.fax}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo2>
+            <MemoHeaderLine Ref="9" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,2.2,27.7,0.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoHeaderLine</Name>
+              <Page isRef="4" />
+              <Parent isRef="5" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoHeaderLine>
+            <MemoReportTitle Ref="10" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>12.45,2.5,2.8,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoReportTitle</Name>
+              <Page isRef="4" />
+              <Parent isRef="5" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>ROOM SALES</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoReportTitle>
+            <MemoDescription Ref="11" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>8.45,3.1,10.8,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoDescription</Name>
+              <Page isRef="4" />
+              <Parent isRef="5" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Description}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </MemoDescription>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>ReportTitle1</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+        </ReportTitle1>
+        <PageFooter1 Ref="12" type="PageFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,18.6,27.7,0.4</ClientRectangle>
+          <Components isList="true" count="2">
+            <Memo5 Ref="13" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,9.7,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo5</Name>
+              <Page isRef="4" />
+              <Parent isRef="12" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Printed: {Format("{0:dd/MM/yyyy hh:mm:ss}",Time)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo5>
+            <Memo6 Ref="14" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>18.4,0,9.3,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo6</Name>
+              <Page isRef="4" />
+              <Parent isRef="12" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Page {PageNumberThrough} of {TotalPageCount}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo6>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageFooter1</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+        </PageFooter1>
+        <Header1 Ref="15" type="HeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,5.3,27.7,1.1</ClientRectangle>
+          <Components isList="true" count="15">
+            <MemoLine Ref="16" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,0.8,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoLine</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>#</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </MemoLine>
+            <MemoAuditDate Ref="17" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.8,0,1.9,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoAuditDate</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Audit Date</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </MemoAuditDate>
+            <H01 Ref="18" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2.7,0,2.1,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>H01</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{RoomType01}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </H01>
+            <H02 Ref="19" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>4.8,0,2.1,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>H02</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{RoomType02}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </H02>
+            <H03 Ref="20" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>6.9,0,2.1,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>H03</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{RoomType03}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </H03>
+            <H04 Ref="21" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>9,0,2.1,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>H04</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{RoomType04}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </H04>
+            <H05 Ref="22" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11.1,0,2.1,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>H05</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{RoomType05}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </H05>
+            <H06 Ref="23" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.2,0,2.1,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>H06</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{RoomType06}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </H06>
+            <H07 Ref="24" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15.3,0,2.1,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>H07</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{RoomType07}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </H07>
+            <HTotal Ref="25" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>23.7,0,1.3,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>HTotal</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </HTotal>
+            <HAdult Ref="26" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>25,0,1.1,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>HAdult</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Adult</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </HAdult>
+            <HChild Ref="27" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>26.1,0,1.2,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>HChild</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Child</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </HChild>
+            <H08 Ref="28" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>17.4,0,2.1,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>H08</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{RoomType08}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </H08>
+            <H09 Ref="29" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>19.5,0,2.1,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>H09</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{RoomType09}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </H09>
+            <H10 Ref="30" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>21.6,0,2.1,1.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>H10</Name>
+              <Page isRef="4" />
+              <Parent isRef="15" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{RoomType10}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </H10>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepHeaderTogether>False</KeepHeaderTogether>
+          <Name>Header1</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+        </Header1>
+        <MasterData1 Ref="31" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,7.2,27.7,0.5</ClientRectangle>
+          <Components isList="true" count="15">
+            <M1 Ref="32" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>0,0,0.8,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>M1</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Line}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M1>
+            <M2 Ref="33" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>0.8,0,1.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>M2</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:dd/MM/yyyy}", root_RoomSales.audit_date )}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M2>
+            <M01 Ref="34" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>2.7,0,2.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>M01</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_RoomSales.room_type01}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M01>
+            <M02 Ref="35" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>4.8,0,2.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>M02</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_RoomSales.room_type02}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M02>
+            <M03 Ref="36" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>6.9,0,2.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>M03</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_RoomSales.room_type03}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M03>
+            <M04 Ref="37" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>9,0,2.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>M04</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_RoomSales.room_type04}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M04>
+            <M05 Ref="38" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>11.1,0,2.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>M05</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_RoomSales.room_type05}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M05>
+            <M06 Ref="39" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>13.2,0,2.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>M06</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_RoomSales.room_type06}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M06>
+            <M07 Ref="40" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>15.3,0,2.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>M07</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_RoomSales.room_type07}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M07>
+            <MTotal Ref="41" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>23.7,0,1.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MTotal</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_RoomSales.room_type01)+decimal.Parse(root_RoomSales.room_type02)+decimal.Parse(root_RoomSales.room_type03)+decimal.Parse(root_RoomSales.room_type04)+decimal.Parse(root_RoomSales.room_type05)+decimal.Parse(root_RoomSales.room_type06)+decimal.Parse(root_RoomSales.room_type07)+decimal.Parse(root_RoomSales.room_type08)+decimal.Parse(root_RoomSales.room_type09)+decimal.Parse(root_RoomSales.room_type10)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MTotal>
+            <MAdult Ref="42" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>25,0,1.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MAdult</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_RoomSales.adult}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MAdult>
+            <MChild Ref="43" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>26.1,0,1.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MChild</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_RoomSales.child}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MChild>
+            <M08 Ref="44" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>17.4,0,2.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>M08</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_RoomSales.room_type08}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M08>
+            <M09 Ref="45" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>19.5,0,2.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>M09</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_RoomSales.room_type09}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M09>
+            <M10 Ref="46" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>21.6,0,2.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>M10</Name>
+              <Page isRef="4" />
+              <Parent isRef="31" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_RoomSales.room_type10}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </M10>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_RoomSales</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData1</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+          <Sort isList="true" count="0" />
+        </MasterData1>
+        <Footer1 Ref="47" type="FooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,8.5,27.7,0.8</ClientRectangle>
+          <Components isList="true" count="14">
+            <F11 Ref="48" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,2.7,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F11</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>TOTAL</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F11>
+            <F01 Ref="49" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2.7,0,2.1,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F01</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_RoomSales.room_type01))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F01>
+            <F02 Ref="50" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>4.8,0,2.1,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F02</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_RoomSales.room_type02))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F02>
+            <F03 Ref="51" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>6.9,0,2.1,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F03</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_RoomSales.room_type03))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F03>
+            <F04 Ref="52" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>9,0,2.1,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F04</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_RoomSales.room_type04))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F04>
+            <F05 Ref="53" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11.1,0,2.1,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F05</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_RoomSales.room_type05))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F05>
+            <F06 Ref="54" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.2,0,2.1,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F06</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_RoomSales.room_type06))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F06>
+            <F07 Ref="55" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15.3,0,2.1,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F07</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_RoomSales.room_type07))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F07>
+            <F110 Ref="56" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>23.7,0,1.3,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F110</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_RoomSales.room_type01)+decimal.Parse(root_RoomSales.room_type02)+decimal.Parse(root_RoomSales.room_type03)+decimal.Parse(root_RoomSales.room_type04)+decimal.Parse(root_RoomSales.room_type05)+decimal.Parse(root_RoomSales.room_type06)+decimal.Parse(root_RoomSales.room_type07)+decimal.Parse(root_RoomSales.room_type08)+decimal.Parse(root_RoomSales.room_type09)+decimal.Parse(root_RoomSales.room_type10))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F110>
+            <F111 Ref="57" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>25,0,1.1,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F111</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_RoomSales.adult))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F111>
+            <F112 Ref="58" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>26.1,0,1.2,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F112</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_RoomSales.child))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F112>
+            <F08 Ref="59" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>17.4,0,2.1,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F08</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_RoomSales.room_type08))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F08>
+            <F09 Ref="60" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>19.5,0,2.1,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F09</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_RoomSales.room_type09))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F09>
+            <F10 Ref="61" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>21.6,0,2.1,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>F10</Name>
+              <Page isRef="4" />
+              <Parent isRef="47" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_RoomSales.room_type10))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </F10>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepFooterTogether>False</KeepFooterTogether>
+          <Name>Footer1</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+        </Footer1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>6dee96418e93468c8154d2fb5b06b450</Guid>
+      <Margins>1,1,1,1</Margins>
+      <Name>Page1</Name>
+      <Orientation>Landscape</Orientation>
+      <PageHeight>21</PageHeight>
+      <PageWidth>29.7</PageWidth>
+      <Report isRef="0" />
+      <TitleBeforeHeader>True</TitleBeforeHeader>
+    </Page1>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>3/22/2024 1:26:51 PM</ReportChanged>
+  <ReportCreated>1/22/2024 1:19:14 PM</ReportCreated>
+  <ReportFile>C:\Users\David Geri\Documents\GitHub\chs_cloud_frontend\public\report\reports\CHS\RoomSales01.mrt</ReportFile>
+  <ReportGuid>8cba7f263fad42dfa3976d61c86c2f7a</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Centimeters</ReportUnit>
+  <ReportVersion>2024.1.4.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="0" />
+</StiSerializer>

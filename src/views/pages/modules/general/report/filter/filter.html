@@ -1,0 +1,3001 @@
+<!-- Advanced Filter Option-->
+
+<!-- User Id  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.AdvancedPaymentDeposit || reportCode == reportCodeName.ArrivalList ||
+reportCode == reportCodeName.FolioTransaction || reportCode == reportCodeName.DailyFolioTransaction ||
+reportCode == reportCodeName.MonthlyFolioTransaction || reportCode == reportCodeName.YearlyFolioTransaction ||
+reportCode == reportCodeName.ChargeList || reportCode == reportCodeName.DailyChargeList ||
+reportCode == reportCodeName.MonthlyChargeList || reportCode == reportCodeName.YearlyChargeList ||
+reportCode == reportCodeName.CashierReport || reportCode == reportCodeName.CashierReportReprint ||
+reportCode == reportCodeName.CashSummaryReport || reportCode == reportCodeName.PaymentList ||
+reportCode == reportCodeName.DailyPaymentList || reportCode == reportCodeName.MonthlyPaymentList ||
+reportCode == reportCodeName.YearlyPaymentList || reportCode == reportCodeName.DailySales ||
+reportCode == reportCodeName.TransactionReportByStaff || reportCode == reportCodeName.TaxBreakdownDetailed ||
+reportCode == reportCodeName.VoidList || reportCode == reportCodeName.Sales ||
+reportCode == reportCodeName.SalesSummary || reportCode == reportCodeName.LogUser ||
+reportCode == reportCodeName.LogShift || reportCode == reportCodeName.LogMoveRoom ||
+reportCode == reportCodeName.LogTransferTransaction || reportCode == reportCodeName.LogSpecialAccess ||
+reportCode == reportCodeName.KeylockHistory || reportCode == reportCodeName.LogVoidTransaction ||
+reportCode == reportCodeName.LogHouseKeeping || reportCode == reportCodeName.ProductCosting ||
+reportCode == reportCodeName.ProductCostingItem || reportCode == reportCodeName.BanquetAdvancedDeposit ||
+reportCode == reportCodeName.BanquetChargeList || reportCode == reportCodeName.FrequentlySales || reportCode == reportCodeName.GeneralLedger"
+>
+  <div
+    class="col-4 pt-1 border"
+    :class="{ 'red-text': reportCode == reportCodeName.TransactionReportByStaff || reportCode == reportCodeName.TaxBreakdownDetailed}"
+  >
+    {{ $t('labels.userId') }}
+  </div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('User')"
+      id="sub_department_code"
+      :options="listDropdown.UserId"
+      class="mb-1"
+      keyName="code"
+      labelName="code"
+      v-model="form.userId"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Shift  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.AdvancedPaymentDeposit ||
+reportCode == reportCodeName.FolioTransaction || reportCode == reportCodeName.DailyFolioTransaction ||
+reportCode == reportCodeName.MonthlyFolioTransaction || reportCode == reportCodeName.YearlyFolioTransaction ||
+reportCode == reportCodeName.ChargeList || reportCode == reportCodeName.DailyChargeList ||
+reportCode == reportCodeName.MonthlyChargeList || reportCode == reportCodeName.YearlyChargeList ||
+reportCode == reportCodeName.CashierReport || reportCode == reportCodeName.CashierReportReprint ||
+reportCode == reportCodeName.CashSummaryReport || reportCode == reportCodeName.PaymentList ||
+reportCode == reportCodeName.DailyPaymentList || reportCode == reportCodeName.MonthlyPaymentList ||
+reportCode == reportCodeName.YearlyPaymentList || reportCode == reportCodeName.DailySales ||
+reportCode == reportCodeName.TransactionReportByStaff || reportCode == reportCodeName.TaxBreakdownDetailed ||
+reportCode == reportCodeName.VoidList || reportCode == reportCodeName.Sales ||
+reportCode == reportCodeName.SalesSummary || reportCode == reportCodeName.ProductCosting ||
+reportCode == reportCodeName.ProductCostingItem || reportCode == reportCodeName.BanquetAdvancedDeposit ||
+reportCode == reportCodeName.BanquetChargeList || reportCode == reportCodeName.FrequentlySales"
+>
+  <div class="col-4 pt-1 border">{{ $t('labels.shift') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Shift')"
+      id="sub_department_code"
+      :options="listDropdown.Shift"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.shift"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Department  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.Sales || reportCode == reportCodeName.SalesSummary || reportCode == reportCodeName.Journal
+|| reportCode == reportCodeName.ProfitAndLossBySubDepartment || reportCode == reportCodeName.ProfitAndLossDetailBySubDepartment || reportCode == reportCodeName.ProfitAndLossByDepartment
+|| reportCode == reportCodeName.ProfitAndLossDetailByDepartment"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.department') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Department')"
+      id="sub_department_code"
+      :options="listDropdown.Department"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.department"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Sub Department -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.AdvancedPaymentDeposit ||
+reportCode == reportCodeName.FolioTransaction || reportCode == reportCodeName.DailyFolioTransaction ||
+reportCode == reportCodeName.MonthlyFolioTransaction || reportCode == reportCodeName.YearlyFolioTransaction ||
+reportCode == reportCodeName.ChargeList || reportCode == reportCodeName.DailyChargeList ||
+reportCode == reportCodeName.MonthlyChargeList || reportCode == reportCodeName.YearlyChargeList ||
+reportCode == reportCodeName.CashierReport || reportCode == reportCodeName.CashierReportReprint ||
+reportCode == reportCodeName.CashSummaryReport || reportCode == reportCodeName.PaymentList ||
+reportCode == reportCodeName.DailyPaymentList || reportCode == reportCodeName.MonthlyPaymentList ||
+reportCode == reportCodeName.YearlyPaymentList || reportCode == reportCodeName.DailySales ||
+reportCode == reportCodeName.TransactionReportByStaff || reportCode == reportCodeName.TaxBreakdownDetailed ||
+reportCode == reportCodeName.VoidList || reportCode == reportCodeName.Sales ||
+reportCode == reportCodeName.SalesSummary || reportCode == reportCodeName.BanquetAdvancedDeposit ||
+reportCode == reportCodeName.BanquetChargeList || reportCode == reportCodeName.Journal || reportCode == reportCodeName.Costing
+|| reportCode == reportCodeName.CostingDetail || reportCode == reportCodeName.GeneralLedger"
+>
+  <div class="col-4 pt-1 border">{{ $t('labels.subDept') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('SubDepartment')"
+      id="sub_department_code"
+      :options="listDropdown.SubDepartment"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.subDepartment"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Account -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.AdvancedPaymentDeposit ||
+reportCode == reportCodeName.FolioTransaction || reportCode == reportCodeName.DailyFolioTransaction ||
+reportCode == reportCodeName.MonthlyFolioTransaction || reportCode == reportCodeName.YearlyFolioTransaction ||
+reportCode == reportCodeName.ChargeList || reportCode == reportCodeName.DailyChargeList ||
+reportCode == reportCodeName.MonthlyChargeList || reportCode == reportCodeName.YearlyChargeList ||
+reportCode == reportCodeName.CashierReport || reportCode == reportCodeName.CashierReportReprint ||
+reportCode == reportCodeName.CashSummaryReport || reportCode == reportCodeName.PaymentList ||
+reportCode == reportCodeName.DailyPaymentList || reportCode == reportCodeName.MonthlyPaymentList ||
+reportCode == reportCodeName.YearlyPaymentList || reportCode == reportCodeName.DailySales ||
+reportCode == reportCodeName.TransactionReportByStaff || reportCode == reportCodeName.TaxBreakdownDetailed ||
+reportCode == reportCodeName.VoidList || reportCode == reportCodeName.BanquetAdvancedDeposit ||
+reportCode == reportCodeName.BanquetChargeList || reportCode == reportCodeName.AccountReceivableList
+|| reportCode == reportCodeName.AccountReceivableAgingReport || reportCode == reportCodeName.AccountReceivableAgingReportDetail || reportCode == reportCodeName.AccountReceivablePayment || reportCode == reportCodeName.AccountReceivableMutation ||
+reportCode == reportCodeName.AccountPayableList ||
+        reportCode == reportCodeName.AccountPayableAgingReport ||
+        reportCode == reportCodeName.AccountPayableAgingReportDetail ||
+        reportCode == reportCodeName.AccountPayablePayment ||
+        reportCode == reportCodeName.AccountPayableMutation || reportCode == reportCodeName.Journal"
+>
+  <div class="col-4 pt-1 border">{{ $t('labels.account') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter(accountDropdown)"
+      id="sub_department_code"
+      :options="listDropdown.Account"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.account"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Sub Account  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.AdvancedPaymentDeposit ||
+reportCode == reportCodeName.FolioTransaction || reportCode == reportCodeName.DailyFolioTransaction ||
+reportCode == reportCodeName.MonthlyFolioTransaction || reportCode == reportCodeName.YearlyFolioTransaction ||
+reportCode == reportCodeName.ChargeList|| reportCode == reportCodeName.DailyChargeList ||
+reportCode == reportCodeName.MonthlyChargeList || reportCode == reportCodeName.YearlyChargeList||
+reportCode == reportCodeName.CashierReport || reportCode == reportCodeName.CashierReportReprint ||
+reportCode == reportCodeName.CashSummaryReport || reportCode == reportCodeName.PaymentList ||
+reportCode == reportCodeName.DailyPaymentList || reportCode == reportCodeName.MonthlyPaymentList ||
+reportCode == reportCodeName.YearlyPaymentList || reportCode == reportCodeName.DailySales ||
+reportCode == reportCodeName.TransactionReportByStaff || reportCode == reportCodeName.TaxBreakdownDetailed ||
+reportCode == reportCodeName.VoidList"
+>
+  <div class="col-4 pt-1 border">{{ $t('labels.subAcc') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('CfgInitSubAccount')"
+      id="sub_department_code"
+      :options="listDropdown.SubAccount"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.subAccount"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.AdvancedPaymentDeposit ||
+reportCode == reportCodeName.FolioTransaction || reportCode == reportCodeName.DailyFolioTransaction ||
+reportCode == reportCodeName.MonthlyFolioTransaction || reportCode == reportCodeName.YearlyFolioTransaction ||
+reportCode == reportCodeName.ChargeList|| reportCode == reportCodeName.DailyChargeList ||
+reportCode == reportCodeName.MonthlyChargeList || reportCode == reportCodeName.YearlyChargeList||
+reportCode == reportCodeName.CashierReport || reportCode == reportCodeName.CashierReportReprint ||
+reportCode == reportCodeName.CashSummaryReport || reportCode == reportCodeName.PaymentList ||
+reportCode == reportCodeName.DailyPaymentList || reportCode == reportCodeName.MonthlyPaymentList ||
+reportCode == reportCodeName.YearlyPaymentList || reportCode == reportCodeName.DailySales ||
+reportCode == reportCodeName.TransactionReportByStaff || reportCode == reportCodeName.TaxBreakdownDetailed ||
+reportCode == reportCodeName.VoidList || reportCode == reportCodeName.Sales ||
+reportCode == reportCodeName.SalesSummary || reportCode == reportCodeName.BanquetChargeList"
+>
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="sub_department_code"
+      :label="$t('labels.showPayable')"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.showAccountPayable"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+</div>
+
+<!-- Include Void Status  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.LeadList || reportCode == reportCodeName.TaskList || 
+reportCode == reportCodeName.ProposalList || reportCode == reportCodeName.SalesActivityDetail"
+>
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="sub_department_code"
+      :label="$t('labels.includingVoidStatus')"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.includingVoidStatus"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+</div>
+<!-- Guest Type  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.ReservationList || 
+reportCode == reportCodeName.CancelledReservation || reportCode == reportCodeName.NoShowReservation ||
+reportCode == reportCodeName.VoidedReservation || reportCode == reportCodeName.GroupReservation ||
+reportCode == reportCodeName.ExpectedArrival || reportCode == reportCodeName.ArrivalList ||
+reportCode == reportCodeName.SamedayReservation || reportCode == reportCodeName.BalanceDeposit ||
+reportCode == reportCodeName.WaitListReservation || reportCode == reportCodeName.CurrentInHouse ||
+reportCode == reportCodeName.GuestInHouse || reportCode == reportCodeName.GuestInHouseByBusinessSource ||
+reportCode == reportCodeName.GuestInHouseByMarket || reportCode == reportCodeName.GuestInHouseByGuestType ||
+reportCode == reportCodeName.GuestInHouseByCountry || reportCode == reportCodeName.GuestInHouseByState ||
+reportCode == reportCodeName.GuestInHouseByCity || reportCode == reportCodeName.GuestInForecast ||
+reportCode == reportCodeName.EarlyCheckIn || reportCode == reportCodeName.EarlyDeparture ||
+reportCode == reportCodeName.ExpectedDeparture || reportCode == reportCodeName.ExtendedDeparture ||
+reportCode == reportCodeName.DepartureList || reportCode == reportCodeName.ActualDepartureGuestList"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.filterGuestType') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.all')"
+          :disabled="reportCode == reportCodeName.GroupReservation ? true: false"
+          v-model="form.guestType"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-5"
+          :label="$t('labels.individual')"
+          :disabled="reportCode == reportCodeName.GroupReservation ? true: false"
+          v-model="form.guestType"
+          value="2"
+        >
+        </c-radio>
+      </div>
+      <div class="row pr-0">
+        <div class="col-4">
+          <c-radio
+            class="m-1"
+            :label="$t('labels.group')"
+            v-model="form.guestType"
+            value="3"
+          >
+          </c-radio>
+        </div>
+        <div class="col-8">
+          <c-select
+            filter
+            @click="onClickFilter('GuestGroup')"
+            id="sub_department_code"
+            :options="listDropdown.Group"
+            class="mb-1"
+            keyName="code"
+            labelName="name"
+            v-model="form.group"
+            name="sub_department_code"
+            customLabelClass="col-3"
+            customClass="col-12 pr-0"
+          >
+          </c-select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Arrival List  -->
+<div class="row" v-show="reportCode == reportCodeName.ArrivalList">
+  <div class="col-4 pt-1 border">{{ $t('commons.arrivalListOption') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <c-radio
+        class="m-1"
+        :label="$t('labels.all')"
+        v-model="form.arrivalListOption"
+        value="1"
+      >
+      </c-radio>
+      <c-radio
+        class="m-1"
+        :label="$t('labels.byReservation')"
+        v-model="form.arrivalListOption"
+        value="2"
+      >
+      </c-radio>
+      <c-radio
+        class="m-1"
+        :label="$t('labels.byWalkin')"
+        v-model="form.arrivalListOption"
+        value="3"
+      >
+      </c-radio>
+    </div>
+  </div>
+</div>
+
+<!-- Action  -->
+<div class="row" v-show="reportCode == reportCodeName.LogUser">
+  <div class="col-4 pt-1 border">{{ $t('commons.action') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Action')"
+      id="sub_department_code"
+      :options="listDropdown.Action"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.action"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- IP Address  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.LogUser ||
+reportCode == reportCodeName.LogShift || reportCode == reportCodeName.LogMoveRoom ||
+reportCode == reportCodeName.LogTransferTransaction|| reportCode == reportCodeName.LogSpecialAccess || 
+reportCode == reportCodeName.LogVoidTransaction || reportCode == reportCodeName.LogHouseKeeping"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.ipAddress') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('IpAddress')"
+      id="sub_department_code"
+      :options="listDropdown.IpAddress"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.ipAddress"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Computer Name  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.LogUser ||
+reportCode == reportCodeName.LogShift|| reportCode == reportCodeName.LogMoveRoom ||
+reportCode == reportCodeName.LogTransferTransaction || reportCode == reportCodeName.LogSpecialAccess || 
+reportCode == reportCodeName.LogVoidTransaction || reportCode == reportCodeName.LogHouseKeeping"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.computerName') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('ComputerName')"
+      id="sub_department_code"
+      :options="listDropdown.ComputerName"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.computerName"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Product  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.ProductCosting || reportCode == reportCodeName.ProductCostingItem ||
+reportCode == reportCodeName.Sales"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.product') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Product')"
+      id="sub_department_code"
+      :options="listDropdown.Product"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.product"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Category  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.SalesSummary || reportCode == reportCodeName.InventoryItem || reportCode == reportCodeName.InventoryPurchaseRequestDetail
+  || reportCode == reportCodeName.InventoryItem || reportCode == reportCodeName.InventoryPurchaseOrderDetail || reportCode == reportCodeName.ReceiveStockDetail ||
+  reportCode == reportCodeName.StoreRequisitionDetail || reportCode == reportCodeName.StockTransferDetail || reportCode == reportCodeName.CostingDetail
+  || reportCode == reportCodeName.StoreStock || reportCode == reportCodeName.StoreStockCard || reportCode == reportCodeName.LowLevelStoreStock 
+  || reportCode == reportCodeName.HighLevelStoreStock || reportCode == reportCodeName.AllStoreStock || reportCode == reportCodeName.AllStoreStockCard
+  || reportCode == reportCodeName.LowLevelAllStoreStock || reportCode == reportCodeName.HighLevelAllStoreStock || reportCode == reportCodeName.AverageItemPricePurchase
+  || reportCode == reportCodeName.ItemPurchasePriceGraphic"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.category') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('ProductCategory')"
+      id="sub_department_code"
+      :options="listDropdown.ProductCategory"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.category"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Group  -->
+<div class="row" v-show="reportCode == reportCodeName.SalesSummary">
+  <div class="col-4 pt-1 border">{{ $t('commons.group') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('ProductGroup')"
+      id="sub_department_code"
+      :options="listDropdown.ProductGroup"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.group"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Supplier  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.InventoryPurchaseRequestDetail || reportCode == reportCodeName.InventoryPurchaseOrder || reportCode == reportCodeName.InventoryPurchaseOrderDetail
+|| reportCode == reportCodeName.ReceiveStock || reportCode == reportCodeName.ReceiveStockDetail || reportCode == reportCodeName.AverageItemPricePurchase
+|| reportCode == reportCodeName.ItemPurchasePriceGraphic || reportCode == reportCodeName.FixedAssetPurchaseOrder || reportCode == reportCodeName.FixedAssetPurchaseOrderDetail
+|| reportCode == reportCodeName.FixedAssetReceive || reportCode == reportCodeName.FixedAssetReceiveDetail"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.supplier') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Company')"
+      id="sub_department_code"
+      :options="listDropdown.Company"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.supplier"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- FA Item  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.FixedAssetReceiveDetail || reportCode == reportCodeName.FixedAssetList"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.faItem') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('FAItem')"
+      id="sub_department_code"
+      :options="listDropdown.FAItem"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.faItem"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- FA Location  -->
+<div class="row" v-show="reportCode == reportCodeName.FixedAssetList">
+  <div class="col-4 pt-1 border">{{ $t('commons.faLocation') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('FALocation')"
+      id="sub_department_code"
+      :options="listDropdown.FALocation"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.faLocation"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Store  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.InventoryPurchaseRequestDetail || reportCode == reportCodeName.InventoryPurchaseOrderDetail || reportCode == reportCodeName.ReceiveStockDetail
+|| reportCode == reportCodeName.StoreRequisition || reportCode == reportCodeName.StoreRequisitionDetail || reportCode == reportCodeName.StockTransferDetail || reportCode == reportCodeName.Costing
+|| reportCode == reportCodeName.CostingDetail || reportCode == reportCodeName.StoreStock || reportCode == reportCodeName.StoreStockCard || reportCode == reportCodeName.AverageItemPricePurchase
+|| reportCode == reportCodeName.LowLevelStoreStock || reportCode == reportCodeName.HighLevelStoreStock || reportCode == reportCodeName.ItemPurchasePriceGraphic"
+>
+  <div
+    class="col-4 pt-1 border"
+    :class="{ 'red-text': reportCode == reportCodeName.StoreStock || reportCode == reportCodeName.StoreStockCard || reportCode == reportCodeName.LowLevelStoreStock || reportCode == reportCodeName.HighLevelStoreStock }"
+  >
+    {{ $t('commons.store') }}
+  </div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Store')"
+      id="sub_department_code"
+      :options="listDropdown.Store"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.store"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- To Store  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.StoreRequisitionDetail || reportCode == reportCodeName.StockTransferDetail"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.toStore') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Store')"
+      id="sub_department_code"
+      :options="listDropdown.Store"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.toStore"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Bank Account  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.BankBookAccount || reportCode == reportCodeName.BankBookAccountGroup || reportCode == reportCodeName.BankBookAccountSummary"
+>
+  <div class="col-4 pt-1 border" style="color: red">
+    {{ $t('commons.bankAccount') }}
+  </div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('BankAccount')"
+      id="sub_department_code"
+      :options="listDropdown.BankAccount"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.bankAccount"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Journal Account  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.BankBookAccount || reportCode == reportCodeName.BankBookAccountGroup || reportCode == reportCodeName.BankBookAccountSummary"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.journalAccount') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('JournalAccount')"
+      id="sub_department_code"
+      :options="listDropdown.Account"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.journalAccount"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Item  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.InventoryPurchaseRequestDetail || reportCode == reportCodeName.InventoryPurchaseOrderDetail || reportCode == reportCodeName.ReceiveStockDetail
+|| reportCode == reportCodeName.StoreRequisitionDetail || reportCode == reportCodeName.StockTransferDetail || reportCode == reportCodeName.CostingDetail || reportCode == reportCodeName.StoreStock || reportCode == reportCodeName.StoreStockCard || reportCode == reportCodeName.LowLevelStoreStock 
+|| reportCode == reportCodeName.HighLevelStoreStock || reportCode == reportCodeName.AllStoreStock || reportCode == reportCodeName.AllStoreStockCard
+|| reportCode == reportCodeName.LowLevelAllStoreStock || reportCode == reportCodeName.HighLevelAllStoreStock || reportCode == reportCodeName.AverageItemPricePurchase
+|| reportCode == reportCodeName.ItemPurchasePriceGraphic"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.item') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Item')"
+      id="sub_department_code"
+      :options="listDropdown.Item"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.item"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- UOM  -->
+<div class="row" v-show="reportCode == reportCodeName.ItemPurchasePriceGraphic">
+  <div class="col-4 pt-1 border">{{ $t('commons.uom') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Item')"
+      id="sub_department_code"
+      :options="listDropdown.Item"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.uom"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Item Group  -->
+<div class="row" v-show="reportCode == reportCodeName.FrequentlySales">
+  <div class="col-4 pt-1 border">{{ $t('commons.itemGroup') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('ItemGroup')"
+      id="sub_department_code"
+      :options="listDropdown.ItemGroup"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.itemGroup"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.InventoryItem || reportCode == reportCodeName.InventoryPurchaseRequestDetail || reportCode == reportCodeName.InventoryPurchaseOrderDetail
+  || reportCode == reportCodeName.ReceiveStockDetail || reportCode == reportCodeName.StockTransferDetail || reportCode == reportCodeName.CostingDetail
+  || reportCode == reportCodeName.StoreStock || reportCode == reportCodeName.StoreStockCard || reportCode == reportCodeName.LowLevelStoreStock 
+  || reportCode == reportCodeName.HighLevelStoreStock || reportCode == reportCodeName.AllStoreStock || reportCode == reportCodeName.AllStoreStockCard
+  || reportCode == reportCodeName.LowLevelAllStoreStock || reportCode == reportCodeName.HighLevelAllStoreStock || reportCode == reportCodeName.InventoryReconciliation
+  || reportCode == reportCodeName.DailyInventoryReconciliation || reportCode == reportCodeName.MonthlyInventoryReconciliation || reportCode == reportCodeName.AverageItemPricePurchase
+  || reportCode == reportCodeName.ItemPurchasePriceGraphic"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.itemGroup') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      id="sub_department_code"
+      :options="listDropdown.ItemGroupInventory"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.itemGroupInventory"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<div
+  class="row"
+  v-show=" reportCode == reportCodeName.InventoryItem || reportCode == reportCodeName.InventoryPurchaseRequestDetail || reportCode == reportCodeName.InventoryPurchaseOrderDetail
+  || reportCode == reportCodeName.ReceiveStockDetail || reportCode == reportCodeName.StockTransferDetail || reportCode == reportCodeName.CostingDetail
+  || reportCode == reportCodeName.StoreStock || reportCode == reportCodeName.StoreStockCard || reportCode == reportCodeName.LowLevelStoreStock 
+  || reportCode == reportCodeName.HighLevelStoreStock || reportCode == reportCodeName.AllStoreStock || reportCode == reportCodeName.AllStoreStockCard
+  || reportCode == reportCodeName.LowLevelAllStoreStock || reportCode == reportCodeName.HighLevelAllStoreStock || reportCode == reportCodeName.InventoryReconciliation
+  || reportCode == reportCodeName.DailyInventoryReconciliation || reportCode == reportCodeName.MonthlyInventoryReconciliation || reportCode == reportCodeName.AverageItemPricePurchase
+  || reportCode == reportCodeName.ItemPurchasePriceGraphic"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.itemType') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      id="sub_department_code"
+      :options="listDropdown.ItemType"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.itemType"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Access Type  -->
+<div class="row" v-show="reportCode == reportCodeName.LogSpecialAccess">
+  <div class="col-4 pt-1 border">{{ $t('commons.accessType') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('AccessName')"
+      id="sub_department_code"
+      :options="listDropdown.AccessName"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.accessType"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Status  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.ReservationList || reportCode == reportCodeName.GroupReservation ||
+reportCode == reportCodeName.Voucher || reportCode == reportCodeName.BanquetBookingDetail"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.status') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      id="sub_department_code"
+      :options="listDropdown.ReservationStatus"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.status"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Company -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.ReservationList ||
+reportCode == reportCodeName.ExpectedArrival || reportCode == reportCodeName.ArrivalList ||
+reportCode == reportCodeName.GuestInHouse || reportCode == reportCodeName.GuestInForecast ||
+reportCode == reportCodeName.EarlyCheckIn || reportCode == reportCodeName.EarlyDeparture ||
+reportCode == reportCodeName.ExpectedDeparture || reportCode == reportCodeName.ExtendedDeparture||
+reportCode == reportCodeName.DepartureList || reportCode == reportCodeName.ActualDepartureGuestList ||
+reportCode == reportCodeName.ChargeList|| reportCode == reportCodeName.TransactionReportByStaff ||
+reportCode == reportCodeName.TaxBreakdownDetailed || reportCode == reportCodeName.MarketStatistic ||
+reportCode == reportCodeName.LeadList || reportCode == reportCodeName.TaskList ||
+reportCode == reportCodeName.ProposalList || reportCode == reportCodeName.ActivityLog || 
+reportCode == reportCodeName.SalesActivityDetail || reportCode == reportCodeName.BanquetBooking ||
+reportCode == reportCodeName.BanquetBookingDetail || reportCode == reportCodeName.ApCommissionAndOtherList ||
+reportCode == reportCodeName.ApCommissionAndOtherAgingReport || reportCode == reportCodeName.ApCommissionAndOtherAgingReportDetail ||
+reportCode == reportCodeName.ApCommissionAndOtherPayment || reportCode == reportCodeName.ApCommissionAndOtherMutation || reportCode == reportCodeName.AccountReceivableList
+|| reportCode == reportCodeName.AccountReceivableAgingReport || reportCode == reportCodeName.AccountReceivableAgingReportDetail || reportCode == reportCodeName.AccountReceivablePayment || reportCode == reportCodeName.AccountReceivableMutation ||
+reportCode == reportCodeName.AccountPayableList ||
+        reportCode == reportCodeName.AccountPayableAgingReport ||
+        reportCode == reportCodeName.AccountPayableAgingReportDetail ||
+        reportCode == reportCodeName.AccountPayablePayment ||
+        reportCode == reportCodeName.AccountPayableMutation || reportCode == reportCodeName.BankBookAccount || reportCode == reportCodeName.BankBookAccountGroup
+        || reportCode == reportCodeName.BankBookAccountSummary || reportCode == reportCodeName.GeneralLedger || reportCode == reportCodeName.GuestInHouseListing || reportCode == reportCodeName.CurrentInHouse || reportCode == reportCodeName.DayUse"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.company') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Company')"
+      id="sub_department_code"
+      :options="listDropdown.Company"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.company"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Show House Use  -->
+<div class="row" v-show="reportCode == reportCodeName.GuestInHouse">
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="sub_department_code"
+      :label="$t('labels.showHouseUse')"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.showHouseUse"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+</div>
+
+<!-- Show Reservation By  -->
+<div class="row" v-show="reportCode == reportCodeName.GuestInHouseListing">
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="sub_department_code"
+      :label="$t('labels.showReservationBy')"
+      @change="testChange"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.showReservationBy"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+</div>
+
+<!-- Compliment Type  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.Sales ||
+reportCode == reportCodeName.SalesSummary"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.complimentType') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('ComplimentType')"
+      id="sub_department_code"
+      :options="listDropdown.ComplimentType"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.complimentType"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.Sales ||
+reportCode == reportCodeName.SalesSummary"
+>
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="sub_department_code"
+      :label="$t('labels.showComplimentOnly')"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.showComplimentOnly"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+</div>
+
+<!-- Type  -->
+<div
+  class="row"
+  v-show=" reportCode == reportCodeName.BusinessSourceProductivity || reportCode == reportCodeName.BanquetBooking || reportCode == reportCodeName.BanquetBookingDetail"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.type') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Company')"
+      id="sub_department_code"
+      :options="listDropdown.Company"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.type"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Company Type  -->
+<div class="row" v-show="reportCode == reportCodeName.Company">
+  <div class="col-4 pt-1 border">{{ $t('commons.type') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('CompanyType')"
+      id="sub_department_code"
+      :options="listDropdown.CompanyType"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.companyType"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+<!-- Phone Book Type  -->
+<div class="row" v-show="reportCode == reportCodeName.PhoneBook">
+  <div class="col-4 pt-1 border">{{ $t('commons.type') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('PhoneBookType')"
+      id="sub_department_code"
+      :options="listDropdown.PhoneBookType"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.phoneBookType"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+<!-- Room Type  -->
+<div class="row" v-show="reportCode == reportCodeName.MarketStatistic">
+  <div class="col-4 pt-1 border">{{ $t('commons.roomType') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('RoomType')"
+      id="sub_department_code"
+      :options="listDropdown.RoomType"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.roomType"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+<!-- Room Rate  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.MarketStatistic || reportCode == reportCodeName.RateCodeAnalysis"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.roomRate') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('RoomRate')"
+      id="sub_department_code"
+      :options="listDropdown.RoomRate"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.roomRate"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Sales  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.MarketStatistic || reportCode == reportCodeName.LeadList ||
+reportCode == reportCodeName.TaskList || reportCode == reportCodeName.ProposalList || 
+reportCode == reportCodeName.ActivityLog || reportCode == reportCodeName.SalesActivityDetail ||
+reportCode == reportCodeName.BanquetBooking || reportCode == reportCodeName.BanquetBookingDetail"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.sales') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Sales')"
+      id="sub_department_code"
+      :options="listDropdown.Sales"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.sales"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Venue  -->
+<div class="row" v-show="reportCode == reportCodeName.BanquetDailySales">
+  <div class="col-4 pt-1 border">{{ $t('commons.venue') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Venue')"
+      id="sub_department_code"
+      :options="listDropdown.Venue"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.venue"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Segment  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.LeadList || reportCode == reportCodeName.TaskList ||
+reportCode == reportCodeName.ProposalList || reportCode == reportCodeName.ActivityLog ||
+reportCode == reportCodeName.SalesActivityDetail"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.segment') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('SalesSegment')"
+      id="sub_department_code"
+      :options="listDropdown.Segment"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.segment"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Source  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.LeadList || reportCode == reportCodeName.TaskList || 
+reportCode == reportCodeName.ProposalList || reportCode == reportCodeName.ActivityLog || 
+reportCode == reportCodeName.SalesActivityDetail"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.source') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('SalesSource')"
+      id="sub_department_code"
+      :options="listDropdown.Source"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.source"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Lead Status  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.LeadList || reportCode == reportCodeName.SalesActivityDetail"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.leadStatus') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('SalesStatus')"
+      id="sub_department_code"
+      :options="listDropdown.LeadStatus"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.leadStatus"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Task status  -->
+<div class="row" v-show="reportCode == reportCodeName.TaskList">
+  <div class="col-4 pt-1 border">{{ $t('commons.taskStatus') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('SalesTaskStatus')"
+      id="sub_department_code"
+      :options="listDropdown.TaskStatus"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.taskStatus"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Proposal status  -->
+<div class="row" v-show="reportCode == reportCodeName.ProposalList">
+  <div class="col-4 pt-1 border">{{ $t('commons.proposalStatus') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('SalesProposalStatus')"
+      id="sub_department_code"
+      :options="listDropdown.ProposalStatus"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.proposalStatus"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Journal Type -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.Journal || reportCode == reportCodeName.GeneralLedger"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.journalType') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('SalesProposalStatus')"
+      id="sub_department_code"
+      :options="listDropdown.JournalType"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.journalType"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Direct Bill  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.CityLedgerList || reportCode == reportCodeName.CityLedgerAgingReport ||
+reportCode == reportCodeName.CityLedgerAgingReportDetail || reportCode == reportCodeName.CityLedgerInvoice ||
+reportCode == reportCodeName.CityLedgerInvoiceDetail || reportCode == reportCodeName.CityLedgerInvoicePayment||
+reportCode == reportCodeName.CityLedgerInvoiceMutation"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.directBill') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('DirectBill')"
+      id="sub_department_code"
+      :options="listDropdown.DirectBill"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.directBill"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Outlet  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.Sales ||
+reportCode == reportCodeName.SalesSummary || reportCode == reportCodeName.FrequentlySales ||
+reportCode == reportCodeName.CaptainOrderList || reportCode == reportCodeName ||
+reportCode == reportCodeName.VoidedCheckList || reportCode == reportCodeName.CancelledCaptainOrderDetail ||
+reportCode == reportCodeName.ProductList || reportCode == reportCodeName.ProductCosting ||
+reportCode == reportCodeName.ProductCostingItem || reportCode == reportCodeName.CancelledCaptainOrder ||
+reportCode == reportCodeName.CashierReport || reportCode == reportCodeName.CashierReportReprint"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.outlet') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Outlet')"
+      id="sub_department_code"
+      :options="listDropdown.Outlet"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.outlet"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Had Commission  -->
+<div class="row" v-show="reportCode == reportCodeName.Sales">
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="sub_department_code"
+      :label="$t('labels.hadCommission')"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.hadCommission"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+</div>
+
+<!-- Filter Account  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.ApCommissionAndOtherList ||
+reportCode == reportCodeName.ApCommissionAndOtherAgingReport || reportCode == reportCodeName.ApCommissionAndOtherAgingReportDetail ||
+reportCode == reportCodeName.ApCommissionAndOtherPayment || reportCode == reportCodeName.ApCommissionAndOtherMutation"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.account') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('CfgInitSubAccount')"
+      id="sub_department_code"
+      :options="listDropdown.SubAccount"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.filterAccount"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.CostingDetail
+|| reportCode == reportCodeName.StockOpnameDetail || reportCode == reportCodeName.StoreStock || reportCode == reportCodeName.AllStoreStock"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.account') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickGetInvAccount()"
+      id="sub_department_code"
+      :options="listDropdown.InventoryAccount"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.invAccount"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- RESV# FOLIO#  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.TransactionReportByStaff ||
+reportCode == reportCodeName.TaxBreakdownDetailed"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.resv#') }}</div>
+  <div class="col-4 border">
+    <c-input
+      id="sub_department_code"
+      class="mb-1"
+      type="number"
+      v-model="form.resvNumber"
+      name="sub_department_code"
+      customLabelClass="col-4"
+      showZeroNumber
+      customClass="col-12 mt-1"
+    >
+    </c-input>
+  </div>
+</div>
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.TransactionReportByStaff ||
+reportCode == reportCodeName.TaxBreakdownDetailed"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.folio#') }}</div>
+  <div class="col-4 border">
+    <c-input
+      id="sub_department_code"
+      class="mb-1"
+      type="number"
+      v-model="form.folioNumber"
+      showZeroNumber
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-input>
+  </div>
+</div>
+
+<!-- Busi Sour  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.GuestInHouseByBusinessSource || reportCode == reportCodeName.ChargeList||
+reportCode == reportCodeName.TransactionReportByStaff || reportCode == reportCodeName.TaxBreakdownDetailed ||
+reportCode == reportCodeName.BusinessSourceProductivity|| reportCode == reportCodeName.MarketStatistic"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.busiSour') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('BusinessSource')"
+      id="sub_department_code"
+      :options="listDropdown.BusinessSource"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.busiSour"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Market Option  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.GuestInHouseByMarket || reportCode == reportCodeName.MarketStatistic"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.market') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Market')"
+      id="sub_department_code"
+      :options="listDropdown.Market"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.market"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.GuestInHouseByBookingSource"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.bookingSource') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('BookingSource')"
+      id="sub_department_code"
+      :options="listDropdown.BookingSource"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.bookingSource"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.GuestInHouseByNationality"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.nationality') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('Nationality')"
+      id="sub_department_code"
+      :options="listDropdown.Nationality"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.nationality"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Folio Type  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.FolioTransaction ||
+reportCode == reportCodeName.DailyFolioTransaction || reportCode == reportCodeName.MonthlyFolioTransaction ||
+reportCode == reportCodeName.YearlyFolioTransaction || reportCode == reportCodeName.ChargeList ||
+reportCode == reportCodeName.DailyChargeList || reportCode == reportCodeName.MonthlyChargeList ||
+reportCode == reportCodeName.YearlyChargeList || reportCode == reportCodeName.CashierReport ||
+reportCode == reportCodeName.CashierReportReprint|| reportCode == reportCodeName.CashSummaryReport ||
+reportCode == reportCodeName.PaymentList || reportCode == reportCodeName.DailyPaymentList ||
+reportCode == reportCodeName.MonthlyPaymentList || reportCode == reportCodeName.YearlyPaymentList || 
+reportCode == reportCodeName.DailySales || reportCode == reportCodeName.TransactionReportByStaff ||
+reportCode == reportCodeName.TaxBreakdownDetailed || reportCode == reportCodeName.VoidList"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.folioType') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="col-4">
+        <checkbox
+          id="sub_department_code"
+          :label="$t('labels.guestFolio')"
+          class="mb-1"
+          keyName="code"
+          labelName="name"
+          v-model="form.guestFolio"
+          name="sub_department_code"
+          customLabelClass="col-3"
+          customClass="col-12 mt-1"
+        >
+        </checkbox>
+      </div>
+      <div class="col-4">
+        <checkbox
+          id="sub_department_code"
+          :label="$t('labels.masterFolio')"
+          class="mb-1"
+          keyName="code"
+          labelName="name"
+          v-model="form.masterFolio"
+          name="sub_department_code"
+          customLabelClass="col-3"
+          customClass="col-12 mt-1"
+        >
+        </checkbox>
+      </div>
+      <div class="col-3">
+        <checkbox
+          id="sub_department_code"
+          :label="$t('labels.deskFolio')"
+          class="mb-1"
+          keyName="code"
+          labelName="name"
+          v-model="form.deskFolio"
+          name="sub_department_code"
+          customLabelClass="col-3"
+          customClass="col-12 mt-1"
+        >
+        </checkbox>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Folio Option  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.FolioList || reportCode == reportCodeName.MasterFolio ||
+reportCode == reportCodeName.DeskFolio || reportCode == reportCodeName.FolioTransaction ||
+reportCode == reportCodeName.DailyFolioTransaction || reportCode == reportCodeName.MonthlyFolioTransaction ||
+reportCode == reportCodeName.YearlyFolioTransaction || reportCode == reportCodeName.ChargeList ||
+reportCode == reportCodeName.DailyChargeList || reportCode == reportCodeName.MonthlyChargeList ||
+reportCode == reportCodeName.YearlyChargeList || reportCode == reportCodeName.CashierReport ||
+reportCode == reportCodeName.CashierReportReprint || reportCode == reportCodeName.CashSummaryReport ||
+reportCode == reportCodeName.PaymentList || reportCode == reportCodeName.DailyPaymentList ||
+reportCode == reportCodeName.MonthlyPaymentList|| reportCode == reportCodeName.YearlyPaymentList ||
+reportCode == reportCodeName.DailySales || reportCode == reportCodeName.TransactionReportByStaff ||
+reportCode == reportCodeName.TaxBreakdownDetailed || reportCode == reportCodeName.VoidList"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.folioOption') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="col-4">
+        <checkbox
+          id="sub_department_code"
+          :label="$t('labels.open')"
+          class="mb-1"
+          keyName="code"
+          labelName="name"
+          v-model="form.folioOpen"
+          name="sub_department_code"
+          customLabelClass="col-3"
+          customClass="col-12 mt-1"
+        >
+        </checkbox>
+      </div>
+      <div class="col-4">
+        <checkbox
+          id="sub_department_code"
+          :label="$t('labels.close')"
+          class="mb-1"
+          keyName="code"
+          labelName="name"
+          v-model="form.folioClose"
+          name="sub_department_code"
+          customLabelClass="col-3"
+          customClass="col-12 mt-1"
+        >
+        </checkbox>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Voucher filter option  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.Voucher || reportCode == reportCodeName.VoucherSoldRedemeedAndComplimented"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.type') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('VoucherType')"
+      id="sub_department_code"
+      :options="listDropdown.VoucherType"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.type"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<div class="row" v-show="reportCode == reportCodeName.Voucher">
+  <div class="col-4 pt-1 border">{{ $t('commons.statusApprove') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('VoucherStatusApprove')"
+      id="sub_department_code"
+      :options="listDropdown.StatusApprove"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.statusApprove"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.Voucher || reportCode == reportCodeName.VoucherSoldRedemeedAndComplimented"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.statusSold') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('VoucherStatusSold')"
+      id="sub_department_code"
+      :options="listDropdown.StatusSold"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.statusSold"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Status Room  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.RoomRate || reportCode == reportCodeName.RoomRateBreakdown ||
+reportCode == reportCodeName.Package || reportCode == reportCodeName.PackageBreakdown"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.status') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.all')"
+          v-model="form.statusRoom"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-3"
+          :label="$t('labels.active')"
+          v-model="form.statusRoom"
+          value="2"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-2"
+          :label="$t('labels.notActive')"
+          v-model="form.statusRoom"
+          value="3"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Status Option  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.AccountReceivableList ||
+  reportCode == reportCodeName.AccountPayableList"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.statusOption') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.all')"
+          v-model="form.statusOption"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-3"
+          :label="$t('labels.paid')"
+          v-model="form.statusOption"
+          value="2"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-2"
+          :label="$t('labels.unpaid')"
+          v-model="form.statusOption"
+          value="3"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Status Purchase Request  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.InventoryPurchaseRequest || reportCode == reportCodeName.InventoryPurchaseRequestDetail || reportCode == reportCodeName.InventoryPurchaseRequestDetail"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.statusPurchaseRequest') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.all')"
+          v-model="form.statusPurchase"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-3"
+          :label="$t('labels.approve')"
+          v-model="form.statusPurchase"
+          value="2"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1 ml-2"
+          :label="$t('labels.notApprove')"
+          v-model="form.statusPurchase"
+          value="3"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-2"
+          :label="$t('labels.rejected')"
+          v-model="form.statusPurchase"
+          value="4"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Status Purchase Order  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.InventoryPurchaseOrder || reportCode == reportCodeName.InventoryPurchaseOrderDetail"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.statusPurchaseOrder') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.all')"
+          v-model="form.statusPurchaseOrder"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1"
+          :label="$t('labels.unreceived')"
+          v-model="form.statusPurchaseOrder"
+          value="2"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-3"
+          :label="$t('labels.receivedPartial')"
+          v-model="form.statusPurchaseOrder"
+          value="3"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.received')"
+          v-model="form.statusPurchaseOrder"
+          value="4"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Room Count Sheet  -->
+<div class="row" v-show="reportCode == reportCodeName.RoomCountSheet">
+  <div class="col-4 pt-1 border">{{ $t('commons.roomCountSheet') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.nettAmount')"
+          v-model="form.roomCountSheet"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-3"
+          :label="$t('labels.grossAmount')"
+          v-model="form.roomCountSheet"
+          value="2"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Room Option  -->
+<div class="row" v-show="reportCode == reportCodeName.RoomSalesByRoomNumber">
+  <div class="col-4 pt-1 border">{{ $t('commons.roomOption') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.roomNum')"
+          v-model="form.roomOption"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-3"
+          :label="$t('labels.roomType')"
+          v-model="form.roomOption"
+          value="2"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-3"
+          :label="$t('labels.bedType')"
+          v-model="form.roomOption"
+          value="3"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Room Status  -->
+<div class="row" v-show="reportCode == reportCodeName.RoomStatus">
+  <div class="col-4 pt-1 border">{{ $t('commons.building') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('RoomBuilding')"
+      id="sub_department_code"
+      :options="listDropdown.Building"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.building"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+<div class="row" v-show="reportCode == reportCodeName.RoomStatus">
+  <div class="col-4 pt-1 border">{{ $t('commons.floor') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('RoomFloor')"
+      id="sub_department_code"
+      :options="listDropdown.Floor"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.floor"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+<div class="row" v-show="reportCode == reportCodeName.RoomStatus">
+  <div class="col-4 pt-1 border">{{ $t('commons.status') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('RoomStatus')"
+      id="sub_department_code"
+      :options="listDropdown.RoomStatus"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.roomStatus"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Report Type  -->
+<div class="row" v-show="reportCode == reportCodeName.RoomProduction">
+  <div class="col-4 pt-1 border">{{ $t('commons.reportType') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byMarket')"
+          v-model="form.reportType"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-3"
+          :label="$t('labels.byRate')"
+          v-model="form.reportType"
+          value="2"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Report  -->
+<div class="row" v-show="reportCode == reportCodeName.RoomProduction">
+  <div class="col-4 pt-1 border">{{ $t('commons.detailReport') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="form.reportType == 2 ? $t('labels.roomType') : $t('labels.detail')"
+          v-model="form.detailReport"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="ml-1"
+          v-show="form.reportType == 2"
+          :label="$t('labels.bedType')"
+          v-model="form.detailReport"
+          value="2"
+        >
+        </c-radio>
+        <c-radio
+          class="ml-1"
+          :label="form.reportType == 2 ? $t('labels.roomNumber') : $t('labels.summary')"
+          v-model="form.detailReport"
+          :value="form.reportType == 2 ? 3 : 2"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Market statistic Sort  -->
+<div class="row" v-show="reportCode == reportCodeName.MarketStatistic">
+  <div class="col-4 pt-1 border">{{ $t('commons.marketStatisticSort') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byName')"
+          v-model="form.marketStatisticSort"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.byPax')"
+          v-model="form.marketStatisticSort"
+          value="2"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byRoomNight')"
+          v-model="form.marketStatisticSort"
+          value="3"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byRevenue')"
+          v-model="form.marketStatisticSort"
+          value="4"
+        >
+        </c-radio>
+        <checkbox
+          id="sub_department_code"
+          :label="$t('labels.ascending')"
+          class="mb-1 ml-3"
+          keyName="code"
+          labelName="name"
+          v-model="form.ascending"
+          name="sub_department_code"
+          customLabelClass="col-3"
+          customClass="col-12 mt-1"
+        >
+        </checkbox>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Market Statistic  -->
+<div class="row" v-show="reportCode == reportCodeName.MarketStatistic">
+  <div class="col-4 pt-1 border">{{ $t('commons.marketStatistic') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="col-5">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.marketStatistic')"
+          v-model="form.marketStatistic"
+          value="1"
+        >
+        </c-radio>
+      </div>
+      <div class="col-6">
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.marketStatisticDetail')"
+          v-model="form.marketStatistic"
+          value="2"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-5">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byCategory')"
+          v-model="form.marketStatistic"
+          value="3"
+        >
+        </c-radio>
+      </div>
+      <div class="col-7">
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.byCategoryDetail')"
+          v-model="form.marketStatistic"
+          value="4"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-5">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byBusinessSource')"
+          v-model="form.marketStatistic"
+          value="5"
+        >
+        </c-radio>
+      </div>
+      <div class="col-7">
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.byBusinessSourceDetail')"
+          v-model="form.marketStatistic"
+          value="6"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-5">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byCompany')"
+          v-model="form.marketStatistic"
+          value="7"
+        >
+        </c-radio>
+      </div>
+      <div class="col-7">
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.byCompanyDetail')"
+          v-model="form.marketStatistic"
+          value="8"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-5">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byRoomType')"
+          v-model="form.marketStatistic"
+          value="9"
+        >
+        </c-radio>
+      </div>
+      <div class="col-6">
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.byRoomTypeDetail')"
+          v-model="form.marketStatistic"
+          value="10"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-5">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byRoomRate')"
+          v-model="form.marketStatistic"
+          value="11"
+        >
+        </c-radio>
+      </div>
+      <div class="col-6">
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.byRoomRateDetail')"
+          v-model="form.marketStatistic"
+          value="12"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-5">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.bySales')"
+          v-model="form.marketStatistic"
+          value="13"
+        >
+        </c-radio>
+      </div>
+      <div class="col-7">
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.bySalesDetail')"
+          v-model="form.marketStatistic"
+          value="14"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-5">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byCountry')"
+          v-model="form.marketStatistic"
+          value="15"
+        >
+        </c-radio>
+      </div>
+      <div class="col-7">
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.byState')"
+          v-model="form.marketStatistic"
+          value="16"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-5">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byCity')"
+          v-model="form.marketStatistic"
+          value="17"
+        >
+        </c-radio>
+      </div>
+      <div class="col-7">
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.byNationality')"
+          v-model="form.marketStatistic"
+          value="18"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-5">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byCountryState')"
+          v-model="form.marketStatistic"
+          value="19"
+        >
+        </c-radio>
+      </div>
+      <div class="col-5">
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.byCountryCity')"
+          v-model="form.marketStatistic"
+          value="20"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-5">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byCountryStateCity')"
+          v-model="form.marketStatistic"
+          value="21"
+        >
+        </c-radio>
+      </div>
+      <div class="col-7">
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.byCountryNationality')"
+          v-model="form.marketStatistic"
+          value="22"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-5">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byBookingSource')"
+          v-model="form.marketStatistic"
+          value="23"
+        >
+        </c-radio>
+      </div>
+      <div class="col-5">
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.byPurposeOf')"
+          v-model="form.marketStatistic"
+          value="24"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hotel Competitor Sort By  -->
+<div class="row" v-show="reportCode == reportCodeName.DailyHotelCompetitor">
+  <div class="col-4 pt-1 border">{{ $t('commons.hotelCompetitorSortBy') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.name')"
+          v-model="form.hotelCompetitorSortBy"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.availableRoom')"
+          v-model="form.hotelCompetitorSortBy"
+          value="2"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1"
+          :label="$t('labels.roomSold')"
+          v-model="form.hotelCompetitorSortBy"
+          value="3"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.revenue')"
+          v-model="form.hotelCompetitorSortBy"
+          value="4"
+        >
+        </c-radio>
+        <checkbox
+          id="sub_department_code"
+          :label="$t('labels.ascending')"
+          class="mb-1 ml-3"
+          keyName="code"
+          labelName="name"
+          v-model="form.hotelCompetitorAscending"
+          name="sub_department_code"
+          customLabelClass="col-3"
+          customClass="col-12 mt-1"
+        >
+        </checkbox>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filter Condition  -->
+<div class="row" v-show="reportCode == reportCodeName.FixedAssetList">
+  <div class="col-4 pt-1 border">{{ $t('commons.condition') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.all')"
+          v-model="form.condition"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-2"
+          :label="$t('labels.good')"
+          v-model="form.condition"
+          value="2"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.broken')"
+          v-model="form.condition"
+          value="3"
+        >
+        </c-radio>
+        <c-radio
+          class=""
+          :label="$t('labels.sold')"
+          v-model="form.condition"
+          value="4"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Balance Sheet and Profit Loss Option  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.BalanceSheet || reportCode == reportCodeName.BalanceMultiPeriod || reportCode == reportCodeName.ProfitAndLossDetail
+|| reportCode == reportCodeName.ProfitAndLossDetailByDepartment || reportCode == reportCodeName.ProfitAndLossDetailBySubDepartment"
+>
+  <div class="col-4 border">
+    {{ $t('commons.balanceSheetAndProfitLossOption') }}
+  </div>
+  <div class="col-8 border">
+    <div class="row">
+      <c-radio
+        class="m-1"
+        :label="$t('labels.noGrouping')"
+        v-model="form.balanceSheetAndProfitLossOption"
+        value="1"
+      >
+      </c-radio>
+    </div>
+    <div class="row">
+      <c-radio
+        class="m-1 ml-1"
+        :label="$t('labels.grupByCategory')"
+        v-model="form.balanceSheetAndProfitLossOption"
+        value="2"
+      >
+      </c-radio>
+    </div>
+    <div class="row">
+      <c-radio
+        class="m-1 ml-1"
+        v-show="reportCode == reportCodeName.ProfitAndLossDetail || reportCode ==  reportCodeName.ProfitAndLossDetailByDepartment || reportCode ==  reportCodeName.ProfitAndLossDetailBySubDepartment ? false : true"
+        :label="$t('labels.groupByCategorySummary')"
+        v-model="form.balanceSheetAndProfitLossOption"
+        value="3"
+      >
+      </c-radio>
+    </div>
+  </div>
+</div>
+
+<!-- Sort Journal  -->
+<div class="row" v-show="reportCode == reportCodeName.Journal">
+  <div class="col-4 pt-1 border">{{ $t('commons.sortJournal') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.date')"
+          v-model="form.sortJournal"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.refNumber')"
+          v-model="form.sortJournal"
+          value="2"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Template Bank Book Options  -->
+<div class="row" v-show="reportCode == reportCodeName.BankBookAccount">
+  <div class="col-4 pt-1 border">
+    {{ $t('commons.templateBankBookOptions') }}
+  </div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="mt-1"
+          :label="$t('labels.detail')"
+          v-model="form.templateBankBookOptions"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="mt-1"
+          :label="$t('labels.groupByReferenceNumber')"
+          v-model="form.templateBankBookOptions"
+          value="2"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Option  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.SalesContributionAnalysis"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.option') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="mt-1"
+          :label="$t('labels.sales')"
+          v-model="form.optionSales"
+          value="1"
+        >
+        </c-radio>
+      </div>
+    </div>
+    <div class="row">
+      <c-radio
+        class="m-1 ml-1"
+        :label="$t('labels.salesByCompanyDetail')"
+        v-model="form.optionSales"
+        value="2"
+      >
+      </c-radio>
+    </div>
+    <div class="row">
+      <c-radio
+        class="m-1"
+        :label="$t('labels.salesByBusinessSourceDetail')"
+        v-model="form.optionSales"
+        value="3"
+      >
+      </c-radio>
+    </div>
+    <div class="row">
+      <checkbox
+        id="sub_department_code"
+        :label="$t('labels.dontShowIfMarketingNA')"
+        class="mb-1 ml-1"
+        v-model="form.dontShowIfMarketingNA"
+        name="sub_department_code"
+        customLabelClass="col-3"
+        customClass="col-12 mt-1"
+      >
+      </checkbox>
+    </div>
+  </div>
+</div>
+
+<!-- Calculate Income, Cost, Expense -->
+<div class="row" v-show="reportCode == reportCodeName.WorkSheet">
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="sub_department_code"
+      :label="$t('labels.calculateIncomeCostandExpenseMonthly')"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.calculateIncomeCostandExpense"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+</div>
+
+<!-- Payment Status  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.CityLedgerList || reportCode == reportCodeName.CityLedgerInvoice ||
+reportCode == reportCodeName.CityLedgerInvoiceDetail || reportCode == reportCodeName.CityLedgerInvoicePayment || reportCode == reportCodeName.ApRefundDepositList || reportCode == reportCodeName.ApCommissionAndOtherList"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.paymentStatus') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.all')"
+          v-model="form.paymentStatus"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.unpaid')"
+          v-model="form.paymentStatus"
+          value="2"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.paid')"
+          v-model="form.paymentStatus"
+          value="3"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Status  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.BankTransactionList"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.statusOption') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.unrecon')"
+          v-model="form.statusOptionBank"
+          value="2"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1"
+          :label="$t('labels.recon')"
+          v-model="form.statusOptionBank"
+          value="3"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filter Date  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.CityLedgerList || reportCode == reportCodeName.CityLedgerAgingReport ||
+reportCode == reportCodeName.CityLedgerAgingReportDetail || reportCode == reportCodeName.ApRefundDepositList ||
+reportCode == reportCodeName.ApRefundDepositAgingReport|| reportCode == reportCodeName.ApRefundDepositAgingReportDetail || reportCode == reportCodeName.ApCommissionAndOtherList ||
+reportCode == reportCodeName.ApCommissionAndOtherAgingReport || reportCode == reportCodeName.ApCommissionAndOtherAgingReportDetail || reportCode == reportCodeName.AccountReceivableList || reportCode == reportCodeName.AccountPayableList ||
+reportCode == reportCodeName.AccountPayableAgingReport || reportCode == reportCodeName.AccountPayableAgingReportDetail || reportCode == reportCodeName.AccountReceivableAgingReport || reportCode == reportCodeName.AccountReceivableAgingReportDetail"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.filterDate') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.byToDate')"
+          v-model="form.filterDate"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1 ml-1"
+          :label="$t('labels.bySelectedDateRange')"
+          v-model="form.filterDate"
+          value="2"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Page Option -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.IncomeStatement || reportCode == reportCodeName.ProfitAndLossBySubDepartment|| reportCode == reportCodeName.ProfitAndLossDetailBySubDepartment
+  || reportCode == reportCodeName.ProfitAndLossByDepartment || reportCode == reportCodeName.ProfitAndLossDetailByDepartment"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.pageOption') }}</div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="mt-1"
+          :label="$t('labels.noSplitPage')"
+          v-model="form.pageOption"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="mt-1"
+          :label="$t('labels.splitPerPage')"
+          v-model="form.pageOption"
+          value="2"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Description Text Alignment -->
+<div class="row" v-show="reportCode == reportCodeName.IncomeStatement">
+  <div class="col-4 pt-1 border">
+    {{ $t('commons.desciptionTextAlignment') }}
+  </div>
+  <div class="col-8 border">
+    <div class="row">
+      <div class="d-flex">
+        <c-radio
+          class="m-1"
+          :label="$t('labels.left')"
+          v-model="form.desciptionTextAlignment"
+          value="1"
+        >
+        </c-radio>
+        <c-radio
+          class="m-1"
+          :label="$t('labels.center')"
+          v-model="form.desciptionTextAlignment"
+          value="2"
+        >
+        </c-radio>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Unit -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.TrialBalance || reportCode == reportCodeName.BalanceSheet || reportCode == reportCodeName.IncomeStatement
+|| reportCode == reportCodeName.ProfitAndLoss || reportCode == reportCodeName.ProfitAndLossDetail || reportCode == reportCodeName.InventoryReconciliation
+|| reportCode == reportCodeName.DailyInventoryReconciliation || reportCode == reportCodeName.MonthlyInventoryReconciliation"
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.unit') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('SalesProposalStatus')"
+      id="sub_department_code"
+      :options="listDropdown.JournalTYPE"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.unit"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+<!-- Show Percentage  -->
+<div class="row" v-show="reportCode == reportCodeName.CityLedgerAgingReport">
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="sub_department_code"
+      :label="$t('labels.showPercentage')"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.showPercentage"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+</div>
+
+<!-- Include All Product Without Transaction -->
+<div class="row" v-show="reportCode == reportCodeName.FrequentlySales">
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="sub_department_code"
+      :label="$t('labels.includeAllProduct')"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.includeAllProduct"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+</div>
+
+<!-- Show Directly Out Only-->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.ReceiveStock || reportCode == reportCodeName.ReceiveStockDetail"
+>
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="sub_department_code"
+      :label="$t('labels.showDirectlyOutOnly')"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.showDirectlyOutOnly"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+</div>
+
+<!-- Hide View Outstanding  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.AccountReceivableAgingReport || reportCode == reportCodeName.AccountReceivableAgingReportDetail ||
+  reportCode == reportCodeName.AccountPayableAgingReport || reportCode == reportCodeName.AccountPayableAgingReportDetail"
+>
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="hide_outstanding"
+      :label="$t('labels.hideOutstanding')"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.hide_outstanding"
+      name="hide_outstanding"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+</div>
+
+<!-- Filter Product  -->
+<div class="row" v-show="reportCode == reportCodeName.ProductList">
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="sub_department_code"
+      :label="$t('labels.includeInactiveProduct')"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.includeInactiveProduct"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="sub_department_code"
+      :label="$t('labels.soldStatusOnly')"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.soldStatusOnly"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+</div>
+
+<!-- General Ledger -->
+<div class="row" v-show="reportCode == reportCodeName.GeneralLedger">
+  <div class="col-4 pt-1 border" style="color: red">
+    {{ $t('commons.filterAccount') }}
+  </div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      select-type="multiple"
+      v-model="form.generalLedgerAccount"
+      :options="listDropdown.JournalAccountUsed"
+      @change="testChange"
+      class="mt-1 mb-1"
+      @click="onClickFilter('JournalAccountUsed')"
+      labelName="name"
+      keyName="code"
+      name="searchOption"
+    />
+  </div>
+</div>
+
+<!-- Supplier  -->
+<div
+  class="row"
+  v-show="reportCode == reportCodeName.ActualDepartureGuestList || reportCode == reportCodeName.GuestInHouseListing || reportCode == reportCodeName.ExpectedArrival
+|| reportCode == reportCodeName.ExpectedDeparture || reportCode == reportCodeName.CurrentInHouse || reportCode == reportCodeName.ArrivalList || reportCode == reportCodeName.DayUse" 
+>
+  <div class="col-4 pt-1 border">{{ $t('commons.type') }}</div>
+  <div class="col-8 border">
+    <c-select
+      filter
+      @click="onClickFilter('RoomType')"
+      id="room_type"
+      :options="listDropdown.RoomType"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.room_type"
+      name="room_type"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </c-select>
+  </div>
+</div>
+
+<!-- Filter Product  -->
+<div class="row" v-show="reportCode == reportCodeName.ExpectedArrival || reportCode == reportCodeName.ExpectedDeparture || reportCode == reportCodeName.CurrentInHouse ||
+reportCode == reportCodeName.ArrivalList || reportCode == reportCodeName.DayUse">
+  <div class="col-4 border"></div>
+  <div class="col-8 border">
+    <checkbox
+      id="sub_department_code"
+      :label="$t('labels.showSummary')"
+      class="mb-1"
+      keyName="code"
+      labelName="name"
+      v-model="form.showSummaryGuestInHouse"
+      name="sub_department_code"
+      customLabelClass="col-3"
+      customClass="col-12 mt-1"
+    >
+    </checkbox>
+  </div>
+</div>

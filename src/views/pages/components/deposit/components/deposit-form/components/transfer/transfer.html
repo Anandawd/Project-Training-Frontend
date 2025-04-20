@@ -1,0 +1,106 @@
+<v-form
+  @submit="onSubmit"
+  ref="transferForm"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="transfer-deposit-form row"
+>
+  <div class="col-md">
+    <div class="row col mb-1">
+      <label required for="number" class="col-3 col-form-label"
+        >{{ $t("transaction.transferTo") }}</label
+      >
+      <div class="row col">
+        <c-select
+          required
+          class="col pr-0"
+          labelName="name"
+          keyName="code"
+          name="Type"
+          v-model="form.type"
+          :options="options.transferTypes"
+          @change="onChangeType"
+        ></c-select>
+
+        <c-select
+          id="number"
+          required
+          selectType="column"
+          :columnOptions="columnOptions"
+          class="col pl-0"
+          labelName="number"
+          name="Number"
+          v-model="number"
+          :options="options.numbers"
+          @change="onChangeNumber"
+        ></c-select>
+      </div>
+    </div>
+    <c-select
+      :disabled="form.type == 'R'"
+      :label="$t('transaction.subFolio')"
+      required
+      id="subFolioGroup"
+      customClass="col-lg-2 col-md-5 col-3 plx-9"
+      customLabelClass="col-3"
+      class="col mb-1"
+      name="Sub Folio"
+      v-model="form.sub_folio_group"
+      :options="$global.subFolioGroup"
+    ></c-select>
+  </div>
+  <div class="col-md">
+    <c-input
+      required
+      disabled
+      class="col mb-1"
+      type="text"
+      formatted
+      :label="$t('transaction.name')"
+      name="Name"
+      v-model="form.name"
+    ></c-input>
+    <c-input
+      required
+      focus
+      class="col mb-1"
+      type="number"
+      formatted
+      :label="$t('transaction.amount')"
+      name="Amount"
+      v-model="form.amount"
+    ></c-input>
+  </div>
+  <div class="col-md">
+    <!-- <div class="row mb-1">
+      <label for="remarkTransfer" class="col-md-3 col-form-label"
+        >{{ $t("transaction.remark") }}</label
+      >
+      <div class="col-md-9">
+        <textarea
+          type="text"
+          class="form-control"
+          rows="3"
+          id="remarkTransfer"
+          name="Remark"
+          v-model="form.remark"
+        />
+      </div>
+    </div> -->
+
+    <c-input
+      type="textarea"
+      class="col mb-1"
+      rows="3"
+      formatted
+      :label="$t('transaction.remark')"
+      name="Remark"
+      v-model="form.remark"
+    ></c-input>
+  </div>
+  <save-close-button
+    :isSaving="isSaving"
+    @save="onSave"
+    @close="onClose"
+  ></save-close-button>
+</v-form>

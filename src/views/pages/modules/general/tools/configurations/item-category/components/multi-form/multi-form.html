@@ -1,0 +1,336 @@
+<section class="content">
+  <div class="card">
+    <div class="card-header">
+      {{ title }}
+      <button type="button" class="close-button btn" @click="onClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="card-body">
+      <v-form
+        @submit="onSave"
+        ref="multiFormElement"
+        :validation-schema="schema"
+        @invalid-submit="onInvalidSubmit"
+        class="input-form row"
+        v-slot="{resetForm}"
+      >
+        <div class="row">
+          <div class="col-md-4 col-sm-6 d-none d-md-block d-sm-none">
+            <c-input
+              class="mb-1"
+              required
+              :disabled="modeData==$global.modeData.edit"
+              v-model="form.code"
+              :max="10"
+              :label="$t('labels.code')"
+              type="text"
+              name="Code"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+            <c-input
+              :max="100"
+              class="mb-1"
+              required
+              v-model="form.name"
+              :label="$t('labels.name')"
+              type="text"
+              name="Name"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+            <c-select
+              required
+              class="mb-1"
+              v-model="form.group_code"
+              :options="listDropdown.ItemGroup"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.group')"
+              name="Group"
+              customLabelClass="col-3"
+              customClass="col-9"
+            >
+              <template #append-end>
+                <button @click="$router.push({name: 'Item Group'})" type="button" class="input-group-text">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+              </template>
+            </c-select>
+            <c-select
+              required
+              class=""
+              v-model="form.journal_account_code"
+              :options="listDropdown.JournalAccountInventory"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.inventoryAccount')"
+              name="Inventory Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            >
+            </c-select>
+          </div>
+          <!-- for small width -->
+          <div class="col-md-4 col-sm-6 d-md-none d-sm-block">
+            <c-input
+              class="mb-1"
+              required
+              :disabled="modeData==$global.modeData.edit"
+              v-model="form.code"
+              :max="10"
+              :label="$t('labels.code')"
+              type="text"
+              name="Code"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+            <c-input
+              :max="100"
+              class="mb-1"
+              required
+              v-model="form.name"
+              :label="$t('labels.name')"
+              type="text"
+              name="Name"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+            <c-select
+              required
+              class="mb-1"
+              v-model="form.group_code"
+              :options="listDropdown.ItemGroup"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.group')"
+              name="Group"
+              customLabelClass="col-3"
+              customClass="col-9"
+            >
+              <template #append-end>
+                <button type="button" class="input-group-text">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+              </template>
+            </c-select>
+            <c-select
+              required
+              class="mb-1"
+              v-model="form.journal_account_code"
+              :options="listDropdown.JournalAccountInventory"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.inventoryAccount')"
+              name="Inventory Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            >
+            </c-select>
+            <c-select
+              required
+              class="mb-1"
+              v-model="form.journal_account_code_cogs"
+              :options="listDropdown.JournalAccount"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.cogsAccount')"
+              name="Cogs Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            ></c-select>
+          </div>
+
+          <div class="col-md-4 col-sm-6 d-none d-md-block d-sm-none">
+            <c-select
+              required
+              class="mb-1"
+              v-model="form.journal_account_code_cogs"
+              :options="listDropdown.JournalAccountCosting"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.cogsAccount')"
+              name="Cogs Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            ></c-select>
+            <c-select
+              required
+              v-model="form.journal_account_code_cogs2"
+              class="mb-1"
+              :options="listDropdown.JournalAccountCosting"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.cogsAccount2')"
+              name="Cogs Account 2"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            ></c-select>
+            <c-select
+              required
+              v-model="form.journal_account_code_expense"
+              class="mb-1"
+              :options="listDropdown.JournalAccountExpense"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.expenseAccount')"
+              name="Expense Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            ></c-select>
+            <c-select
+              required
+              v-model="form.journal_account_code_sell"
+              class="mb-1"
+              :options="listDropdown.JournalAccountIncome"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.sellAccount')"
+              name="Sell Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            ></c-select>
+          </div>
+          <!-- for small width -->
+          <div class="col-md-4 col-sm-6 d-md-none d-sm-block">
+            <c-select
+              required
+              v-model="form.journal_account_code_cogs2"
+              class="mb-1"
+              :options="listDropdown.JournalAccountCosting"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.cogsAccount2')"
+              name="Cogs Account 2"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            ></c-select>
+            <c-select
+              required
+              v-model="form.journal_account_code_expense"
+              class="mb-1"
+              :options="listDropdown.JournalAccountExpense"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.expenseAccount')"
+              name="Expense Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            ></c-select>
+            <c-select
+              required
+              v-model="form.journal_account_code_sell"
+              class="mb-1"
+              :options="listDropdown.JournalAccountIncome"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.sellAccount')"
+              name="Sell Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            ></c-select>
+            <c-select
+              required
+              v-model="form.journal_account_code_adjustment"
+              class="mb-1"
+              :options="listDropdown.JournalAccountInventory"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.adjustmentAccount')"
+              name="Adjustment Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            ></c-select>
+            <c-select
+              required
+              v-model="form.journal_account_code_spoil"
+              class="mb-1"
+              :options="listDropdown.JournalAccountExpense"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.spoilAccount')"
+              name="Spoil Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            ></c-select>
+          </div>
+
+          <div class="col-md-4 col-sm-6 d-none d-md-block d-sm-none">
+            <c-select
+              required
+              v-model="form.journal_account_code_adjustment"
+              class="mb-1"
+              :options="listDropdown.JournalAccountInventory"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.adjustmentAccount')"
+              name="Adjustment Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            ></c-select>
+            <c-select
+              required
+              v-model="form.journal_account_code_spoil"
+              class="mb-1"
+              :options="listDropdown.JournalAccountExpense"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.spoilAccount')"
+              name="Spoil Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+              selectType="column"
+              :columnOptions="columnOptions"
+            ></c-select>
+          </div>
+        </div>
+      </v-form>
+    </div>
+    <save-close-button
+      :isSaving="isSaving"
+      @save="onSubmit"
+      @close="onClose"
+    ></save-close-button>
+  </div>
+</section>

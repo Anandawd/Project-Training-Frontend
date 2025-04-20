@@ -1,0 +1,146 @@
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="container">
+      <transition name="slide-fade">
+        <InputForm
+          ref="inputFormElement"
+          :rowData="inputFormData"
+          v-show="showForm"
+          :schema="schema"
+          :formType="formType"
+          :modeData="modeData"
+          @save="handleSave"
+          @close="showForm=false"
+        />
+      </transition>
+
+      <transition name="slide-fade">
+        <payment-form
+          ref="paymentFormElement"
+          :rowData="inputFormData"
+          v-show="showPaymentForm"
+          :schema="schema"
+          :modeData="modeData"
+          @save="handleSave"
+          @close="showPaymentForm=false"
+        />
+      </transition>
+    </div>
+    <search-filter
+      :options="searchOptions"
+      :searchDefault="searchDefault"
+      :formType="$global.formType.accountPayable"
+      :defaultSearchBy="1"
+      @search="refreshData"
+    >
+      <template v-slot="{search}">
+        <div class="col-md-6 d-flex mb-md-4">
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="all"
+              id="all"
+              v-model="search.filter[0]"
+              value="0"
+              @change="onRefresh"
+            />
+            <label for="all">{{ $t('commons.filter.checkList.unpaid') }}</label>
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showActive"
+              id="showActive"
+              v-model="search.filter[0]"
+              value="1"
+              @change="onRefresh"
+            />
+            <label for="showActive"
+              >{{ $t('commons.filter.checkList.paid') }}</label
+            >
+          </div>
+        </div>
+      </template>
+    </search-filter>
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">
+          {{ $route.meta.isAp ? $t('title.accountPayable') :
+          $t('title.accountReceivable')}} {{ $t('commons.list') }}
+        </h3>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col sm-3 d-flex justify-content-end mb-2">
+            <button
+              v-show="!showForm"
+              type="button"
+              class="btn btn-primary mr-1"
+              @click="handleShowFormInput"
+            >
+              <i class="fas fa-plus"></i>
+              {{ $t('buttons.insert') }}
+            </button>
+            <button
+              v-show="!showForm"
+              type="button"
+              class="btn btn-primary mr-1"
+              @click="handleShowFormExpense"
+            >
+              <i class="fas fa-plus"></i>
+              {{ $t('buttons.insertAccrued') }}
+            </button>
+            <button
+              v-show="showPaymentButton"
+              type="button"
+              class="btn btn-primary"
+              @click="handleShowPayment('' , $global.modeData.insert)"
+            >
+              <i class="fas fa-plus"></i>
+              {{ $t('buttons.insertPayment') }}
+            </button>
+          </div>
+        </div>
+        <!-- //Table -->
+        <ag-grid-vue
+          :style="agGridSetting.styleAgGridFrame"
+          :class="agGridSetting.themeAgGrid"
+          :columnDefs="columnDefs"
+          :rowData="rowData"
+          :paginationPageSize="paginationPageSize"
+          :gridOptions="gridOptions"
+          :context="context"
+          :frameworkComponents="frameworkComponents"
+          :enableCellChangeFlash="true"
+          :rowSelection="rowSelection"
+          :getContextMenuItems="getContextMenu"
+          :defaultColDef="agGridSetting.defColDef"
+          :masterDetail="true"
+          :detailCellRenderer="detailCellRenderer"
+          :detailRowAutoHeight="detailRowAutoHeight"
+          :suppressDragLeaveHidesColumns="true"
+          :suppressMakeColumnVisibleAfterUnGroup="true"
+          :statusBar="statusBar"
+          :rowGroupPanelShow="rowGroupPanelShow"
+          @selection-changed="onSelectionChanged"
+          @grid-ready="onGridReady"
+          @cellContextMenu="handleRowRightClicked"
+        />
+      </div>
+    </div>
+    <CDialog
+      v-show="showDialog"
+      w100
+      dialogTitle="Confirm"
+      @confirm="deleteData"
+      @cancel="showDialog= false"
+      confirm
+    >
+      <template #body> Are you sure to delete this data? </template>
+    </CDialog>
+  </div>
+</section>

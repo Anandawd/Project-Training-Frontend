@@ -1,0 +1,145 @@
+<section>
+  <div class="card">
+    <div class="card-header">
+      <h4 id="list-item-1">{{$t('settings.companyInformation')}}</h4>
+    </div>
+    <div class="card-body">
+      <v-form
+        ref="formElement"
+        @submit="onSubmit"
+        @invalid-submit="onInvalidSubmit"
+        :validation-schema="schema"
+      >
+        <div class="row">
+          <div class="col mb-2">
+            <!-- <c-input
+              disabled
+              customClass="col-3"
+              class="mb-1"
+              v-model="form.code"
+              :label="$t('labels.code')"
+              name="code"
+            ></c-input> -->
+            <c-input
+              required
+              class="mb-1"
+              v-model="form.name"
+              :label="$t('labels.name')"
+              name="name"
+            ></c-input>
+            <c-input
+              required
+              class="mb-1"
+              v-model="form.street"
+              :label="$t('labels.street')"
+              name="street"
+            ></c-input>
+            <c-input
+              required
+              class="mb-1"
+              v-model="form.city"
+              :label="$t('labels.city')"
+              name="city"
+            ></c-input>
+            <c-select
+              class="mb-1"
+              v-model="form.country_code"
+              :options="options.Country"
+              labelName="name"
+              keyName="code"
+              :label="$t('labels.country')"
+              name="country_code"
+            ></c-select>
+            <c-select
+              class="mb-1"
+              v-model="form.state_code"
+              :options="options.State"
+              labelName="name"
+              keyName="code"
+              :label="$t('labels.state')"
+              name="state_code"
+            ></c-select>
+            <c-input
+              class="mb-1"
+              v-model="form.postal_code"
+              :label="$t('labels.postalCode')"
+              name="postal_code"
+            ></c-input>
+            <c-input
+              class="mb-1"
+              v-model="form.phone1"
+              :label="$t('labels.phone')+'1'"
+              name="phone1"
+            ></c-input>
+            <c-input
+              class="mb-1"
+              v-model="form.phone2"
+              :label="$t('labels.phone')+'2'"
+              name="phone2"
+            ></c-input>
+            <c-input
+              class="mb-1"
+              v-model="form.fax"
+              :label="$t('labels.fax')"
+              name="fax"
+            ></c-input>
+            <c-input
+              class="mb-1"
+              v-model="form.email"
+              :label="$t('labels.email')"
+              name="email"
+            ></c-input>
+            <c-input
+              class="mb-1"
+              v-model="form.website"
+              :label="$t('labels.website')"
+              name="website"
+            ></c-input>
+          </div>
+          <div v-if="screenSize != 'xs'" class="col-md-6">
+            <div class="w-100 text-center">
+              <div class="row justify-content-center">
+                <image-uploader
+                  field="img"
+                  @crop-success="cropSuccess"
+                  @crop-upload-success="cropUploadSuccess"
+                  @crop-upload-fail="cropUploadFail"
+                  lang-type="en"
+                  v-model="showImageUploader"
+                  :width="256"
+                  :height="256"
+                  :url="uploadURL"
+                  :params="params"
+                  :headers="headers"
+                  img-format="png"
+                ></image-uploader>
+                <div class="logo-wrapper">
+                  <img
+                    v-if="form.image_url"
+                    class="company-logo"
+                    height="256"
+                    width="256"
+                    alt=""
+                    :src="form.image_url"
+                  />
+                  <span v-if="!form.image_url">Minimun size 128x128</span>
+                  <div class="logo-overlay" @click="handleShowImageUploader">
+                    <span>Change Image</span>
+                  </div>
+                </div>
+              </div>
+              <p class="mt-1">We recommended an image of at least 512x512</p>
+              <button
+                class="btn btn-primary"
+                type="button"
+                @click="handleShowImageUploader"
+              >
+                {{$t('buttons.uploadImage')}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </v-form>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,68 @@
+.navbar-nav .nav-modules {
+  .dropdown-menu {
+    position: absolute;
+    .dropdown-item:not(.active) {
+      color: rgb(72, 72, 72);
+    }
+  }
+  button {
+    // margin-bottom: 5px;
+    background-color: rgb(77, 77, 77);
+    color: white;
+    border-radius: 5px;
+
+    border: none;
+  }
+}
+
+.custom-logo {
+  height: 100px;
+  position: relative;
+  img {
+    /* clip-path: inset(50px 50px 50px 50px); */
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    top: -50px;
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    clip-path: inset(20px 0px 20px 0px);
+  }
+}
+
+.sidebar-search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  input {
+    height: 32px !important;
+    width: 100%;
+    border-radius: 2px !important;
+    border: 1px solid #ccc;
+    padding: 5px;
+  }
+
+  .suggestion-list {
+    top: 37px;
+    z-index: 99;
+  }
+
+  .search-input {
+    padding-left: 30px; /* Adds space for the icon */
+    padding: 10px;
+    width: 200px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #343a40;
+  }
+
+  .search-icon {
+    position: absolute;
+    right: 15px;
+    top: 16px;
+    font-size: 16px;
+    color: #ccc;
+  }
+}

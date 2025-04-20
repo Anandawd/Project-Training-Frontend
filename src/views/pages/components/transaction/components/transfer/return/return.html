@@ -1,0 +1,27 @@
+<div class="transfer-account-form">
+  <Form @submit="onSubmit" ref="formElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit"
+    class="input-form row" v-slot="{resetForm}">
+    <div class="row">
+      <div class="col-md-5">
+        <div>
+          <label for="subFolio">{{ $t('transaction.returnTo') }}:</label>
+          <Select required half class="row mb-1" :label="$t('transaction.subFolio')" name="subFolioGroupCode"
+            v-model="form.sub_folio_group_code" :options="$global.subFolioGroup"></Select>
+        </div>
+        <b-form-radio v-model="form.return_type" name="returnType" :value="1">{{ $t('transaction.returnTransaction') }}
+        </b-form-radio>
+        <b-form-radio v-model="form.return_type" name="returnType" :value="2">{{ $t('transaction.removeAutoRouting') }}
+        </b-form-radio>
+        <b-form-radio v-model="form.return_type" name="returnType" :value="3">
+          {{ $t('transaction.removeTransactionAndAutoRouting') }}</b-form-radio>
+      </div>
+      <div class="col">
+        <ag-grid-vue :style="$global.agGrid.styleAgGridFrame1" :class="$global.agGrid.themeAgGrid"
+          :gridOptions="gridOptions" @grid-ready="onGridReady" @selection-changed="getSelectedRow"
+          :columnDefs="columnDefs" :rowData="rowData" :suppressRowClickSelection="true" :rowSelection="rowSelection"
+          :defaultColDef="$global.agGrid.colDef1"></ag-grid-vue>
+      </div>
+    </div>
+    <save-close-button :isSaving="isSaving" @save="onSave" @close="$emit('close')"></save-close-button>
+  </Form>
+</div>

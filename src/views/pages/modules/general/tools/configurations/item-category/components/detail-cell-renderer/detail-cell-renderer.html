@@ -1,0 +1,15 @@
+<section>
+  <other-cogs @delete="onDeleteOtherCogs" @edit="onEditOtherCogs" id="otherCogs" :rowData="otherCogsRowData" ref="otherCogsElement"></other-cogs>
+  <other-cogs2 @delete="onDeleteOtherCogs2" @edit="onEditOtherCogs2" id="otherCogs2" :rowData="otherCogs2RowData" ref="otherCogs2Element"></other-cogs2>
+  <other-expense @delete="onDeleteOtherExpense" @edit="onEditOtherExpense" id="otherExpense" :rowData="otherExpenseRowData" ref="otherExpenseElement"></other-expense>
+
+  <CDialog v-show="showDialogCogs" w100 dialogTitle="Confirm" @confirm="deleteDataCogs" @cancel="showDialogCogs= false" confirm>
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </CDialog>
+  <CDialog v-show="showDialogCogs2" w100 dialogTitle="Confirm" @confirm="deleteDataCogs2" @cancel="showDialogCogs2= false" confirm>
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </CDialog>
+  <CDialog v-show="showDialogExpense" w100 dialogTitle="Confirm" @confirm="deleteDataExpense" @cancel="showDialogExpense= false" confirm>
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </CDialog>
+</section>

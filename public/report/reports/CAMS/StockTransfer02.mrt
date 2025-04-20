@@ -1,0 +1,677 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="0" />
+    <DataSources isList="true" count="3">
+      <root_CompanyInformation Ref="2" type="DataTableSource" isKey="true">
+        <Alias>root_CompanyInformation</Alias>
+        <Columns isList="true" count="9">
+          <value>image_url,System.String</value>
+          <value>name,System.String</value>
+          <value>street,System.String</value>
+          <value>city,System.String</value>
+          <value>state,System.String</value>
+          <value>country,System.String</value>
+          <value>postal_code,System.String</value>
+          <value>phone1,System.String</value>
+          <value>fax,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>d4f305fc-b934-4e37-abd6-4881fe0410b7</Key>
+        <Name>root_CompanyInformation</Name>
+        <NameInSource>json.root_company</NameInSource>
+      </root_CompanyInformation>
+      <root_StockTransfer Ref="3" type="DataTableSource" isKey="true">
+        <Alias>root_StockTransfer</Alias>
+        <Columns isList="true" count="5">
+          <value>ORIGINAL,number,number,number,System.String,d104986811bd47c3819e733174a1d08e</value>
+          <value>ORIGINAL,request_by,request_by,request_by,System.String,b7a4fa348df54deeaa12ef52f09bcb14</value>
+          <value>ORIGINAL,date,date,date,System.DateTime,_x0034_237f5bf170b4deba6fba30925b00c9e</value>
+          <value>name,System.String</value>
+          <value>remark,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>e974b30b-8be1-4ee3-98d1-61996f6a5f4c</Key>
+        <Name>root_StockTransfer</Name>
+        <NameInSource>json.root_data_StockTransfer</NameInSource>
+      </root_StockTransfer>
+      <root_StockTransferDetail Ref="4" type="DataTableSource" isKey="true">
+        <Alias>root_StockTransferDetail</Alias>
+        <Columns isList="true" count="4">
+          <value>name_1,System.String</value>
+          <value>name,System.String</value>
+          <value>quantity,System.String</value>
+          <value>uom_code,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>03a9a918-2999-4d5d-9885-5c4b6c165fdd</Key>
+        <Name>root_StockTransferDetail</Name>
+        <NameInSource>json.root_data_StockTransferDetail</NameInSource>
+      </root_StockTransferDetail>
+    </DataSources>
+    <Relations isList="true" count="0" />
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <UserFunctions isList="true" count="0" />
+    <Variables isList="true" count="0" />
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>70c2ab9659474e959acec2ec9ce6aa90</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="5" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="5">
+        <ReportTitle1 Ref="6" type="ReportTitleBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,0.4,20,3.7</ClientRectangle>
+          <Components isList="true" count="18">
+            <Picture1 Ref="7" type="Image" isKey="true">
+              <Brush>White</Brush>
+              <ClientRectangle>0,0,2,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <DataColumn>root_CompanyInformation.image_url</DataColumn>
+              <Expressions isList="true" count="0" />
+              <IconColor>68, 114, 196</IconColor>
+              <Margins>2,2,2,2</Margins>
+              <Name>Picture1</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+            </Picture1>
+            <Memo1 Ref="8" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2,0,0.6,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,12,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo1</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.name}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo1>
+            <Memo2 Ref="9" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2.6,0,0.6,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo2</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.street}, {root_CompanyInformation.city}
+{root_CompanyInformation.state} {root_CompanyInformation.country}. {root_CompanyInformation.postal_code}
+Phone: {root_CompanyInformation.phone1}  Fax: {root_CompanyInformation.fax}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo2>
+            <Memo25 Ref="10" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.9,0,8.2,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo25</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>STOCK TRANSFER</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo25>
+            <Memo26 Ref="11" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3,0.8,5.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo26</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>: {root_StockTransfer.number}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo26>
+            <Memo3 Ref="12" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.1,0.8,2.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Width</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo3</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>ST No</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Bottom</VertAlignment>
+            </Memo3>
+            <Memo27 Ref="13" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3,1.3,5.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo27</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>: {root_StockTransfer.request_by}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo27>
+            <Memo28 Ref="14" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.1,1.3,2.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Width</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo28</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Request By</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Bottom</VertAlignment>
+            </Memo28>
+            <frxDBDsPurchaseOrderdate Ref="15" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3,1.8,5.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>frxDBDsPurchaseOrderdate</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>: {root_StockTransfer.date}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </frxDBDsPurchaseOrderdate>
+            <Memo22 Ref="16" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3,2.3,5.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo22</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>: {root_StockTransfer.name}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo22>
+            <Memo29 Ref="17" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.1,1.8,2.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Width</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo29</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Request By</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Bottom</VertAlignment>
+            </Memo29>
+            <Memo21 Ref="18" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.1,2.3,2.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Width</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo21</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>From</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Bottom</VertAlignment>
+            </Memo21>
+            <frxDBDsReceiveremark Ref="19" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.9,0.8,9.1,2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>frxDBDsReceiveremark</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_StockTransfer.remark}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </frxDBDsReceiveremark>
+            <Memo13 Ref="20" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>9.4,0.8,1.5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Width</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo13</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Remark</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo13>
+            <Memo8 Ref="21" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,3,1.2,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Width</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo8</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Num.</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo8>
+            <Memo9 Ref="22" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>1.2,3,10.8,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Width</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo9</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Item</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo9>
+            <Memo10 Ref="23" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>12,3,2.1,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo10</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Quantity</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo10>
+            <Memo12 Ref="24" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,3,5.9,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo12</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>To Store</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo12>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>ReportTitle1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+        </ReportTitle1>
+        <PageFooter1 Ref="25" type="PageFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,16.22,20,0.4</ClientRectangle>
+          <Components isList="true" count="2">
+            <Memo5 Ref="26" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,9.7,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo5</Name>
+              <Page isRef="5" />
+              <Parent isRef="25" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Printed: {Format("{0:dd/MM/yyyy hh:mm:ss}",Time)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo5>
+            <Memo6 Ref="27" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.7,0,9.3,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo6</Name>
+              <Page isRef="5" />
+              <Parent isRef="25" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Page {PageNumberThrough} of {TotalPageCount}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo6>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageFooter1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+        </PageFooter1>
+        <PageHeader1 Ref="28" type="PageHeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,4.9,20,0</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageHeader1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+        </PageHeader1>
+        <MasterData1 Ref="29" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,5.7,20,0.5</ClientRectangle>
+          <Components isList="true" count="5">
+            <Memo14 Ref="30" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,1.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo14</Name>
+              <Page isRef="5" />
+              <Parent isRef="29" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Line}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo14>
+            <frxDBDsDetailPOname Ref="31" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>1.2,0,10.8,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>frxDBDsDetailPOname</Name>
+              <Page isRef="5" />
+              <Parent isRef="29" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_StockTransferDetail.name_1}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </frxDBDsDetailPOname>
+            <Memo15 Ref="32" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>15,0,5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo15</Name>
+              <Page isRef="5" />
+              <Parent isRef="29" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_StockTransferDetail.name}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo15>
+            <frxDBDsDetailReceivequantity_receive Ref="33" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>12,0,2.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>frxDBDsDetailReceivequantity_receive</Name>
+              <Page isRef="5" />
+              <Parent isRef="29" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_StockTransferDetail.quantity}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </frxDBDsDetailReceivequantity_receive>
+            <frxDBDsDetailReceivesatuan Ref="34" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0,0.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>frxDBDsDetailReceivesatuan</Name>
+              <Page isRef="5" />
+              <Parent isRef="29" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_StockTransferDetail.uom_code}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </frxDBDsDetailReceivesatuan>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_StockTransferDetail</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+          <Sort isList="true" count="0" />
+        </MasterData1>
+        <ReportSummary1 Ref="35" type="ReportSummaryBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,7,20,2.7</ClientRectangle>
+          <Components isList="true" count="5">
+            <Memo17 Ref="36" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0.2,2,4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo17</Name>
+              <Page isRef="5" />
+              <Parent isRef="35" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Bottom</VertAlignment>
+            </Memo17>
+            <Memo16 Ref="37" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,12,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo16</Name>
+              <Page isRef="5" />
+              <Parent isRef="35" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Bottom</VertAlignment>
+            </Memo16>
+            <Memo24 Ref="38" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.5,2,4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo24</Name>
+              <Page isRef="5" />
+              <Parent isRef="35" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Bottom</VertAlignment>
+            </Memo24>
+            <Memo18 Ref="39" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.1,0,5.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo18</Name>
+              <Page isRef="5" />
+              <Parent isRef="35" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Bottom</VertAlignment>
+            </Memo18>
+            <Memo23 Ref="40" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>12,0,2.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Calibri,9</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo23</Name>
+              <Page isRef="5" />
+              <Parent isRef="35" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_StockTransferDetail.quantity))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Bottom</VertAlignment>
+            </Memo23>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepReportSummaryTogether>False</KeepReportSummaryTogether>
+          <Name>ReportSummary1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+        </ReportSummary1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>6a961ec8da684a7794d8a9dfd9a09100</Guid>
+      <Margins>0.5,0.5,0.5,0.5</Margins>
+      <Name>Page1</Name>
+      <PageHeight>14.85</PageHeight>
+      <PageWidth>21</PageWidth>
+      <Report isRef="0" />
+      <TitleBeforeHeader>True</TitleBeforeHeader>
+    </Page1>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>5/20/2024 4:36:27 PM</ReportChanged>
+  <ReportCreated>7/5/2023 1:05:46 PM</ReportCreated>
+  <ReportFile>C:\Users\David Geri\Documents\GitHub\chs_cloud_frontend\public\report\reports\CAMS\StockTransfer02.mrt</ReportFile>
+  <ReportGuid>e0754855720b40dfb749e87900592e05</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Centimeters</ReportUnit>
+  <ReportVersion>2024.1.4.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="0" />
+</StiSerializer>

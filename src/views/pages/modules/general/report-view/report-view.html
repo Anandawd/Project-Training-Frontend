@@ -1,0 +1,24 @@
+<!-- Main content -->
+<section class="content">
+  <!-- <div class="container-fluid">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{ $t('title.guestProfile') }}</h3>
+      </div>
+      <div id="tooltip" class="card-body">
+        
+      </div>
+      <div class="card-footer">Footer</div>
+    </div>
+  </div> -->
+  <div id="viewerContent"></div>
+  <c-dialog v-if="showDialog" close @close="handleCloseDownloadConfirmation">
+    <template #body>
+      Your report is ready to download. You can safely close this window
+      now.</template
+    >
+  </c-dialog>
+  <span v-else class="waiting-text"
+    >Please wait while we are generating your report</span
+  >
+</section>

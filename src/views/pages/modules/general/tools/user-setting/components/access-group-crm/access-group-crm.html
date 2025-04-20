@@ -1,0 +1,43 @@
+<section>
+  <div class="accordion" id="accordionAccessPos">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingAccessPos1">
+        <button
+          class="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseAccessPos1"
+          aria-expanded="true"
+          aria-controls="collapseAccessPos1"
+        >
+          Form Access
+        </button>
+      </h2>
+      <div
+        id="collapseAccessPos1"
+        class="accordion-collapse collapse show"
+        aria-labelledby="headingAccessPos1"
+        data-bs-parent="#accordionAccessPos"
+      >
+        <div
+          class="accordion-body row"
+          @contextmenu="onContextMenu($event,access.access_form,accessList.access_form)"
+        >
+          <div
+            v-if="access"
+            class="col"
+            v-for="(column,columnIndex) in calculateDataForDisplay(accessList.access_form)"
+          >
+            <div v-for="(item,i) in column" :key="i" :hidden="item.hidden">
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_form[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,872 @@
+<section class="content transaction">
+  <div class="container-fluid">
+    <div
+      v-if="!transactionType && !showProperties && !showGuestInHouseForm"
+      class="navigation row mb-1"
+    >
+      <div class="col-md-3">
+        <button class="btn btn-dark" type="button" @click="onClickBackButton">
+          <i class="fa fa-arrow-left mr-1"></i>{{ $t('buttons.back') }}
+        </button>
+      </div>
+      <div class="col-md">
+        <div class="d-md-flex justify-content-end">
+          <button
+            :disabled="!canUserAccess(
+            $global.frontDeskAccessOrder.accessFolio.printFolio
+          )"
+            class="w-100 btn-transaction btn btn-outline-primary mr-1"
+            type="button"
+            id="dropdownMenuButton1"
+            @click="handlePrintFolio"
+          >
+            <img
+              class="mr-1"
+              border="0"
+              width="16"
+              height="16"
+              src="/images/icons/color_print_icon32.png"
+            />
+            {{$t('buttons.printFolio')}}
+          </button>
+          <div class="btn-group">
+            <button
+              :disabled="!canUserAccess(
+            $global.frontDeskAccessOrder.accessFolio.cash
+          )"
+              type="button"
+              class="w-100 btn-charge btn btn-outline-success"
+              @click="setTransactionType($global.modeTransaction.cash)"
+            >
+              <img
+                border="0"
+                width="16"
+                height="16"
+                src="/images/icons/cash_icon24.png"
+              />
+              <span class="ml-2">{{$t('buttons.cash')}}</span>
+            </button>
+            <c-dropdown class="mr-1">
+              <template v-slot:dropdown-button>
+                <button
+                  :disabled="!canUserAccess(
+                  $global.frontDeskAccessOrder.accessFolio.charge
+                )"
+                  type="button"
+                  class="btn btn-success dropdown-toggle dropdown-toggle-split"
+                >
+                  <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+              </template>
+              <template v-slot:dropdown-menu>
+                <button
+                  :disabled="!canUserAccess(
+                $global.frontDeskAccessOrder.accessFolio.card
+              )"
+                  type="button"
+                  class="dropdown-item"
+                  @click="setTransactionType($global.modeTransaction.card)"
+                >
+                  <img
+                    border="0"
+                    width="16"
+                    height="16"
+                    src="/images/icons/card_icon24.png"
+                  />
+                  <span class="ml-2">{{$t('buttons.card')}}</span>
+                </button>
+                <button
+                  :disabled="!canUserAccess(
+                $global.frontDeskAccessOrder.accessFolio.directBill
+              )"
+                  type="button"
+                  class="dropdown-item"
+                  @click="setTransactionType($global.modeTransaction.directBill)"
+                >
+                  <img
+                    border="0"
+                    width="16"
+                    height="16"
+                    src="/images/icons/card_icon24.png"
+                  />
+                  <span class="ml-2">{{$t('buttons.directBill')}}</span>
+                </button>
+                <button
+                  v-if="isSubscribedHotel"
+                  :disabled="!canUserAccess(
+                $global.frontDeskAccessOrder.accessFolio.voucher
+              )"
+                  type="button"
+                  class="dropdown-item"
+                  @click="setTransactionType($global.modeTransaction.voucher)"
+                >
+                  <img
+                    border="0"
+                    width="16"
+                    height="16"
+                    src="/images/icons/color_voucher_icon24.png"
+                  />
+                  <span class="ml-2">{{$t('buttons.voucher')}}</span>
+                </button>
+                <button
+                  :disabled="!canUserAccess(
+                $global.frontDeskAccessOrder.accessFolio.otherPayment
+              )"
+                  type="button"
+                  class="dropdown-item"
+                  @click="setTransactionType($global.modeTransaction.other)"
+                >
+                  <img
+                    border="0"
+                    width="16"
+                    height="16"
+                    src="/images/icons/other_payment_icon24.png"
+                  />
+                  <span class="ml-2">{{$t('buttons.otherPayment')}}</span>
+                </button>
+                <hr v-if="isOpen" class="dropdown-divider" />
+                <button
+                  :disabled="!canUserAccess(
+                $global.frontDeskAccessOrder.accessFolio.cashRefund
+              )"
+                  v-if="isOpen"
+                  type="button"
+                  class="dropdown-item"
+                  @click="setTransactionType($global.modeTransaction.refund)"
+                >
+                  <img
+                    border="0"
+                    width="16"
+                    height="16"
+                    src="/images/icons/cash_refund_icon24.png"
+                  />
+                  <span class="ml-2">{{$t('buttons.cashRefund')}}</span>
+                </button>
+              </template>
+            </c-dropdown>
+          </div>
+          <div class="btn-group">
+            <button
+              :disabled="!canUserAccess(
+              $global.frontDeskAccessOrder.accessFolio.charge
+            )"
+              type="button"
+              class="w-100 btn-charge btn btn-outline-primary"
+              @click="setTransactionType($global.modeTransaction.charge)"
+            >
+              <img
+                class="mr-1"
+                border="0"
+                width="16"
+                height="16"
+                src="/images/icons/charge_icon24.png"
+              />{{$t('buttons.charge')}}
+            </button>
+            <c-dropdown class="mr-1">
+              <template v-slot:dropdown-button>
+                <button
+                  :disabled="!canUserAccess(
+                  $global.frontDeskAccessOrder.accessFolio.charge
+                )"
+                  type="button"
+                  class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                >
+                  <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+              </template>
+              <template v-slot:dropdown-menu>
+                <button
+                  :disabled="!canUserAccess(
+                  $global.frontDeskAccessOrder.accessFolio.charge
+                )"
+                  type="button"
+                  class="dropdown-item"
+                  @click="setTransactionType($global.modeTransaction.package)"
+                >
+                  <img
+                    class="mr-1"
+                    border="0"
+                    width="16"
+                    height="16"
+                    alt="package"
+                    src="/images/icons/package_icon24.png"
+                  />
+                  {{ $t('buttons.package') }}
+                </button>
+
+                <button
+                  :disabled="!canUserAccess(
+                  $global.frontDeskAccessOrder.accessFolio.charge
+                )"
+                  type="button"
+                  class="dropdown-item"
+                  @click="setTransactionType($global.modeTransaction.utility)"
+                >
+                  <img
+                    class="mr-1"
+                    border="0"
+                    width="16"
+                    height="16"
+                    alt="utility"
+                    src="/images/icons/color_utility_icon64.png"
+                  />
+                  {{ $t('buttons.utility') }}
+                </button>
+
+                <button
+                  :disabled="!canUserAccess(
+                  $global.frontDeskAccessOrder.accessFolio.charge
+                )"
+                  type="button"
+                  class="dropdown-item"
+                  @click="setTransactionType($global.modeTransaction.apTransaction)"
+                >
+                  <img
+                    class="mr-1"
+                    border="0"
+                    width="16"
+                    height="16"
+                    alt="apTransaction"
+                    src="/images/icons/ap_transaction_icon24.png"
+                  />
+                  {{ $t('buttons.apTransaction') }}
+                </button>
+                <button
+                  v-if="folioType == $global.folioType.guestFolio && isOpen"
+                  :disabled="!canUserAccess(
+                    $global.frontDeskAccessOrder.accessFolio.charge
+                  )"
+                  type="button"
+                  class="dropdown-item"
+                >
+                  <img
+                    class="mr-1"
+                    border="0"
+                    width="16"
+                    height="16"
+                    alt="autopost"
+                    src="/images/icons/autopost_icon24.png"
+                  />
+                  {{ $t('button.autoPostingRoomCharge') }}
+                </button>
+              </template>
+            </c-dropdown>
+          </div>
+          <button
+            v-if="isOpen"
+            :disabled="!canUserAccess(
+              $global.frontDeskAccessOrder.accessFolio.transfer
+            )"
+            type="button"
+            class="mb-md-0 mb-sm-1 w-100 btn-transaction btn btn-warning mr-md-1"
+            @click="setTransactionType($global.modeTransaction.transfer)"
+          >
+            <img
+              class="mr-1"
+              border="0"
+              width="16"
+              height="16"
+              src="/images/icons/transfer_icon24.png"
+            />
+            {{$t('buttons.transfer')}}
+          </button>
+          <!-- TODO: proses checkout masih ada error nih pas create folio kyknya -->
+          <button
+            v-if="isOpen"
+            :disabled="!canUserAccess(
+              $global.frontDeskAccessOrder.accessFolio.checkOut
+            )"
+            type="button"
+            class="mb-md-0 mb-sm-1 w-100 btn-transaction btn btn-danger"
+            @click="onClickCheckOut"
+          >
+            <img
+              class="mr-1"
+              border="0"
+              width="16"
+              height="16"
+              src="/images/icons/check_out_icon24.png"
+            />
+            {{$t('buttons.checkOut')}}
+          </button>
+        </div>
+      </div>
+    </div>
+    <transition name="slide-fade">
+      <div v-if="transactionType" class="card">
+        <div class="card-header">
+          {{isPayment && transactionType != $global.modeTransaction.refund ?
+          `${$t('transaction.addPayment')}: ` : "" }}
+          <b>{{ title }}</b>
+          <button type="button" class="close-button btn" @click="onFormClosed">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="card-body">
+          <div
+            v-if="isPayment && transactionType !== $global.modeTransaction.voucher"
+          >
+            <payment-form
+              ref="paymentFormElement"
+              :transaction-type="transactionType"
+              :balance="parseFloat(balance)"
+              :folioNumber="folioNumber"
+              @close="onFormClosed"
+              @save="onSave"
+            />
+          </div>
+          <div
+            v-else-if="transactionType === $global.modeTransaction.voucher"
+            class="voucher-form row mt-3"
+          >
+            <voucher-form
+              ref="voucherFormElement"
+              :rateAmount="rate.weekday_rate"
+              :folio-number="folioNumber"
+              @close="onFormClosed"
+              @save="onSave"
+            />
+          </div>
+          <div
+            v-else-if="transactionType === $global.modeTransaction.charge || transactionType === $global.modeTransaction.apTransaction"
+            class="charge-form row mt-3"
+          >
+            <charge-form
+              ref="chargeFormElement"
+              :transaction-type="transactionType"
+              :folioNumber="folioNumber"
+              :bookingNumber="bookingNumber"
+              :balance="parseFloat(balance)"
+              :formType="formType"
+              @close="onFormClosed"
+              @save="onSave"
+            />
+          </div>
+          <div
+            v-else-if="transactionType === $global.modeTransaction.package"
+            class="package-form row mt-3"
+          >
+            <package-form
+              ref="chargeFormElement"
+              :transaction-type="transactionType"
+              :bookingNumber="bookingNumber"
+              :folioNumber="folioNumber"
+              @close="onFormClosed"
+              @save="onSave"
+              :formType="formType"
+            />
+          </div>
+          <div
+            v-else-if="transactionType === $global.modeTransaction.utility"
+            class="charge-form row mt-3"
+          >
+            <utility-form
+              ref="utilityFormElement"
+              :transaction-type="transactionType"
+              :bookingNumber="bookingNumber"
+              :folioNumber="folioNumber"
+              :roomNumber="roomNumber"
+              @close="onFormClosed"
+              @save="onSave"
+              :formType="formType"
+            />
+          </div>
+          <div
+            v-else-if="transactionType === $global.modeTransaction.transfer"
+            class="transfer-form row mt-3"
+          >
+            <transfer-form
+              :transaction-type="transactionType"
+              :room-number="roomNumber"
+              :folio-number="folioNumber"
+              @close="onFormClosed"
+            />
+          </div>
+          <div
+            v-else-if="transactionType === $global.modeTransaction.changeCorrectionDate"
+            class="transfer-form row mt-3"
+          >
+            <change-correction-date-form
+              @close="onFormClosed"
+              :isDeposit="false"
+              :number="folioNumber"
+            ></change-correction-date-form>
+          </div>
+        </div>
+      </div>
+      <correction-form
+        v-else-if="showCorrectionForm"
+        :credential="credentialForm"
+        :titleID="paramsData.id"
+        :ID="paramsData.breakdown1"
+        @save="onSaveCorrection"
+        @close="showCorrectionForm=false"
+      >
+      </correction-form>
+      <advanced-correction-form
+        v-else-if="showAdvancedCorrection"
+        :credential="credentialForm"
+        :data="paramsData"
+        @save="onSaveCorrection"
+        @close="showAdvancedCorrection=false"
+      >
+      </advanced-correction-form>
+
+      <div v-else-if="showGuestInHouseForm">
+        <guest-in-house-form
+          v-if="headerData.type_code == $global.folioType.guestFolio"
+          :formType="$global.formType.transaction"
+          @close="showGuestInHouseForm=false"
+          ref="guestInHouseForm"
+          @refresh-data="onRefreshData"
+        >
+        </guest-in-house-form>
+        <div v-else class="card">
+          <div class="card-header">
+            {{ headerData.type_code == $global.folioType.deskFolio ? "Update "+
+            "Desk Folio: " + folioNumber : "Update Master Folio: " + folioNumber
+            }}
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <FolioForm
+                ref="folioForm"
+                :modeData="$global.modeData.edit"
+                :folioType="headerData.type_code == $global.folioType.deskFolio ? '2' : '1'"
+                :disabledEditData="headerData.status_code != $global.folioStatus.open"
+                @save="onRefreshData"
+                @close="showGuestInHouseForm=false"
+              >
+              </FolioForm>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+    <properties1
+      v-if="showProperties"
+      :breakdown1="breakdown1"
+      @close="showProperties=false"
+    ></properties1>
+    <div class="card transaction-header">
+      <div class="card-header d-flex justify-content-between">
+        <div class="w-100">{{$t('title.stayInformation')}}</div>
+        <div class="w-100 text-right pr-2">
+          <i
+            v-if="!(!isSubscribedHotel || headerData.system_code == $global.systemCode.Banquet)"
+            @click="handleGuestInHouse"
+            :title="$t('labels.edit')"
+            class="cursor-pointer fa fa-pencil-alt"
+          ></i>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-2 col-lg-2">
+            <div class="row">
+              <h3>F-{{ headerData.number }}</h3>
+            </div>
+            <div class="row">
+              <span v-if="headerData.room_number"
+                >R-{{ headerData.room_number }}</span
+              >
+            </div>
+          </div>
+          <div class="col-md-4 col-lg-4">
+            <div class="row">
+              <h6>{{ headerData.FullName }}</h6>
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.address') }}</label
+              >
+              <span class="text-truncate" :title="headerData.Address"
+                >: {{ headerData.Address }}</span
+              >
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.phone') }}</label
+              >
+              <span class="text-truncate">: {{ headerData.phone1 }}</span>
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.group') }}</label
+              >
+              <span class="text-truncate">: {{ headerData.GuestGroup }}</span>
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.guestType') }}</label
+              >
+              <span class="text-truncate"
+                >: {{ headerData.guest_type_code }}</span
+              >
+            </div>
+          </div>
+          <div class="col-md-4 col-lg-3">
+            <div class="d-flex">
+              <h5>{{ $t('transaction.header.stayInformation') }}</h5>
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.arrivalDate') }}</label
+              >
+              <span>: {{ headerData.arrival }}</span>
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.departureDate') }}</label
+              >
+              <span>: {{ headerData.departure }}</span>
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.adultOrChild') }}</label
+              >
+              <span>: {{ headerData.adult }} / {{ headerData.child }}</span>
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.roomType') }}</label
+              >
+              <span>: {{ headerData.room_type_code }}</span>
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.autoRouting') }}</label
+              >
+              <span>: {{ headerData.auto_routing }}</span>
+            </div>
+          </div>
+          <!-- hide on banquet -->
+          <div
+            v-if="formType != $global.formType.banquetInProgress && this.isSubscribedHotel"
+            class="col-md-4 col-lg-3"
+          >
+            <div class="d-flex">
+              <h5>{{ $t('transaction.header.rateInformation') }}</h5>
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.rateCode') }}</label
+              >
+              <span>: {{ headerData.room_rate_code }}</span>
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.rateAmount') }}
+                ({{headerData.currency_code}})</label
+              >
+              <span
+                >: {{ headerData.weekday_rate }} / {{ headerData.weekend_rate
+                }}</span
+              >
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.discountType') }}</label
+              >
+              <span
+                >: {{ headerData.discount_percent ? `${headerData.discount}%`
+                :'Amount' }}</span
+              >
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.discount')
+                }}({{headerData.currency_code}})</label
+              >
+              <span>: {{ headerData.discount }}</span>
+            </div>
+            <div class="d-flex">
+              <label class="title-width"
+                >{{ $t('transaction.header.roomCharge') }}
+                ({{headerData.currency_code}})</label
+              >
+              <span>: {{ headerData.room_charge_will_post }} </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card filter">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col-md-4">
+            <div class="d-flex">
+              <c-select
+                required
+                v-model="search.index"
+                class="col-3"
+                placeholder="Search By"
+                :options="searchOptions"
+                labelName="text"
+                keyName="value"
+                id="searchOption"
+                name="searchOption"
+              />
+              <div class="input-group col pr-0 pl-0">
+                <input
+                  v-model="search.text"
+                  type="search"
+                  class="form-control"
+                  placeholder="Search..."
+                  aria-label="searchData"
+                  @keyup.enter="onRefreshData"
+                />
+                <div class="input-group-append">
+                  <button class="input-group-text" @click="onRefreshData">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-5 pl-4">
+            <div class="row">
+              <c-checkbox
+                class="col"
+                v-model="search.showPossession"
+                @change="onRefreshData"
+              >
+                {{ $t('transaction.filter.possessionOnly') }}
+              </c-checkbox>
+              <c-checkbox
+                class="col"
+                v-model="search.showTransferred"
+                @change="onRefreshData"
+              >
+                {{ $t('transaction.filter.showTransferred') }}
+              </c-checkbox>
+            </div>
+            <div class="row">
+              <c-checkbox
+                class="col"
+                v-model="search.showCorrection"
+                @change="onRefreshData"
+              >
+                {{ $t('transaction.filter.showCorrection') }}
+              </c-checkbox>
+              <c-checkbox
+                class="col"
+                v-model="search.showVoid"
+                @change="onRefreshData"
+              >
+                {{ $t('transaction.filter.showVoid') }}</c-checkbox
+              >
+            </div>
+          </div>
+          <div class="col-md-3 d-flex justify-content-end">
+            <c-select
+              required
+              class="w-50 pr-0"
+              v-model="search.subFolioGroupCode"
+              :options="options.subFolioGroup"
+              labelName="name"
+              keyName="code"
+              name="subFolioGroup"
+              @change="onRefreshData"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <ag-grid-vue
+          :style="$global.agGrid.styleAgGridFrame2"
+          :class="$global.agGrid.themeAgGrid"
+          :paginationPageSize="paginationPageSize"
+          :gridOptions="gridOptions"
+          :context="context"
+          :columnDefs="columnDefs"
+          :allowContextMenuWithControlKey="true"
+          :frameworkComponents="frameworkComponents"
+          :rowData="rowData"
+          :defaultColDef="$global.agGrid.defColDef"
+          :getContextMenuItems="getContextMenu"
+          :suppressDragLeaveHidesColumns="true"
+          :suppressMakeColumnVisibleAfterUnGroup="true"
+          :enableCellChangeFlash="true"
+          :rowSelection="rowSelection"
+          :statusBar="statusBar"
+          :rowClassRules="rowClassRules"
+          @grid-ready="onGridReady"
+          @filterChanged="onFilterChanged"
+          @cellContextMenu="handleRowRightClicked"
+        ></ag-grid-vue>
+      </div>
+    </div>
+    <div class="card transaction-footer">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4 col-lg-4">
+            <div class="form-floating">
+              <textarea
+                disabled
+                class="form-control"
+                id="billInstruction"
+                v-model="headerData.bill_instruction"
+                style="height: 150px"
+              ></textarea>
+              <label for="billInstruction"
+                >{{$t('labels.billInstruction')}}</label
+              >
+            </div>
+          </div>
+          <div class="col-md-4 col-lg-4">
+            <div class="form-floating">
+              <textarea
+                disabled
+                class="form-control"
+                id="notes"
+                v-model="headerData.notes"
+                style="height: 150px"
+              ></textarea>
+              <label for="notes">{{$t('labels.notes')}}</label>
+            </div>
+          </div>
+          <div class="col-md col-lg pr-3 pl-3">
+            <div class="d-flex justify-content-between">
+              <label class="title-width"
+                ><h4>{{ $t('transaction.footer.totalCharge') }}</h4></label
+              >
+              <h4 class="text-danger">{{ footerData.Debit }}</h4>
+            </div>
+            <div class="d-flex justify-content-between">
+              <label class="title-width"
+                ><h4>{{ $t('transaction.footer.totalDeposit') }}</h4></label
+              >
+              <h4 class="text-success">{{ footerData.Credit }}</h4>
+            </div>
+            <hr class="divider" />
+            <div class="d-flex justify-content-between">
+              <label class="title-width"
+                ><h4>{{ $t('transaction.footer.balance') }}</h4></label
+              >
+              <h4>{{ footerData.Balance }}</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <Credential
+    ref="credentialElement"
+    :module="$global.accessModule.hotel"
+  ></Credential>
+  <c-confirmation ref="confirmationElement"></c-confirmation>
+  <c-dialog
+    v-if="showDialog"
+    @cancel="showDialog=false"
+    confirm
+    @confirm="checkOut"
+  >
+    <template #body>{{$t('messages.checkOutFolio')}}</template>
+  </c-dialog>
+  <c-dialog
+    v-if="showDialogUpdateSubDepartment"
+    @cancel="showDialogUpdateSubDepartment=false"
+    :title="$t('title.updateSubDepartment')"
+    :confirmText="$t('buttons.save')"
+    :cancelText="$t('buttons.close')"
+    confirmClass="btn-primary"
+    cancelClass="btn-danger"
+    @confirm="updateSubDepartment"
+  >
+    <template #body>
+      <c-select
+        :inlineLabel="false"
+        required
+        :label="$t('labels.subDepartment')"
+        v-model="subDepartmentCode"
+        :options="options.subDepartments"
+        @load="loadSubDepartment"
+        labelName="name"
+        keyName="code"
+        name="subDepartment"
+      />
+    </template>
+  </c-dialog>
+  <c-dialog
+    v-if="showDialogUpdateRemark"
+    @cancel="showDialogUpdateRemark=false"
+    :title="$t('title.updateRemark')"
+    :confirmText="$t('buttons.save')"
+    :cancelText="$t('buttons.close')"
+    confirmClass="btn-primary"
+    cancelClass="btn-danger"
+    @confirm="updateRemark"
+  >
+    <template #body>
+      <c-input
+        :inlineLabel="false"
+        :label="$t('labels.remark')"
+        type="textarea"
+        v-model="remark"
+      ></c-input>
+    </template>
+  </c-dialog>
+  <c-dialog
+    v-if="showDialogFolioBalance"
+    :title="$t('messages.errorTitle')"
+    @close="showDialogFolioBalance=false"
+    close
+  >
+    <template #body>{{$t('messages.cannotCloseFolioUnbalance')}}</template>
+  </c-dialog>
+  <c-dialog
+    v-if="showDialogUpdateDocumentNumber"
+    @cancel="showDialogUpdateDocumentNumber=false"
+    :title="$t('title.updateDocumentNumber')"
+    :confirmText="$t('buttons.save')"
+    :cancelText="$t('buttons.close')"
+    confirmClass="btn-primary"
+    cancelClass="btn-danger"
+    @confirm="updateDocumentNumber"
+  >
+    <template #body>
+      <c-input
+        :inlineLabel="false"
+        :label="$t('labels.documentNumber')"
+        type="text"
+        v-model="documentNumber"
+      ></c-input>
+    </template>
+  </c-dialog>
+  <c-dialog
+    v-if="showDialogFolioBalance"
+    :title="$t('messages.errorTitle')"
+    @close="showDialogFolioBalance=false"
+    close
+  >
+    <template #body>{{$t('messages.cannotCloseFolioUnbalance')}}</template>
+  </c-dialog>
+  <c-dialog
+    v-if="showPrintUtilityPeriod"
+    :confirmText="$t('buttons.preview')"
+    :cancelText="$t('buttons.close')"
+    :title="$t('messages.selectPeriod')"
+    @confirm="printUtility"
+    @cancel="showPrintUtilityPeriod=false"
+  >
+    <template #body>
+      <c-select
+        required
+        v-model="printUtilityPeriod"
+        :options="printUtilityPeriods"
+        keyName="period"
+        labelName="period"
+      ></c-select>
+    </template>
+  </c-dialog>
+
+  <print-folio-option
+    v-if="showPrintFolioOption"
+    @close="showPrintFolioOption=false"
+    :folio-number="folioNumber"
+    isCheckedOut=""
+  ></print-folio-option>
+</section>

@@ -1,0 +1,80 @@
+<v-form
+  @submit="onSubmit"
+  ref="inputForm"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="card"
+>
+  <div class="card-header">{{title}}</div>
+  <div class="card-body">
+    <div class="row">
+      <c-input
+        focus
+        class="col-md mb-1"
+        customLabelClass="col-6"
+        v-model="form.audit_date"
+        :label="$t('labels.transactionDate')"
+        name="date"
+      >
+      </c-input>
+      <c-input
+        disabled
+        formatted
+        type="number"
+        customLabelClass="col-6"
+        class="col-md mb-1"
+        v-model="form.amount_before"
+        :label="$t('labels.amountBefore')"
+        name="amount_before"
+      >
+      </c-input>
+      <c-radio
+        class="col mb-1"
+        :value="1"
+        v-model="form.is_fixed"
+        :label="$t('labels.fixedTotalAmount')"
+        name="is_fixed"
+      ></c-radio>
+      <c-radio
+        class="col mb-1"
+        :value="0"
+        v-model="form.is_fixed"
+        :label="$t('labels.changeTotalAmount')"
+        name="is_fixed"
+      ></c-radio>
+      <div class="col-md">
+        <button
+          aria-label="reset"
+          title="reset"
+          class="btn btn-outline-primary w-50 float-end"
+          type="button"
+          @click="handleReset"
+        >
+          {{$t('buttons.reset')}}
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <ag-grid-vue
+      :style="$global.agGrid.styleAgGridFrame1"
+      :class="$global.agGrid.themeAgGrid"
+      :columnDefs="columnDefs"
+      :rowData="rowData"
+      :paginationPageSize="paginationPageSize"
+      :gridOptions="gridOptions"
+      :context="context"
+      :frameworkComponents="frameworkComponents"
+      :rowSelection="rowSelection"
+      :defaultColDef="$global.agGrid.defColDef"
+      :rowGroupPanelShow="false"
+      @cellValueChanged="cellValueChanged"
+      @grid-ready="onGridReady"
+    />
+  </div>
+  <save-close-button
+    :isSaving="isSaving"
+    @save="handleSave"
+    @close="$emit('close')"
+  ></save-close-button>
+</v-form>

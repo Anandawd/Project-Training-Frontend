@@ -1,0 +1,47 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- button insert -->
+    <div class="d-flex justify-content-end mb-2">
+      <button
+        title="Generate Payroll"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleShowForm('', $global.modeData.insert)"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insert') }}
+      </button>
+    </div>
+
+    <!-- content -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{$t('title.payrollPeriod')}}</h3>
+      </div>
+      <div class="card-body">
+        <ag-grid-vue
+          :style="agGridSetting.styleAgGridFrame"
+          :class="agGridSetting.themeAgGrid"
+          :columnDefs="columnDefs"
+          :rowData="rowData"
+          :paginationPageSize="paginationPageSize"
+          :gridOptions="gridOptions"
+          :context="context"
+          :frameworkComponents="frameworkComponents"
+          :enableCellChangeFlash="true"
+          :rowSelection="rowSelection"
+          :getContextMenuItems="getContextMenu"
+          :defaultColDef="agGridSetting.defColDef"
+          :rowGroupPanelShow="rowGroupPanelShow"
+          :suppressDragLeaveHidesColumns="true"
+          :suppressMakeColumnVisibleAfterUnGroup=" true"
+          :statusBar="statusBar"
+          @grid-ready="onGridReady"
+          @cellContextMenu="handleRowRightClicked"
+        ></ag-grid-vue>
+      </div>
+    </div>
+
+    <!-- modal -->
+  </div>
+</section>

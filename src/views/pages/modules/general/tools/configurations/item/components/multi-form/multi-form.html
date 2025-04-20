@@ -1,0 +1,199 @@
+<section class="content">
+  <div class="card">
+    <div class="card-header">
+      {{ title }}
+      <button type="button" class="close-button btn" @click="onClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="card-body">
+      <v-form
+        @submit="onSave"
+        ref="multiFormElement"
+        :validation-schema="schema"
+        @invalid-submit="onInvalidSubmit"
+        class="input-form row"
+        v-slot="{resetForm}"
+      >
+        <div class="row">
+          <div class="col-md-4 col-sm-6">
+            <c-input
+              :focus="focus"
+              class="mb-1"
+              required
+              :disabled="modeData==$global.modeData.edit"
+              v-model="form.code"
+              :max="20"
+              :label="$t('labels.code')"
+              type="text"
+              name="Code"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+            <c-input
+              :max="100"
+              class="mb-1"
+              required
+              v-model="form.name"
+              :label="$t('labels.name')"
+              type="text"
+              name="Name"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+            <c-select
+              :disabled="isUsed && modeData==$global.modeData.edit"
+              filter
+              required
+              class="mb-1"
+              v-model="form.category_code"
+              :options="listDropdown.ItemCategory"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.category')"
+              name="Category"
+              customLabelClass="col-3"
+              customClass="col-9"
+              @load="repeatLoadDropdownList"
+            >
+              <template #append-end>
+                <button
+                  type="button"
+                  class="input-group-text"
+                  @click="$router.push({ name: 'Item Category' })"
+                >
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+              </template>
+            </c-select>
+            <c-select
+              :disabled="isUsed && modeData==$global.modeData.edit"
+              filter
+              required
+              class="mb-1"
+              v-model="form.uom_code"
+              :options="listDropdown.UOM"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.basicUom')"
+              name="Basic UOM"
+              customLabelClass="col-3"
+              customClass="col-9"
+              @load="repeatLoadDropdownList"
+            >
+            </c-select>
+            <div class="d-md-none d-sm-block">
+              <c-input
+                showZeroNumber
+                formatted
+                class="mb-1"
+                v-model="form.purchase_price"
+                :label="$t('labels.purchasePrice')"
+                type="number"
+                name="Purchase Price"
+                customLabelClass="col-3"
+                customClass="col-9"
+              ></c-input>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <div class="d-none d-md-block d-sm-none">
+              <c-input
+                showZeroNumber
+                formatted
+                class="mb-1"
+                v-model="form.purchase_price"
+                :label="$t('labels.purchasePrice')"
+                type="number"
+                name="Purchase Price"
+                customLabelClass="col-3"
+                customClass="col-9"
+              ></c-input>
+            </div>
+            <c-input
+              showZeroNumber
+              formatted
+              class="mb-1"
+              v-model="form.sell_price"
+              :label="$t('labels.sellPrice')"
+              type="number"
+              name="Sell Price"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+            <c-input
+              class="mb-1"
+              v-model="form.barcode"
+              :label="$t('labels.barcode')"
+              type="text"
+              name="Barcode"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+            <c-input
+              showZeroNumber
+              formatted
+              class="mb-1"
+              v-model="form.stock_minimum"
+              :label="$t('labels.stockMinimum')"
+              type="number"
+              name="Stock Minimum"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+            <div class="d-md-none d-sm-block">
+              <c-input
+                showZeroNumber
+                formatted
+                class="mb-1"
+                v-model="form.stock_maximum"
+                :label="$t('labels.stockMaximum')"
+                type="number"
+                name="Stock Maximum"
+                customLabelClass="col-3"
+                customClass="col-9"
+              ></c-input>
+              <c-input
+                class="mb-1"
+                v-model="form.remark"
+                :label="$t('labels.remark')"
+                type="text"
+                name="Remark"
+                customLabelClass="col-3"
+                customClass="col-9"
+              ></c-input>
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-6 d-none d-md-block d-sm-none">
+            <c-input
+              showZeroNumber
+              formatted
+              class="mb-1"
+              v-model="form.stock_maximum"
+              :label="$t('labels.stockMaximum')"
+              type="number"
+              name="Stock Maximum"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+            <c-input
+              class="mb-1"
+              v-model="form.remark"
+              :label="$t('labels.remark')"
+              type="text"
+              name="Remark"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+          </div>
+        </div>
+      </v-form>
+    </div>
+    <save-close-button
+      :isSaving="isSaving"
+      @save="onSubmit"
+      @close="onClose"
+    ></save-close-button>
+  </div>
+</section>

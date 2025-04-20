@@ -1,0 +1,111 @@
+<!-- <Form @submit="onSave" ref="inputFormElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit" -->
+    <div id="parrentAccordion" class="accordion">
+        <Form @submit="onSaveGrid()" ref="formElement" @invalid-submit="onInvalidSubmit" :validation-schema="schemaCredit"
+        class="input-form" v-slot="{resetForm}">
+            <div class="accordion-item">
+                <h6 class="accordion-header" id="itemInformationHeader">
+                    <button type="button" class="accordion-button d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+                    aria-controls="itemInformation" aria-expanded="false">
+                    <span class="col">Detail Information</span>
+                    <div class="col d-flex justify-content-end">
+                        <checkbox class="ml-4" style="float: right;" id="separate" v-model="formDetail.separate" type="checkbox"
+                        name="separate" @change="changeSeparate">
+                        </checkbox>
+                        <label for="separate" class="col-form-label ml-2">Separate Discount and Tax</label>
+                    </div>
+                    </button>
+                </h6>
+                <div id="itemInformation1" class="accordion-collapse p-3" aria-labelledby="itemInformationHeader1">
+                <div class="accordion-body card-block">
+                    <div class="row mb-3">
+                        <div class="col-md-4 col-sm-6 mb-1">
+                                <c-select required id="store" customLabelClass="col-3" customClass="col-9" class="mb-1" :options="listDropdown.Store" labelName="name"
+                                v-model="formDetail.store" :label="$t('labels.store')" @change="onChangeStore" name="store"><template #append-end>
+                                    <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                </template>
+                                </c-select>
+                                <c-select required id="item" customLabelClass="col-3" customClass="col-9" class="mb-1" selectType="column" :columnOptions="columnOptions"  :options="listDropdown.InventoryItem" keyName="code" labelName="name" 
+                                v-model="formDetail.item" :label="$t('labels.item')" name="item" @change="onChangeItem"><template #append-end>
+                                    <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                </template>
+                                </c-select>
+                                <c-input v-model="formDetail.quantity" :label="$t('labels.quantity')" showZeroNumber @change="onChangeQuantity" id="quantity" customLabelClass="col-3" customClass="col-9" class="mb-1" type="number" formatted
+                                name="quantity" />
+                                <c-select required id="uom" :label="$t('labels.uom')" customLabelClass="col-3" customClass="col-9" selectType="column" keyName="uom_code" :columnOptions="columnOptions" :options="listDropdownUom" labelName="name"
+                                v-model="formDetail.uom" @change="getUomCode" name="uom">
+                                </c-select>
+                        </div>  
+                        <div class="col-md-4 col-sm-6 mb-1">
+                                <c-input v-model="formDetail.price" :label="$t('labels.price')" id="price" showZeroNumber @change="onChangePrice" customLabelClass="col-3" customClass="col-9" class="mb-1" type="number" formatted
+                                name="price" />
+                                <c-input v-model="formDetail.total_price" :label="$t('labels.totalPrice')" id="total_price" showZeroNumber @change="onChangeTotalPrice" customLabelClass="col-3" customClass="col-9" class="mb-1" type="number" formatted
+                                name="total_price" />
+                                <c-input v-model="formDetail.discount" :label="$t('labels.discount')" :disabled="!formDetail.separate" id="discount" showZeroNumber @change="onChangeTotalPrice" customLabelClass="col-3" customClass="col-9" class="mb-1" type="number" formatted
+                                name="discount" />
+                                <c-input v-model="formDetail.tax" :label="$t('labels.tax')" id="tax" :disabled="!formDetail.separate" showZeroNumber @change="onChangeTotalPrice" customLabelClass="col-3" customClass="col-9" class="mb-1" type="number" formatted
+                                name="tax" />
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                                <c-datepicker v-model="formDetail.expire" :label="$t('labels.expire')" valueType="YYYY-MM-DD" format="DD/MM/YYYY" id="expire" customLabelClass="col-3" customClass="col-9" class="mb-1" type="date"
+                                name="expire" />
+                                <c-input v-model="formDetail.remark" :label="$t('labels.remark')" id="remark" customLabelClass="col-3" customClass="col-9" type="text"
+                                name="remark" />
+                        </div>
+
+                        <p class="mb-0" style="color: blue;">Costing Information for Directly Out Item</p>
+                        <hr class="pr-0" style="border: 1px solid black;">
+
+                        <div class="row">
+                            <div class="col-2 d-flex">
+                                    <input class="mr-1" :disabled="!disableForm" type="radio" name="asCogs" id="asCogs" v-model="formDetail.asCogsExpense" value="0"
+                                    @change="changeRadio">
+                                    <label for="asCogs" class="pt-2" style="font-size: 12px;">{{ $t('commons.filter.checkList.asCogs') }}</label>
+                            </div>
+                            <div class="col-2 d-flex">
+                                <input class="mr-1" type="radio" :disabled="!disableForm" name="asExpense" id="asExpense" v-model="formDetail.asCogsExpense" value="1"
+                                @change="changeRadio">
+                                <label for="asExpense" class="pt-2" style="font-size: 12px;">{{ $t('commons.filter.checkList.asExpense') }}</label>
+                        </div>
+                        <div class="col-md-4">
+                            <c-select required id="account" :label="$t('labels.account')" :disabled="!disableForm" customLabelClass="col-3" customClass="col-9" class="mb-1" keyName="uom_code" :options="listDropdownUom" labelName="name"
+                            v-model="formDetail.account"  name="account">
+                            </c-select>
+                        </div>
+                        <div class="col-md-4">
+                            <c-select required id="costing_group" :label="$t('labels.costingGroup')" :disabled="!disableForm" customLabelClass="col-3" customClass="col-9" class="mb-1" labelName="name"
+                            v-model="formDetail.costing_group" @change="onChangeSubDepartment" name="costing_group"><template #append-end>
+                                <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                            </template>
+                            </c-select>
+                        </div>
+                        </div>
+
+                    <div class="d-flex justify-content-end mb-2 mt-3">
+                        <div>
+                        <button type="button" class="btn btn-primary mr-1" @click="handleSaveGrid"><i
+                            class="fa fa-plus mr-1" aria-hidden="true"></i>{{isSave ? $t('buttons.save') :
+                            $t('buttons.insert') }}</button>
+                        <button v-if="isSave" type="button" class="btn btn-danger mr-1" @click="gridFormCancel"><i
+                            class="fa fa-times" aria-hidden="true"></i>
+                            {{$t('buttons.cancel')}}</button>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div v-show="isSave" class="disabled-grid"></div>
+                        <ag-grid-vue disabled :style="agGridSetting.styleAgGridFrame1" :class="agGridSetting.themeAgGrid"
+                        :columnDefs="columnDefs" :rowData="rowData" :paginationPageSize="paginationPageSize"
+                        :gridOptions="gridOptions" :context="context" :frameworkComponents="frameworkComponents"
+                        :enableCellChangeFlash="true" :rowSelection="rowSelection" :getContextMenuItems="getContextMenu"
+                        :defaultColDef="agGridSetting.defColDef" :suppressDragLeaveHidesColumns="true"
+                        :suppressMakeColumnVisibleAfterUnGroup="true" :statusBar="statusBar" @grid-ready="onGridReady"
+                        @cellContextMenu="handleRowRightClicked" @rowDataUpdated="onChangeFormList" :getRowNodeId="getRowNodeId"
+                        @cellValueChanged="cellValueChanged" />
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </Form>
+        </div>
+    
+    

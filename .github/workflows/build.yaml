@@ -1,0 +1,36 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  build:
+    runs-on: [self-hosted]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Dev
+        run: |
+          npm install --legacy-peer-deps
+
+      - name: Build
+        run: |
+          export NODE_OPTIONS='--max-old-space-size=8000'
+          npm run build
+
+      - name: Deploy
+        run: |
+          rm -f -r  /home/images
+          cp -f -r /home/chs_cloud_frontend/build/images /home/images 
+          rm -r -f /home/chs_cloud_frontend/build
+          cp -r -f ./build /home/chs_cloud_frontend/build
+          \cp -f -r /home/images /home/chs_cloud_frontend/build
+          docker container restart chs_cloud_frontend
+
+      - name: Test
+        run: |
+          time curl -I http://localhost:8080 | grep HTTP

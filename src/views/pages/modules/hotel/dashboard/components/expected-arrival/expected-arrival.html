@@ -1,0 +1,27 @@
+<div class="col-lg-6 mb-1">
+  <div class="card h-100">
+    <div class="card-header">{{$t('title.expectedArrival')}}</div>
+    <div class="card-body">
+      <ag-grid-vue
+        :style="agGridSetting.styleAgGridFrame100"
+        :class="agGridSetting.themeAgGrid"
+        :columnDefs="columnDefs"
+        :rowData="rowData"
+        :paginationPageSize="paginationPageSize"
+        :gridOptions="gridOptions"
+        :context="context"
+        :frameworkComponents="frameworkComponents"
+        :enableCellChangeFlash="true"
+        :rowSelection="rowSelection"
+        :getContextMenuItems="getContextMenu"
+        :defaultColDef="agGridSetting.defColDef"
+        :suppressDragLeaveHidesColumns="true"
+        :suppressMakeColumnVisibleAfterUnGroup="true"
+        :statusBar="statusBar"
+        @grid-ready="onGridReady"
+        @rowDoubleClicked="handleRowDoubleClicked"
+        @cellContextMenu="handleRowRightClicked"
+      />
+    </div>
+  </div>
+</div>

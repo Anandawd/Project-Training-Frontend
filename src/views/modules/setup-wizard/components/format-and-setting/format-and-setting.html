@@ -1,0 +1,100 @@
+<section>
+  <div>
+    <h2>Format & Setting</h2>
+    <div class="row justify-content-between">
+      <p class="col">
+        In this section, you will specify the format and settings related to
+        your hotel's property information and system configurations. These
+        details help establish consistency and streamline operations within your
+        hotel management system.
+      </p>
+    </div>
+
+    <div class="accordion-body row">
+      <v-form
+        @submit="onSubmit"
+        ref="formElement"
+        :validation-schema="schema"
+        @invalid-submit="onInvalidSubmit"
+        class="input-form"
+      >
+        <c-input
+          required
+          type="date"
+          customLabelClass="col-6"
+          customClass="col-6 plx-9"
+          class="mb-1 col-md-6"
+          :label="$t('labels.auditDate')"
+          v-model="form.audit_date"
+          name="Audit Date"
+          showError
+        ></c-input>
+        <c-select
+          customLabelClass="col-6"
+          class="mb-1 col-md-6"
+          v-model="form.timezone"
+          @change="onChangeData"
+          :clearable="false"
+          :options="options.Timezone"
+          :label="$t('labels.timezone')"
+          keyName="name"
+          labelName="name"
+          name="Timezone"
+        ></c-select>
+        <c-select
+          customLabelClass="col-6"
+          class="mb-1 col-md-6"
+          v-model="form.short_date_format"
+          @change="onChangeData"
+          :clearable="false"
+          :options="shortDateFormat"
+          :label="$t('labels.shortDateFormat')"
+          name="Short Date Format"
+        ></c-select>
+        <c-select
+          customLabelClass="col-6"
+          customClass="col-2 plx-9"
+          class="mb-1 col-md-6"
+          :clearable="false"
+          v-model="form.date_separator"
+          @change="onChangeData"
+          :options="dateSeparator"
+          :label="$t('labels.dateSeparator')"
+          name="Date Separator"
+        ></c-select>
+        <c-select
+          customLabelClass="col-6"
+          class="mb-1 col-md-6"
+          :clearable="false"
+          v-model="form.currency_format"
+          @change="onChangeData"
+          :options="currencyFormat"
+          :label="$t('labels.currencyFormat')"
+          name="Currency Format"
+        ></c-select>
+        <c-select
+          :clearable="false"
+          customLabelClass="col-6"
+          customClass="col-2  plx-9"
+          class="mb-1 col-md-6"
+          v-model="form.decimal_separator"
+          @change="onChangeData"
+          :options="decimalSeparator"
+          :label="$t('labels.decimalSeparator')"
+          name="Decimal Separator"
+        ></c-select>
+        <c-select
+          :clearable="false"
+          customLabelClass="col-6"
+          customClass="col-2  plx-9"
+          class="mb-1 col-md-6"
+          v-model="form.thousands_separator"
+          @change="onChangeData"
+          :options="thousandSeparator"
+          :label="$t('labels.thousandsSeparator')"
+          name="Thousand Separator"
+        ></c-select>
+      </v-form>
+    </div>
+  </div>
+</section>

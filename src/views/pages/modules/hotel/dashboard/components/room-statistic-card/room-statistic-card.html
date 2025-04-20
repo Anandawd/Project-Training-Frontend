@@ -1,0 +1,441 @@
+<div class="content">
+  <div class="">
+    <h4 v-if="showOccupancyByRoomType">By Bed</h4>
+    <div class="row">
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-white d-flex mb-2">
+          <div
+            class="icon align-self-center"
+            style="background-color: #ca324191"
+          >
+            <img
+              class="radius"
+              src="/images/icons/color_guest_in_house_icon64.png"
+            />
+          </div>
+          <div class="inner">
+            <span class="text-bold mr-2"> Occupancy</span>
+            <div class="d-flex">
+              <div class="text">
+                <h4 class="mb-0">
+                  <b>{{currentOccupancy.room}}</b>
+                  <sup style="font-size: 13px" class="text-bold text-danger"
+                    >{{currentOccupancyPercent.room}}%</sup
+                  >
+                </h4>
+                <span>Actual</span>
+              </div>
+              <h4 class="mr-1">/</h4>
+              <div class="text">
+                <h4 class="mb-0">
+                  <b>{{forecastOccupancy.room}}</b>
+                  <sup style="font-size: 13px" class="text-bold text-danger"
+                    >{{forecastOccupancyPercent.room}}%</sup
+                  >
+                </h4>
+                <span>Expected</span>
+              </div>
+              <!-- <sup style="font-size: 15px" class="text-bold text-danger"
+            >10%</sup
+          > -->
+            </div>
+            <span class="font-weight-light" style="font-size: 11px"
+              >Yesterday {{yesterdayOccupancy.room}}</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-white d-flex mb-2">
+          <div
+            class="icon align-self-center"
+            style="background-color: #00814391"
+          >
+            <img
+              class="radius"
+              src="/images/icons/color_vacant_room_icon64.png"
+            />
+          </div>
+          <div class="inner">
+            <span class="text-bold mr-2">Vacant</span>
+            <div class="d-flex">
+              <div class="text-center">
+                <h4 class="mb-0">
+                  <b>{{currentVacantRooms.room}}</b>
+                  <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+                </h4>
+                <span>Actual</span>
+              </div>
+              <h4 class="mr-1">/</h4>
+              <div class="text-center">
+                <h4 class="mb-0">
+                  <b>{{forecastVacantRooms.room}}</b>
+                  <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+                </h4>
+                <span>Expected</span>
+              </div>
+              <!-- <sup style="font-size: 15px" class="text-bold text-danger"
+            >10%</sup
+          > -->
+            </div>
+            <span class="font-weight-light" style="font-size: 11px"
+              >Yesterday {{yesterdayVacant.room}}</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-white d-flex mb-2">
+          <div
+            class="icon align-self-center"
+            style="background-color: #1279bf8c"
+          >
+            <img class="radius" src="/images/icons/check_in_icon64.png" />
+          </div>
+          <div class="inner">
+            <span class="text-bold">Arrival</span>
+            <div class="d-flex">
+              <div class="text-center">
+                <h4 class="mb-0">
+                  <b>{{currentArrival.room}}</b>
+                  <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+                </h4>
+                <span>Actual</span>
+              </div>
+              <h4 class="mr-1">/</h4>
+              <div class="text-center">
+                <h4 class="mb-0">
+                  <b>{{forecastArrival.room}}</b>
+                  <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+                </h4>
+                <span>Expected</span>
+              </div>
+              <!-- <sup style="font-size: 15px" class="text-bold text-danger"
+            >10%</sup
+          > -->
+            </div>
+            <span class="font-weight-light" style="font-size: 11px"
+              >Yesterday {{yesterdayArrival.room}}</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-white d-flex mb-2">
+          <div
+            class="icon align-self-center"
+            style="background-color: #004d748c"
+          >
+            <img class="radius" src="/images/icons/check_out_icon64.png" />
+          </div>
+          <div class="inner">
+            <span class="text-bold mr-2"> Departure</span>
+            <div class="d-flex">
+              <div class="text-center">
+                <h4 class="mb-0">
+                  <b>{{currentDeparture.room}}</b>
+                  <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+                </h4>
+                <span>Actual</span>
+              </div>
+              <h4 class="mr-1">/</h4>
+              <div class="text-center">
+                <h4 class="mb-0">
+                  <b>{{forecastDeparture.room}}</b>
+                  <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+                </h4>
+                <span>Expected</span>
+              </div>
+              <!-- <sup style="font-size: 15px" class="text-bold text-danger"
+            >10%</sup
+          > -->
+            </div>
+            <span class="font-weight-light" style="font-size: 11px"
+              >Yesterday {{yesterdayDeparture.room}}</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- By Room Type -->
+  <div v-if="showOccupancyByRoomType" class="">
+    <h4>By Room</h4>
+    <div class="row">
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-white d-flex mb-2">
+          <div
+            class="icon align-self-center"
+            style="background-color: #ca324191"
+          >
+            <img
+              class="radius"
+              src="/images/icons/color_guest_in_house_icon64.png"
+            />
+          </div>
+          <div class="inner">
+            <span class="text-bold mr-2"> Occupancy</span>
+            <div class="d-flex">
+              <div class="text">
+                <h4 class="mb-0">
+                  <b>{{currentOccupancy.type}}</b>
+                  <sup style="font-size: 13px" class="text-bold text-danger"
+                    >{{currentOccupancyPercent.type}}%</sup
+                  >
+                </h4>
+                <span>Actual</span>
+              </div>
+              <h4 class="mr-1">/</h4>
+              <div class="text">
+                <h4 class="mb-0">
+                  <b>{{forecastOccupancy.type}}</b>
+                  <sup style="font-size: 13px" class="text-bold text-danger"
+                    >{{forecastOccupancyPercent.type}}%</sup
+                  >
+                </h4>
+                <span>Expected</span>
+              </div>
+              <!-- <sup style="font-size: 15px" class="text-bold text-danger"
+            >10%</sup
+          > -->
+            </div>
+            <span class="font-weight-light" style="font-size: 11px"
+              >Yesterday {{yesterdayOccupancy.type}}</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-white d-flex mb-2">
+          <div
+            class="icon align-self-center"
+            style="background-color: #00814391"
+          >
+            <img
+              class="radius"
+              src="/images/icons/color_vacant_room_icon64.png"
+            />
+          </div>
+          <div class="inner">
+            <span class="text-bold mr-2">Vacant</span>
+            <div class="d-flex">
+              <div class="text-center">
+                <h4 class="mb-0">
+                  <b>{{currentVacantRooms.type}}</b>
+                  <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+                </h4>
+                <span>Actual</span>
+              </div>
+              <h4 class="mr-1">/</h4>
+              <div class="text-center">
+                <h4 class="mb-0">
+                  <b>{{forecastVacantRooms.type}}</b>
+                  <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+                </h4>
+                <span>Expected</span>
+              </div>
+              <!-- <sup style="font-size: 15px" class="text-bold text-danger"
+            >10%</sup
+          > -->
+            </div>
+            <span class="font-weight-light" style="font-size: 11px"
+              >Yesterday {{yesterdayVacant.type}}</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-white d-flex mb-2">
+          <div
+            class="icon align-self-center"
+            style="background-color: #1279bf8c"
+          >
+            <img class="radius" src="/images/icons/check_in_icon64.png" />
+          </div>
+          <div class="inner">
+            <span class="text-bold">Arrival</span>
+            <div class="d-flex">
+              <div class="text-center">
+                <h4 class="mb-0">
+                  <b>{{currentArrival.type}}</b>
+                  <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+                </h4>
+                <span>Actual</span>
+              </div>
+              <h4 class="mr-1">/</h4>
+              <div class="text-center">
+                <h4 class="mb-0">
+                  <b>{{forecastArrival.type}}</b>
+                  <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+                </h4>
+                <span>Expected</span>
+              </div>
+              <!-- <sup style="font-size: 15px" class="text-bold text-danger"
+            >10%</sup
+          > -->
+            </div>
+            <span class="font-weight-light" style="font-size: 11px"
+              >Yesterday {{yesterdayArrival.type}}</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-white d-flex mb-2">
+          <div
+            class="icon align-self-center"
+            style="background-color: #004d748c"
+          >
+            <img class="radius" src="/images/icons/check_out_icon64.png" />
+          </div>
+          <div class="inner">
+            <span class="text-bold mr-2"> Departure</span>
+            <div class="d-flex">
+              <div class="text-center">
+                <h4 class="mb-0">
+                  <b>{{currentDeparture.type}}</b>
+                  <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+                </h4>
+                <span>Actual</span>
+              </div>
+              <h4 class="mr-1">/</h4>
+              <div class="text-center">
+                <h4 class="mb-0">
+                  <b>{{forecastDeparture.type}}</b>
+                  <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+                </h4>
+                <span>Expected</span>
+              </div>
+              <!-- <sup style="font-size: 15px" class="text-bold text-danger"
+            >10%</sup
+          > -->
+            </div>
+            <span class="font-weight-light" style="font-size: 11px"
+              >Yesterday {{yesterdayDeparture.type}}</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end By Room Type -->
+
+  <div class="row">
+    <div class="col-lg-6 col-6">
+      <!-- small box -->
+      <div class="small-box bg-white d-flex mb-2">
+        <div class="icon align-self-center" style="background-color: #004d748c">
+          <img
+            class="radius"
+            src="/images/icons/color_income_budget_icon64.png"
+          />
+        </div>
+        <div class="inner">
+          <span class="text-bold mr-2"> Room Revenue</span>
+          <div class="d-flex">
+            <div class="text-center">
+              <h4 class="mb-0">
+                <b>{{revenueActual.room}}</b>
+                <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+              </h4>
+              <span>Actual</span>
+            </div>
+            <h4 class="mr-1">/</h4>
+            <div class="text-center">
+              <h4 class="mb-0">
+                <b>{{revenue.room}}</b>
+                <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+              </h4>
+              <span>Expected</span>
+            </div>
+            <!-- <sup style="font-size: 15px" class="text-bold text-danger"
+            >10%</sup
+          > -->
+          </div>
+          <!-- <span class="font-weight-light" style="font-size: 11px"
+          >Yesterday {{yesterdayDeparture.room}}</span
+        > -->
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 col-6">
+      <!-- small box -->
+      <div class="small-box bg-white d-flex mb-2">
+        <div class="icon align-self-center" style="background-color: #004d748c">
+          <img
+            class="radius"
+            src="/images/icons/color_statistic_budget_icon64.png"
+          />
+        </div>
+        <div class="inner">
+          <span class="text-bold mr-2"> Average Room Revenue</span>
+          <div class="d-flex">
+            <div class="text-center">
+              <h4 class="mb-0">
+                <b>{{arrActual.room}}</b>
+                <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+              </h4>
+              <span>Actual</span>
+            </div>
+            <h4 class="mr-1">/</h4>
+            <div class="text-center">
+              <h4 class="mb-0">
+                <b>{{arr.room}}</b>
+                <!-- <sup style="font-size: 13px" class="text-bold text-danger"
+                >10%</sup
+              > -->
+              </h4>
+              <span>Expected</span>
+            </div>
+            <!-- <sup style="font-size: 15px" class="text-bold text-danger"
+            >10%</sup
+          > -->
+          </div>
+          <!-- <span class="font-weight-light" style="font-size: 11px"
+          >Yesterday {{yesterdayDeparture}}</span
+        > -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ./col -->
+</div>

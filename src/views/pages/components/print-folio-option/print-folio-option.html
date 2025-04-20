@@ -1,0 +1,208 @@
+<CModal
+  size="md"
+  confirm
+  no-padding
+  close
+  :title="$t('title.printFolioOption')"
+  @close="handleClose"
+>
+  <template #body>
+    <div class="p-1">
+      <div class="card">
+        <div class="card-header">{{$t('title.breakdown')}}</div>
+        <div class="card-body row">
+          <c-radio
+            class="mb-1 col-6"
+            v-model="form.breakdown"
+            :label="$t('labels.dontShowCorrection')"
+            value="1"
+            name="breakdown"
+          ></c-radio>
+          <c-radio
+            class="mb-1 col-6"
+            v-model="form.breakdown"
+            :label="$t('labels.showBreakdown')"
+            value="2"
+            name="breakdown"
+          ></c-radio>
+          <c-radio
+            class="mb-1 col-6"
+            v-model="form.breakdown"
+            :label="$t('labels.showCorrection')"
+            value="3"
+            name="breakdown"
+          ></c-radio>
+          <c-radio
+            class="mb-1 col-6"
+            v-model="form.breakdown"
+            :label="$t('labels.showTaxAndService')"
+            value="4"
+            name="breakdown"
+          ></c-radio>
+          <c-radio
+            class="mb-1 col-6"
+            v-model="form.breakdown"
+            :label="$t('labels.showBreakdownTax')"
+            value="5"
+            name="breakdown"
+          ></c-radio>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">{{$t('title.filter')}}</div>
+        <div class="card-body">
+          <c-select
+            class="mb-1"
+            v-model="form.sub_folio_group_code"
+            :label="$t('labels.subFolio')"
+            :options="options.subFolioGroup"
+            labelName="code"
+            keyName="code"
+            name="subFolio"
+          >
+            <template #append-end>
+              <c-checkbox
+                v-model="form.show_rate"
+                booleanValue
+                :label="$t('labels.showRate')"
+                name="showRate"
+              ></c-checkbox>
+              <c-checkbox
+                v-model="form.show_void"
+                booleanValue
+                :label="$t('labels.showVoid')"
+                name="showVoid"
+              ></c-checkbox>
+            </template>
+          </c-select>
+          <c-select
+            selectType="column"
+            class="mb-1"
+            customClass="col-5 plx-9"
+            :columnOptions="columnOption"
+            v-model="form.belongs_to"
+            :label="$t('labels.belongsTo')"
+            :options="options.belongsTo"
+            keyName="BelongTo"
+            labelName="BelongTo"
+            name="belongsTo"
+          ></c-select>
+          <div class="row mb-1">
+            <label class="col-form-label col-3" for="filter"
+              >{{$t('labels.transferFilter')}}</label
+            >
+            <div class="col d-flex">
+              <c-checkbox
+                v-model="form.possession_only"
+                :label="$t('labels.possessionOnly')"
+                name="possession"
+              ></c-checkbox>
+              <c-checkbox
+                v-model="form.show_transferred"
+                :label="$t('labels.showTransferred')"
+                name="transferred"
+              ></c-checkbox>
+            </div>
+          </div>
+          <div class="row mb-1">
+            <label class="col-3 col-form-label required" for="startDate"
+              >{{$t('labels.transactionDate')}}</label
+            >
+            <div class="col row">
+              <c-datepicker
+                id="startDate"
+                class="col-5 pr-0"
+                v-model="form.start_date"
+                type="date"
+                valueType="YYYY-MM-DD"
+                format="DD/MM/YYYY"
+                name="startDate"
+              ></c-datepicker>
+              <c-datepicker
+                class="col-5 pl-0"
+                v-model="form.end_date"
+                type="date"
+                valueType="YYYY-MM-DD"
+                format="DD/MM/YYYY"
+                name="endDate"
+              ></c-datepicker>
+            </div>
+          </div>
+          <c-select
+            required
+            v-model="form.currency_code"
+            customClass="col-2 plx-9"
+            :label="$t('labels.currency')"
+            :options="options.currencies"
+            name="currencyCode"
+            labelName="code"
+            keyName="code"
+          ></c-select>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">{{$t('title.splitBillOption')}}</div>
+        <div class="card-body">
+          <c-checkbox
+            :disabled="!splitBillOption.contact_person1"
+            v-model="form.contact_person1"
+            :label="splitBillOption.contact_person1 ?? '(Not Available)'"
+            :value="form.contact_person1"
+            name="contactPerson1"
+          ></c-checkbox>
+          <c-checkbox
+            :disabled="!splitBillOption.contact_person2"
+            v-model="form.contact_person2"
+            :label="splitBillOption.contact_person2 ?? '(Not Available)'"
+            :value="form.contact_person2"
+            name="contactPerson2"
+          ></c-checkbox>
+          <c-checkbox
+            :disabled="!splitBillOption.contact_person3"
+            v-model="form.contact_person3"
+            :label="splitBillOption.contact_person3 ?? '(Not Available)'"
+            :value="form.contact_person3"
+            name="contactPerson3"
+          ></c-checkbox>
+          <c-checkbox
+            :disabled="!splitBillOption.contact_person4"
+            v-model="form.contact_person4"
+            :label="splitBillOption.contact_person4 ?? '(Not Available)'"
+            :value="form.contact_person4"
+            name="contactPerson4"
+          ></c-checkbox>
+        </div>
+      </div>
+    </div>
+  </template>
+  <template #footer>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-outline-primary mr-1"
+        @click="handlePrint()"
+      >
+        <img
+          src="/images/icons/color_print_icon32.png"
+          height="16"
+          width="16"
+        />
+        {{ $t("buttons.print") }}
+      </button>
+      <button type="button" class="btn btn-danger" @click="handleClose()">
+        <i class="fa fa-times"></i> {{ $t('buttons.close') }}
+      </button>
+    </div>
+  </template>
+</CModal>
+<c-dialog
+  v-if="showPrintCountDialog"
+  title="Confirm"
+  confirm
+  close
+  @close="handlePrintSplitBill()"
+>
+  <template #body>
+    Print Preview Folio {{folioPreviewed}}/{{folioCount}}
+  </template>
+</c-dialog>

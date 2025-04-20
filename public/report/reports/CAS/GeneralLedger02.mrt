@@ -1,0 +1,1355 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="0" />
+    <DataSources isList="true" count="2">
+      <root_GeneralLedger Ref="2" type="DataTableSource" isKey="true">
+        <Alias>root_GeneralLedger</Alias>
+        <Columns isList="true" count="10">
+          <value>ORIGINAL,account_code,account_code,account_code,System.String,_x0031_744fefa9751431d8b3a2dc5be7e1a58</value>
+          <value>ORIGINAL,name,name,name,System.String,_x0037_654a02f5b34487cb4749338753fbe28</value>
+          <value>ORIGINAL,Description,Description,Description,System.String,f4c3b8d59a414866be3ab92a4951e6ce</value>
+          <value>ORIGINAL,Balance,Balance,Balance,System.String,dadbe1a58cae488c8a6733be16b685b1</value>
+          <value>ORIGINAL,group_code,group_code,group_code,System.String,_x0030_aa09d24504349f0a73a4fa44a4f7bd4</value>
+          <value>ORIGINAL,Debit,Debit,Debit,System.String,_x0039_70ecd06986545a88bbbb2e0e45bfa8e</value>
+          <value>ORIGINAL,Credit,Credit,Credit,System.String,e6a78c2bfc004dfa8f44aa08567146e1</value>
+          <value>ORIGINAL,date,date,date,System.DateTime,bb1bc0b1328c46f286d4a277d2026470</value>
+          <value>ref_number,System.String</value>
+          <value>created_by,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>8931bf0e-1e46-4925-8473-73518032bbf7</Key>
+        <Name>root_GeneralLedger</Name>
+        <NameInSource>json.GeneralLedger</NameInSource>
+      </root_GeneralLedger>
+      <root_CompanyInformation Ref="3" type="DataTableSource" isKey="true">
+        <Alias>root_CompanyInformation</Alias>
+        <Columns isList="true" count="9">
+          <value>image_url,System.String</value>
+          <value>name,System.String</value>
+          <value>street,System.String</value>
+          <value>city,System.String</value>
+          <value>state,System.String</value>
+          <value>country,System.String</value>
+          <value>postal_code,System.String</value>
+          <value>phone1,System.String</value>
+          <value>fax,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>1d1a1e4e-1210-420d-913e-6c199342f539</Key>
+        <Name>root_CompanyInformation</Name>
+        <NameInSource>json.hotel_information</NameInSource>
+      </root_CompanyInformation>
+    </DataSources>
+    <Relations isList="true" count="0" />
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <UserFunctions isList="true" count="0" />
+    <Variables isList="true" count="8">
+      <value>,UserName,UserName,,System.String,,False,False,False,False</value>
+      <value>,DirectorName,DirectorName,,System.String,,False,False,False,False</value>
+      <value>,DirectorPosition,DirectorPosition,,System.String,,False,False,False,False</value>
+      <value>,HotelManagerName,HotelManagerName,,System.String,,False,False,False,False</value>
+      <value>,HotelManagerPosition,HotelManagerPosition,,System.String,,False,False,False,False</value>
+      <value>,Description,Description,,System.String,,False,False,False,False</value>
+      <value>,FinanceHeadName,FinanceHeadName,,System.String,,False,False,False,False</value>
+      <value>,FinanceHeadPosition,FinanceHeadPosition,,System.String,,False,False,False,False</value>
+    </Variables>
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>f381350ad9d749ea826591d7ea8b6442</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="4" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="8">
+        <ReportTitle1 Ref="5" type="ReportTitleBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,0.4,27.7,0</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>ReportTitle1</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+        </ReportTitle1>
+        <PageFooter1 Ref="6" type="PageFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,22.4,27.7,0.4</ClientRectangle>
+          <Components isList="true" count="2">
+            <Memo5 Ref="7" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,9.7,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo5</Name>
+              <Page isRef="4" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Printed: {Format("{0:dd/MM/yyyy hh:mm:ss}",Time)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo5>
+            <Memo6 Ref="8" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>18.4,0,9.3,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo6</Name>
+              <Page isRef="4" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Page {PageNumberThrough} of {TotalPageCount}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo6>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageFooter1</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+        </PageFooter1>
+        <GroupHeader1 Ref="9" type="GroupHeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,1.2,27.7,7</ClientRectangle>
+          <Components isList="true" count="28">
+            <root_GLAccountaccount_code Ref="10" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.4,4.9,12,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>root_GLAccountaccount_code</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_GeneralLedger.account_code}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </root_GLAccountaccount_code>
+            <root_GLAccountname1 Ref="11" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.4,4.4,12,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>root_GLAccountname1</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_GeneralLedger.name}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </root_GLAccountname1>
+            <Memo25 Ref="12" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>20.9,4.4,3.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo25</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Previous Balance</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo25>
+            <Memo30 Ref="13" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>24.3,4.4,3.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo30</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:N2}", root_GeneralLedger.Description=="Previous Balance"? (decimal.Parse(root_GeneralLedger.Balance) &gt; 0 ? (decimal.Parse(root_GeneralLedger.group_code) == 1 || decimal.Parse(root_GeneralLedger.group_code) == 5 || decimal.Parse(root_GeneralLedger.group_code) == 6 || decimal.Parse(root_GeneralLedger.group_code) == 7 || decimal.Parse(root_GeneralLedger.group_code) == 9? decimal.Parse(root_GeneralLedger.Balance) : -decimal.Parse(root_GeneralLedger.Balance)) : (decimal.Parse(root_GeneralLedger.group_code) == 2 || decimal.Parse(root_GeneralLedger.group_code) == 3 || decimal.Parse(root_GeneralLedger.group_code) == 4 || decimal.Parse(root_GeneralLedger.group_code) == 8 ? -decimal.Parse(root_GeneralLedger.Balance): decimal.Parse(root_GeneralLedger.Balance))): 0)}
+</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="14" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo30>
+            <Memo31 Ref="15" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>24,4.4,0.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo31</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo31>
+            <Memo38 Ref="16" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>20.9,4.9,3.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo38</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Mutation Debit</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo38>
+            <Memo39 Ref="17" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>24.3,4.9,3.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo39</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:N2}", (decimal.Parse(root_GeneralLedger.group_code) == 1 || decimal.Parse(root_GeneralLedger.group_code) == 5 || decimal.Parse(root_GeneralLedger.group_code) == 6 || decimal.Parse(root_GeneralLedger.group_code) == 7 || decimal.Parse(root_GeneralLedger.group_code) == 9) ? Sum(decimal.Parse(root_GeneralLedger.Debit)) : -Sum(decimal.Parse(root_GeneralLedger.Debit)))}
+</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="18" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo39>
+            <Memo40 Ref="19" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>24,4.9,0.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo40</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo40>
+            <Memo41 Ref="20" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>20.9,5.4,3.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo41</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Mutation Credit</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo41>
+            <Memo42 Ref="21" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>24.3,5.4,3.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo42</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:N2}", (decimal.Parse(root_GeneralLedger.group_code) == 2 || decimal.Parse(root_GeneralLedger.group_code) == 3 || decimal.Parse(root_GeneralLedger.group_code) == 4 || decimal.Parse(root_GeneralLedger.group_code) == 8) ? Sum(decimal.Parse(root_GeneralLedger.Credit)): -Sum(decimal.Parse(root_GeneralLedger.Credit)))}
+</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="22" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo42>
+            <Memo43 Ref="23" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>24,5.4,0.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo43</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo43>
+            <Memo44 Ref="24" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>20.9,5.9,3.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo44</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Mutation</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo44>
+            <Memo45 Ref="25" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>24.3,6.4,3.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo45</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:N2}", decimal.Parse(root_GeneralLedger.Balance) &gt; 0? (decimal.Parse(root_GeneralLedger.group_code) == 1 || decimal.Parse(root_GeneralLedger.group_code) == 5 || decimal.Parse(root_GeneralLedger.group_code) == 6 || decimal.Parse(root_GeneralLedger.group_code) == 7 || decimal.Parse(root_GeneralLedger.group_code) == 9? decimal.Parse(root_GeneralLedger.Balance): -decimal.Parse(root_GeneralLedger.Balance)): (decimal.Parse(root_GeneralLedger.group_code) == 2 || decimal.Parse(root_GeneralLedger.group_code) == 3 || decimal.Parse(root_GeneralLedger.group_code) == 4 || decimal.Parse(root_GeneralLedger.group_code) == 8 ? -decimal.Parse(root_GeneralLedger.Balance): decimal.Parse(root_GeneralLedger.Balance)))}
+</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="26" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo45>
+            <Memo46 Ref="27" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>24,5.9,0.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo46</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo46>
+            <Memo47 Ref="28" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>20.9,6.4,3.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo47</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Balance</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo47>
+            <Memo48 Ref="29" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>24.3,5.9,3.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo48</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:N2}", ((decimal.Parse(root_GeneralLedger.group_code) == 1 || decimal.Parse(root_GeneralLedger.group_code) == 5 || decimal.Parse(root_GeneralLedger.group_code) == 6 || decimal.Parse(root_GeneralLedger.group_code) == 7 || decimal.Parse(root_GeneralLedger.group_code) == 9)? Sum(decimal.Parse(root_GeneralLedger.Debit)): -Sum(decimal.Parse(root_GeneralLedger.Debit))) + 
+  ((decimal.Parse(root_GeneralLedger.group_code) == 2 || decimal.Parse(root_GeneralLedger.group_code) == 3 || decimal.Parse(root_GeneralLedger.group_code) == 4 || decimal.Parse(root_GeneralLedger.group_code) == 8)? Sum(decimal.Parse(root_GeneralLedger.Credit)): -Sum(decimal.Parse(root_GeneralLedger.Credit))))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="30" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo48>
+            <Memo49 Ref="31" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>24,6.4,0.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo49</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo49>
+            <Memo50 Ref="32" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,4.4,3.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo50</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Account</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo50>
+            <Memo51 Ref="33" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.1,4.4,0.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo51</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo51>
+            <Memo52 Ref="34" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,4.9,3.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo52</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Code</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo52>
+            <Memo53 Ref="35" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.1,4.9,0.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo53</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo53>
+            <Memo54 Ref="36" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,5.4,3.1,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo54</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Period</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo54>
+            <Memo55 Ref="37" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.1,5.4,0.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo55</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo55>
+            <MemoDescription Ref="38" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>3.45,5.4,12,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoDescription</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Description}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </MemoDescription>
+            <Memo1 Ref="39" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>5.5,2,16.7,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,12,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo1</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.name}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo1>
+            <MemoHeaderLine Ref="40" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,2.8,27.7,0.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoHeaderLine</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoHeaderLine>
+            <MemoReportTitle Ref="41" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11.65,3.2,4.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoReportTitle</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>GENERAL LEDGER</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoReportTitle>
+            <Picture1 Ref="42" type="Image" isKey="true">
+              <Brush>White</Brush>
+              <ClientRectangle>12.85,0,2.8,2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <HorAlignment>Center</HorAlignment>
+              <IconColor>68, 114, 196</IconColor>
+              <ImageURL>{root_CompanyInformation.image_url}</ImageURL>
+              <Margins>0,0,0,0</Margins>
+              <Name>Picture1</Name>
+              <Page isRef="4" />
+              <Parent isRef="9" />
+              <ShiftMode>None</ShiftMode>
+              <VertAlignment>Center</VertAlignment>
+            </Picture1>
+          </Components>
+          <Condition>{root_GeneralLedger.account_code}</Condition>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupHeader1</Name>
+          <NewPageBefore>True</NewPageBefore>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+        </GroupHeader1>
+        <GroupHeader2 Ref="43" type="GroupHeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,9,27.7,0.9</ClientRectangle>
+          <Components isList="true" count="9">
+            <Memo23 Ref="44" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,1.7,0.9</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo23</Name>
+              <Page isRef="4" />
+              <Parent isRef="43" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Date</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo23>
+            <Memo24 Ref="45" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>1.7,0,10.2,0.9</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo24</Name>
+              <Page isRef="4" />
+              <Parent isRef="43" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Description</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo24>
+            <Memo32 Ref="46" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11.9,0,2.4,0.9</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo32</Name>
+              <Page isRef="4" />
+              <Parent isRef="43" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Ref</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo32>
+            <Memo33 Ref="47" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.3,0,2.9,0.9</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo33</Name>
+              <Page isRef="4" />
+              <Parent isRef="43" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Debit</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo33>
+            <Memo34 Ref="48" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>17.2,0,2.9,0.9</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo34</Name>
+              <Page isRef="4" />
+              <Parent isRef="43" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Credit</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo34>
+            <Memo37 Ref="49" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>20.1,0,5.8,0.45</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo37</Name>
+              <Page isRef="4" />
+              <Parent isRef="43" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Balance</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo37>
+            <Memo7 Ref="50" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>25.9,0,1.8,0.9</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo7</Name>
+              <Page isRef="4" />
+              <Parent isRef="43" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>UserID</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo7>
+            <Memo35 Ref="51" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>20.1,0.45,2.9,0.45</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo35</Name>
+              <Page isRef="4" />
+              <Parent isRef="43" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Debit</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo35>
+            <Memo36 Ref="52" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>23,0.45,2.9,0.45</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo36</Name>
+              <Page isRef="4" />
+              <Parent isRef="43" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Credit</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo36>
+          </Components>
+          <Condition>{root_GeneralLedger.account_code}</Condition>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupHeader2</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+          <PrintOnAllPages>True</PrintOnAllPages>
+        </GroupHeader2>
+        <MasterData1 Ref="53" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,10.7,27.7,0.5</ClientRectangle>
+          <Components isList="true" count="8">
+            <root_GLAccountaudit_date Ref="54" type="Text" isKey="true">
+              <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,1.7,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>root_GLAccountaudit_date</Name>
+              <Page isRef="4" />
+              <Parent isRef="53" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:dd/MM/yyyy}", root_GeneralLedger.Description=="Previous Balance"?"":root_GeneralLedger.date)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </root_GLAccountaudit_date>
+            <root_GLAccountname Ref="55" type="Text" isKey="true">
+              <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <ClientRectangle>1.7,0,10.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>root_GLAccountname</Name>
+              <Page isRef="4" />
+              <Parent isRef="53" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_GeneralLedger.Description}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </root_GLAccountname>
+            <root_GLAccountref_number Ref="56" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11.9,0,2.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>root_GLAccountref_number</Name>
+              <Page isRef="4" />
+              <Parent isRef="53" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_GeneralLedger.Description=="Previous Balance"?"":root_GeneralLedger.ref_number}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </root_GLAccountref_number>
+            <root_GLAccountdebit Ref="57" type="Text" isKey="true">
+              <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.3,0,2.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>root_GLAccountdebit</Name>
+              <Page isRef="4" />
+              <Parent isRef="53" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_GeneralLedger.Debit}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="58" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </root_GLAccountdebit>
+            <root_GLAccountdebit1 Ref="59" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>17.2,0,2.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>root_GLAccountdebit1</Name>
+              <Page isRef="4" />
+              <Parent isRef="53" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_GeneralLedger.Credit}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="60" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </root_GLAccountdebit1>
+            <root_GLAccountfirst_insert Ref="61" type="Text" isKey="true">
+              <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>25.9,0,1.8,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>2,2,2,2</Margins>
+              <Name>root_GLAccountfirst_insert</Name>
+              <Page isRef="4" />
+              <Parent isRef="53" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_GeneralLedger.Description=="Previous Balance"?"":root_GeneralLedger.created_by}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </root_GLAccountfirst_insert>
+            <Memo3 Ref="62" type="Text" isKey="true">
+              <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>20.1,0,2.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo3</Name>
+              <Page isRef="4" />
+              <Parent isRef="53" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_GeneralLedger.Balance)&gt;0?decimal.Parse(root_GeneralLedger.Balance):0}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="63" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo3>
+            <Memo4 Ref="64" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>23,0,2.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo4</Name>
+              <Page isRef="4" />
+              <Parent isRef="53" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_GeneralLedger.Balance)&lt;0?-decimal.Parse(root_GeneralLedger.Balance):0}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="65" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo4>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_GeneralLedger</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData1</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+          <Sort isList="true" count="0" />
+        </MasterData1>
+        <GroupFooter2 Ref="66" type="GroupFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,12,27.7,0</ClientRectangle>
+          <Components isList="true" count="0" />
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupFooter2</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+        </GroupFooter2>
+        <GroupFooter1 Ref="67" type="GroupFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,12.8,27.7,0.5</ClientRectangle>
+          <Components isList="true" count="6">
+            <Memo10 Ref="68" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14.3,0,2.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo10</Name>
+              <Page isRef="4" />
+              <Parent isRef="67" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_GeneralLedger.Debit))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="69" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo10>
+            <Memo11 Ref="70" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>17.2,0,2.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo11</Name>
+              <Page isRef="4" />
+              <Parent isRef="67" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Sum(decimal.Parse(root_GeneralLedger.Credit))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="71" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo11>
+            <Memo12 Ref="72" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,14.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo12</Name>
+              <Page isRef="4" />
+              <Parent isRef="67" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Total </Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo12>
+            <Memo13 Ref="73" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>20.1,0,2.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo13</Name>
+              <Page isRef="4" />
+              <Parent isRef="67" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{IIF(decimal.Parse(root_GeneralLedger.Balance)&gt;0,decimal.Parse(root_GeneralLedger.Balance),0)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="74" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo13>
+            <Memo14 Ref="75" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>23,0,2.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo14</Name>
+              <Page isRef="4" />
+              <Parent isRef="67" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_GeneralLedger.Balance)&lt;0?-decimal.Parse(root_GeneralLedger.Balance):0}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextFormat Ref="76" type="NumberFormat" isKey="true">
+                <DecimalDigits>2</DecimalDigits>
+                <DecimalSeparator>,</DecimalSeparator>
+                <GroupSeparator>.</GroupSeparator>
+                <NegativePattern>1</NegativePattern>
+                <State>DecimalDigits</State>
+              </TextFormat>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo14>
+            <Memo15 Ref="77" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>25.9,0,1.8,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo15</Name>
+              <Page isRef="4" />
+              <Parent isRef="67" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo15>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>GroupFooter1</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+        </GroupFooter1>
+        <ReportSummary1 Ref="78" type="ReportSummaryBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,14.1,27.7,3.3</ClientRectangle>
+          <Components isList="true" count="10">
+            <Memo67 Ref="79" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>4.8,0.6,5.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo67</Name>
+              <Page isRef="4" />
+              <Parent isRef="78" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Prepared By,</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo67>
+            <Memo69 Ref="80" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>17.5,0.1,5.8,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo69</Name>
+              <Page isRef="4" />
+              <Parent isRef="78" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.city}, {Date}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo69>
+            <Memo68 Ref="81" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>17.5,0.6,5.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo68</Name>
+              <Page isRef="4" />
+              <Parent isRef="78" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Approved By,</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo68>
+            <MemoA1 Ref="82" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>4.8,2.1,5.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoA1</Name>
+              <Page isRef="4" />
+              <Parent isRef="78" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{FinanceHeadName}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </MemoA1>
+            <MemoA2 Ref="83" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>17.5,2.1,5.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoA2</Name>
+              <Page isRef="4" />
+              <Parent isRef="78" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{DirectorName}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </MemoA2>
+            <Memo8 Ref="84" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>17.5,2.6,5.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo8</Name>
+              <Page isRef="4" />
+              <Parent isRef="78" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{DirectorPosition}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo8>
+            <Memo18 Ref="85" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11.1,0.6,5.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo18</Name>
+              <Page isRef="4" />
+              <Parent isRef="78" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Acknowledge By,</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo18>
+            <MemoFinanceHeadName Ref="86" type="Text" isKey="true">
+              <Border>Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11.1,2.1,5.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoFinanceHeadName</Name>
+              <Page isRef="4" />
+              <Parent isRef="78" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{HotelManagerName}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoFinanceHeadName>
+            <Memo29 Ref="87" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>11.1,2.6,5.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo29</Name>
+              <Page isRef="4" />
+              <Parent isRef="78" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{HotelManagerPosition}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo29>
+            <Text1 Ref="88" type="Text" isKey="true">
+              <Border>None;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>4.8,2.6,5.9,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text1</Name>
+              <Page isRef="4" />
+              <Parent isRef="78" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{FinanceHeadPosition}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text1>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepReportSummaryTogether>False</KeepReportSummaryTogether>
+          <Name>ReportSummary1</Name>
+          <Page isRef="4" />
+          <Parent isRef="4" />
+        </ReportSummary1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>ca6f63b25276496a88fe4e78267e7526</Guid>
+      <Margins>1,1,1,1</Margins>
+      <Name>Page1</Name>
+      <Orientation>Landscape</Orientation>
+      <PageHeight>21</PageHeight>
+      <PageWidth>29.7</PageWidth>
+      <Report isRef="0" />
+      <TitleBeforeHeader>True</TitleBeforeHeader>
+    </Page1>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>10/2/2024 12:05:10 PM</ReportChanged>
+  <ReportCreated>9/19/2024 10:34:30 AM</ReportCreated>
+  <ReportFile>C:\Users\David Geri\Documents\GitHub\chs_cloud_frontend\public\report\reports\CAS\GeneralLedger02.mrt</ReportFile>
+  <ReportGuid>ccbb40bde2794d3fa591d08a556eae0d</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Centimeters</ReportUnit>
+  <ReportVersion>2024.1.4.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="0" />
+</StiSerializer>

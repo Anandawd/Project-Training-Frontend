@@ -1,0 +1,125 @@
+<div
+  ref="bookingInformationForm"
+  id="accordionRegistrationForm"
+  class="accordion"
+>
+  <div class="accordion-item">
+    <h3 class="accordion-header" id="accordion-bookingInformationHeader">
+      <button
+        type="button"
+        class="accordion-button"
+        aria-expanded="true"
+        aria-controls="accordion-bookingInformation"
+        data-bs-target="#accordion-bookingInformation"
+        data-bs-toggle="collapse"
+      >
+        {{ $t('title.chargeInformation') }}
+      </button>
+    </h3>
+    <div
+      id="accordion-bookingInformation"
+      class="accordion-collapse collapse show"
+      aria-labelledby="accordion-bookingInformationHeader"
+    >
+      <!-- Main content -->
+      <section class="content">
+        <div class="container-fluid">
+          <div class="mt-2">
+            <transition name="slide-fade-right">
+              <input-form-package
+                :focus="showFormPackage"
+                v-if="showFormPackage"
+                ref="inputFormPackageElement"
+                :formType="formType"
+                :isSaving="isSaving"
+                :modeData="modeData"
+                @save="handleSave"
+                :bookingNumber="bookingNumber"
+                @close="showFormPackage=false"
+              />
+            </transition>
+            <!-- </div>
+          <div class="mt-2"> -->
+            <transition name="slide-fade-right">
+              <InputFormProduct
+                :focus="showFormProduct"
+                ref="inputFormProductElement"
+                :isSaving="isSaving"
+                :defaultForm="form"
+                v-if="showFormProduct"
+                :schema="schema"
+                :modeData="modeData"
+                :bookingNumber="bookingNumber"
+                @save="handleSave"
+                @close="showFormProduct=false"
+              />
+            </transition>
+          </div>
+          <div class="mt-1">
+            <div class="d-flex justify-content-end mb-2">
+              <div class="d-flex justify-content-start mb-2 mt-2">
+                <button
+                  :disabled="showFormPackage || showFormProduct"
+                  title="Insert Package"
+                  type="button"
+                  class="btn btn-primary mr-1"
+                  @click="handleShowForm(true, $global.modeData.insert)"
+                >
+                  <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+                  $t('buttons.package') }}
+                </button>
+                <button
+                  :disabled="showFormPackage || showFormProduct"
+                  title="Insert Product"
+                  type="button"
+                  class="btn btn-primary mr-1"
+                  @click="handleShowForm(false, $global.modeData.insert)"
+                >
+                  <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+                  $t('buttons.product') }}
+                </button>
+                <c-checkbox
+                  @change="refreshData"
+                  class="mr-2"
+                  :label="$t('labels.showVoid')"
+                  v-model="ShowVoidCharge"
+                  booleanValue
+                ></c-checkbox>
+              </div>
+            </div>
+            <ag-grid-vue
+              :style="agGridSetting.styleAgGridFrame2"
+              :class="agGridSetting.themeAgGrid"
+              :columnDefs="columnDefs"
+              :rowData="rowData"
+              :paginationPageSize="paginationPageSize"
+              :gridOptions="gridOptions"
+              :context="context"
+              :frameworkComponents="frameworkComponents"
+              :enableCellChangeFlash="true"
+              :rowSelection="rowSelection"
+              :getContextMenuItems="getContextMenu"
+              :defaultColDef="agGridSetting.defColDef"
+              :suppressDragLeaveHidesColumns="true"
+              :suppressMakeColumnVisibleAfterUnGroup="true"
+              :statusBar="statusBar"
+              @grid-ready="onGridReady"
+              @cellContextMenu="handleRowRightClicked"
+              :rowGroupPanelShow="rowGroupPanelShow"
+            />
+          </div>
+          <CDialog
+            v-show="showDialog"
+            w100
+            dialogTitle="Confirm"
+            @confirm="deleteData"
+            @cancel="showDialog= false"
+            confirm
+          >
+            <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+          </CDialog>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

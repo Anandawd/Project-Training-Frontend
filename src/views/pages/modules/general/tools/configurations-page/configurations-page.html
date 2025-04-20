@@ -1,0 +1,81 @@
+<!-- Main content -->
+<section class="content p-lg-2">
+  <div class="card">
+    <div class="card-body">
+      <div class="search input-group">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search"
+          aria-label="Search"
+          v-model="filterText"
+          aria-describedby="button-addon2"
+          @keyup.enter="onSearch"
+          @input="onSearch"
+        />
+        <button
+          title="search"
+          class="btn btn-outline-secondary"
+          type="button"
+          id="button-addon2"
+          @click="onSearch"
+        >
+          <i class="fa fa-search fa-sm"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="configurations-content card">
+    <div class="card-body">
+      <div
+        id="accordionConfigurationPage"
+        class="accordion accordion-flush border mbp-5"
+      >
+        <div
+          v-for="(header, index) in displayItems"
+          :key="`header-${index}`"
+          class="accordion-item"
+        >
+          <h3 class="accordion-header" :id="`id${index}Header`">
+            <button
+              type="button"
+              class="accordion-button"
+              :class="{'collapsed':!isExpanded}"
+              aria-expanded="false"
+              :aria-controls="`id${index}`"
+              :data-bs-target="`#id${index}`"
+              data-bs-toggle="collapse"
+            >
+              {{ $t(`${header.label}`) }}
+            </button>
+          </h3>
+          <div
+            :id="`id${index}`"
+            class="accordion-collapse collapse"
+            :class="{'show':isExpanded}"
+            :aria-labelledby="`id${index}Header`"
+            :data-bs-parent="`#accordionConfigurationPage`"
+          >
+            <div class="content accordion-body">
+              <div class="row justify-content-start">
+                <div
+                  v-for="(item, index2) in header.children"
+                  :key="`children-${index2}`"
+                  @click="navigation(item.path)"
+                  class="configuration-item p-3 d-flex flex-column align-content-center align-items-center justify-content-center col-2 text-center"
+                >
+                  <img
+                    src="/images/icons/color_configuration_icon32.png"
+                    height="20"
+                    width="20"
+                  />
+                  <span>{{$t(item.label)}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

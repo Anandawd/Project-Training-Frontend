@@ -1,0 +1,323 @@
+<section>
+  <div v-if="access" class="accordion" id="accordionHotelAccess">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOneHotelAccess1">
+        <button
+          class="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseHotelAccess1"
+          aria-expanded="true"
+          aria-controls="collapseHotelAccess1"
+        >
+          Form Access
+        </button>
+      </h2>
+      <div
+        id="collapseHotelAccess1"
+        class="accordion-collapse collapse show"
+        aria-labelledby="headingOneHotelAccess1"
+        data-bs-parent="#accordionHotelAccess"
+      >
+        <div
+          class="accordion-body row"
+          @contextmenu="onContextMenu($event,access.access_form,accessList.access_form)"
+        >
+          <div
+            class="col"
+            v-for="(column,columnIndex) in calculateDataForDisplay(accessList.access_form)"
+          >
+            <div v-for="(item,i) in column">
+              <c-checkbox
+                v-if="!item.hidden"
+                :disabled="item.disabled"
+                :label="item.name"
+                v-model="access.access_form[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOneHotelAccess2">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseHotelAccess2"
+          aria-expanded="false"
+          aria-controls="collapseHotelAccess2"
+        >
+          Other Access
+        </button>
+      </h2>
+      <div
+        id="collapseHotelAccess2"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingOneHotelAccess2"
+        data-bs-parent="#accordionHotelAccess"
+      >
+        <div
+          @contextmenu="onContextMenu($event,access.access_reservation,accessList.access_reservation)"
+        >
+          <div class="text-divider mb-3 position-relative">
+            <span
+              class="label-badge-left badge bg-secondary text-dark position-absolute"
+              >Reservation</span
+            >
+          </div>
+          <div class="accordion-body row">
+            <div
+              class="col-2"
+              v-for="(item,i) in accessList.access_reservation"
+            >
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_reservation[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+        <div
+          @contextmenu="onContextMenu($event,access.access_deposit,accessList.access_deposit)"
+        >
+          <div class="text-divider mb-3 position-relative">
+            <span
+              class="label-badge-left badge bg-secondary text-dark position-absolute"
+              >Deposit Tools</span
+            >
+          </div>
+          <div class="accordion-body row">
+            <div class="col-2" v-for="(item,i) in accessList.access_deposit">
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_deposit[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+        <div
+          @contextmenu="onContextMenu($event,access.access_floor_plan,accessList.access_floor_plan)"
+        >
+          <div class="text-divider mb-3 position-relative">
+            <span
+              class="label-badge-left badge bg-secondary text-dark position-absolute"
+              >Floor Plan</span
+            >
+          </div>
+          <div class="accordion-body row">
+            <div class="col-2" v-for="(item,i) in accessList.access_floor_plan">
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_floor_plan[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+        <div
+          @contextmenu="onContextMenu($event,access.access_keylock,accessList.access_keylock)"
+        >
+          <div class="text-divider mb-3 position-relative">
+            <span
+              class="label-badge-left badge bg-secondary text-dark position-absolute"
+              >Key Lock</span
+            >
+          </div>
+          <div class="accordion-body row">
+            <div class="col-2" v-for="(item,i) in accessList.access_keylock">
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_keylock[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+        <div
+          @contextmenu="onContextMenu($event,access.access_in_house,accessList.access_in_house)"
+        >
+          <div class="text-divider mb-3 position-relative">
+            <span
+              class="label-badge-left badge bg-secondary text-dark position-absolute"
+              >In House</span
+            >
+          </div>
+          <div class="accordion-body row">
+            <div class="col-2" v-for="(item,i) in accessList.access_in_house">
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_in_house[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+        <div
+          @contextmenu="onContextMenu($event,access.access_folio,accessList.access_folio)"
+        >
+          <div class="text-divider mb-3 position-relative">
+            <span
+              class="label-badge-left badge bg-secondary text-dark position-absolute"
+              >Folio Transaction</span
+            >
+          </div>
+          <div class="accordion-body row">
+            <div class="col-2" v-for="(item,i) in accessList.access_folio">
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_folio[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+        <div
+          @contextmenu="onContextMenu($event,access.access_folio_history,accessList.access_folio_history)"
+        >
+          <div class="text-divider mb-3 position-relative">
+            <span
+              class="label-badge-left badge bg-secondary text-dark position-absolute"
+              >Folio History</span
+            >
+          </div>
+          <div class="accordion-body row">
+            <div
+              class="col-2"
+              v-for="(item,i) in accessList.access_folio_history"
+            >
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                :disabled="item.disabled"
+                v-model="access.access_folio_history[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+        <div
+          @contextmenu="onContextMenu($event,access.access_walk_in,accessList.access_walk_in)"
+        >
+          <div class="text-divider mb-3 position-relative">
+            <span
+              class="label-badge-left badge bg-secondary text-dark position-absolute"
+              >WI / CI / Update</span
+            >
+          </div>
+          <div class="accordion-body row">
+            <div class="col-2" v-for="(item,i) in accessList.access_walk_in">
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                :disabled="item.disabled"
+                v-model="access.access_walk_in[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+        <div
+          @contextmenu="onContextMenu($event,access.access_member_voucher_gift,accessList.access_member_voucher_gift)"
+        >
+          <div class="text-divider mb-3 position-relative">
+            <span
+              class="label-badge-left badge bg-secondary text-dark position-absolute"
+              >Member, Voucher & Gift</span
+            >
+          </div>
+          <div class="accordion-body row">
+            <div
+              class="col-2"
+              v-for="(item,i) in accessList.access_member_voucher_gift"
+            >
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                :disabled="item.disabled"
+                v-model="access.access_member_voucher_gift[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOneHotelAccess4">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseHotelAccess4"
+          aria-expanded="true"
+          aria-controls="collapseHotelAccess4"
+        >
+          Special Access
+        </button>
+      </h2>
+      <div
+        id="collapseHotelAccess4"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingOneHotelAccess4"
+        data-bs-parent="#accordionHotelAccess"
+      >
+        <div
+          @contextmenu="onContextMenu($event,access.access_special,accessList.access_special)"
+        >
+          <div class="accordion-body row">
+            <div
+              class="col"
+              v-for="(column,columnIndex) in calculateDataForDisplay(accessList.access_special)"
+            >
+              <div v-for="(item,i) in column">
+                <!-- <c-checkbox
+                  class="mb-1"
+                  customLabelClass="col-6"
+                  v-if="item.code == $global.frontDeskAccessOrder.accessSpecial.printInvoiceMoreThan &&!item.hidden"
+                  :label="item.name"
+                  v-model="access.access_special[item.code]"
+                >
+                  <template #body>
+                    <c-input
+                      class="ml-3 mb-1"
+                      customLabelClass="col-6"
+                      v-if="item.code == $global.frontDeskAccessOrder.accessSpecial.printInvoiceMoreThan &&!item.hidden"
+                      type="number"
+                      spinner
+                      v-model="access.print_invoice_count"
+                    ></c-input> </template
+                ></c-checkbox> -->
+                <c-input
+                  class="ml-3 mb-1"
+                  customLabelClass="col-6"
+                  v-if="item.code == $global.frontDeskAccessOrder.accessSpecial.maxPercent &&!item.hidden"
+                  type="number"
+                  spinner
+                  :label="item.name"
+                  v-model="access.sa_max_discount_percent"
+                ></c-input>
+                <c-input
+                  class="ml-3 mb-1"
+                  customLabelClass="col-6"
+                  v-else-if="item.code == $global.frontDeskAccessOrder.accessSpecial.maxAmount &&!item.hidden"
+                  type="number"
+                  formatted
+                  showZeroNumber
+                  :label="item.name"
+                  v-model="access.sa_max_discount_amount"
+                ></c-input>
+                <c-checkbox
+                  class="mb-1"
+                  v-else-if="!item.hidden"
+                  :label="item.name"
+                  v-model="access.access_special[item.code]"
+                ></c-checkbox>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

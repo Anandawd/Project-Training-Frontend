@@ -1,0 +1,40 @@
+<!-- <Form class="main-payment-form">  -->
+<div v-show="showDepositForm" class="card">
+  <div class="card-header">
+    {{ formType !== $global.modeDeposit.transfer ?
+    $t('transaction.addPayment')+': '+ title : title}}
+  </div>
+  <div class="card-body mt-3">
+    <div v-if="formType === $global.modeDeposit.transfer">
+      <TransferForm
+        :isSaving="isSaving"
+        @save="onSaveTransfer"
+        @close="showDepositForm=false"
+        :reservationNumber="reservationNumber"
+        ref="transferForm"
+      />
+    </div>
+    <div
+      v-else-if="formType === $global.modeDeposit.cash || formType === $global.modeDeposit.refund || formType === $global.modeDeposit.other"
+    >
+      <PaymentChargeForm
+        ref="paymentChargeForm"
+        :modeEditorTransaction="modeEditorTransaction"
+        :param="reservationNumber"
+        :isSaving="isSaving"
+        :isBanquet="isBanquet"
+        @close="showDepositForm=false"
+        @save="onSaveDeposit"
+      />
+    </div>
+    <div v-else-if="formType === $global.modeDeposit.card">
+      <BankCardForm
+        ref="bankCardForm"
+        :isSaving="isSaving"
+        :modeEditorTransaction="modeEditorTransaction"
+        @close="showDepositForm=false"
+        @save="onSaveDeposit"
+      />
+    </div>
+  </div>
+</div>

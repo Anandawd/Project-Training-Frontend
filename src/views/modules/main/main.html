@@ -1,0 +1,66 @@
+<div v-if="!showDayendCloseStatusPage" class="wrapper mr-2">
+  <div class="position-relative" v-if="!showConfirmWindowOpen">
+    <div id="header" class="position-relative">
+      <app-header @changePassword="handleChangePassword"></app-header>
+      <active-menu></active-menu>
+    </div>
+    <menu-sidebar></menu-sidebar>
+    <main-content class="pb-5 mr-md-2"></main-content>
+    <credential ref="credential"></credential>
+    <app-footer></app-footer>
+    <control-sidebar></control-sidebar>
+    <div
+      id="sidebar-overlay"
+      v-if="screenSize === 'xs' && isSidebarMenuCollapsed"
+      @click="toggleMenuSidebar"
+    ></div>
+  </div>
+  <c-dialog v-if="showConfirmWindowOpen" size="md">
+    <template #body>
+      Cakrasoft System is open in another window. Click "Use here" to use it in
+      this window.
+    </template>
+    <template #footer>
+      <button
+        class="w-25 btn btn-outline-primary mr-1"
+        type="button"
+        @click="handleClose()"
+      >
+        CLOSE
+      </button>
+      <button
+        class="w-25 btn btn-primary"
+        type="button"
+        @click="handleUseHereDialog()"
+      >
+        USE HERE
+      </button>
+    </template>
+  </c-dialog>
+  <c-dialog v-if="announcement.text" size="md">
+    <template #body> {{announcement.text}} </template>
+    <template #footer>
+      <button
+        class="w-25 btn btn-outline-primary mr-1"
+        type="button"
+        @click="handleAnnouncementAction()"
+      >
+        CLOSE
+      </button>
+    </template>
+  </c-dialog>
+
+  <change-password
+    v-if="showChangePassword"
+    @close="showChangePassword=false"
+  ></change-password>
+  <tracking-data></tracking-data>
+  <c-dialog v-if="showDialog" close :title="$t('messages.errorTitle')">
+    <template #body>
+      {{`Dayend Close is currently running`}}<br />
+      {{`Page will be close in ${this.seconds} seconds`}}
+    </template>
+  </c-dialog>
+</div>
+<!-- <network-error v-else-if="!serverConnectionStatus"></network-error> -->
+<dayend-close-status class="dayend-close-status" v-else></dayend-close-status>

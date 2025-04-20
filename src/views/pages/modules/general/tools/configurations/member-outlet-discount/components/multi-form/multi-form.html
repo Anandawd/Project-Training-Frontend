@@ -1,0 +1,60 @@
+<section class="content">
+  <div class="card">
+    <div class="card-header">
+      {{ title }}
+      <button type="button" class="close-button btn" @click="onClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="card-body">
+      <Form @submit="onSave" ref="multiFormElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit"
+        class="input-form row" v-slot="{resetForm}">
+        <div class="row">
+          <div class="col-md-6 col-sm-6">
+            <div class="row">
+              <div class="col-md-6">
+                <c-input class="mb-1" required :disabled="modeData==$global.modeData.edit" v-model="form.code" :max="10"
+                  :label="$t('labels.code')" type="text" name="Code" customLabelClass="col-3"
+                  customClass="col-9"></c-input>
+                <c-select filter required id="outlet" class="row mb-1" v-model="form.outlet_code" @change="onChangeOutlet"
+                  :options="listDropdown.Outlet" @load="repeatLoadDropdownList" keyName="code" labelName="name"
+                  :label="$t('labels.outlet')" name="Outlet" customLabelClass="col-3" customClass="col-9">
+                </c-select>
+                <c-input class="mb-1" required v-model="form.name" :max="10" :label="$t('labels.name')" type="text"
+                  name="Name" customLabelClass="col-3" customClass="col-9"></c-input>
+                <c-input showZeroNumber formatted class="mb-1" v-model="form.minimum_sale"
+                  :label="$t('labels.minimumSale')" type="number" name="Minimum Sale" customLabelClass="col-3"
+                  customClass="col-9"></c-input>
+              </div>
+
+              <div class="col-md-6">
+                <c-input showZeroNumber formatted id="maximumDiscount" class="row mb-1" v-model="form.maximum_discount"
+                  :label="$t('labels.maximumDiscount')" type="number" name="Maximum Discount" customLabelClass="col-3"
+                  customClass="col-9" />
+                <div class="row justify-content-end">
+                  <div class="col-9">
+                    <c-checkbox id="isForAllProduct" class="" v-model="form.is_for_all_product"
+                      :label="$t('labels.isForAllProduct')" name="Is For All Product" customLabelClass="col-3"
+                      customClass="col-9">
+                    </c-checkbox>
+                  </div>
+                </div>
+                <c-input :max="3" showZeroNumber id="discountPercent" class="row mb-1" v-model="form.discount_percent"
+                  :label="$t('labels.discountPercent')" type="number" name="Discount Percent" customLabelClass="col-3"
+                  customClass="col-9" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Form>
+    </div>
+    <div class="row mt-3 mb-3">
+      <div class="col-6">
+        <product ref="productElement" @handleInsert="insertDataProduct" @repeatLoadDropdownList="repeatLoadDropdown"></product>
+      </div>
+      <div class="col-6">
+        <product-discount ref="productDiscountElement"></product-discount>
+      </div>
+    </div>
+    <save-close-button :isSaving="isSaving" @save="onSubmit" @close="onClose"></save-close-button>
+
+  </div>
+</section>

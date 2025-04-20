@@ -1,0 +1,23 @@
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg">
+        <!-- <search-filter :options="searchOptions" :searchDefault="searchDefault" @search="refreshData"></search-filter> -->
+        <div class="card h-100">
+          <div class="card-header">
+            <h3 class="card-title">{{ $t('title.otherExpenseAccount') }}</h3>
+          </div>
+          <div class="card-body">
+            <!-- //Table -->
+            <ag-grid-vue :style="agGridSetting.styleAgGridFrame0" :class="agGridSetting.themeAgGrid"
+              :columnDefs="columnDefs" :rowData="rowData" :paginationPageSize="paginationPageSize"
+              :gridOptions="gridOptions" :context="context" :frameworkComponents="frameworkComponents"
+              :enableCellChangeFlash="true" :rowSelection="rowSelection" :defaultColDef="agGridSetting.defColDef"
+              @grid-ready="onGridReady" @cellContextMenu="handleRowRightClicked" :rowGroupPanelShow="rowGroupPanelShow"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

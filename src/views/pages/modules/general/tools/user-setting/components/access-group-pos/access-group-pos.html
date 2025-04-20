@@ -1,0 +1,160 @@
+<section>
+  <div class="accordion" id="accordionAccessPos">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingAccessPos1">
+        <button
+          class="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseAccessPos1"
+          aria-expanded="true"
+          aria-controls="collapseAccessPos1"
+        >
+          Form Access
+        </button>
+      </h2>
+      <div
+        id="collapseAccessPos1"
+        class="accordion-collapse collapse show"
+        aria-labelledby="headingAccessPos1"
+        data-bs-parent="#accordionAccessPos"
+      >
+        <div
+          class="accordion-body row"
+          @contextmenu="onContextMenu($event,access.access_form,accessList.access_form)"
+        >
+          <div
+            v-if="access"
+            class="col"
+            v-for="(column,columnIndex) in calculateDataForDisplay(accessList.access_form)"
+          >
+            <div v-for="(item,i) in column" :key="i" :hidden="item.hidden">
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_form[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingAccessPos2">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapsePos2"
+          aria-expanded="false"
+          aria-controls="collapsePos2"
+        >
+          Transaction Terminal Access
+        </button>
+      </h2>
+      <div
+        id="collapsePos2"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingAccessPos2"
+        data-bs-parent="#accordionAccessPos"
+      >
+        <div
+          class="accordion-body row"
+          @contextmenu="onContextMenu($event,access.access_transaction_terminal,accessList.access_transaction_terminal)"
+        >
+          <div
+            v-if="access"
+            class="col"
+            v-for="(column,columnIndex) in calculateDataForDisplay(accessList.access_transaction_terminal)"
+          >
+            <div v-for="(item,i) in column">
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_transaction_terminal[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingAccessPos3">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapsePos3"
+          aria-expanded="false"
+          aria-controls="collapsePos3"
+        >
+          Table View Access
+        </button>
+      </h2>
+      <div
+        id="collapsePos3"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingAccessPos3"
+        data-bs-parent="#accordionAccessPos"
+      >
+        <div
+          class="accordion-body row"
+          @contextmenu="onContextMenu($event,access.access_table_view,accessList.access_table_view)"
+        >
+          <div
+            v-if="access"
+            class="col"
+            v-for="(column,columnIndex) in calculateDataForDisplay(accessList.access_table_view)"
+          >
+            <div v-for="(item,i) in column">
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_table_view[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingAccessPos4">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapsePos4"
+          aria-expanded="false"
+          aria-controls="collapsePos4"
+        >
+          Special Access
+        </button>
+      </h2>
+      <div
+        id="collapsePos4"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingAccessPos4"
+        data-bs-parent="#accordionAccessPos"
+      >
+        <div
+          class="accordion-body row"
+          @contextmenu="onContextMenu($event,access.access_special,accessList.access_special)"
+        >
+          <div
+            v-if="access"
+            class="col"
+            v-for="(column,columnIndex) in calculateDataForDisplay(accessList.access_special)"
+          >
+            <div v-for="(item,i) in column">
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_special[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

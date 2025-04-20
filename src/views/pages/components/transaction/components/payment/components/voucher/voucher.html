@@ -1,0 +1,160 @@
+<div class="voucher-form">
+  <v-form
+    @submit="onSave"
+    ref="formElement"
+    :validation-schema="schema"
+    @invalid-submit="onInvalidSubmit"
+    class="input-form row"
+  >
+    <div class="row">
+      <div class="col-lg">
+        <c-select
+          required
+          customClass="col-lg-2 col-md-2 col-4"
+          class="mb-1"
+          :label="$t('labels.subFolio')"
+          name="subFolioGroup"
+          v-model="form.sub_folio_group_code"
+          :options="$global.subFolioGroup"
+        ></c-select>
+        <c-select
+          required
+          customClass="col-lg-4 col-md-4 col"
+          class="mb-1"
+          :label="$t('labels.provider')"
+          labelName="name"
+          keyName="code"
+          name="provider"
+          v-model="form.provider_code"
+          :options="options.providers"
+        ></c-select>
+        <c-select
+          v-if="form.provider_code == 'CAKRA'"
+          required
+          class="mb-1"
+          :label="$t('labels.voucherNumber')"
+          labelName="code"
+          keyName="code"
+          name="voucherNumber"
+          v-model="form.voucher_number"
+          :options="options.vouchers"
+        ></c-select>
+        <c-input
+          v-else
+          required
+          class="mb-1 focus"
+          :label="$t('labels.voucherNumber')"
+          name="voucherNumber"
+          v-model="form.voucher_number"
+          @blur="handleCheckVoucher"
+          ><template #append-end>
+            <div class="input-group-append">
+              <button
+                v-if="voucherStatus == 'activated'"
+                disabled
+                title="valid"
+                type="button"
+                class="input-group-text text-bold text-success"
+              >
+                <i class="fa fa-check mr-1" aria-hidden="true"></i>
+                {{$t('buttons.valid')}}
+              </button>
+              <button
+                v-else-if="voucherStatus == 'used'"
+                disabled
+                title="valid"
+                type="button"
+                class="input-group-text text-bold text-gray"
+              >
+                <i class="fa fa-times mr-1" aria-hidden="true"></i>
+                {{$t('buttons.used')}}
+              </button>
+              <button
+                v-else-if="voucherStatus == 'invalid'"
+                disabled
+                title="valid"
+                type="button"
+                class="input-group-text text-bold text-danger"
+              >
+                <i class="fa fa-times mr-1" aria-hidden="true"></i>
+                {{$t('buttons.invalid')}}
+              </button>
+              <button
+                v-else
+                title="check"
+                type="button"
+                class="input-group-text"
+              >
+                <span
+                  v-if="isChecking"
+                  class="spinner-border spinner-border-sm mr-1"
+                  style="height: 12px; width: 12px"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                <!-- <i class="fa fa-search" aria-hidden="true"></i> -->
+                {{$t('buttons.check')}}
+              </button>
+            </div>
+          </template>
+        </c-input>
+        <c-input
+          v-if="form.provider_code == 'CAKRA'"
+          required
+          class="mb-1"
+          :label="$t('labels.number')"
+          name="number"
+          v-model="form.number"
+          ><template v-if="form.provider_code == 'CAKRA'" #append-end>
+            <div class="input-group-append">
+              <button title="search" type="button" class="input-group-text">
+                <!-- <i class="fa fa-search" aria-hidden="true"></i> -->
+                {{$t('buttons.check')}}
+              </button>
+            </div>
+          </template></c-input
+        >
+        <c-input
+          v-if="form.provider_code == 'TADA'"
+          disabled
+          class="mb-1"
+          :label="$t('labels.description')"
+          name="description"
+          v-model="voucherDetail.egiftName"
+        ></c-input>
+      </div>
+      <div class="col-lg">
+        <c-input
+          required
+          disabled
+          class="mb-1"
+          :label="$t('labels.voucherType')"
+          name="voucherType"
+          v-model="voucherDetail.egiftType"
+        ></c-input>
+        <c-input
+          required
+          disabled
+          class="mb-1"
+          formatted
+          type="number"
+          :label="$t('labels.amount')"
+          name="amount"
+          v-model="form.amount"
+        ></c-input>
+        <c-input
+          class="mb-1"
+          type="textarea"
+          :label="$t('labels.remark')"
+          name="remark"
+          v-model="form.remark"
+        ></c-input>
+      </div>
+    </div>
+    <save-close-button
+      :is-saving="isSaving"
+      @save="onSubmit()"
+      @close="$emit('close')"
+    ></save-close-button>
+  </v-form>
+</div>

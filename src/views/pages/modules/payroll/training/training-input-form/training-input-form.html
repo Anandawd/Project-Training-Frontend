@@ -1,0 +1,384 @@
+<!-- <Form @submit="onSave" ref="inputFormElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit" -->
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">{{ title }}</div>
+    <!-- <button @click="showForm">Check</button> -->
+    <div class="card-body">
+      <div id="parrentAccordion" class="accordion">
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemInformationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#itemInformation"
+              aria-controls="itemInformation"
+              aria-expanded="false"
+            >
+              Item Information
+            </button>
+          </h6>
+          <div
+            id="itemInformation"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="itemInformationHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="d-flex" style="padding-left: 4px !important">
+                  <c-radio
+                    class="m-1"
+                    :label="$t('labels.lost')"
+                    v-model="form.is_lost"
+                    value="1"
+                  >
+                  </c-radio>
+                  <c-radio
+                    class="m-1"
+                    :label="$t('labels.found')"
+                    v-model="form.is_lost"
+                    value="0"
+                  ></c-radio>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <!-- input code -->
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    id="Item"
+                    class="row mb-1"
+                    :label="$t('labels.itemLostOrFound')"
+                    type="text"
+                    name="Item"
+                    v-model="form.item"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    id="Location"
+                    class="row mb-1"
+                    v-model="form.location"
+                    :label="$t('labels.location')"
+                    type="text"
+                    name="Location"
+                  />
+                </div>
+                {{form.color}}
+                <div class="col-md-4">
+                  <c-select
+                    name="Color"
+                    selectType="column"
+                    offset="right"
+                    class="row mb-1"
+                    keyName="code"
+                    labelName="name"
+                    v-model="form.color"
+                    :label="$t('labels.color')"
+                    :columnOptions="columnOptions"
+                    :options="dropdownList"
+                  >
+                    <template #append-end>
+                      <span class="input-group-text"
+                        ><i class="fa fa-search" aria-hidden="true"></i
+                      ></span>
+                    </template>
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    multiple
+                    offset="right"
+                    :columnOptions="columnOptions"
+                    class="row mb-1"
+                    :options="dropdownList"
+                    keyName="code"
+                    labelName="name"
+                    v-model="form.color"
+                    :label="$t('labels.color')"
+                    name="Color"
+                  >
+                    <template #append-end>
+                      <span class="input-group-text"
+                        ><i class="fa fa-search" aria-hidden="true"></i
+                      ></span>
+                    </template>
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    offset="right"
+                    :columnOptions="columnOptions"
+                    class="row mb-1"
+                    :options="dropdownList"
+                    keyName="code"
+                    labelName="name"
+                    v-model="form.color"
+                    :label="$t('labels.color')"
+                    name="Color"
+                  >
+                    <template #append-end>
+                      <span class="input-group-text"
+                        ><i class="fa fa-search" aria-hidden="true"></i
+                      ></span>
+                    </template>
+                  </c-select>
+                </div>
+                <!-- input code -->
+                <div class="col-md-4">
+                  <c-input
+                    id="Who"
+                    class="row mb-1"
+                    v-model="form.who"
+                    :label="$t('labels.who')"
+                    type="text"
+                    name="Who"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    id="Value"
+                    class="row mb-1"
+                    v-model="form.value"
+                    formatted
+                    showZeroNumber
+                    :label="$t('labels.value')"
+                    type="number"
+                    name="Value"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    id="Value2"
+                    class="row mb-1"
+                    v-model="form.value2"
+                    formatted
+                    showZeroNumber
+                    :label="$t('labels.value2')"
+                    type="number"
+                    name="Value2"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    id="currentLocation"
+                    class="mb-1"
+                    v-model="form.current_location"
+                    :label="$t('labels.currentLocation')"
+                    type="text"
+                    name="currentLocation"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <!-- <label for="">{{$t('labels.date')}}</label> -->
+                  <!-- <c-datepicker required id="Date" class="row mb-1" v-model="form.date_posting" :label="$t('labels.date')"
+                  type="datetime" name="Date" /> -->
+                  <!-- <label for="Date" style="color: red;" class="col-md-3 labDatepicker">{{ $t('labels.date')
+                    }}</label> -->
+                  <c-datepicker
+                    customLabelClass="col-6"
+                    label="date"
+                    v-model="form.date_posting"
+                    id="Date"
+                    type="date"
+                    valueType="YYYY-MM-DD"
+                    format="DD/MM/YYYY"
+                    name="Date"
+                  ></c-datepicker>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="accordion-item">
+          <h6 class="accordion-header mt-3">
+            Return Information
+          </h6>
+          <div class="accordion-collapse collapse show">
+            <div class="row mb-3 mt-2">
+              <div class="col-md-4">
+                <checkbox id="isReturned" v-model="form.is_return" :label="$t('labels.Returned')" type="checkbox"
+                  name="isReturned" @change="changeReturn">
+                </checkbox>
+              </div>
+            </div>
+            <div class="row">
+            
+              <div class="col-md-4 row" style="margin: 0px;">
+           
+                <label for="returnDate" class="col-md-3 col-form-label labDatepicker">{{ $t('labels.returnDate')
+                  }}</label>
+                <c-datepicker :disabled="isReturned" v-model="form.date_return" id="returnDate"
+                  class="col-md-9 Datepicks" type="date" valueType="YYYY-MM-DD" format="DD/MM/YYYY" name="returnDate">
+                </c-datepicker>
+              </div>
+              <div class="col-md-4">
+                <c-input :disabled="isReturned" v-model="form.return_by" id="returnBy" class="row mb-1"
+                  :label="$t('labels.returnBy')" type="text" name="returnBy" />
+              </div>
+              <div class="col-md-4">
+                <c-input :disabled="isReturned" v-model="form.owner" id="owner" class="row mb-1"
+                  :label="$t('labels.owner')" type="text" name="owner" />
+              </div>
+              <div class="col-md-4">
+                <c-input :disabled="isReturned" v-model="form.phone" id="phone" class="row mb-1"
+                  :label="$t('labels.phone')" type="text" name="phone" />
+              </div>
+              <div class="col-md-4">
+                <c-input :disabled="isReturned" v-model="form.notes" id="notes" class="row mb-1"
+                  :label="$t('labels.notes')" type="text" name="notes" />
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemInformationHeader1">
+            <button
+              type="button"
+              class="accordion-button collapsed"
+              aria-expanded="true"
+              aria-controls="itemInformation1"
+              data-bs-target="#itemInformation1"
+              data-bs-toggle="collapse"
+            >
+              Test Grid
+            </button>
+          </h6>
+          <div
+            id="itemInformation1"
+            class="accordion-collapse p-3"
+            aria-labelledby="itemInformationHeader1"
+          >
+            <div class="accordion-body card-block">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    id="Code"
+                    class="row mb-1"
+                    :label="'Code'"
+                    type="text"
+                    name="Code"
+                    v-model="formDetail.Code"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    id="Name"
+                    customLabelClass="col-2"
+                    class="row mb-1"
+                    :label="'Name'"
+                    type="text"
+                    formatted
+                    name="Name"
+                    v-model="formDetail.Name"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    id="Nominal"
+                    class="row mb-1"
+                    :label="'Nominal'"
+                    type="number"
+                    formatted
+                    showZeroNumber
+                    name="Nominal"
+                    v-model="formDetail.Nominal"
+                  />
+                </div>
+                <div class="col-md-4 d-flex">
+                  <label
+                    for="Date"
+                    style="color: red"
+                    class="col-md-3 labDatepicker"
+                    >{{ 'Tanggal' }}</label
+                  >
+                  <c-datepicker
+                    v-model="formDetail.Tanggal"
+                    id="tanggal"
+                    class="col-md-9 Datepicks"
+                    type="tanggal"
+                    valueType="YYYY-MM-DD"
+                    format="DD/MM/YYYY"
+                    name="tanggal"
+                  ></c-datepicker>
+                </div>
+                <div class="d-flex justify-content-end mb-2">
+                  <div>
+                    <button
+                      type="button"
+                      class="btn btn-primary mr-1"
+                      @click="handleSaveGrid"
+                    >
+                      <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{isSave
+                      ? $t('buttons.save') : $t('buttons.insert') }}
+                    </button>
+                    <button
+                      v-if="isSave"
+                      type="button"
+                      class="btn btn-danger mr-1"
+                      @click="gridFormCancel"
+                    >
+                      <i class="fa fa-times" aria-hidden="true"></i>
+                      {{$t('buttons.cancel')}}
+                    </button>
+                  </div>
+                  <b-progress
+                    :value="progressBarValue"
+                    :max="5"
+                    striped
+                    variant="success"
+                  ></b-progress>
+                </div>
+                <div class="col-md-12">
+                  <!-- <div v-show="isSave" class="disabled-grid"></div> -->
+                  <ag-grid-vue
+                    disabled
+                    :style="agGridSetting.styleAgGridFrame"
+                    :class="agGridSetting.themeAgGrid"
+                    :columnDefs="columnDefs"
+                    :rowData="rowData"
+                    :paginationPageSize="paginationPageSize"
+                    :gridOptions="gridOptions"
+                    :context="context"
+                    :frameworkComponents="frameworkComponents"
+                    :enableCellChangeFlash="true"
+                    :rowSelection="rowSelection"
+                    :getContextMenuItems="getContextMenu"
+                    :defaultColDef="agGridSetting.defColDef"
+                    :suppressDragLeaveHidesColumns="true"
+                    :suppressMakeColumnVisibleAfterUnGroup="true"
+                    :statusBar="statusBar"
+                    @grid-ready="onGridReady"
+                    @cellContextMenu="handleRowRightClicked"
+                    :getRowNodeId="getRowNodeId"
+                    @cellValueChanged="cellValueChanged"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mt-2">
+        <button type="button" class="btn btn-danger mr-1" @click="onClose">
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.close')}}
+        </button>
+        <button type="button" class="btn btn-primary" @click="onSubmit">
+          <i class="fas fa-save"></i>
+          {{ $t('buttons.save') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</c-form>

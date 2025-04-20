@@ -1,0 +1,287 @@
+<section class="row">
+  <div class="col-lg">
+    <div class="card h-100">
+      <div class="card-header"><span>{{$t('title.inputForm')}}</span></div>
+      <div class="card-body">
+        <v-form
+          @submit="onSubmit"
+          ref="formElement"
+          :validation-schema="schema"
+          class="input-form row"
+        >
+          <div class="row">
+            <div class=" ">
+              <c-select
+                required
+                class="mb-1"
+                v-model="form.sub_department_code"
+                :options="options.SubDepartment"
+                keyName="code"
+                labelName="name"
+                :label="$t('labels.subDepartment')"
+                name="Sub Department"
+                customLabelClass="col-3"
+                customClass="col-9"
+                @change="onChangeSubDepartment"
+              >
+              </c-select>
+              <c-select
+                required
+                class="mb-1 pr-0"
+                v-model="form.account_code"
+                :options="options.Account"
+                keyName="code"
+                labelName="code"
+                :label="$t('labels.account')"
+                name="Account"
+                @change="onChangeAccount"
+              >
+                <template #append-end>
+                  <c-select
+                    required
+                    class="col-9 pr-0"
+                    v-model="form.account_code"
+                    :options="options.Account"
+                    keyName="code"
+                    labelName="name"
+                    name="Account"
+                    @change="onChangeAccount"
+                  >
+                  </c-select>
+                </template>
+              </c-select>
+              <c-select
+                :disabled="disabledBusinessSource"
+                class="mb-1"
+                v-model="form.company_code"
+                :options="options.BusinessSource"
+                keyName="code"
+                labelName="name"
+                :label="$t('labels.businessSource')"
+                name="Business Source"
+                customLabelClass="col-3"
+                customClass="col-9"
+              >
+              </c-select>
+              <c-input
+                :disabled="form.per_pax"
+                required
+                showZeroNumber
+                formatted
+                class="mb-1"
+                v-model="form.quantity"
+                :label="$t('labels.quantity')"
+                type="number"
+                name="Quantity"
+                customLabelClass="col-3"
+                customClass=" col-5 col-lg-3"
+              >
+              </c-input>
+              <div class="row mb-2 mt-1">
+                <div class="col-3 pr-0">
+                  <label class="col-form-label d-flex mt-1" for="color"
+                    >{{$t('labels.amountType')}}</label
+                  >
+                </div>
+                <div class="col-9 mt-1">
+                  <div class="row justify-content-start">
+                    <div class="col-4">
+                      <c-radio
+                        :label="$t('labels.amount')"
+                        v-model="form.is_amount_percent"
+                        value="0"
+                      ></c-radio>
+                    </div>
+                    <div class="col-2">
+                      <c-radio
+                        class="grid"
+                        label="%"
+                        v-model="form.is_amount_percent"
+                        value="1"
+                      ></c-radio>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class=" ">
+              <c-input
+                required
+                showZeroNumber
+                formatted
+                class="mb-1"
+                v-model="form.amount"
+                :label="$t('labels.amount')"
+                type="number"
+                name="Amount"
+                customLabelClass="col-3"
+                customClass="col-6"
+              >
+                <template #append-end>
+                  <span class="input-group-text"
+                    >{{ form.is_amount_percent == 1 ? '%' : '.00' }}</span
+                  >
+                </template>
+              </c-input>
+              <div class="row justify-content-end">
+                <div class="col-4">
+                  <c-checkbox
+                    :label="$t('labels.perPax')"
+                    v-model="form.per_pax"
+                    @change="onChangePerPax"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  >
+                  </c-checkbox>
+                </div>
+                <div class="col-5">
+                  <c-checkbox
+                    :disabled="!form.per_pax"
+                    class="col"
+                    :label="$t('labels.includeChild')"
+                    v-model="form.include_child"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  >
+                  </c-checkbox>
+                </div>
+              </div>
+              <c-input
+                class="mb-1"
+                v-model="form.remark"
+                :label="$t('labels.remark')"
+                type="text"
+                name="Remark"
+                customLabelClass="col-3"
+                customClass="col-9"
+              >
+              </c-input>
+              <c-select
+                required
+                class="mb-1"
+                v-model="form.tax_and_service_code"
+                :options="options.TaxAndService"
+                keyName="code"
+                labelName="name"
+                :label="$t('labels.taxAndService')"
+                name="Tax & Service"
+                customLabelClass="col-3"
+                customClass="col-9"
+              >
+              </c-select>
+              <c-select
+                required
+                class=""
+                v-model="form.charge_frequency_code"
+                :options="options.ChargeFrequency"
+                keyName="code"
+                labelName="name"
+                :label="$t('labels.chargeFrequency')"
+                name="Charge Frequency"
+                customLabelClass="col-3"
+                customClass="col-9"
+              >
+              </c-select>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="accordion">
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button
+                    type="button"
+                    class="accordion-button"
+                    aria-expanded="false"
+                    aria-controls="extraChargeAccordion"
+                    data-bs-target="#extraChargeAccordion"
+                    data-bs-toggle="collapse"
+                  >
+                    {{ $t('title.extraCharge') }}
+                  </button>
+                </h3>
+                <div
+                  id="extraChargeAccordion"
+                  class="accordion-collapse collapse show"
+                >
+                  <div class="accordion-body">
+                    <c-input
+                      :disabled="form.per_pax != 1"
+                      class="mb-1"
+                      spinner
+                      v-model="form.max_pax"
+                      :label="$t('labels.maxPax')"
+                      type="text"
+                      name="Max Pax"
+                      customLabelClass="col-md-3 col-3"
+                      customClass="col-md-6 col"
+                    >
+                      <template #append-end>
+                        <c-checkbox
+                          :disabled="form.per_pax != 1"
+                          @change="onChangePerPaxExtra"
+                          :label="$t('labels.perPax')"
+                          v-model="form.per_pax_extra"
+                          customLabelClass="col-3"
+                          customClass="col-9"
+                        ></c-checkbox
+                      ></template>
+                    </c-input>
+                    <c-input
+                      :disabled="form.per_pax != 1"
+                      showZeroNumber
+                      formatted
+                      v-model="form.extra_pax"
+                      :label="$t('labels.extraPax')"
+                      type="number"
+                      name="Extra Pax"
+                      customLabelClass="col-3"
+                      customClass="col-md-6 col"
+                    ></c-input>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </v-form>
+      </div>
+      <div class="card-footer w-100 justify-content-end d-flex">
+        <button class="btn btn-primary mr-1" type="button" @click="handleSave">
+          <i class="fa fa-save"></i>
+          {{ modeData==0 ? $t('buttons.save') : $t('buttons.update') }}
+        </button>
+        <button class="btn btn-danger" type="button" @click="resetForm">
+          <i class="fa fa-history"></i>
+          {{$t('buttons.reset')}}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card h-100">
+      <div class="card-header">
+        <span>{{$t('title.breakdown')}}</span>
+      </div>
+      <div class="card-body">
+        <ag-grid-vue
+          :style="$global.agGrid.styleAgGridFrame100"
+          :class="$global.agGrid.themeAgGrid"
+          :columnDefs="columnDefs"
+          :rowData="rowData"
+          rowSelection="single"
+          :gridOptions="gridOptions"
+          :defaultColDef="$global.agGrid.defColDef"
+          :context="context"
+          :getRowNodeId="getRowNodeId"
+          :frameworkComponents="frameworkComponents"
+          @gridReady="onGridReady"
+        />
+      </div>
+    </div>
+  </div>
+  <c-dialog
+    v-if="showConfirmation"
+    @confirm="onDelete"
+    @close="showConfirmation=false"
+  ></c-dialog>
+</section>

@@ -1,0 +1,32 @@
+<!-- Main content -->
+<section class="content">
+      <transition name="slide-fade-right">
+        <div v-show="showForm">
+          <div class="card h-100">
+            <div class="card-header">
+              <h3 class="card-title">{{ title }}
+                <button type="button" class="close-button btn" @click="onClose"><i class="fas fa-times"></i></button>
+              </h3>
+            </div>
+            <div class="card-body">
+              <Form @submit="handleSave" ref="formElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit"
+                class="input-form row" v-slot="{resetForm}">
+                <div class="row">
+                  <div class="col-md-6">
+                    <c-select :focus="focus" filter required class="mb-1" v-model="form.currency_code" @load="loadDropdown"
+                      :options="listDropdown.Currency" keyName="code" labelName="name"
+                      :label="$t('labels.currency')" name="Currency" customLabelClass="col-3" customClass="col-9">
+                    </c-select>
+                    <c-input required class="mb-1" showZeroNumber formatted v-model="form.exchange_rate" :label="$t('labels.exchangeRate')"
+                      type="number" name="Exchange Rate" customLabelClass="col-3" customClass="col-9">
+                    </c-input>
+                  </div>
+                </div>
+                <hr>
+              </Form>
+            </div>
+              <save-close-button :isSaving="isSaving" @save="onSubmit" @close="onClose"></save-close-button>
+          </div>
+        </div>
+      </transition>
+</section>

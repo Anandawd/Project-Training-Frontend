@@ -1,0 +1,899 @@
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">{{title}}</div>
+    <div class="card-body">
+      <!-- form accordian -->
+      <div id="parrentAccordion" class="accordion">
+        <!-- employee information -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemEmployeeInformationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#employeeInformation"
+              aria-controls="employeeInformation"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.employee.employeeInformation')}}
+            </button>
+          </h6>
+          <div
+            id="employeeInformation"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="employeeInformationHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="employeeId"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.employeeId"
+                    :label="$t('labels.payroll.employee.selectEmployee')"
+                    :columnOptions="columnOptions"
+                    :options="selectEmployeeOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    id="EmployeeName"
+                    class="row mb-1"
+                    type="text"
+                    name="employeeName"
+                    v-model="form.employeeName"
+                    :label="$t('labels.payroll.employee.employeeName')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    id="Gender"
+                    class="row mb-1"
+                    type="text"
+                    name="gender"
+                    v-model="form.gender"
+                    :label="$t('labels.payroll.employee.gender')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    id="Position"
+                    class="row mb-1"
+                    type="text"
+                    name="position"
+                    v-model="form.position"
+                    :label="$t('labels.payroll.employee.position')"
+                  />
+                </div>
+
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    id="Department"
+                    class="row mb-1"
+                    type="text"
+                    name="department"
+                    v-model="form.department"
+                    :label="$t('labels.payroll.employee.department')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    id="Placement"
+                    class="row mb-1"
+                    type="text"
+                    name="placement"
+                    v-model="form.placement"
+                    :label="$t('labels.payroll.employee.placement')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    id="EmployeeType"
+                    class="row mb-1"
+                    type="text"
+                    name="employeeType"
+                    v-model="form.employeeType"
+                    :label="$t('labels.payroll.employee.employeeType')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    id="MaritialStatus"
+                    class="row mb-1"
+                    type="text"
+                    name="maritialStatus"
+                    v-model="form.maritialStatus"
+                    :label="$t('labels.payroll.employee.maritialStatus')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    id="BankName"
+                    class="row mb-1"
+                    type="text"
+                    name="bankName"
+                    v-model="form.bankName"
+                    :label="$t('labels.payroll.employee.bankName')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    id="BankAccountHolder"
+                    class="row mb-1"
+                    type="text"
+                    name="bankAccountHolder"
+                    v-model="form.bankAccountHolder"
+                    :label="$t('labels.payroll.employee.bankAccountHolder')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    id="BankAccountNumber"
+                    class="row mb-1"
+                    type="text"
+                    name="bankAccountNumber"
+                    v-model="form.bankAccountNumber"
+                    :label="$t('labels.payroll.employee.bankAccountNumber')"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- earnings -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemEarningsHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#earnings"
+              aria-controls="earnings"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.payroll.earnings')}}
+            </button>
+          </h6>
+          <div
+            id="earnings"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="earningsHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <div class="d-flex justify-content-end mb-1">
+                    <font-awesome-icon
+                      v-if="form.is_taxable"
+                      :icon="['fas', 'file-invoice-dollar']"
+                      class="me-1 text-info"
+                      data-bs-toggle="tooltip"
+                      title="Included in Tax Income (PPH 21)"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_health"
+                      :icon="['fas', 'medkit']"
+                      class="me-1 text-success"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Kesehatan"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_employee"
+                      :icon="['fas', 'hard-hat']"
+                      class="me-1 text-warning"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Ketenagakerjaan"
+                    />
+                  </div>
+                  <c-input
+                    disabled
+                    type="number"
+                    name="BaseSalary"
+                    id="BaseSalary"
+                    class="row mb-1"
+                    :max="9999999999"
+                    :min="0"
+                    :label="$t('labels.payroll.employee.baseSalary')"
+                    v-model="form.baseSalary"
+                    formatted
+                    showZeroNumber
+                  />
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex justify-content-end mb-1">
+                    <font-awesome-icon
+                      v-if="form.is_taxable"
+                      :icon="['fas', 'file-invoice-dollar']"
+                      class="me-1 text-info"
+                      data-bs-toggle="tooltip"
+                      title="Included in Tax Income (PPH 21)"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_health"
+                      :icon="['fas', 'medkit']"
+                      class="me-1 text-success"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Kesehatan"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_employee"
+                      :icon="['fas', 'hard-hat']"
+                      class="me-1 text-warning"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Ketenagakerjaan"
+                    />
+                  </div>
+                  <c-input
+                    disabled
+                    type="number"
+                    name="Allowance"
+                    id="Allowance"
+                    class="row mb-1"
+                    :max="9999999999"
+                    :min="0"
+                    :label="$t('labels.payroll.payroll.allowance')"
+                    v-model="form.allowance"
+                    formatted
+                    showZeroNumber
+                  />
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex justify-content-end mb-1">
+                    <font-awesome-icon
+                      v-if="form.is_taxable"
+                      :icon="['fas', 'file-invoice-dollar']"
+                      class="me-1 text-info"
+                      data-bs-toggle="tooltip"
+                      title="Included in Tax Income (PPH 21)"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_health"
+                      :icon="['fas', 'medkit']"
+                      class="me-1 text-success"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Kesehatan"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_employee"
+                      :icon="['fas', 'hard-hat']"
+                      class="me-1 text-warning"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Ketenagakerjaan"
+                    />
+                  </div>
+                  <c-input
+                    disabled
+                    type="number"
+                    name="Incentive"
+                    id="Incentive"
+                    class="row mb-1"
+                    :max="9999999999"
+                    :min="0"
+                    :label="$t('labels.payroll.payroll.incentive')"
+                    v-model="form.incentive"
+                    formatted
+                    showZeroNumber
+                  />
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex justify-content-end mb-1">
+                    <font-awesome-icon
+                      v-if="form.is_taxable"
+                      :icon="['fas', 'file-invoice-dollar']"
+                      class="me-1 text-info"
+                      data-bs-toggle="tooltip"
+                      title="Included in Tax Income (PPH 21)"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_health"
+                      :icon="['fas', 'medkit']"
+                      class="me-1 text-success"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Kesehatan"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_employee"
+                      :icon="['fas', 'hard-hat']"
+                      class="me-1 text-warning"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Ketenagakerjaan"
+                    />
+                  </div>
+                  <c-input
+                    disabled
+                    type="number"
+                    name="THR"
+                    id="THR"
+                    class="row mb-1"
+                    :max="9999999999"
+                    :min="0"
+                    :label="$t('labels.payroll.payroll.thr')"
+                    v-model="form.thr"
+                    formatted
+                    showZeroNumber
+                  />
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex justify-content-end mb-1">
+                    <font-awesome-icon
+                      v-if="form.is_taxable"
+                      :icon="['fas', 'file-invoice-dollar']"
+                      class="me-1 text-info"
+                      data-bs-toggle="tooltip"
+                      title="Included in Tax Income (PPH 21)"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_health"
+                      :icon="['fas', 'medkit']"
+                      class="me-1 text-success"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Kesehatan"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_employee"
+                      :icon="['fas', 'hard-hat']"
+                      class="me-1 text-warning"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Ketenagakerjaan"
+                    />
+                  </div>
+                  <c-input
+                    disabled
+                    type="number"
+                    name="JKM"
+                    id="JKM"
+                    class="row mb-1"
+                    :max="9999999999"
+                    :min="0"
+                    :label="$t('labels.payroll.payroll.jkm')"
+                    v-model="form.jkm"
+                    formatted
+                    showZeroNumber
+                  />
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex justify-content-end mb-1">
+                    <font-awesome-icon
+                      v-if="form.is_taxable"
+                      :icon="['fas', 'file-invoice-dollar']"
+                      class="me-1 text-info"
+                      data-bs-toggle="tooltip"
+                      title="Included in Tax Income (PPH 21)"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_health"
+                      :icon="['fas', 'medkit']"
+                      class="me-1 text-success"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Kesehatan"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_employee"
+                      :icon="['fas', 'hard-hat']"
+                      class="me-1 text-warning"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Ketenagakerjaan"
+                    />
+                  </div>
+                  <c-input
+                    disabled
+                    type="number"
+                    name="Jkk"
+                    id="Jkk"
+                    class="row mb-1"
+                    :max="9999999999"
+                    :min="0"
+                    :label="$t('labels.payroll.payroll.jkk')"
+                    v-model="form.jkk"
+                    formatted
+                    showZeroNumber
+                  />
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex justify-content-end mb-1">
+                    <font-awesome-icon
+                      v-if="form.is_taxable"
+                      :icon="['fas', 'file-invoice-dollar']"
+                      class="me-1 text-info"
+                      data-bs-toggle="tooltip"
+                      title="Included in Tax Income (PPH 21)"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_health"
+                      :icon="['fas', 'medkit']"
+                      class="me-1 text-success"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Kesehatan"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_employee"
+                      :icon="['fas', 'hard-hat']"
+                      class="me-1 text-warning"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Ketenagakerjaan"
+                    />
+                  </div>
+                  <c-input
+                    disabled
+                    type="number"
+                    name="BpjsHealth"
+                    id="BpjsHealth"
+                    class="row mb-1"
+                    :max="9999999999"
+                    :min="0"
+                    :label="$t('labels.payroll.payroll.bpjsHealth')"
+                    v-model="form.bpjs_health"
+                    formatted
+                    showZeroNumber
+                  />
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex justify-content-end mb-1">
+                    <font-awesome-icon
+                      v-if="form.is_taxable"
+                      :icon="['fas', 'file-invoice-dollar']"
+                      class="me-1 text-info"
+                      data-bs-toggle="tooltip"
+                      title="Included in Tax Income (PPH 21)"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_health"
+                      :icon="['fas', 'medkit']"
+                      class="me-1 text-success"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Kesehatan"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_employee"
+                      :icon="['fas', 'hard-hat']"
+                      class="me-1 text-warning"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Ketenagakerjaan"
+                    />
+                  </div>
+                  <c-input
+                    disabled
+                    type="number"
+                    name="Overtime"
+                    id="Overtime"
+                    class="row mb-1"
+                    :max="9999999999"
+                    :min="0"
+                    :label="$t('labels.payroll.employee.overtime')"
+                    v-model="form.overtime"
+                    formatted
+                    showZeroNumber
+                  />
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex justify-content-end mb-1">
+                    <font-awesome-icon
+                      v-if="form.is_taxable"
+                      :icon="['fas', 'file-invoice-dollar']"
+                      class="me-1 text-info"
+                      data-bs-toggle="tooltip"
+                      title="Included in Tax Income (PPH 21)"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_health"
+                      :icon="['fas', 'medkit']"
+                      class="me-1 text-success"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Kesehatan"
+                    />
+                    <font-awesome-icon
+                      v-if="form.is_included_in_bpjs_employee"
+                      :icon="['fas', 'hard-hat']"
+                      class="me-1 text-warning"
+                      data-bs-toggle="tooltip"
+                      title="Included in BPJS Ketenagakerjaan"
+                    />
+                  </div>
+                  <c-input
+                    disabled
+                    type="number"
+                    name="Reimburse"
+                    id="Reimburse"
+                    class="row mb-1"
+                    :max="9999999999"
+                    :min="0"
+                    :label="$t('labels.payroll.payroll.reimburse')"
+                    v-model="form.reimburse"
+                    formatted
+                    showZeroNumber
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- financial information -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemFinancialInformationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#personalInformation"
+              aria-controls="personalInformation"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.employee.financialInformation')}}
+            </button>
+          </h6>
+          <div
+            id="financialInformation"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="financialInformationHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="number"
+                    name="BaseSalary"
+                    id="BaseSalary"
+                    class="row mb-1"
+                    :max="9999999999"
+                    :min="0"
+                    :label="$t('labels.payroll.employee.baseSalary')"
+                    v-model="form.baseSalary"
+                    formatted
+                    showZeroNumber
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    multiple
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="benefitComponent"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.benefitComponent"
+                    :label="$t('labels.payroll.employee.benefitComponent')"
+                    :columnOptions="columnOptions"
+                    :options="benefitComponentOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="salaryType"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.salaryType"
+                    :label="$t('labels.payroll.employee.salaryType')"
+                    :columnOptions="columnOptions"
+                    :options="salaryTypeOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="paymentMethod"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.paymentMethod"
+                    :label="$t('labels.payroll.employee.paymentMethod')"
+                    :columnOptions="columnOptions"
+                    :options="paymentMethodOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="bankName"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.bankName"
+                    :label="$t('labels.payroll.employee.bankName')"
+                    :columnOptions="columnOptions"
+                    :options="bankNameOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="number"
+                    name="bankAccountNumber"
+                    id="bankAccountNumber"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.bankAccountNumber')"
+                    v-model="form.bankAccountNumber"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="number"
+                    name="bankAccountHolder"
+                    id="bankAccountHolder"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.bankAccountHolder')"
+                    v-model="form.bankAccountHolder"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- tax and identification information -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemTaxAndIdentificationDataHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#taxAndIdentificationData"
+              aria-controls="taxAndIdentificationData"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.employee.taxAndIdentificationData')}}
+            </button>
+          </h6>
+          <div
+            id="taxAndIdentificationData"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="taxAndIdentificationDataHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="taxNumber"
+                    id="taxNumber"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.taxNumber')"
+                    v-model="form.taxNumber"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="maritialStatus"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.maritialStatus"
+                    :label="$t('labels.payroll.employee.maritialStatus')"
+                    :columnOptions="columnOptions"
+                    :options="maritialStatusOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="identifyNumber"
+                    id="identifyNumber"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.identityNumber')"
+                    v-model="form.identifyNumber"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="bpjsHealthNumber"
+                    id="bpjsHealthNumber"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.bpjsHealthNumber')"
+                    v-model="form.bpjsHealthNumber"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="bpjsEmployeeNumber"
+                    id="bpjsEmployeeNumber"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.bpjsEmployeeNumber')"
+                    v-model="form.bpjsEmployeeNumber"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- supporting documents -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemSupportingDocumentHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#supportingDocument"
+              aria-controls="supportingDocument"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.employee.supportingDocument')}}
+            </button>
+          </h6>
+          <div
+            id="supportingDocument"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="supportingDocumentHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="identityCardFile"
+                    id="identityCardFile"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.identityCardFile')"
+                    v-model="form.identityCardFile"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="taxCardFile"
+                    id="taxCardFile"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.taxCardFile')"
+                    v-model="form.taxCardFile"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="cvFile"
+                    id="cvFile"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.cvFile')"
+                    v-model="form.cvFile"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="employeeContractFile"
+                    id="employeeContractFile"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.employeeContractFile')"
+                    v-model="form.employeeContractFile"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="otherDocuments"
+                    id="otherDocuments"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.otherDocuments')"
+                    v-model="form.otherDocuments"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attendance and Leave Data -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemAttendanceAndLeaveDataHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#attendanceAndLeaveData"
+              aria-controls="attendanceAndLeaveData"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.employee.attendanceAndLeaveData')}}
+            </button>
+          </h6>
+          <div
+            id="attendanceAndLeaveData"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="attendanceAndLeaveDataHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="workSchedule"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.workSchedule"
+                    :label="$t('labels.payroll.employee.workSchedule')"
+                    :columnOptions="columnOptions"
+                    :options="workScheduleOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="number"
+                    name="annualLeaveQuota"
+                    id="annualLeaveQuota"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.annualLeaveQuota')"
+                    v-model="form.annualLeaveQuota"
+                    showZeroNumber
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="number"
+                    name="remainingLeave"
+                    id="remainingLeave"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.remainingLeave')"
+                    v-model="form.remainingLeave"
+                    showZeroNumber
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- buttons -->
+      <div class="d-flex justify-content-end mt-2">
+        <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.close')}}
+        </button>
+        <button type="button" class="btn btn-primary px-3" @click="onSubmit">
+          <i class="fa fa-save"></i>
+          {{$t('buttons.save')}}
+        </button>
+      </div>
+    </div>
+  </div>
+</c-form>

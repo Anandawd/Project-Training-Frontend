@@ -1,0 +1,60 @@
+<div class="card-body">
+  <!-- //Table -->
+  <div class="d-flex mb-1">
+    <c-radio
+      class="ml-2"
+      :label="$t('labels.all')"
+      v-model="isActive"
+      value="-1"
+      @change="refreshData"
+    ></c-radio>
+    <c-radio
+      class="ml-1"
+      :label="$t('labels.active')"
+      v-model="isActive"
+      value="1"
+      @change="refreshData"
+    ></c-radio>
+    <c-radio
+      class="ml-1"
+      :label="$t('labels.notActive')"
+      v-model="isActive"
+      value="0"
+      @change="refreshData"
+    ></c-radio>
+  </div>
+  <ag-grid-vue
+    :style="agGridSetting.styleAgGridFrame"
+    :class="agGridSetting.themeAgGrid"
+    :columnDefs="columnDefs"
+    :rowData="rowData"
+    :paginationPageSize="paginationPageSize"
+    :gridOptions="gridOptions"
+    :context="context"
+    :frameworkComponents="frameworkComponents"
+    :enableCellChangeFlash="true"
+    :rowSelection="rowSelection"
+    :rowGroupPanelShow="rowGroupPanelShow"
+    :getContextMenuItems="getContextMenu"
+    :defaultColDef="agGridSetting.defColDef"
+    :masterDetail="true"
+    :suppressDragLeaveHidesColumns="true"
+    :detailRowAutoHeight="detailRowAutoHeight"
+    :suppressMakeColumnVisibleAfterUnGroup="true"
+    :statusBar="statusBar"
+    @grid-ready="onGridReady"
+    @cellContextMenu="handleRowRightClicked"
+    @selection-changed="onSelectionChanged"
+  />
+
+  <c-dialog
+    v-show="showDialog"
+    w100
+    dialogTitle="Confirm"
+    @confirm="confirmDialog"
+    @cancel="showDialog= false"
+    confirm
+  >
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </c-dialog>
+</div>

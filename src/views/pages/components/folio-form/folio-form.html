@@ -1,0 +1,438 @@
+<v-form
+  class="main-registration-form"
+  ref="validate"
+  @submit="onSubmit"
+  :class="{'card' : showForm}"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  v-slot="{resetForm}"
+>
+  <div class="accordion accordion-flush border mbp-5">
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="bookingInformationHeader">
+        <button
+          type="button"
+          class="accordion-button collapsed"
+          aria-expanded="false"
+          aria-controls="bookingInformation"
+          data-bs-target="#bookingInformation"
+          data-bs-toggle="collapse"
+        >
+          {{ $t('title.bookingInformation') }}
+        </button>
+      </h3>
+      <div
+        id="bookingInformation"
+        class="accordion-collapse collapse show"
+        aria-labelledby="bookingInformationHeader"
+        data-bs-parent="#reservation-form"
+      >
+        <form class="accordion-body row" :validation-schema="schema">
+          <div class="col-md-4">
+            <!-- <label for="arrival" class="col-md-3 col-form-label required">{{ $t('labels.arrival') }}</label> -->
+            <c-datepicker
+              class="mb-1"
+              required
+              :label="$t('labels.arrival')"
+              v-model="form.arrival"
+              id="arrival"
+              type="date"
+              valueType="YYYY-MM-DDTHH:mm:ssZZ"
+              format="DD/MM/YYYY"
+              :clearable="false"
+              :disabled-date="todayDateDisabled"
+              disabled
+              name="Arrival date"
+              resetButton
+              @input="onChangeArrival"
+              @reset="onResetDate"
+            ></c-datepicker>
+            <c-input
+              :disabled="disabledEditData"
+              required
+              half
+              @change="onChangeNight"
+              :min="1"
+              class="row mb-1"
+              v-model="form.night"
+              :max="3"
+              :label="$t('labels.night')"
+              type="number"
+              name="Night"
+            />
+            <c-datepicker
+              :disabled="disabledEditData"
+              class="mb-1"
+              :label="$t('labels.departure')"
+              v-model="form.departure"
+              id="departure"
+              type="date"
+              valueType="YYYY-MM-DDTHH:mm:ssZZ"
+              format="DD/MM/YYYY"
+              :clearable="false"
+              :disabled-date="dateDisabledDeparture"
+              name="Departure date"
+              resetButton
+              @input="onChangeDeparture"
+              @reset="onResetDate"
+            ></c-datepicker>
+            <c-select
+              :disabled="disabledEditData"
+              class="row mb-1"
+              required
+              @change="onChangeMarket"
+              :label="$t('labels.market')"
+              v-model="form.market_code"
+              :options="optionsList.Market"
+              labelName="name"
+              keyName="code"
+              name="Market"
+            />
+          </div>
+          <div class="col-md-4">
+            <c-select
+              :disabled="disabledEditData"
+              class="row mb-1"
+              :label="$t('labels.bookingSource')"
+              v-model="form.booking_source_code"
+              :options="optionsList.BookingSource"
+              labelName="name"
+              keyName="code"
+              name="Booking Source"
+            />
+            <c-select
+              :disabled="disabledEditData"
+              class="row mb-1"
+              :label="$t('labels.group')"
+              v-model="form.group_code"
+              :options="optionsList.GuestGroup"
+              labelName="name"
+              keyName="code"
+              name="groupCode"
+            />
+            <c-select
+              :disabled="disabledEditData"
+              class="row mb-1"
+              :label="$t('labels.sales')"
+              v-model="form.sales_code"
+              :options="optionsList.Sales"
+              labelName="name"
+              keyName="code"
+              name="salesCode"
+            />
+            <c-input
+              :disabled="disabledEditData"
+              class="row mb-1"
+              v-model="form.document_number"
+              :label="$t('labels.documentNumber')"
+              type="text"
+              name="documentNumber"
+            />
+          </div>
+          <div class="col-md-4">
+            <c-select
+              :disabled="disabledEditData"
+              required
+              class="row mb-1"
+              :label="$t('labels.paymentType')"
+              v-model="form.payment_type_code"
+              :options="optionsList.PaymentType"
+              labelName="name"
+              keyName="code"
+              name="PaymentType"
+            />
+            <div class="row mb-1">
+              <label for="notes" class="col-md-3 col-form-label"
+                >{{ $t('labels.notes') }}</label
+              >
+              <div class="col-md-9">
+                <textarea
+                  :disabled="disabledEditData"
+                  v-model="form.notes"
+                  type="text"
+                  class="form-control"
+                  rows="3"
+                  id="notes"
+                  name="notes"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="currencyHeader">
+        <button
+          type="button"
+          class="accordion-button collapsed"
+          aria-expanded="false"
+          aria-controls="currency"
+          data-bs-target="#currency"
+          data-bs-toggle="collapse"
+        >
+          {{ $t('title.currency') }}
+        </button>
+      </h3>
+      <div
+        id="currency"
+        class="accordion-collapse collapse show"
+        aria-labelledby="currency"
+        data-bs-parent="#currencyHeader"
+      >
+        <div class="accordion-body row">
+          <div class="col-md-4">
+            <c-select
+              :disabled="disabledEditData"
+              required
+              class="row mb-1"
+              :label="$t('labels.currency')"
+              v-model="form.currency_code"
+              :options="optionsList.Currency"
+              labelName="code"
+              keyName="code"
+              name="currency"
+              @change="onChangeCurrencyCode"
+            />
+            <c-input
+              half
+              disabled
+              required
+              formatted
+              class="row mb-1"
+              v-model="form.exchange_rate"
+              :label="$t('labels.exchangeRate')"
+              type="number"
+              name="exchangeRate"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="personalInformationHeader">
+        <button
+          type="button"
+          class="accordion-button collapsed"
+          aria-expanded="false"
+          aria-controls="personalInformation"
+          data-bs-target="#personalInformation"
+          data-bs-toggle="collapse"
+        >
+          {{ $t('title.personalInformation') }}
+        </button>
+      </h3>
+      <div
+        id="personalInformation"
+        class="accordion-collapse collapse"
+        :class="{ 'show' : formType !== $global.formType.guestGroup}"
+        aria-labelledby="personalInformationHeader"
+        data-bs-parent="#reservation-form"
+      >
+        <form class="accordion-body row">
+          <div class="col-md-4">
+            <c-select
+              :disabled="disabledEditData"
+              :required="isTitleRequired"
+              class="row mb-1"
+              half
+              :label="$t('labels.title')"
+              v-model="form.title_code"
+              :options="optionsList.GuestTitle"
+              labelName="name"
+              keyName="code"
+              name="Title"
+            />
+            <c-input
+              :disabled="disabledEditData"
+              required
+              class="row mb-1"
+              v-model="form.full_name"
+              :label="$t('labels.fullname')"
+              type="text"
+              name="Full Name"
+            />
+            <c-input
+              :disabled="disabledEditData"
+              class="row mb-1"
+              v-model="form.street"
+              :label="$t('labels.street')"
+              type="text"
+              name="Street"
+            />
+            <c-select
+              :disabled="disabledEditData"
+              class="row mb-1"
+              @change="onChangeCountry"
+              :label="$t('labels.country')"
+              v-model="form.country_code"
+              :options="optionsList.Country"
+              labelName="name"
+              keyName="code"
+              name="Country"
+            />
+            <c-select
+              :disabled="disabledEditData"
+              :required="isStateRequired"
+              class="row mb-1"
+              @change="onChangeState"
+              :label="$t('labels.state')"
+              v-model="form.state_code"
+              :options="optionsList.State"
+              labelName="name"
+              keyName="code"
+              name="State"
+            />
+            <c-select
+              :disabled="disabledEditData"
+              :required="isCityRequired"
+              class="row mb-1"
+              @change="onChangeCity"
+              :label="$t('labels.city')"
+              v-model="form.city_code"
+              :options="optionsList.City"
+              labelName="name"
+              keyName="code"
+              name="City"
+            />
+            <c-input
+              :disabled="form.city_code !== 'OTH' || disabledEditData"
+              class="row mb-1"
+              v-model="form.city"
+              :label="$t('labels.otherCity')"
+              type="text"
+              name="Other City"
+            />
+          </div>
+          <div class="col-md-4">
+            <c-select
+              :disabled="disabledEditData"
+              :required="isNationalityRequired"
+              class="row mb-1"
+              :label="$t('labels.nationality')"
+              v-model="form.nationality_code"
+              :options="optionsList.Nationality"
+              labelName="name"
+              keyName="code"
+              name="Nationality"
+            />
+            <c-input
+              :disabled="disabledEditData"
+              class="row mb-1"
+              v-model="form.postal_code"
+              :label="$t('labels.postalCode')"
+              type="text"
+              name="Postal Code"
+            />
+            <c-input
+              :disabled="disabledEditData"
+              :required="isPhone1Required"
+              class="row mb-1"
+              v-model="form.phone1"
+              :label="`${$t('labels.phone')}1`"
+              type="text"
+              name="Phone 1"
+            />
+            <c-input
+              :disabled="disabledEditData"
+              class="row mb-1"
+              v-model="form.phone2"
+              :label="`${$t('labels.phone')}2`"
+              type="text"
+              name="Phone 2"
+            />
+            <c-input
+              :disabled="disabledEditData"
+              class="row mb-1"
+              v-model="form.fax"
+              :label="$t('labels.fax')"
+              type="text"
+              name="fax"
+            />
+            <c-input
+              :disabled="disabledEditData"
+              :required="isEmailRequired"
+              class="row mb-1"
+              v-model="form.email"
+              :label="$t('labels.email')"
+              type="text"
+              name="Email"
+            />
+            <c-input
+              :disabled="disabledEditData"
+              class="row mb-1"
+              v-model="form.website"
+              :label="$t('labels.website')"
+              type="text"
+              name="website"
+            />
+          </div>
+          <div class="col-md-4">
+            <c-select
+              :disabled="disabledEditData"
+              :required="isCompanyRequired"
+              class="row mb-1"
+              :label="$t('labels.company')"
+              v-model="form.company_code"
+              :options="optionsList.Company"
+              labelName="name"
+              keyName="code"
+              name="Company"
+            />
+            <c-select
+              :disabled="disabledEditData"
+              class="row mb-1"
+              :label="$t('labels.guestType')"
+              v-model="form.guest_type_code"
+              :options="optionsList.GuestType"
+              labelName="name"
+              keyName="code"
+              name="Guest Type"
+            />
+            <c-select
+              :disabled="disabledEditData"
+              class="row mb-1"
+              :label="$t('labels.idCardType')"
+              v-model="form.id_card_code"
+              :options="optionsList.IDCardType"
+              labelName="name"
+              keyName="code"
+              name="Card Type"
+            />
+            <c-input
+              :disabled="disabledEditData"
+              class="row mb-1"
+              v-model="form.id_card_number"
+              :label="$t('labels.idCardNumber')"
+              type="text"
+              name="ID Card Number"
+            />
+            <c-input
+              :disabled="disabledEditData"
+              class="mb-1"
+              v-model="form.birth_place"
+              :label="$t('labels.birthPlace')"
+              type="text"
+              name="Birth Place"
+            />
+            <c-datepicker
+              :disabled="disabledEditData"
+              :label="$t('labels.birthDate')"
+              v-model="form.birth_date"
+              type="date"
+              valueType="YYYY-MM-DDTHH:mm:ssZZ"
+              format="DD/MM/YYYY"
+              name="Birth Date"
+            ></c-datepicker>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <save-close-button
+    :saveDisabled="disabledEditData"
+    :isSaving="isSaving"
+    @save="onSave"
+    @close="$emit('close')"
+  ></save-close-button>
+</v-form>

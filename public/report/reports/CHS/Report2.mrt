@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="1">
+      <Data Ref="2" type="Stimulsoft.Report.Dictionary.StiJsonDatabase" isKey="true">
+        <Alias>Data</Alias>
+        <Name>Data</Name>
+        <PathData>http://localhost:8000/api/report/preview?reservationNumber=9&amp;reportId=90001</PathData>
+      </Data>
+    </Databases>
+    <DataSources isList="true" count="2">
+      <company Ref="3" type="DataTableSource" isKey="true">
+        <Alias>company</Alias>
+        <Columns isList="true" count="13">
+          <value>name,System.String</value>
+          <value>street,System.String</value>
+          <value>city,System.String</value>
+          <value>country,System.String</value>
+          <value>CityStreet,System.String</value>
+          <value>CountryState,System.String</value>
+          <value>postal_code,System.String</value>
+          <value>Contact,System.String</value>
+          <value>phone2,System.String</value>
+          <value>fax,System.String</value>
+          <value>email,System.String</value>
+          <value>website,System.String</value>
+          <value>foto,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>d8de8310f29a428b96613e92f5f7a623</Key>
+        <Name>company</Name>
+        <NameInSource>Data.company</NameInSource>
+      </company>
+      <data Ref="4" type="DataTableSource" isKey="true">
+        <Alias>data</Alias>
+        <Columns isList="true" count="44">
+          <value>reservation_number,System.Decimal</value>
+          <value>ReservationBy,System.String</value>
+          <value>Notes,System.String</value>
+          <value>HK_x0020_Notes,System.String</value>
+          <value>AuditDate,System.String</value>
+          <value>LastUpdate,System.String</value>
+          <value>Deposit,System.String</value>
+          <value>Title,System.String</value>
+          <value>FullName,System.String</value>
+          <value>Address,System.String</value>
+          <value>City,System.String</value>
+          <value>Phone,System.String</value>
+          <value>Phone1,System.String</value>
+          <value>Phone2,System.String</value>
+          <value>Fax,System.String</value>
+          <value>Email,System.String</value>
+          <value>Website,System.String</value>
+          <value>IDCardNumber,System.String</value>
+          <value>Gender,System.String</value>
+          <value>BirthPlace,System.String</value>
+          <value>BirthDate,System.String</value>
+          <value>Arrival,System.String</value>
+          <value>Departure,System.String</value>
+          <value>DateArrival,System.String</value>
+          <value>DateDeparture,System.String</value>
+          <value>Adult,System.Decimal</value>
+          <value>Child,System.Decimal</value>
+          <value>Discount,System.String</value>
+          <value>WeekdayRate,System.String</value>
+          <value>WeekendRate,System.String</value>
+          <value>RoomNumber,System.String</value>
+          <value>Bill_x0020_Instruction,System.String</value>
+          <value>Group,System.String</value>
+          <value>Status,System.String</value>
+          <value>Country,System.String</value>
+          <value>State,System.String</value>
+          <value>Company,System.String</value>
+          <value>Guest_x0020_Type,System.String</value>
+          <value>ID_x0020_Card_x0020_Type,System.String</value>
+          <value>RoomType,System.String</value>
+          <value>RateType,System.String</value>
+          <value>Market,System.String</value>
+          <value>Booking_x0020_Source,System.String</value>
+          <value>Bussiness_x0020_Source,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>45aa861a1ec94daead2c9aa273ebdc42</Key>
+        <Name>data</Name>
+        <NameInSource>Data.data</NameInSource>
+      </data>
+    </DataSources>
+    <Relations isList="true" count="0" />
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <Variables isList="true" count="0" />
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>9a6d830793e348b3a35ef04aa138873b</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="5" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="1">
+        <Text1 Ref="6" type="Text" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>8,1.4,3.4,0.6</ClientRectangle>
+          <Conditions isList="true" count="0" />
+          <Font>Arial,9</Font>
+          <HorAlignment>Center</HorAlignment>
+          <Margins>0,0,0,0</Margins>
+          <Name>Text1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+          <Text>{company.name}</Text>
+          <TextBrush>Black</TextBrush>
+          <VertAlignment>Center</VertAlignment>
+        </Text1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Guid>9290be6baf7d4d4aa68099e1eb38bafd</Guid>
+      <Margins>1,1,1,1</Margins>
+      <Name>Page1</Name>
+      <PageHeight>29.7</PageHeight>
+      <PageWidth>21</PageWidth>
+      <Report isRef="0" />
+    </Page1>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>4/9/2020 9:14:55 PM</ReportChanged>
+  <ReportCreated>4/9/2020 9:13:54 PM</ReportCreated>
+  <ReportFile>D:\PROJECT\PHP\.LARAVEL\starter-kit\StimulsoftReport\Report2.mrt</ReportFile>
+  <ReportGuid>2a37972a149b4a65bcec8a3a5ad7b5d7</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Centimeters</ReportUnit>
+  <ReportVersion>2020.2.2.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="0" />
+</StiSerializer>

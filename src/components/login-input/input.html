@@ -1,0 +1,16 @@
+<div class="input-group">
+  <input
+    :type="type"
+    class="form-control"
+    :placeholder="placeholder"
+    :value="modelValue"
+    autocomplete="off"
+    @change="onValueChange($event)"
+    @blur="$emit('blur',$event)"
+  />
+  <div v-if="icon" class="input-group-append">
+    <div class="input-group-text">
+      <font-awesome-icon :icon="icon" />
+    </div>
+  </div>
+</div>

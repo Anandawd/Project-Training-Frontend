@@ -1,0 +1,568 @@
+<div
+  :class="formType !== $global.formType.storeStock ? 
+'card filter' : 'filter'"
+>
+  <div class="card-body">
+    <div
+      :class="formType !== $global.formType.closeMonth && formType !== $global.formType.closeYear && formType !== $global.formType.costingPos && formType !== $global.formType.reservationListForm ? 'row' : ''"
+    >
+      <div
+        v-if="dateRange || date || searchBy 
+      || formType === $global.formType.reservation
+      || formType === $global.formType.apCommissionAndOther 
+      || formType === $global.formType.apRefundDeposit
+      || formType === $global.formType.arCityLedger
+      || formType === $global.formType.arCityLedgerInvoice
+      || formType === $global.formType.receipt
+      || formType === $global.formType.journal
+      || formType === $global.formType.purchaseOrder
+      || formType === $global.formType.accountPayable
+      || formType === $global.formType.receive
+      || formType === $global.formType.bankTransaction
+      || formType === $global.formType.bankReconciliation
+      || formType === $global.formType.receiptAccounting
+      || formType === $global.formType.prepaidExpense
+      || formType === $global.formType.foreignCash 
+      || formType === $global.formType.cashSalesReconciliation"
+        class="mr-0"
+        :class="[ formType ==  $global.formType.folioHistory 
+              || formType ==  $global.formType.roomAvailability  
+              || formType ==  $global.formType.reservation 
+              || formType ==  $global.formType.apRefundDeposit
+              || formType == $global.formType.apCommissionAndOther
+              || formType ==  $global.formType.dynamicRate 
+              || formType !== $global.formType.roomRateLastDeal
+               ? 'col' : 'col-md-6']"
+      >
+        <div
+          class="row mb-1"
+          v-if="formType !== $global.formType.paymentByAPARList && formType!==$global.formType.roomAvailability && formType !== $global.formType.PaymentApArList && formType!==$global.formType.dynamicRate && formType!==$global.formType.roomRateLastDeal &&  formType !==  $global.formType.proposalAndTaskCalendar && formType !== $global.formType.salesActivityDashboard && formType !== $global.formType.activityLog
+          && formType !== $global.formType.closeMonth && formType !== $global.formType.closeYear && formType !== $global.formType.costingPos && formType !== $global.formType.reservationListForm && searchBy"
+        >
+          <label for="search-option" class="pr-0 col-form-label col-md-2 col-3">
+            {{$t('labels.searchBy')}}</label
+          >
+          <div class="row col">
+            <c-select
+              title="Search by"
+              required
+              v-model="data.index"
+              class="col-4 pr-0"
+              placeholder="Search By"
+              :options="options"
+              labelName="text"
+              keyName="value"
+              name="searchOption"
+            />
+            <div class="input-group col pl-0">
+              <input
+                v-model="data.text"
+                type="search"
+                class="form-control"
+                placeholder="Search..."
+                aria-label="searchData"
+                @keyup.enter="onEnter"
+              />
+              <div class="input-group-append">
+                <button
+                  title="search"
+                  type="button"
+                  class="input-group-text"
+                  @click="onRefresh"
+                >
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <c-datepicker
+              v-if="dateRight"
+              class="pr-2"
+              :label=" $t('labels.date')"
+              v-model="data.start_date"
+              type="date"
+              valueType="YYYY-MM-DD"
+              format="DD/MM/YYYY"
+              name="from"
+              @change="onChangeStartDate"
+            ></c-datepicker>
+          </div>
+        </div>
+        <div
+          v-if="dateRange || date||
+          formType === $global.formType.reservation
+          || formType === $global.formType.apCommissionAndOther 
+          || formType === $global.formType.apRefundDeposit
+          || formType === $global.formType.arCityLedger
+          || formType === $global.formType.arCityLedgerInvoice
+          || formType === $global.formType.receipt
+          || formType === $global.formType.journal
+          || formType === $global.formType.purchaseOrder
+          || formType === $global.formType.accountPayable
+          || formType === $global.formType.receive
+          || formType === $global.formType.bankTransaction
+          || formType === $global.formType.bankReconciliation
+          || formType === $global.formType.receiptAccounting
+          || formType === $global.formType.prepaidExpense
+          || formType === $global.formType.foreignCash 
+          || formType === $global.formType.cashSalesReconciliation"
+          class="row mb-1"
+        >
+          <label class="pr-0 col-form-label col-2">
+            {{$t('labels.date')}}</label
+          >
+          <div class="col row">
+            <c-datepicker
+              class="col-xl-4 col-md-4 col-5 pr-0"
+              @change="onChangeStartDate"
+              v-model="data.start_date"
+              type="date"
+              valueType="YYYY-MM-DD"
+              format="DD/MM/YYYY"
+              name="start"
+            >
+            </c-datepicker>
+            <c-datepicker
+              v-if="!date"
+              class="col-xl-4 col-md-4 col-5 pl-0"
+              customClass="plx-7-5"
+              @change="onChangeEndDate"
+              v-model="data.end_date"
+              type="date"
+              valueType="YYYY-MM-DD"
+              format="DD/MM/YYYY"
+              name="start"
+            ></c-datepicker>
+            <c-checkbox
+              v-if="formType === $global.formType.reservation"
+              booleanValue
+              class="col-2 col-md-4 pl-1"
+              label="Individual Only"
+              v-model="data.filter[1]"
+              @change="onRefresh"
+            >
+            </c-checkbox>
+          </div>
+        </div>
+      </div>
+      <div v-if="formType===$global.formType.reservation" class="col-md-6">
+        <div v-if="isGroupCheckIn">
+          <c-select
+            :clearable="false"
+            :title="$t('commons.group')"
+            v-model="data.filter[2]"
+            class="col row"
+            :label="$t('commons.filter.select.group')"
+            :options="groups"
+            labelName="name"
+            keyName="code"
+            name="group"
+            @load="getGuestGroup"
+            @change="onRefresh"
+          />
+        </div>
+        <div v-else>
+          <div class="d-flex">
+            <div class="checklist">
+              <input
+                class="mr-1"
+                type="radio"
+                name="new"
+                id="new"
+                v-model="data.filter[0]"
+                value="N"
+                @change="onRefresh"
+              />
+              <label for="new"
+                >{{ $t('commons.filter.checkList.reserved') }}</label
+              >
+            </div>
+            <div class="checklist">
+              <input
+                class="mr-1"
+                type="radio"
+                name="wait-list"
+                id="wait-list"
+                v-model="data.filter[0]"
+                value="W"
+                @change="onRefresh"
+              />
+              <label for="wait-list"
+                >{{ $t('commons.filter.checkList.waitList') }}</label
+              >
+            </div>
+            <div class="checklist">
+              <input
+                class="mr-1"
+                type="radio"
+                name="check-in"
+                id="check-in"
+                v-model="data.filter[0]"
+                value="I"
+                @change="onRefresh"
+              />
+              <label for="check-in"
+                >{{ $t('commons.filter.checkList.checkedIn') }}</label
+              >
+            </div>
+            <div class="checklist">
+              <input
+                class="mr-1"
+                type="radio"
+                name="check-out"
+                id="check-out"
+                v-model="data.filter[0]"
+                value="O"
+                @change="onRefresh"
+              />
+              <label for="check-out"
+                >{{ $t('commons.filter.checkList.checkedOut') }}</label
+              >
+            </div>
+          </div>
+          <div class="d-flex">
+            <div class="checklist">
+              <input
+                class="mr-1"
+                type="radio"
+                name="cancelled"
+                id="cancelled"
+                v-model="data.filter[0]"
+                value="C"
+                @change="onRefresh"
+              />
+              <label for="cancelled"
+                >{{ $t('commons.filter.checkList.cancelled') }}</label
+              >
+            </div>
+            <div class="checklist">
+              <input
+                class="mr-1"
+                type="radio"
+                name="no-show"
+                id="no-show"
+                v-model="data.filter[0]"
+                value="S"
+                @change="onRefresh"
+              />
+              <label for="no-show"
+                >{{ $t('commons.filter.checkList.noShow') }}</label
+              >
+            </div>
+            <div class="checklist">
+              <input
+                class="mr-1"
+                type="radio"
+                name="voided"
+                id="voided"
+                v-model="data.filter[0]"
+                value="V"
+                @change="onRefresh"
+              />
+              <label for="voided"
+                >{{ $t('commons.filter.checkList.voided') }}</label
+              >
+            </div>
+            <div class="checklist">
+              <input
+                class="mr-1"
+                type="radio"
+                name="select-all"
+                id="select-all"
+                v-model="data.filter[0]"
+                value=""
+                @change="onRefresh"
+              />
+              <label for="select-all"
+                >{{ $t('commons.filter.checkList.showAll') }}</label
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Lost and Found  -->
+      <div class="col-md-6" v-if="formType === $global.formType.lostAndFound">
+        <div class="d-flex">
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="all"
+              id="all"
+              v-model="data.filter[0]"
+              value="0"
+              @change="onRefresh"
+            />
+            <label for="all">{{ $t('commons.filter.checkList.all') }}</label>
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showActive"
+              id="showActive"
+              v-model="data.filter[0]"
+              value="1"
+              @change="onRefresh"
+            />
+            <label for="showActive"
+              >{{ $t('commons.filter.checkList.showActive') }}</label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showInactive"
+              id="showInactive"
+              v-model="data.filter[0]"
+              value="2"
+              @change="onRefresh"
+            />
+            <label for="showInactive"
+              >{{ $t('commons.filter.checkList.showInactive') }}</label
+            >
+          </div>
+        </div>
+      </div>
+      <!-- filter by Select -->
+      <div class="col-md-3" v-if="formType === $global.formType.journal">
+        <div v-if="formType === $global.formType.journal" class="d-flex">
+          <label for="searchJournalType" class="mt-1" style="font-size: 12px"
+            >{{ $t('commons.filter.select.journalType') }}</label
+          >
+          <c-select
+            v-model="data.filter[0]"
+            required
+            class="col"
+            :options="journalTypeOptions"
+            labelName="text"
+            keyName="value"
+            name="searchJournalType"
+            @change="onRefresh"
+          />
+        </div>
+      </div>
+      <!-- AR City Ledger & Invoice -->
+      <div
+        class="col-md-6"
+        v-if="formType === $global.formType.arCityLedger || formType === $global.formType.arCityLedgerInvoice"
+      >
+        <div v-if="formType === $global.formType.arCityLedger" class="row">
+          <c-select
+            v-model="data.filter[0]"
+            @change="onRefresh"
+            class="col row"
+            :label="$t('commons.filter.select.directBill')"
+            :options="listDropdown.Company"
+            labelName="name"
+            keyName="code"
+            name="searchDirectBill"
+            customLabelClass="col-4"
+          >
+            <!-- <template #append-end>
+              <button type="button" class="input-group-text" @click="onRefresh"><i class="fa fa-search"
+                  aria-hidden="true"></i></button>
+            </template> -->
+          </c-select>
+          <c-select
+            v-model="data.filter[1]"
+            @change="onRefresh"
+            class="col row"
+            :label="$t('commons.filter.select.companyType')"
+            :options="listDropdown.CompanyType"
+            labelName="name"
+            keyName="code"
+            name="searchCompany"
+            customLabelClass="col-5"
+          >
+            <!-- <template #append-end>
+              <button type="button" class="input-group-text" @click="onRefresh"><i class="fa fa-search"
+                  aria-hidden="true"></i></button>
+            </template> -->
+          </c-select>
+        </div>
+        <div v-if="formType === $global.formType.arCityLedgerInvoice">
+          <c-select
+            v-model="data.filter[1]"
+            class="row mb-1"
+            :label="$t('commons.filter.select.companyType')"
+            :options="listDropdown.CompanyType"
+            labelName="name"
+            keyName="code"
+            name="searchCompany"
+            @change="onRefresh"
+            customLabelClass="col-2 col-md-3"
+            customClass="col-lg-5 col"
+          >
+            <!-- <template #append-end>
+              <button type="button" class="input-group-text" @click="onRefresh"><i class="fa fa-search"
+                  aria-hidden="true"></i></button>
+            </template> -->
+          </c-select>
+          <div class="d-flex">
+            <div class="checklist col-sm">
+              <input
+                class="mr-1"
+                type="radio"
+                name="unpaid"
+                id="unpaid"
+                v-model="data.filter[0]"
+                value="false"
+                @change="onRefresh"
+              />
+              <label for="unpaid"
+                >{{ $t('commons.filter.checkList.unpaid') }}</label
+              >
+            </div>
+            <div class="checklist col-sm">
+              <input
+                class="mr-1"
+                type="radio"
+                name="paid"
+                id="paid"
+                v-model="data.filter[0]"
+                value="true"
+                @change="onRefresh"
+              />
+              <label for="paid"
+                >{{ $t('commons.filter.checkList.paid') }}</label
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- checkist Reconciliation -->
+      <div
+        class="col-md-6"
+        v-if="formType === $global.formType.bankTransaction"
+      >
+        <div class="row">
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="all"
+              id="all"
+              v-model="data.filter[0]"
+              value="false"
+              @change="onRefresh"
+            />
+            <label for="all"
+              >{{ $t('commons.filter.checkList.unreconciliated') }}</label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showActive"
+              id="showActive"
+              v-model="data.filter[0]"
+              value="true"
+              @change="onRefresh"
+            />
+            <label for="showActive"
+              >{{ $t('commons.filter.checkList.reconciliated') }}</label
+            >
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6" v-if="formType === $global.formType.prepaidExpense">
+        <div class="d-flex">
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="all"
+              id="all"
+              v-model="data.filter[0]"
+              value="false"
+              @change="onRefresh"
+            />
+            <label for="all"
+              >{{ $t('commons.filter.checkList.unposted') }}</label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showActive"
+              id="showActive"
+              v-model="data.filter[0]"
+              value="true"
+              @change="onRefresh"
+            />
+            <label for="showActive"
+              >{{ $t('commons.filter.checkList.posted') }}</label
+            >
+          </div>
+        </div>
+      </div>
+      <!-- cost recipe -->
+      <div class="col-md-6" v-if="formType === $global.formType.costRecipe">
+        <div class="ml-1 d-flex w-100 checklist">
+          <input
+            class="mr-1"
+            type="checkbox"
+            name="sopthcr"
+            id="sopthcr"
+            v-model="data.filter[0]"
+            @change="onRefresh"
+          />
+          <label for="sopthcr" class="col"
+            >{{ $t('commons.filter.checkList.sopthcr') }}</label
+          >
+        </div>
+      </div>
+      <!-- period -->
+      <div
+        v-if="formType === $global.formType.incomeBudget
+      || formType === $global.formType.expenseBudget
+      || formType === $global.formType.budgetStatistic
+      || formType === $global.formType.manPower "
+        class="d-md-flex col-md-5 mb-1"
+      >
+        <c-select
+          v-model="data.filter[0]"
+          class="col-5 row"
+          :label="$t('labels.period')"
+          :options="period"
+          labelName="text"
+          keyName="value"
+          name="searchPeriod"
+          @change="onRefresh"
+        />
+      </div>
+      <div v-if="dateRangeInline || dateInline" class="col-md-4 row mb-1">
+        <label class="pr-0 col-form-label col-3"> {{$t('labels.date')}}</label>
+        <div class="col row">
+          <c-datepicker
+            class="col-lg-6 col-md-6 col-6 pr-0"
+            customClass="plx-9"
+            @input="onDateChanges"
+            v-model="data.start_date"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            name="start_date"
+          >
+          </c-datepicker>
+          <c-datepicker
+            v-if="!dateInline"
+            class="col-lg-6 col-md-6 col-6 pl-0"
+            customClass="plx-7-5"
+            @input="onDateChanges"
+            v-model="data.end_date"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            name="end_date"
+          ></c-datepicker>
+        </div>
+      </div>
+      <slot :search="data" :onRefresh="onRefresh"> </slot>
+    </div>
+  </div>
+  <!-- </div> -->
+</div>

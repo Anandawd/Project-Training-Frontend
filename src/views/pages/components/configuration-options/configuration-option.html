@@ -1,0 +1,25 @@
+<c-modal
+  size="lg"
+  :title="$t('title.configuration')"
+  @close="handleClose"
+  confirm
+>
+  <template #body>
+    <component :is="activeConfig" @selected="onSelectedData"></component>
+  </template>
+  <template #footer>
+    <div class="card-footer">
+      <div class="row">
+        <button
+          class="col btn btn-primary mr-1"
+          @click.prevent="handleSelectData"
+        >
+          {{$t('buttons.select')}}
+        </button>
+        <button class="col btn btn-danger" @click.prevent="handleClose">
+          {{$t('buttons.close')}}
+        </button>
+      </div>
+    </div>
+  </template>
+</c-modal>

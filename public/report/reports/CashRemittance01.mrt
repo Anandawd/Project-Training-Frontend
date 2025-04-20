@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="1">
+      <json Ref="2" type="Stimulsoft.Report.Dictionary.StiJsonDatabase" isKey="true">
+        <Alias>json</Alias>
+        <Name>json</Name>
+        <PathData>D:\json.json</PathData>
+      </json>
+    </Databases>
+    <DataSources isList="true" count="5">
+      <cash_count Ref="3" type="DataTableSource" isKey="true">
+        <Alias>cash_count</Alias>
+        <Columns isList="true" count="5">
+          <value>SubTotal,System.Decimal</value>
+          <value>currency_sign,System.String</value>
+          <value>id,System.Decimal</value>
+          <value>nominal,System.String</value>
+          <value>quantity,System.Decimal</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>978e52e20a09426685ea4b7c6c3f8e58</Key>
+        <Name>cash_count</Name>
+        <NameInSource>json.cash_count</NameInSource>
+      </cash_count>
+      <current_balance Ref="4" type="DataTableSource" isKey="true">
+        <Alias>current_balance</Alias>
+        <Columns isList="true" count="1">
+          <value>Balance,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>c50988612a6b45ea921714449e7d5718</Key>
+        <Name>current_balance</Name>
+        <NameInSource>json.current_balance</NameInSource>
+      </current_balance>
+      <data_payment Ref="5" type="DataTableSource" isKey="true">
+        <Alias>data_payment</Alias>
+        <Columns isList="true" count="4">
+          <value>Account,System.String</value>
+          <value>AccountCode,System.String</value>
+          <value>TotalAmount,System.String</value>
+          <value>relationId,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>95237d43d3454ec6a670fb8326a27157</Key>
+        <Name>data_payment</Name>
+        <NameInSource>json.data_payment</NameInSource>
+      </data_payment>
+      <refund Ref="6" type="DataTableSource" isKey="true">
+        <Alias>refund</Alias>
+        <Columns isList="true" count="3">
+          <value>Account,System.String</value>
+          <value>AccountCode,System.String</value>
+          <value>TotalAmount,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>e4c23d32eb504488a2b7648b53dac00e</Key>
+        <Name>refund</Name>
+        <NameInSource>json.refund</NameInSource>
+      </refund>
+      <shift_information Ref="7" type="DataTableSource" isKey="true">
+        <Alias>shift_information</Alias>
+        <Columns isList="true" count="16">
+          <value>audit_date,System.DateTime</value>
+          <value>computer_name,System.String</value>
+          <value>created_at,System.DateTime</value>
+          <value>created_by,System.String</value>
+          <value>end_date,System.DateTime</value>
+          <value>id,System.Decimal</value>
+          <value>ip_address,System.String</value>
+          <value>is_open,System.Decimal</value>
+          <value>mac_address,System.String</value>
+          <value>opening_balance,System.String</value>
+          <value>remark,System.String</value>
+          <value>shift,System.String</value>
+          <value>start_date,System.DateTime</value>
+          <value>system_code,System.String</value>
+          <value>updated_at,System.DateTime</value>
+          <value>updated_by,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>7ee4a75e6e544939a1232255b48f01e9</Key>
+        <Name>shift_information</Name>
+        <NameInSource>json.shift_information</NameInSource>
+      </shift_information>
+    </DataSources>
+    <Relations isList="true" count="0" />
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <Variables isList="true" count="0" />
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>b84dc13909074a1fb83bae1f9a1a48f3</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="8" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="2">
+        <Text1 Ref="9" type="Text" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>8.6,1.6,5,2</ClientRectangle>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Font>Arial,8</Font>
+          <Margins>0,0,0,0</Margins>
+          <Name>Text1</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+          <Text>{root_current_balance.Balance}</Text>
+          <TextBrush>Black</TextBrush>
+          <Type>DataColumn</Type>
+        </Text1>
+        <Text2 Ref="10" type="Text" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>3.8,1.4,1.6,0.6</ClientRectangle>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Font>Arial,8</Font>
+          <Margins>0,0,0,0</Margins>
+          <Name>Text2</Name>
+          <Page isRef="8" />
+          <Parent isRef="8" />
+          <TextBrush>Black</TextBrush>
+        </Text2>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>d2e4b0a5c0ef4ac7ba853dba597e5307</Guid>
+      <Margins>1,1,1,1</Margins>
+      <Name>Page1</Name>
+      <PageHeight>29.7</PageHeight>
+      <PageWidth>21</PageWidth>
+      <Report isRef="0" />
+    </Page1>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>3/7/2023 4:03:50 PM</ReportChanged>
+  <ReportCreated>3/7/2023 3:18:07 PM</ReportCreated>
+  <ReportFile>D:\CODING\_Cakrasoft\Web\chs_cloud_frontend\public\report\reports\CashRemittance01.mrt</ReportFile>
+  <ReportGuid>9e63d452353f49de89f24934e1709b15</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Centimeters</ReportUnit>
+  <ReportVersion>2021.3.2.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+  </Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="0" />
+</StiSerializer>

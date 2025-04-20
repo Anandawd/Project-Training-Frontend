@@ -1,0 +1,48 @@
+<app-dropdown is-nav class="user-menu">
+  <template v-slot:dropdown-button>
+    <img
+      :src="(user && user.picture) ? user.picture : defaultProfileImage"
+      class="user-image img-circle elevation-2"
+      alt="User Image"
+    />
+  </template>
+  <template v-slot:dropdown-menu>
+    <li class="user-header bg-primary">
+      <img
+        :src="(user && user.picture) ? user.picture : defaultProfileImage"
+        class="img-circle elevation-3"
+        alt="User Image"
+      />
+
+      <p>
+        <span>{{userId}}</span>
+        <small>
+          <span>{{ userGroup}}&nbsp;</span>
+        </small>
+      </p>
+    </li>
+    <!-- Menu Body -->
+    <!-- <li class="user-body">
+      <div class="row">
+        <div class="col-4 text-center">
+          <a href="#">{{ $t("labels.followers") }}</a>
+        </div>
+        <div class="col-4 text-center">
+          <a href="#">{{ $t("labels.sales") }}</a>
+        </div>
+        <div class="col-4 text-center">
+          <a href="#">{{ $t("labels.friends") }}</a>
+        </div>
+      </div> 
+    </li> -->
+    <!-- Menu Footer-->
+    <li class="user-footer">
+      <button class="btn btn-default btn-flat" @click="$emit('changePassword')">
+        {{ $t("labels.changePassword") }}
+      </button>
+      <button @click="logout()" class="btn btn-default btn-flat float-right">
+        {{ $t("labels.signOut") }}
+      </button>
+    </li>
+  </template>
+</app-dropdown>

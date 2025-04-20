@@ -1,0 +1,68 @@
+
+        <div id="parrentAccordion" class="accordion mb-2">
+            <div class="accordion-item">
+                <h6 class="accordion-header" id="itemInformationHeader">
+                    <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+                    aria-controls="itemInformation" aria-expanded="false">
+                    Total Information
+                    </button>
+                </h6>
+                <div id="itemInformation1" class="accordion-collapse p-3" aria-labelledby="itemInformationHeader1">
+                <div class="accordion-body card-block">
+                        <div class="row mb-2"> 
+                        <div class="col-md-6 d-flex">
+                            <label for="sub_total" style="width: 50%;" class="col-form-label pb-1">{{ $t('labels.subTotal') }}</label>
+                            <c-input v-model="form.sub_total" @change="onChangeSubTotal" disabled="true" id="sub_total" class="mb-1" type="text" style="width: 90%;"
+                            name="sub_total" />
+                        </div> 
+                        </div>
+                        <div class="row mb-2"> 
+                            <div class="col-md-6 d-flex">
+                                <label for="discount" style="width: 50%;" class="col-form-label pb-1">{{ $t('labels.discount') }}</label>
+                                <c-input v-model="form.discount" @change="onChangeDiscount" :disabled="disableForm" id="discount" class="mb-1" formatted showZeroNumber type="number" style="width: 90%;"
+                                name="discount" />
+                            </div> 
+                            <div class="col-md-6 d-flex pb-1">
+                                <checkbox class="ml-0" id="discountCheck" v-model="form.discountCheck" type="checkbox"
+                                name="discountCheck">
+                            </checkbox>
+                            <label for="discountCheck" style=" width: 100%;" class="col-form-label ml-2">{{ $t('labels.discountAsIncome') }}</label>
+                            </div>
+                        </div>
+                        <div class="row mb-2"> 
+                            <div class="col-md-6 d-flex">
+                                <label for="tax" style="width: 50%;" class="col-form-label pb-1">{{ $t('labels.tax') }}</label>
+                                <c-input v-model="form.tax" id="tax" @change="onChangeTax" :disabled="disableForm" class="mb-1" formatted showZeroNumber type="number" style="width: 90%;"
+                                name="tax" />
+                            </div> 
+                            <div class="col-md-6 d-flex pb-1">
+                                <checkbox class="ml-0" id="taxCheck" v-model="form.taxCheck" type="checkbox"
+                                name="taxCheck">
+                            </checkbox>
+                            <label for="taxCheck" style=" width: 100%;" class="col-form-label ml-2">{{ $t('labels.taxAsExpense') }}</label>
+                            </div>
+                        </div>
+                        <div class="row mb-2"> 
+                            <div class="col-md-6 d-flex">
+                                <label for="shipping" style="width: 50%;" class="col-form-label pb-1">{{ $t('labels.shipping') }}</label>
+                                <c-input v-model="form.shipping" @change="onChangeShipping" id="shipping" class="mb-1" formatted showZeroNumber type="number" style="width: 90%;"
+                                name="shipping" />
+                            </div> 
+                            <div class="col-md-6 d-flex pb-1">
+                                <checkbox class="ml-0" id="shippingCheck" v-model="form.shippingCheck" type="checkbox"
+                                name="shippingCheck">
+                            </checkbox>
+                            <label for="shippingCheck" style=" width: 100%;" class="col-form-label ml-2">{{ $t('labels.shippingAsExpense') }}</label>
+                            </div>
+                        </div>
+                        <div class="row mb-2"> 
+                            <div class="col-md-6 d-flex">
+                                <label for="total" style="width: 50%;" class="col-form-label pb-1">{{ $t('labels.total') }}</label>
+                                <c-input v-model="form.total" id="total" disabled="true" class="mb-1" type="text" style="width: 90%;"
+                                name="total" />
+                            </div> 
+                            </div>
+                    </div>
+                </div>
+                </div>
+            </div>

@@ -1,0 +1,12 @@
+<div class="c-select" :class="{ 'has-error': !!errorMessage, 'is-invalid': !!errorMessage }">
+  <label v-if="label" :for="ID" class="col-form-label"
+    :class="[ 'col-md-3', {'required': required} ]">{{ label }}</label>
+  <div :class="[half ? 'col-md-4' : 'col-md-9']">
+    <VSelect ref="refElement" class="c-select" :id="ID" noOptionsText="empty" v-model="data" :multiple="multiple"
+      :placeholder="placeholder" :closeOnSelect="false" :reduce="reduce" :disabled="disabled" :label="labelName"
+      @option:deselecting="deselect" @option:clear="deselect" @option:selected="onValueChange" :valueProp="keyName"
+      :options="options">
+    </VSelect>
+  </div>
+  <!-- {{data}} -->
+</div>

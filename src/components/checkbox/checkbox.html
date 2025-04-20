@@ -1,0 +1,25 @@
+<div class="c-checkbox row">
+  <div
+    class="d-flex align-items-center"
+    :class="{'icheck-primary': type === 'icheck', 'form-check': type === 'default', 'custom-control custom-checkbox': type === 'custom'}"
+  >
+    <input
+      class="mr-1"
+      :title="title??label"
+      type="checkbox"
+      :disabled="disabled"
+      :id="ID"
+      :class="{'form-check-input' : type === 'default', 'custom-control-input ': type === 'custom'}"
+      :checked="modelValue == 1 || modelValue == 'True' || modelValue == 'true'"
+      @change="onValueChange($event)"
+    />
+    <label
+      class="d-flex col-form-label"
+      :for="ID"
+      :class="{'form-check-label': type === 'default', 'custom-control-label': type === 'custom'}"
+    >
+      <slot> {{label}} </slot>
+    </label>
+    <slot name="body"></slot>
+  </div>
+</div>

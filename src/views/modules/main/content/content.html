@@ -1,0 +1,24 @@
+<div @click="onToggleSideBar" class="content-wrapper">
+  <progress-bar></progress-bar>
+  <vue3-progress-bar></vue3-progress-bar>
+  <breadcrumb></breadcrumb>
+  <!-- <RouterView v-slot="{ Component }">
+    <template v-if="Component">
+      <Transition mode="out-in">
+        <Suspense> 
+          <component :is="Component"></component>
+ 
+          <template #fallback>
+            Loading...
+          </template>
+        </Suspense>
+      </Transition>
+    </template>
+  </RouterView> -->
+  <!-- <router-view></router-view> -->
+  <router-view v-slot="{ Component }">
+    <keep-alive :include="[...activeMenu, 'dayend-close']">
+      <component :is="Component" />
+    </keep-alive>
+  </router-view>
+</div>

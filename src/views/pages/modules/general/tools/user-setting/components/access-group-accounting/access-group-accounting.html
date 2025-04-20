@@ -1,0 +1,138 @@
+<section>
+  <div class="accordion" id="accordionAccessAccounting">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingAccessAccounting1">
+        <button
+          class="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseAccessAccounting1"
+          aria-expanded="true"
+          aria-controls="collapseAccessAccounting1"
+        >
+          Form Access
+        </button>
+      </h2>
+      <div
+        id="collapseAccessAccounting1"
+        class="accordion-collapse collapse show"
+        aria-labelledby="headingAccessAccounting1"
+        data-bs-parent="#accordionAccessAccounting"
+      >
+        <div
+          class="accordion-body row"
+          @contextmenu="onContextMenu($event,access.access_form,accessList.access_form)"
+        >
+          <div
+            v-if="access"
+            class="col"
+            v-for="(column,columnIndex) in calculateDataForDisplay(accessList.access_form)"
+          >
+            <div v-for="(item,i) in column">
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_form[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingAccessAccounting2">
+        <button
+          class="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseAccessAccounting2"
+          aria-expanded="true"
+          aria-controls="collapseAccessAccounting"
+        >
+          Invoice Access
+        </button>
+      </h2>
+      <div
+        id="collapseAccessAccounting2"
+        class="accordion-collapse collapse show"
+        aria-labelledby="headingAccessAccounting2"
+        data-bs-parent="#accordionAccessAccounting2"
+      >
+        <div
+          class="accordion-body row"
+          @contextmenu="onContextMenu($event,access.access_invoice,accessList.access_invoice)"
+        >
+          <div
+            v-if="access"
+            class="col"
+            v-for="(column,columnIndex) in calculateDataForDisplay(accessList.access_invoice)"
+          >
+            <div v-for="(item,i) in column">
+              <c-checkbox
+                v-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_invoice[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingAccessAccounting3">
+        <button
+          class="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseAccessAccounting3"
+          aria-expanded="true"
+          aria-controls="collapseAccessAccounting3"
+        >
+          Special Access
+        </button>
+      </h2>
+      <div
+        id="collapseAccessAccounting3"
+        class="accordion-collapse collapse show"
+        aria-labelledby="headingAccessAccounting3"
+        data-bs-parent="#accordionAccessAccounting"
+      >
+        <div
+          class="accordion-body row"
+          @contextmenu="onContextMenu($event,access.access_special,accessList.access_special)"
+        >
+          <div
+            v-if="access"
+            class="col"
+            v-for="(column,columnIndex) in calculateDataForDisplay(accessList.access_special)"
+          >
+            <div v-for="(item,i) in column">
+              <c-checkbox
+                class="mb-1"
+                customLabelClass="col-6"
+                v-if="item.code == $global.accountingAccessOrder.accessSpecial.printInvoiceMoreThan &&!item.hidden"
+                :label="item.name"
+                v-model="access.access_special[item.code]"
+              >
+                <template #body>
+                  <c-input
+                    class="ml-3 mb-1"
+                    customLabelClass="col-6"
+                    v-if="item.code == $global.accountingAccessOrder.accessSpecial.printInvoiceMoreThan &&!item.hidden"
+                    type="number"
+                    spinner
+                    v-model="access.print_invoice_count"
+                  ></c-input> </template
+              ></c-checkbox>
+              <c-checkbox
+                v-else-if="!item.hidden"
+                :label="item.name"
+                v-model="access.access_special[item.code]"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,43 @@
+
+        <div id="parrentAccordion" class="accordion mb-2">
+            <div class="accordion-item">
+                <h6 class="accordion-header" id="itemInformationHeader">
+                    <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+                    aria-controls="itemInformation" aria-expanded="false">
+                    Payment Information
+                    </button>
+                </h6>
+                <div id="itemInformation1" class="accordion-collapse p-3" aria-labelledby="itemInformationHeader1">
+                <div class="accordion-body card-block">
+                        <div class="row"> 
+                        <div class="col-md-6 mb-1">
+                            <c-input v-model="form.amount" :label="$t('labels.amount')" id="amount" customLabelClass="col-3" customClass="col-9" class="mb-1" formatted showZeroNumber type="number"
+                            name="amount" />
+                            <c-select v-model="form.bank_account" :label="$t('labels.bankAccount')" keyName="code" :options="listDropdown.BankAccountPayment" labelName="name" id="bank_account" customLabelClass="col-3" customClass="col-9" class="mb-1"
+                            name="bank_account"><template #append-end>
+                            <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                            </template>
+                            </c-select>
+                            <c-input v-model="form.balance" :label="$t('labels.balance')" disabled="true" id="balance" customLabelClass="col-3" customClass="col-9" type="text"
+                            name="balance" />
+                        </div> 
+                        <div class="col-md-6">
+                                <c-datepicker id="due_date" :label="$t('labels.dueDate')" :required="required" customLabelClass="col-3" customClass="col-9" class="mb-1" keyName="code" type="date"
+                                v-model="form.due_date" valueType="YYYY-MM-DD" format="DD/MM/YYYY" name="due_date">
+                                </c-datepicker>
+                                <c-select v-model="form.ap_account" :label="$t('labels.apAccount')" keyName="code" :options="listDropdown.JournalAccountAP" labelName="name" id="ap_account" customLabelClass="col-3" customClass="col-9" class="mb-1"
+                                name="ap_account"><template #append-end>
+                                    <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                                </template>
+                                </c-select>
+                                <c-input v-model="form.remark" :label="$t('labels.remark')" id="remark" type="text" customLabelClass="col-3" customClass="col-9"
+                                name="remark" />
+                        </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>

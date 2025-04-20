@@ -1,0 +1,35 @@
+<Form @keyup.enter.native="onEnter" :form="defaultForm" @submit="onSave" ref="barcodeFormElement" :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit" class="input-form row" v-slot="{resetForm}">
+  <div class="card">
+    <div class="card-header">
+      {{ $t('title.productBarcodeEditor') }}
+      <button type="button" class="float-end close-button btn" @click="onClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <c-input disabled id="code" class="row mb-1"
+            v-model="form.code" :label="$t('labels.code')" customLabelClass="col-3" customClass="col-9" type="text"
+            name="Code" />
+          <c-input disabled id="name" class="row mb-1"
+            v-model="form.code" :label="$t('labels.name')" customLabelClass="col-3" customClass="col-9" type="text"
+            name="Name" />
+          <c-input disabled id="price" class="row mb-1"
+            v-model="form.code" :label="$t('labels.price')" customLabelClass="col-3" customClass="col-9" type="text"
+            name="Price" />
+        </div>
+        <div class="col-md-6">
+          <c-input disabled id="outlet" class="row mb-1"
+            v-model="form.outlet" :label="$t('labels.outlet')" customLabelClass="col-3" customClass="col-9" type="text"
+            name="Outlet" />
+          <c-input id="barcode" autofocus class="row mb-1"
+            v-model="form.barcode" :label="$t('labels.barcode')" customLabelClass="col-3" customClass="col-9" type="text"
+            name="Barcode" />
+        </div>
+      </div>
+      <div class="card-footer">
+        <save-close-button :isSaving="isSaving" @save="onSubmit" @close="onClose"></save-close-button>
+      </div>
+    </div>
+  </div>
+</Form>

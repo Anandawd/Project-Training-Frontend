@@ -1,0 +1,16 @@
+<c-modal title="Changelog">
+  <template #body>
+    <div class="mb-4" v-for="change in changelogX">
+      <h6>
+        <u><b> {{change.version}}</b> - {{ change.date }}</u>
+      </h6>
+      <ul>
+        <template v-for="(items, typeX) in change.changes">
+          <li v-for="item in items" :key="item">
+            • <b>{{ typeX }}</b> {{ item }}
+          </li>
+        </template>
+      </ul>
+    </div>
+  </template>
+</c-modal>

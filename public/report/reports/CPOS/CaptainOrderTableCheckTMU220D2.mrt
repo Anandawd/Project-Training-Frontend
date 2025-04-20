@@ -1,0 +1,495 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Culture isNull="true" />
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="1">
+      <json Ref="2" type="Stimulsoft.Report.Dictionary.StiJsonDatabase" isKey="true">
+        <Alias>json</Alias>
+        <Key />
+        <Name>json</Name>
+        <PathData>D:\json.json</PathData>
+      </json>
+    </Databases>
+    <DataSources isList="true" count="5">
+      <root_company Ref="3" type="DataTableSource" isKey="true">
+        <Alias>root_company</Alias>
+        <Columns isList="true" count="16">
+          <value>Country,System.String</value>
+          <value>State,System.String</value>
+          <value>city,System.String</value>
+          <value>code,System.String</value>
+          <value>country_code,System.String</value>
+          <value>email,System.String</value>
+          <value>fax,System.String</value>
+          <value>image_url,System.String</value>
+          <value>name,System.String</value>
+          <value>phone1,System.String</value>
+          <value>phone2,System.String</value>
+          <value>postal_code,System.String</value>
+          <value>state_code,System.String</value>
+          <value>street,System.String</value>
+          <value>website,System.String</value>
+          <value>relationId,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>1b39df38e70546c4abe0b5f93347c1f6</Key>
+        <Name>root_company</Name>
+        <NameInSource>json.root_company</NameInSource>
+      </root_company>
+      <root_data_captain_order Ref="4" type="DataTableSource" isKey="true">
+        <Alias>root_data_captain_order</Alias>
+        <Columns isList="true" count="16">
+          <value>CheckType,System.String</value>
+          <value>ComplimentType,System.String</value>
+          <value>Department,System.String</value>
+          <value>Outlet,System.String</value>
+          <value>Waitress,System.String</value>
+          <value>adult,System.Decimal</value>
+          <value>audit_date,System.DateTime</value>
+          <value>child,System.Decimal</value>
+          <value>created_by,System.String</value>
+          <value>full_name,System.String</value>
+          <value>id,System.Decimal</value>
+          <value>posting_date,System.DateTime</value>
+          <value>table_number,System.String</value>
+          <value>title_code,System.String</value>
+          <value>updated_by,System.String</value>
+          <value>relationId,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>1c7cb787bd6947eea7dbdcb899b8b85f</Key>
+        <Name>root_data_captain_order</Name>
+        <NameInSource>json.root_data_captain_order</NameInSource>
+      </root_data_captain_order>
+      <root_data_transactions Ref="5" type="DataTableSource" isKey="true">
+        <Alias>root_data_transactions</Alias>
+        <Columns isList="true" count="5">
+          <value>DescriptionFree,System.String</value>
+          <value>quantity,System.String</value>
+          <value>quantity_printed_check,System.String</value>
+          <value>remark,System.String</value>
+          <value>relationId,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>f6d57193c6374e859809e455e8d0e507</Key>
+        <Name>root_data_transactions</Name>
+        <NameInSource>json.root_data_transactions</NameInSource>
+      </root_data_transactions>
+      <root Ref="6" type="DataTableSource" isKey="true">
+        <Alias>root</Alias>
+        <Columns isList="true" count="3">
+          <value>company,System.String</value>
+          <value>data,System.String</value>
+          <value>template,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>46a65aa4ecd9442a8096c244b292c7d9</Key>
+        <Name>root</Name>
+        <NameInSource>json.root</NameInSource>
+      </root>
+      <root_data Ref="7" type="DataTableSource" isKey="true">
+        <Alias>root_data</Alias>
+        <Columns isList="true" count="3">
+          <value>captain_order,System.String</value>
+          <value>transactions,System.String</value>
+          <value>relationId,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>6f069e169b5640ab9eef1f3fb3a1a238</Key>
+        <Name>root_data</Name>
+        <NameInSource>json.root_data</NameInSource>
+      </root_data>
+    </DataSources>
+    <Relations isList="true" count="4">
+      <root Ref="8" type="DataRelation" isKey="true">
+        <Alias>root</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>relationId</value>
+        </ChildColumns>
+        <ChildSource isRef="3" />
+        <Dictionary isRef="1" />
+        <Name>root</Name>
+        <NameInSource>root_company</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>company</value>
+        </ParentColumns>
+        <ParentSource isRef="6" />
+      </root>
+      <root_data Ref="9" type="DataRelation" isKey="true">
+        <Alias>root_data</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>relationId</value>
+        </ChildColumns>
+        <ChildSource isRef="4" />
+        <Dictionary isRef="1" />
+        <Name>root_data</Name>
+        <NameInSource>root_data_captain_order</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>captain_order</value>
+        </ParentColumns>
+        <ParentSource isRef="7" />
+      </root_data>
+      <root_data Ref="10" type="DataRelation" isKey="true">
+        <Alias>root_data</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>relationId</value>
+        </ChildColumns>
+        <ChildSource isRef="5" />
+        <Dictionary isRef="1" />
+        <Name>root_data</Name>
+        <NameInSource>root_data_transactions</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>transactions</value>
+        </ParentColumns>
+        <ParentSource isRef="7" />
+      </root_data>
+      <root Ref="11" type="DataRelation" isKey="true">
+        <Alias>root</Alias>
+        <ChildColumns isList="true" count="1">
+          <value>relationId</value>
+        </ChildColumns>
+        <ChildSource isRef="7" />
+        <Dictionary isRef="1" />
+        <Name>root</Name>
+        <NameInSource>root_data</NameInSource>
+        <ParentColumns isList="true" count="1">
+          <value>data</value>
+        </ParentColumns>
+        <ParentSource isRef="6" />
+      </root>
+    </Relations>
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <Variables isList="true" count="0" />
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>c601c44135854580a3cd8e84f9a1be8b</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="12" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="4">
+        <ReportTitle1 Ref="13" type="ReportTitleBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,0.4,6.3,1.3</ClientRectangle>
+          <Components isList="true" count="5">
+            <Memo1 Ref="14" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>0,0,6.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Memo1</Name>
+              <Page isRef="12" />
+              <Parent isRef="13" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_company.name}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo1>
+            <Memo3 Ref="15" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>0,0.5,3.3,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Memo3</Name>
+              <Page isRef="12" />
+              <Parent isRef="13" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>CO #: {root_data_captain_order.id}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo3>
+            <Memo4 Ref="16" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>0,0.9,3.3,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Memo4</Name>
+              <Page isRef="12" />
+              <Parent isRef="13" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Outlet: {root_data_captain_order.Outlet}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo4>
+            <Memo6 Ref="17" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>3.5,0.5,2.8,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Memo6</Name>
+              <Page isRef="12" />
+              <Parent isRef="13" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Table: {root_data_captain_order.table_number}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo6>
+            <Memo7 Ref="18" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>3.5,0.9,2.8,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Memo7</Name>
+              <Page isRef="12" />
+              <Parent isRef="13" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_data_captain_order.Waitress}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo7>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>ReportTitle1</Name>
+          <Page isRef="12" />
+          <Parent isRef="12" />
+        </ReportTitle1>
+        <PageFooter1 Ref="19" type="PageFooterBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanShrink>True</CanShrink>
+          <ClientRectangle>0,8.6,6.3,0.4</ClientRectangle>
+          <Components isList="true" count="2">
+            <Memo34 Ref="20" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>0,0,4.5,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Memo34</Name>
+              <Page isRef="12" />
+              <Parent isRef="19" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Printed: {Format("{0:dd/MM/yyyy HH:mm:ss}",Time)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo34>
+            <Memo37 Ref="21" type="Text" isKey="true">
+              <AutoWidth>True</AutoWidth>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>2.5,0,3.8,0.4</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Memo37</Name>
+              <Page isRef="12" />
+              <Parent isRef="19" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Audit: {Format("{0:dd/MM/yyyy}",root_data_captain_order.audit_date)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo37>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>PageFooter1</Name>
+          <Page isRef="12" />
+          <Parent isRef="12" />
+        </PageFooter1>
+        <Header1 Ref="22" type="HeaderBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,2.5,6.3,0.5</ClientRectangle>
+          <Components isList="true" count="2">
+            <Memo13 Ref="23" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>0,0,5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Memo13</Name>
+              <Page isRef="12" />
+              <Parent isRef="22" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Product</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo13>
+            <Memo14 Ref="24" type="Text" isKey="true">
+              <Border>Top, Bottom;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>5,0,1.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Memo14</Name>
+              <Page isRef="12" />
+              <Parent isRef="22" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Qty</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo14>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <KeepHeaderTogether>False</KeepHeaderTogether>
+          <Name>Header1</Name>
+          <Page isRef="12" />
+          <Parent isRef="12" />
+        </Header1>
+        <MasterData1 Ref="25" type="DataBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <CanBreak>True</CanBreak>
+          <ClientRectangle>0,3.8,6.3,0.5</ClientRectangle>
+          <Components isList="true" count="2">
+            <Memo9 Ref="26" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>0,0,5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <Margins>0,0,0,0</Margins>
+              <Name>Memo9</Name>
+              <Page isRef="12" />
+              <Parent isRef="25" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{(root_data_transactions.remark=="") ? root_data_transactions.DescriptionFree : root_data_transactions.DescriptionFree +" ("+ root_data_transactions.remark+")"}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo9>
+            <Memo10 Ref="27" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <CanGrow>True</CanGrow>
+              <CanShrink>True</CanShrink>
+              <ClientRectangle>5,0,1.3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9</Font>
+              <GrowToHeight>True</GrowToHeight>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>0,0,0,0</Margins>
+              <Name>Memo10</Name>
+              <Page isRef="12" />
+              <Parent isRef="25" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{decimal.Parse(root_data_transactions.quantity)-decimal.Parse(root_data_transactions.quantity_printed_check)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo10>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_data_transactions</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>MasterData1</Name>
+          <Page isRef="12" />
+          <Parent isRef="12" />
+          <Sort isList="true" count="0" />
+        </MasterData1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>511e7b07c1b041c0872c0c3dcfcc2e46</Guid>
+      <LargeHeight>True</LargeHeight>
+      <LargeHeightFactor>1</LargeHeightFactor>
+      <Margins>0.7,1.3,0.5,0.5</Margins>
+      <Name>Page1</Name>
+      <PageHeight>10</PageHeight>
+      <PageWidth>8.3</PageWidth>
+      <Report isRef="0" />
+      <TitleBeforeHeader>True</TitleBeforeHeader>
+      <UnlimitedBreakable>False</UnlimitedBreakable>
+      <UnlimitedHeight>True</UnlimitedHeight>
+    </Page1>
+  </Pages>
+  <PreviewSettings>25108991</PreviewSettings>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>12/21/2023 11:22:36 AM</ReportChanged>
+  <ReportCreated>12/19/2023 2:56:13 PM</ReportCreated>
+  <ReportFile>D:\CODING\_Cakrasoft\Web\chs_cloud_frontend\public\report\reports\CPOS\CaptainOrderTableCheckTMU220D2.mrt</ReportFile>
+  <ReportGuid>865994b7cdaf4c28b49995700cb0f07b</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Centimeters</ReportUnit>
+  <ReportVersion>2021.3.2.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+</Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="0" />
+</StiSerializer>

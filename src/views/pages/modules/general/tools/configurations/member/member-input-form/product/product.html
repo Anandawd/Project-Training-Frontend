@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col-4">
+    <c-select @change="handleLoadData('outlet')" :disabled="isDisabled" id="outlet" :options="listDropdown.Outlet"
+      class="row mb-1" keyName="code" labelName="name" v-model="form.outlet" :label="$t('labels.outlet')" name="outlet"
+      customLabelClass="col-3" customClass="col-9">
+    </c-select>
+  </div>
+  <div class="col-4">
+    <c-select @change="handleLoadData('')" :disabled="isDisabled" id="category" :options="listDropdown.Category"
+      class="row mb-1" keyName="code" labelName="name" v-model="form.category" :label="$t('labels.category')"
+      name="category" customLabelClass="col-3" customClass="col-9">
+    </c-select>
+  </div>
+  <div class="col-4">
+    <c-input @change="handleLoadData('')" :disabled="isDisabled" id="product" class="row mb-1" v-model="form.product"
+      :label="$t('labels.product')" name="product" customLabelClass="col-3" customClass="col-9" />
+  </div>
+</div>
+<!-- //Table -->
+<div class="mb-2">
+  <ag-grid-vue :style="agGridSetting.styleAgGridFrame1" :class="agGridSetting.themeAgGrid" :columnDefs="columnDefs"
+    :rowData="rowData" :paginationPageSize="paginationPageSize" :gridOptions="gridOptions" :context="context"
+    :frameworkComponents="frameworkComponents" :enableCellChangeFlash="true" :rowSelection="rowSelection"
+    :rowGroupPanelShow="rowGroupPanelShow" :getContextMenuItems="getContextMenu"
+    :defaultColDef="agGridSetting.defColDef" :masterDetail="true" :detailCellRenderer="detailCellRenderer"
+    :detailRowAutoHeight="detailRowAutoHeight" :suppressMakeColumnVisibleAfterUnGroup="true" :statusBar="statusBar"
+    @grid-ready="onGridReady" @cellContextMenu="handleRowRightClicked" />
+</div>

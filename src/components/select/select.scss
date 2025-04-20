@@ -1,0 +1,363 @@
+.c-multiselect {
+  position: relative;
+  label {
+    margin-bottom: 0;
+  }
+  .selectBox {
+    position: relative;
+  }
+
+  .selectBox select {
+    width: 100%;
+  }
+
+  .overSelect {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+
+  #option {
+    font-size: 11px;
+    padding: 5px 0px 5px 0px;
+    max-width: 100%;
+    position: absolute;
+    top: 20px;
+    width: 94%;
+    z-index: 99;
+    background: white;
+    display: block;
+    border: 1px #dadada solid;
+
+    .select-label {
+      font-weight: 500 !important;
+    }
+
+    span {
+      width: 100%;
+    }
+    hr {
+      margin-top: 1px;
+      margin-bottom: 5px;
+      border: 0;
+      border-top: 1px solid rgba(0, 0, 0, 0.544);
+    }
+
+    .checkbox {
+      // position: absolute;
+      overflow: auto;
+      max-height: 200px;
+    }
+  }
+
+  #option label {
+    padding: 0px 5px 0px 5px;
+    display: block;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+  }
+
+  #option label:hover,
+  #checkboxes span:hover {
+    background-color: #1e90ff;
+  }
+}
+.selectedOption {
+  height: 24px;
+  display: block;
+}
+
+.selectList .selectOption:hover {
+  background-color: rgba(59, 153, 252, 0.7);
+  cursor: default;
+}
+/* class applies to select element itself, not a wrapper element */
+.select-css {
+  font-size: 12px;
+  font-family: sans-serif;
+  font-weight: 400;
+  color: #444;
+  line-height: 1.3;
+  padding: 0.6em 0em 0em 0.8em;
+  /* width: 100%; */
+  max-width: 100%;
+  /* useful when width is set to anything other than 100% */
+  box-sizing: border-box;
+  margin: 0;
+  border: 1px solid #ced4da;
+  box-shadow: 0 1px 0 1px rgba(0, 0, 0, 0.04);
+  // border-radius: 0.5em;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  /* note: bg image below uses 2 urls. The first is an svg data uri for the arrow icon, and the second is the gradient. 
+				for the icon, if you want to change the color, be sure to use `%23` instead of `#`, since it's a url. You can also swap in a different svg icon or an external image reference
+				
+			*/
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"),
+    linear-gradient(to bottom, #ffffff 0%, #e5e5e5 100%);
+  background-repeat: no-repeat, repeat;
+  /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
+  background-position: right 0.7em top 50%, 0 0;
+  /* icon size, then gradient */
+  background-size: 0.65em auto, 100%;
+}
+
+/* Hide arrow icon in IE browsers */
+.select-css::-ms-expand {
+  // display: none;
+}
+.selectHeader {
+  font-weight: 700;
+}
+
+/* Hover style */
+.select-css:hover {
+  border-color: #888;
+}
+
+/* Focus style */
+.select-css:focus {
+  border-color: #aaa;
+  /* It'd be nice to use -webkit-focus-ring-color here but it doesn't work on box-shadow */
+  box-shadow: 0 0 1px 3px rgba(59, 153, 252, 0.7);
+  box-shadow: 0 0 0 3px -moz-mac-focusring;
+  color: #222;
+  outline: none;
+}
+
+/* Set options to normal weight */
+.select-css option {
+  font-weight: normal;
+}
+
+/* Support for rtl text, explicit support for Arabic and Hebrew */
+*[dir="rtl"] .select-css,
+:root:lang(ar) .select-css,
+:root:lang(iw) .select-css {
+  background-position: left 0.7em top 50%, 0 0;
+  padding: 0.6em 0.8em 0.5em 1.4em;
+}
+
+/* Disabled styles */
+.select-css:disabled,
+.select-css[aria-disabled="true"] {
+  color: graytext;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22graytext%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"),
+    linear-gradient(to bottom, #ffffff 0%, #e5e5e5 100%);
+}
+
+.select-css:disabled:hover,
+.select-css[aria-disabled="true"] {
+  border-color: #aaa;
+}
+
+.selectOption[selected="selected"] {
+  color: white;
+  background: var(--primary);
+}
+
+.selectOptions {
+  position: absolute;
+  z-index: 1000;
+  background-image: none;
+  display: block;
+  top: 24px;
+  min-width: 200px;
+  // right: 0;
+  // margin: 0px;
+  // transform: translate3d(width, 1542px, 0px);
+}
+
+.select-column {
+  width: auto;
+
+  > .disabled {
+    background-color: #e9ecef;
+    opacity: 1;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+.selectList {
+  max-height: 150px;
+  overflow: auto;
+}
+// option:empty {
+//   display: none;
+// }
+
+.customX-select {
+  position: relative;
+}
+
+.c-select {
+  .single-select {
+    button.form-select {
+      text-align: left;
+    }
+    .dropdown-menu {
+      width: 100%;
+      min-width: 10px;
+      // position: fixed !important;
+      // font-size: 12px !important ;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1005;
+      // background-color: white;
+      // display: block;
+      // width: 100%;
+      &.show {
+        padding-bottom: 3px;
+      }
+      div.clear-btn {
+        &:hover {
+          cursor: default;
+          color: #ffffff;
+          background-color: var(--danger);
+        }
+        font-size: 12px;
+        width: 100%;
+        padding: 2px 5px 2px 5px;
+      }
+    }
+    .empty-data {
+      font-size: 12px;
+      padding-left: 5px !important;
+      cursor: default;
+      text-align: left;
+    }
+    .dropdown-menu-option {
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 0.25rem;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+
+      font-size: 12px !important ;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1000;
+      background-color: white;
+      display: block;
+      width: 100%;
+      max-height: 200px; /* Adjust as needed */
+      overflow-y: auto;
+
+      .option {
+        font-size: 12px;
+        padding-left: 5px !important;
+        cursor: default;
+        &:hover {
+          background-color: grey;
+          color: white;
+        }
+        text-align: left;
+      }
+      .selected {
+        color: white;
+        background-color: var(--primary);
+      }
+    }
+  }
+
+  .select-column {
+    button.form-select {
+      text-align: left;
+    }
+    .dropdown-menu {
+      width: auto;
+      min-width: 10px;
+      // position: fixed !important;
+      // font-size: 12px !important ;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1005;
+      // background-color: white;
+      // display: block;
+      // width: 100%;
+      &.show {
+        padding-bottom: 3px;
+      }
+      div.clear-btn {
+        &:hover {
+          cursor: default;
+          color: #ffffff;
+          background-color: var(--danger);
+        }
+        font-size: 12px;
+        width: 100%;
+        padding: 2px 5px 2px 5px;
+      }
+    }
+    .empty-data {
+      font-size: 12px;
+      padding-left: 5px !important;
+      cursor: default;
+      text-align: left;
+    }
+    .dropdown-menu-option {
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 0.25rem;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+
+      font-size: 12px !important ;
+      margin-left: auto;
+      margin-right: auto;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background-color: white;
+      display: block;
+      width: inherit;
+      max-height: 200px; /* Adjust as needed */
+      overflow-y: auto;
+
+      .option {
+        font-size: 12px;
+        padding-left: 5px !important;
+        cursor: default;
+        &:hover {
+          background-color: grey;
+          color: white;
+        }
+        text-align: left;
+      }
+      .selected {
+        color: white;
+        background: var(--primary);
+      }
+    }
+    .column-header {
+      font-size: 12px !important ;
+      th {
+        border: none;
+      }
+    }
+
+    tr {
+      padding: 5px;
+    }
+    td,
+    th {
+      border: none;
+      padding: 1px 5px;
+      background: none !important;
+    }
+    table {
+      margin-bottom: 0px;
+      width: max-content;
+    }
+  }
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "version": "v1.0.9.3",
+    "date": "2023-09-15",
+    "changes": {
+      "FIX": [
+        "Ensure single select is disabled on active filter",
+        "Correct the user outlet group",
+        "Updated dfr"
+      ],
+      "ADD": ["Add individual Proforma Invoice"]
+    }
+  },
+  {
+    "version": "v1.0.9.1",
+    "date": "2023-08-28",
+    "changes": {
+      "CHANGE": [
+        "Updated all filters in c-select asset/accounting",
+        "Added filter to c-select in banquet and marketing"
+      ],
+      "ADD": [
+        "Implemented autofocus on filter select",
+        "Introduced Schedule Payment API and updated corresponding UI"
+      ],
+      "FIX": [
+        "Rectified budget expense issue",
+        "Corrected columns select layout"
+      ]
+    }
+  },
+  {
+    "version": "v1.0.9",
+    "date": "2023-08-10",
+    "changes": {
+      "IMPROVE": [
+        "Enhance UX input form PR",
+        "Enable column selection with search"
+      ],
+      "CHANGE": [
+        "Enable multiselect for supplier/store on apply price PR",
+        "Update menu for income, expense, and budget statistics"
+      ],
+      "ADD": [
+        "Implement filter on item PR",
+        "Record payment invoice as an expense",
+        "Implement validation for empty data on save depreciation (requires verification)"
+      ],
+      "FIX": ["Resolve bug in the expense budget menu"]
+    }
+  },
+  {
+    "version": "v1.0.8",
+    "date": "2023-07-25",
+    "changes": {
+      "ADD": [
+        "Alert for differing audit dates",
+        "Property name in the page title",
+        "Subscription alert icon in the header"
+      ],
+      "CHANGE": [
+        "Make table container resizable",
+        "Increase max length of room number to 20",
+        "Adjust the resolution of the app's logo"
+      ],
+      "FIX": [
+        "Day-end close status displaying on running client",
+        "Filter on booking"
+      ]
+    }
+  }
+]

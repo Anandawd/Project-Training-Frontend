@@ -1,0 +1,15 @@
+<div class="transfer-account-form">
+  <div class="row">
+    <c-checkbox class="ml-3" booleanValue :label="$t('labels.transferExistingTransaction')" v-model="transferExisting">
+    </c-checkbox>
+    <ag-grid-vue :style="$global.agGrid.styleAgGridFrame1" :class="$global.agGrid.themeAgGrid"
+      :suppressDragLeaveHidesColumns="true" :enableRangeSelection="false" :gridOptions="gridOptions"
+      @grid-ready="onGridReady" :context="context" :columnDefs="columnDefs" :frameworkComponents="frameworkComponents"
+      @cellContextMenu="handleRowRightClicked" :getRowNodeId="getRowNodeId" :suppressRowClickSelection="true"
+      :enableCellChangeFlash="true" :getContextMenuItems="getContextMenu" :rowSelection="rowSelection"
+      :rowData="rowData" :defaultColDef="$global.agGrid.colDef1">
+    </ag-grid-vue>
+  </div>
+  <save-close-button :isSaving="isSaving" @save="onSave()" @close="$emit('close')"></save-close-button>
+
+</div>

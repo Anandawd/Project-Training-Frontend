@@ -1,0 +1,44 @@
+<section class="content">
+        <div class="card">
+            <div class="card-header">
+            {{ title }}
+    <button type="button" class="close-button btn" style="float: right;" @click="onClose"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="card-body">
+            <Form @submit="onSave" ref="inputFormElement" :validation-schema="schema"
+                @invalid-submit="onInvalidSubmit" class="input-form row" v-slot="{resetForm}">
+                <div class="row pr-0">
+                    <div class="col-md-8">
+                    <receive-form ref="receiveFormElement" @getFormHeader="onGetFormListGeneral"></receive-form>
+                    </div>
+                    <div class="col-md-4">
+                    <directly-form ref="directlyFormElement" @disable="disableForm" @getFormHeader="onGetFormListGeneral"></directly-form>
+                    </div>
+                </div>
+                <detail-form class="mb-2" ref="detailFormElement" @disableSeparate="disableSeparate" @getDetailList="onGetDetailList" :disableForm="disableFormDetail" @getFormHeader="onGetFormListGeneral"></detail-form>
+                <div class="row pr-0">
+                    <div class="col-5">
+                    <total-form ref="totalFormElement" :subTotal="subTotal" :disableForm="disableFormTotal" @getFormHeader="onGetFormListGeneral"></total-form>
+                    </div>
+                    <div class="col-7">
+                    <payment-form ref="paymentFormElement" :balance="subTotal" @getFormHeader="onGetFormListGeneral"></payment-form>
+                    </div>
+                </div>
+            </Form> 
+            </div>
+        
+        <div class="card-footer">
+            <div class="d-flex justify-content-end mt-2">
+            <button type="button" class="btn btn-danger mr-1" @click="onClose">
+                <i class="fa fa-times" aria-hidden="true"></i>
+                {{$t('buttons.close')}}
+            </button>
+            <button type="button" class="btn btn-primary" @click="onSubmit">
+                <i class="fas fa-save"></i>
+                {{ $t('buttons.save') }}
+            </button>
+            </div>
+        </div>
+    </div>
+</section>

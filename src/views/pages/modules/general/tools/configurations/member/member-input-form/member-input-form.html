@@ -1,0 +1,221 @@
+<!-- <Form @submit="onSave" ref="inputFormElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit" -->
+<Form @submit="onSave" ref="inputFormValidation" :validation-schema="schema" @invalid-submit="onInvalidSubmit"
+  class="input-form row" v-slot="{resetForm}">
+  <div class="card">
+    <div class="card-header">
+      {{ title }}
+      <button type="button" class="close-button btn" @click="onClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="card-body">
+      <div class="row p-0">
+        <div class="col-md-6">
+          <div id="parrentAccordion" class="accordion">
+            <div class="accordion-item">
+              <h6 class="accordion-header" id="itemInformationHeader">
+                <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                  data-bs-target="#itemInformation" aria-controls="itemInformation" aria-expanded="true">
+                  {{ $t('commons.memberInformation')}}
+                </button>
+              </h6>
+              <div id="itemInformation" class="accordion-collapse collapse show"
+                aria-labelledby="itemInformationHeader">
+                <div class="accordion-body">
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <c-input :disabled="modeData === $global.modeData.edit" required id="code" class="row mb-1"
+                        :label="$t('labels.code')" :max="10" type="text" name="code" v-model="form.code"
+                        customLabelClass="col-3" customClass="col-9" />
+                      <c-select filter id="title" customLabelClass="col-3" customClass="col-9" class="mb-1"
+                        :options="listDropdown.title" keyName="code" labelName="name" v-model="form.title_code"
+                        :label="$t('labels.title')" name="title" @load="repeatLoadDropdownList">
+                      </c-select>
+                      <c-input required id="full_name" class="row mb-1" :label="$t('labels.fullname')" type="text"
+                        name="full_name" v-model="form.full_name" customLabelClass="col-3" customClass="col-9" />
+                      <c-input id="street" class="row mb-1" :label="$t('labels.street')" type="text" name="street"
+                        v-model="form.street" customLabelClass="col-3" customClass="col-9" />
+                      <c-select filter @change="loadStatelist" id="country" :options="listDropdown.country" class="row mb-1"
+                        keyName="code" labelName="name" v-model="form.country_code" :label="$t('labels.country')"
+                        name="country" customLabelClass="col-3" customClass="col-9" @load="repeatLoadDropdownList">
+                      </c-select>
+                      <c-select filter @change="loadCitylist" id="state" :options="listDropdown.state" class="row mb-1"
+                        keyName="code" labelName="name" v-model="form.state_code" :label="$t('labels.state')"
+                        name="state" customLabelClass="col-3" customClass="col-9" @load="repeatLoadDropdownList">
+                      </c-select>
+                      <c-select filter id="city" @change="handleDisableCity" class="row mb-1" :options="listDropdown.city"
+                        keyName="code" labelName="name" v-model="form.city_code" :label="$t('labels.city')" name="city"
+                        customLabelClass="col-3" customClass="col-9" @load="repeatLoadDropdownList">
+                      </c-select>
+                      <c-input id="cityOther" :disabled="isOther" class="row mb-1" :label="'&nbsp;'" type="text"
+                        name="cityOther" v-model="form.city" customLabelClass="col-3" customClass="col-9" />
+                      <c-select filter id="nationality" :options="listDropdown.nationality" class="row mb-1" keyName="code"
+                        labelName="name" v-model="form.nationality_code" :label="$t('labels.nationality')"
+                        name="nationality" customLabelClass="col-3" customClass="col-9" @load="repeatLoadDropdownList">
+                      </c-select>
+                      <c-input id="postCode" class="row mb-1" :label="$t('labels.postCode')" type="text" name="postCode"
+                        v-model="form.postal_code" customLabelClass="col-3" customClass="col-9" />
+                      <c-input id="phone1" class="row mb-1" :label="$t('labels.phone1')" type="text" name="phone1"
+                        v-model="form.phone1" customLabelClass="col-3" customClass="col-9" />
+                    </div>
+                    <div class="col-md-6">
+                      <c-input id="phone2" class="row mb-1" :label="$t('labels.phone2')" type="text" name="phone2"
+                        v-model="form.phone2" customLabelClass="col-3" customClass="col-9" />
+                      <c-input id="fax" class="row mb-1" :label="$t('labels.fax')" type="text" name="fax"
+                        v-model="form.fax" customLabelClass="col-3" customClass="col-9" />
+                      <c-input id="email" class="row mb-1" :label="$t('labels.email')" type="text" name="email"
+                        v-model="form.email" customLabelClass="col-3" customClass="col-9" />
+                      <c-input id="website" class="row mb-1" :label="$t('labels.website')" type="text" name="website"
+                        v-model="form.website" customLabelClass="col-3" customClass="col-9" />
+                      <c-select filter id="company" :options="listDropdown.company" class="row mb-1" keyName="code"
+                        labelName="name" v-model="form.company_code" :label="$t('labels.company')" name="company"
+                        customLabelClass="col-3" customClass="col-9" @load="repeatLoadDropdownList">
+                      </c-select>
+                      <c-select filter id="idCard" class="row mb-1" :options="listDropdown.idCardType" keyName="code"
+                        labelName="name" v-model="form.id_card_code" :label="$t('labels.idCard')" name="idCard"
+                        customLabelClass="col-3" customClass="col-9" @load="repeatLoadDropdownList">
+                      </c-select>
+                      <c-input id="idCardHashtag" class="row mb-1" :label="$t('labels.idCardHashtag')" type="text"
+                        name="idCardHashtag" v-model="form.id_card_number" customLabelClass="col-3"
+                        customClass="col-9" />
+                      <c-input id="birthPlace" class="row mb-1" :label="$t('labels.birthPlace')" type="text"
+                        name="birthPlace" v-model="form.birth_place" customLabelClass="col-3" customClass="col-9" />
+                      <c-datepicker :label="$t('labels.birthDate')" v-model="form.birth_date" id="birthDate"
+                        class="mb-1" type="date" valueType="YYYY-MM-DD" format="DD/MM/YYYY" name="birthDate"
+                        customLabelClass="col-3" customClass="col-9"></c-datepicker>
+                      <c-datepicker required :label="$t('labels.expiredDate')" v-model="form.expire_date"
+                        id="expired_date" class="mb-1" type="date" valueType="YYYY-MM-DD" format="DD/MM/YYYY"
+                        name="expired_date" customLabelClass="col-3" customClass="col-9"></c-datepicker>
+                    </div>
+                  </div>
+                  <div id="parrentAccordion" class="accordion mb-2">
+                    <div class="accordion-item">
+                      <h6 class="accordion-header" id="itemInformationHeader">
+                        <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                          data-bs-target="#itemInformation" aria-controls="itemInformation" aria-expanded="true">
+                          {{ $t('commons.pointType')}}
+                        </button>
+                      </h6>
+                      <div id="itemInformation" class="accordion-collapse collapse show"
+                        aria-labelledby="itemInformationHeader">
+                        <div class="accordion-body">
+                          <div class="row">
+                            <div class="col-3"></div>
+                            <div class="col-6">
+                              <checkbox id="forRoom" v-model="form.is_for_room" :label="$t('labels.forRoom')"
+                                type="checkbox" name="for_room" @change="pointTypeChange(1)">
+                              </checkbox>
+                            </div>
+                          </div>
+                          <c-select filter :disabled="isRPT" :required="!isRPT" id="roomPointType"
+                            :options="listDropdown.roomPointType" class="row mb-1" keyName="code" labelName="name"
+                            v-model="form.room_point_type_code" :label="$t('labels.roomPointType')" name="roomPointType"
+                            customLabelClass="col-3" customClass="col-9" @load="repeatLoadDropdownList">
+                          </c-select>
+                          <div class="row">
+                            <div class="col-3"></div>
+                            <div class="col-6">
+                              <checkbox id="forOutlet" v-model="form.is_for_outlet" :label="$t('labels.forOutlet')"
+                                type="checkbox" name="for_outlet" @change="pointTypeChange(2)">
+                              </checkbox>
+                            </div>
+                          </div>
+                          <c-select filter :disabled="isOPT" :required="!isOPT" id="outletPointType"
+                            :options="listDropdown.outletPointType" class="row mb-1" keyName="code" labelName="name"
+                            v-model="form.outlet_point_type_code" :label="$t('labels.outletPointType')"
+                            name="outletPointType" customLabelClass="col-3" customClass="col-9" @load="repeatLoadDropdownList">
+                          </c-select>
+                          <div class="row">
+                            <div class="col-3"></div>
+                            <div class="col-6">
+                              <checkbox id="forBanquet" v-model="form.is_for_banquet" :label="$t('labels.forBanquet')"
+                                type="checkbox" name="for_banquet" @change="pointTypeChange(3)">
+                              </checkbox>
+                            </div>
+                          </div>
+                          <c-select filter :disabled="isBPT" :required="!isBPT" id="banquetPointType"
+                            :options="listDropdown.banquetPointType" class="row mb-1" keyName="code" labelName="name"
+                            v-model="form.banquet_point_type_code" :label="$t('labels.banquetPointType')"
+                            name="banquetPointType" customLabelClass="col-3" customClass="col-9" @load="repeatLoadDropdownList">
+                          </c-select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="parrentAccordion" class="accordion">
+                    <div class="accordion-item">
+                      <h6 class="accordion-header" id="itemInformationHeader">
+                        <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                          data-bs-target="#itemInformation" aria-controls="itemInformation" aria-expanded="true">
+                          {{ $t('commons.memberOutletDiscount')}}
+                        </button>
+                      </h6>
+                      <div id="itemInformation" class="accordion-collapse collapse show"
+                        aria-labelledby="itemInformationHeader">
+                        <div class="accordion-body">
+                          <c-select filter id="memberOutletDiscount" :options="listDropdown.memberOutletDiscount"
+                            class="row mb-1" keyName="code" labelName="name" v-model="form.outlet_discount_code"
+                            :label="$t('labels.memberOutletDiscount')" name="memberOutletDiscount"
+                            customLabelClass="col-3" customClass="col-9" @load="repeatLoadDropdownList">
+                          </c-select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div id="parrentAccordion" class="accordion">
+            <div class="accordion-item">
+              <h6 class="accordion-header" id="itemInformationHeader">
+                <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                  data-bs-target="#itemInformation" aria-controls="itemInformation" aria-expanded="true">
+                  {{ $t('commons.product')}}
+                </button>
+              </h6>
+              <div id="itemInformation" class="accordion-collapse collapse show"
+                aria-labelledby="itemInformationHeader">
+                <div class="accordion-body">
+                  <Product ref="Product" :schema="schema" @onAdd="handleAddToProductDiscount" :modeData="modeData" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="parrentAccordion" class="accordion">
+            <div class="accordion-item">
+              <h6 class="accordion-header" id="itemInformationHeader">
+                <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                  data-bs-target="#itemInformation" aria-controls="itemInformation" aria-expanded="true">
+                  {{ $t('commons.productDiscount')}}
+                </button>
+              </h6>
+              <div id="itemInformation" class="accordion-collapse collapse show"
+                aria-labelledby="itemInformationHeader">
+                <div class="accordion-body">
+                  <ProductDiscount ref="ProductDiscount" @onDelete="handleDeleteData" @onEdit="handleEditData"
+                    :schema="schema" :modeData="modeData" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <save-close-button :isSaving="isSaving" @save="onSubmit" @close="onClose"></save-close-button>
+    </div>
+  </div>
+</Form>
+<CDialog v-show="showDialog" w100 dialogTitle="Product Discount" @confirm="addToProductDiscount"
+  @cancel="showDialog= false" confirm>
+  <template #body>
+    <c-input id="productname" disabled class="row mb-1" :label="$t('labels.product')" type="text" name="productname"
+      v-model="modal.product_name" customLabelClass="col-3" customClass="col-9" />
+    <c-input id="discount" class="row mb-1" :label="$t('labels.discount')" max="100" type="number" name="discount"
+      v-model="modal.discount" customLabelClass="col-3" customClass="col-9" />
+  </template>
+</CDialog>
+<CDialog v-show="showDialogDelete" w100 dialogTitle="Confirm" @confirm="DeleteMemberProductDiscount"
+  @cancel="showDialogDelete= false" confirm>
+  <template #body> Are you sure to delete this data? </template>
+</CDialog>

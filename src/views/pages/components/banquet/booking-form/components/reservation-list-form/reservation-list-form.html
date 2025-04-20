@@ -1,0 +1,140 @@
+<div ref="reservationListElement" id="reservation-form" class="accordion">
+  <div class="accordion-item">
+    <h3 class="accordion-header" id="reservation-header">
+      <button type="button" class="accordion-button" aria-expanded="true" aria-controls="reservation"
+        data-bs-target="#reservation" data-bs-toggle="collapse">
+        {{ $t('title.reservationList') }}
+      </button>
+    </h3>
+    <div id="reservation" class="accordion-collapse collapse show" aria-labelledby="reservation-header"
+      data-bs-toggle="reservation-form">
+      <!-- <div class="accordion-body row"> -->
+      <!-- Main content -->
+      <section class="content">
+        <div class="container-fluid">
+          <transition name="slide-fade">
+            <div class="mt-2">
+              <transition name="slide-fade">
+                <reservation-form :focus="showReservationForm" v-show="showReservationForm" ref="reservationFormElement" :isSaving="isSaving"
+                  :defaultForm="form" :modeData="modeData" @save="handleSave"
+                  @onLoadDropDown="loadDropdown" @close="showReservationForm=false" />
+              </transition>
+            </div>
+          </transition>
+          <div v-if="!showReservationForm" class=" d-flex justify-content-end mb-2 mt-2">
+            <div class="btn-group">
+              <button :disabled="disabledButton" title="Cancel Reservation" type="button"
+                class="w-100 btn-charge btn btn-secondary" @click="handleCancelForm($global.reservationStatus.cancel)">
+                {{ $t('buttons.cancelReservation') }}
+              </button>
+              <c-dropdown class="mr-1">
+                <template v-slot:dropdown-button>
+                  <button :disabled="disabledButton" type="button"
+                    class="btn btn-secondary dropdown-toggle dropdown-toggle-split">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                  </button>
+                </template>
+                <template v-slot:dropdown-menu>
+                  <button type="button" class="dropdown-item" @click="handleCancelForm($global.reservationStatus.noShow)">
+                    {{ $t('buttons.noShowReservation') }}
+                  </button>
+                  <button type="button" class="dropdown-item" @click="handleCancelForm($global.reservationStatus.void)">
+                    {{ $t('buttons.voidReservation') }}
+                  </button>
+                </template>
+              </c-dropdown>
+            </div>
+            <button :disabled="disabledButton" title="Insert Reservation" type="button" class="btn btn-secondary"
+              @click="handleShowForm('', $global.modeData.insert)">
+              <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{$t('buttons.insertReservation') }}
+            </button>
+          </div>
+          <search-filter ref="searchFilter" :options="searchOptions" :searchDefault="searchDefault"
+            @search="refreshData" :formType="$global.formType.reservationListForm">
+            <template v-slot="{search, onRefresh}">
+              <div class="row">
+                <div class="col-md-9">
+                  <div class="col d-flex">
+                    <c-radio class="col-md-4" :label="$t('labels.reservasi')" v-model="search.filter[0]" value="0"
+                      @change="onRefresh" customLabelClass="col-3" customClass="col-9">
+                    </c-radio>
+                    <c-radio class="col-md-4" :label="$t('labels.inProgress')" v-model="search.filter[0]" value="1"
+                      @change="onRefresh" customLabelClass="col-3" customClass="col-9">
+                    </c-radio>
+                    <c-radio class="col-md-4" :label="$t('labels.finish')" v-model="search.filter[0]" value="2"
+                      @change="onRefresh" customLabelClass="col-3" customClass="col-9">
+                    </c-radio>
+                  </div>
+                  <div class="col mt-2 d-flex">
+                    <c-radio class="col-md-4" :label="$t('labels.cancelled')" v-model="search.filter[0]" value="3"
+                      @change="onRefresh" customLabelClass="col-3" customClass="col-9">
+                    </c-radio>
+                    <c-radio class="col-md-4" :label="$t('labels.noShow')" v-model="search.filter[0]" value="4"
+                      @change="onRefresh" customLabelClass="col-3" customClass="col-9">
+                    </c-radio>
+                    <c-radio class="col-md-4" :label="$t('labels.void')" v-model="search.filter[0]" value="5"
+                      @change="onRefresh" customLabelClass="col-3" customClass="col-9">
+                    </c-radio>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <c-checkbox class="col" :label="$t('labels.showDetailCombine')" v-model="search.filter[1]"
+                    @change="onRefresh" />
+                </div>
+              </div>
+            </template>
+          </search-filter>
+          <div class="mt-1">
+            <ag-grid-vue :style="agGridSetting.styleAgGridFrame2" :class="agGridSetting.themeAgGrid"
+              :columnDefs="columnDefs" :rowData="rowData" :paginationPageSize="paginationPageSize"
+              :gridOptions="gridOptions" :context="context" :frameworkComponents="frameworkComponents"
+              :enableCellChangeFlash="true" :rowSelection="rowSelection" :getContextMenuItems="getContextMenu"
+              :defaultColDef="agGridSetting.defColDef" :suppressDragLeaveHidesColumns="true"
+              :suppressMakeColumnVisibleAfterUnGroup="true" :statusBar="statusBar" @grid-ready="onGridReady"
+              @cellContextMenu="handleRowRightClicked" :rowGroupPanelShow="rowGroupPanelShow" />
+          </div>
+          <CDialog v-if="showDialog" size="md" dialogTitle="Confirm" @confirm="cancelReservation"
+            @cancel="showDialog=false" confirm>
+            <template #body>
+              <div class="mb-2">
+                <span>{{ $t('credential.pleaseInputReason') }}</span>
+              </div>
+              <c-input required class="row mb-1" type="text" formatted :label="$t('credential.reason')"
+                customLabelClass="col-3" customClass="col-9" name="reason" v-model="dialogForm.reason"
+                @keyup.enter="onVerify"></c-input>
+            </template>
+          </CDialog>
+
+          <!-- <CDialog v-if="showDialog" size="md" dialogTitle="Confirm" @confirm="cancelReservation"
+            @cancel="showDialog=false" confirm>
+            <template #body>
+              <div id="bookingForm" class="accordion">
+                <div class="accordion-item">
+                  <h3 class="accordion-header" id="bookingHeader">
+                    <button type="button" class="accordion-button" aria-expanded="true"
+                      aria-controls="bookingInformation" data-bs-target="#bookingInformation">
+                      {{ $t('credential.pleaseInputReason') }}
+                    </button>
+                  </h3>
+                  <div id="bookingInformation" class="accordion-collapse collapse show" aria-labelledby="bookingHeader"
+                    data-bs-parent="#bookingForm">
+                    <div class="accordion-body row">
+                      <c-input required class="row mb-1" type="text" formatted :label="$t('credential.reason')"
+                        customLabelClass="col-3" customClass="col-9" name="reason" v-model="form.reason"
+                        @keyup.enter="onVerify"></c-input>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </CDialog> -->
+          <!-- TODO: credential -->
+          <!-- <Credential ref="credentialElement" reason showVerify="false" :module="$global.accessModule.banquet">
+          </Credential> -->
+        </div>
+      </section>
+      <!-- </div> -->
+    </div>
+  </div>
+</div>
+<!-- </div> -->

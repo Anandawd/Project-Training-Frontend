@@ -1,0 +1,23 @@
+{
+    "StatusCode": 0,
+    "Message": "",
+    "Result": {
+        "hotel_information": {
+            "code": "AMORACH",
+            "name": "SHORE AMORA CANGGU",
+            "street": "Jl. Pantai Perenan, Canggu",
+            "city": "Badung",
+            "country_code": "IDN",
+            "state_code": "BI",
+            "postal_code": "-",
+            "phone1": "0361-9091773",
+            "phone2": "",
+            "fax": "-",
+            "email": "info@shoreamora.com",
+            "website": "www.shoreamora.com",
+            "foto": "",
+            "image_url": "",
+            "Description": "Sunday, 01/01/2023"
+        }
+    }
+}

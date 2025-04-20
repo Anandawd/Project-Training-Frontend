@@ -1,0 +1,594 @@
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="d-flex justify-content-end mb-2"></div>
+    <div class="pl-2 pr-2">
+      <ReportForm
+        ref="inputFormElement"
+        :reportCode="reportCode"
+        v-show="showForm"
+        :schema="schema"
+        :modeData="modeData"
+        @save="handleSave"
+        @close="showForm=false"
+      />
+      <CustomizeReport
+        ref="customizeReportElement"
+        :reportCode="reportCode"
+        v-show="showCustomizeReport"
+        :schema="schema"
+        :modeData="modeData"
+        @save="insertDataCustomReport"
+        @close="showCustomizeReport=false"
+      />
+      <locationHistoryForm
+        ref="inputFormElementHistory"
+        v-show="showFormHistory"
+        :faCode="faCode"
+        :modeData="modeData"
+        @save="handleSave"
+        @close="showFormHistory=false"
+      />
+      <CreateDefaultFieldForm
+      ref="createDefaultFieldElement"
+      :reportCode="reportCode"
+      v-show="showCreateDefaultFieldForm"
+      :schema="schema"
+      :modeData="modeData"
+      @save="handleSave"
+      @close="showCreateDefaultFieldForm=false"
+    />
+    </div>
+    <!-- <search-filter :options="searchOptions" :searchDefault="searchDefault" @search="refreshData">
+      <template v-slot="{search}">
+        <div class="d-flex">
+          <div class="checklist">
+            <input class="mr-1" type="radio" name="all" id="all" v-model="search.filter[0]" value="0"
+              @change="refreshData">
+            <label for="all">{{ $t('commons.filter.checkList.all') }}</label>
+          </div>
+          <div class="checklist">
+            <input class="mr-1" type="radio" name="hkStore" id="hkStore" v-model="search.filter[0]" value="1"
+              @change="refreshData">
+            <label for="hkStore">{{ $t('commons.filter.checkList.hkStore') }}</label>
+          </div>
+          <div class="checklist">
+            <input class="mr-1" type="radio" name="laundry" id="laundry" v-model="search.filter[0]" value="2"
+              @change="refreshData">
+            <label for="laundry">{{ $t('commons.filter.checkList.laundry') }}</label>
+          </div>
+          <div class="checklist">
+            <input class="mr-1" type="radio" name="room" id="room" v-model="search.filter[0]" value="3"
+              @change="refreshData">
+            <label for="room">{{ $t('commons.filter.checkList.room') }}</label>
+          </div>
+        </div>
+      </template>
+
+    </search-filter> -->
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card" style="height: 100vh">
+          <div class="card-header">
+            <h3 class="card-title">{{ $t('title.selectReport') }}</h3>
+          </div>
+          <c-input
+            @change="handleSearchReport()"
+            @input="handleSearchReport()"
+            v-model="searchReport"
+            id="remark"
+            class="mb-1"
+            type="text"
+            name="remark"
+            customLabelClass="col-3"
+            customClass="col-12"
+          />
+          <div id="tooltip" class="card-body overflow-auto">
+            <!-- //Table -->
+            <div v-if="filtered">
+              <vue3-tree-vue
+                :isCheckable="false"
+                v-model:selectedItem="selectedItem"
+                @onSelect="onItemSelected"
+                :expandedIds="expandedIds"
+                :items="items"
+                :hideGuideLines="false"
+              >
+                <template v-slot:item-prepend-icon="items">
+                  <!-- <img src="./assets/folder.svg" alt="folder" v-if="items.type === 'folder'" height="20" width="20" /> -->
+                  <div>
+                    <i
+                      class="mr-2"
+                      v-if="items.type === 'folder'"
+                      height="20"
+                      width="20"
+                      ><img
+                        src="/images/icons/color_folder_icon32.png"
+                        height="16"
+                        width="16"
+                        alt=""
+                    /></i>
+                    <i
+                      class="mr-2"
+                      v-if="items.type === 'report'"
+                      height="10"
+                      width="10"
+                      ><img
+                        src="/images/icons/color_print_icon32.png"
+                        height="16"
+                        width="16"
+                        alt=""
+                    /></i>
+                  </div>
+                </template>
+              </vue3-tree-vue>
+            </div>
+          </div>
+          <!-- <div class="card-footer">Footer</div> -->
+        </div>
+      </div>
+      <div class="col-md-3 p-0">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">{{ $t('title.selectReportTemplate') }}</h3>
+          </div>
+          <div id="tooltip" class="card-body">
+            <!-- //Table -->
+            <div class="justify-content-center mb-2">
+              <div class="row">
+                <div class="col-6 p-1">
+                  <button
+                    title="Insert Item"
+                    type="button"
+                    :disabled="disablePreview"
+                    class="btn btn-primary mr-1 w-100 mb-1 p-1"
+                    @click="previewReport"
+                  >
+                    <i
+                      ><img
+                        src="/images/icons/color_preview_icon32.png"
+                        height="16"
+                        width="16"
+                        alt="" /></i
+                    >{{ $t('buttons.previewReport') }}
+                  </button>
+                  <button
+                    title="Insert Item"
+                    type="button"
+                    :disabled="!isCanCustomizeReport"
+                    class="btn btn-primary mr-1 w-100 mb-1 p-1"
+                    @click="handleShowCustomizeReport()"
+                  >
+                    {{ $t('buttons.customizeUserReport') }}
+                  </button>
+                </div>
+                <div class="col-6 p-1">
+                  <button
+                    title="Insert Item"
+                    type="button"
+                    class="btn btn-primary mr-1 w-100 mb-1 p-1"
+                    @click="previewDRRText(1)"
+                  >
+                    {{ $t('buttons.drrText') }}
+                  </button>
+                  <button
+                    title="Insert Item"
+                    disabled
+                    type="button"
+                    class="btn btn-primary mr-1 w-100 mb-1 p-1"
+                    @click="handleShowForm('', $global.modeData.insert)"
+                  >
+                    {{ $t('buttons.exportToExcel') }}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <ag-grid-vue
+              :style="agGridSetting.styleAgGridFrame1"
+              :class="agGridSetting.themeAgGrid"
+              :columnDefs="columnDefs"
+              :rowData="rowData"
+              :paginationPageSize="paginationPageSize"
+              :gridOptions="gridOptions"
+              :context="context"
+              :frameworkComponents="frameworkComponents"
+              :enableCellChangeFlash="true"
+              :rowSelection="rowSelection"
+              :rowGroupPanelShow="rowGroupPanelShow"
+              :getContextMenuItems="getContextMenu"
+              :defaultColDef="agGridSetting.defColDef"
+              :masterDetail="true"
+              :detailCellRenderer="detailCellRenderer"
+              :detailRowAutoHeight="detailRowAutoHeight"
+              :suppressMakeColumnVisibleAfterUnGroup="true"
+              @grid-ready="onGridReady"
+              @cellContextMenu="handleRowRightClicked"
+              @selectionChanged="onSelectionChanged"
+            />
+            <button
+              title="Insert Item"
+              type="button"
+              class="btn btn-primary mr-1 mt-1 w-100"
+              @click="handleShowForm('', $global.modeData.insert)"
+            >
+              <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+              $t('buttons.insert') }}
+            </button>
+            <button
+              v-show="user.ID === 'SYSTEM'"
+              title="Insert Item"
+              type="button"
+              class="btn btn-primary mr-1 mt-1 w-100"
+              @click="handleShowCreateDefaultField()"
+            >
+              {{$t('buttons.createDefaultField') }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">{{ $t('title.dateRange') }}</h3>
+          </div>
+          <div id="tooltip" class="card-body">
+            <!-- //Table -->
+            <div class="row">
+              <div class="col-4">
+                <c-radio
+                  class="m-1"
+                  :disabled="dateDisabled"
+                  :label="$t('labels.date')"
+                  v-model="dateRange.type"
+                  value="0"
+                >
+                </c-radio>
+              </div>
+              <div class="col-4">
+                <c-datepicker
+                  @click="handleChangeType(0,dateDisabled)"
+                  :disabled="dateDisabled"
+                  v-model="dateRange.date"
+                  id="date"
+                  class="mb-1"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="date"
+                  customClass="col-12"
+                ></c-datepicker>
+              </div>
+              <div class="col-4"></div>
+            </div>
+
+            <div class="row">
+              <div class="col-4">
+                <c-radio
+                  class="m-1"
+                  :label="$t('labels.dateRange')"
+                  :disabled="dateRangeDisabled"
+                  v-model="dateRange.type"
+                  value="1"
+                >
+                </c-radio>
+              </div>
+              <div class="col-4">
+                <c-datepicker
+                  @click="handleChangeType(1,dateRangeDisabled)"
+                  @change="handleFromDateChange()"
+                  :disabled="dateRangeDisabled"
+                  v-model="dateRange.dateFrom"
+                  id="date"
+                  class="mb-1"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="date"
+                  customClass="col-12"
+                ></c-datepicker>
+              </div>
+              <div class="col-4">
+                <c-datepicker
+                  @click="handleChangeType(1,dateRangeDisabled)"
+                  @change="handleToDateChange()"
+                  :disabled="dateRangeDisabled"
+                  v-model="dateRange.dateTo"
+                  id="date"
+                  class="mb-1"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="date"
+                  customClass="col-12"
+                ></c-datepicker>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-4">
+                <c-radio
+                  class="m-1"
+                  :label="$t('labels.week')"
+                  :disabled="allDateDisabled"
+                  v-model="dateRange.type"
+                  value="2"
+                >
+                </c-radio>
+              </div>
+              <div class="col-4">
+                <c-select
+                  @click="handleChangeType(2,allDateDisabled)"
+                  id="week"
+                  :disabled="allDateDisabled"
+                  :options="listDropdown.weekList"
+                  class="mb-1"
+                  keyName="code"
+                  labelName="name"
+                  v-model="dateRange.week"
+                  name="week"
+                  customLabelClass="col-3"
+                  customClass="col-12"
+                >
+                </c-select>
+              </div>
+              <div class="col-4">
+                <c-select
+                  @click="handleChangeType(2,allDateDisabled)"
+                  required
+                  :disabled="allDateDisabled"
+                  id="yearOfWeek"
+                  :options="listDropdown.yearList"
+                  class="mb-1"
+                  keyName="code"
+                  labelName="name"
+                  v-model="dateRange.yearOfWeek"
+                  name="yearOfWeek"
+                  customLabelClass="col-3"
+                  customClass="col-12"
+                >
+                </c-select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-4">
+                <c-radio
+                  class="m-1"
+                  :label="$t('labels.month')"
+                  :disabled="monthDisabled"
+                  v-model="dateRange.type"
+                  value="3"
+                >
+                </c-radio>
+              </div>
+              <div class="col-4">
+                <c-select
+                  @click="handleChangeType(3,monthDisabled)"
+                  required
+                  :disabled="monthDisabled"
+                  id="month"
+                  :options="listDropdown.monthList"
+                  class="mb-1"
+                  keyName="code"
+                  labelName="name"
+                  v-model="dateRange.month"
+                  name="month"
+                  customLabelClass="col-3"
+                  customClass="col-12"
+                >
+                </c-select>
+              </div>
+              <div class="col-4">
+                <c-select
+                  @click="handleChangeType(3,monthDisabled)"
+                  id="yearOfMonth"
+                  :disabled="monthDisabled"
+                  :options="listDropdown.yearList"
+                  class="mb-1"
+                  keyName="code"
+                  labelName="name"
+                  v-model="dateRange.yearOfMonth"
+                  name="yearOfMonth"
+                  customLabelClass="col-3"
+                  customClass="col-12"
+                >
+                </c-select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-4">
+                <c-radio
+                  class="m-1"
+                  :label="$t('labels.quarter')"
+                  :disabled="allDateDisabled"
+                  v-model="dateRange.type"
+                  value="4"
+                >
+                </c-radio>
+              </div>
+              <div class="col-4">
+                <c-select
+                  @click="handleChangeType(4,allDateDisabled)"
+                  required
+                  :disabled="allDateDisabled"
+                  id="quarter"
+                  :options="listDropdown.quarterList"
+                  class="mb-1"
+                  keyName="code"
+                  labelName="name"
+                  v-model="dateRange.quarter"
+                  name="quarter"
+                  customLabelClass="col-3"
+                  customClass="col-12"
+                >
+                </c-select>
+              </div>
+              <div class="col-4">
+                <c-select
+                  @click="handleChangeType(4,allDateDisabled)"
+                  id="yearOfQuarter"
+                  :disabled="allDateDisabled"
+                  :options="listDropdown.yearList"
+                  class="mb-1"
+                  keyName="code"
+                  labelName="name"
+                  v-model="dateRange.yearOfQuarter"
+                  name="yearOfQuarter"
+                  customLabelClass="col-3"
+                  customClass="col-12"
+                >
+                </c-select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-4">
+                <c-radio
+                  class="m-1"
+                  :label="$t('labels.semester')"
+                  :disabled="semesterDisabled"
+                  v-model="dateRange.type"
+                  value="5"
+                >
+                </c-radio>
+              </div>
+              <div class="col-4">
+                <c-select
+                  @click="handleChangeType(5,semesterDisabled)"
+                  id="semester"
+                  :disabled="semesterDisabled"
+                  :options="listDropdown.semesterList"
+                  class="mb-1"
+                  keyName="code"
+                  labelName="name"
+                  v-model="dateRange.semester"
+                  name="semester"
+                  customLabelClass="col-3"
+                  customClass="col-12"
+                >
+                </c-select>
+              </div>
+              <div class="col-4">
+                <c-select
+                  @click="handleChangeType(5,semesterDisabled)"
+                  :disabled="semesterDisabled"
+                  id="yearOfSemester"
+                  :options="listDropdown.yearList"
+                  class="mb-1"
+                  keyName="code"
+                  labelName="name"
+                  v-model="dateRange.yearOfSemester"
+                  name="yearOfSemester"
+                  customLabelClass="col-3"
+                  customClass="col-12"
+                >
+                </c-select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-4">
+                <c-radio
+                  class="m-1"
+                  :label="$t('labels.year')"
+                  :disabled="yearDisabled"
+                  v-model="dateRange.type"
+                  value="6"
+                >
+                </c-radio>
+              </div>
+              <div class="col-4">
+                <c-select
+                  @click="handleChangeType(6,yearDisabled)"
+                  id="year"
+                  :disabled="yearDisabled"
+                  :options="listDropdown.yearList"
+                  class="mb-1"
+                  keyName="code"
+                  labelName="name"
+                  v-model="dateRange.year"
+                  name="year"
+                  customLabelClass="col-3"
+                  customClass="col-12"
+                >
+                </c-select>
+              </div>
+              <div class="col-4">
+                <button
+                  title="Reset Date Range"
+                  type="button"
+                  class="btn btn-light mr-1 w-100 mb-1 p-1"
+                  @click="handleResetDateRange()"
+                >
+                  {{ $t('buttons.resetDate') }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Filter -->
+        <div class="card card-filter">
+          <div class="card-header">
+            <h3 class="card-title">{{ $t('title.filter') }}</h3>
+          </div>
+          <div id="tooltip" class="card-body overflow-auto">
+            <!-- //Filter -->
+            <Filter
+              ref="filterElement"
+              :reportCode="reportCode"
+              :schema="schema"
+              :modeData="modeData"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <CDialog
+      :isSaving="isSaving"
+      v-show="showDialog"
+      w100
+      dialogTitle="Confirm"
+      @confirm="deleteData"
+      @cancel="showDialog= false"
+      confirm
+    >
+      <template #body> Are you sure to delete this data? </template>
+    </CDialog>
+    <CModal
+      v-show="showDRR"
+      w100
+      dialogTitle="{{DRRTittle}}"
+      @confirm="showDRR=false"
+      confirm
+      @close="showDRR=false"
+      close
+    >
+      <template #body>
+        <div id="DRRText" v-html="DRRResult"></div>
+      </template>
+      <template #footer>
+        <div class="modal-footer p-2">
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="copyToClipboard('DRRText')"
+          >
+            {{ 'Copy to Clipboard'}}
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="previewDRRText(2)"
+          >
+            {{'refresh'}}
+          </button>
+          <button class="btn btn-danger" @click="showDRR=false">
+            <i class="fa fa-times mr-1"></i>
+            <span>{{$t('buttons.close')}}</span>
+          </button>
+        </div>
+      </template>
+    </CModal>
+  </div>
+</section>

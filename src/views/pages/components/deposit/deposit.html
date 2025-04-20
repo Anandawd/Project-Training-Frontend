@@ -1,0 +1,300 @@
+<div class="deposit">
+  <!-- v-if="!showForm"  -->
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4 balance">
+          <span
+            ><strong
+              >{{`${$t('transaction.balance')}: ${balance}`}}</strong
+            ></span
+          >
+        </div>
+        <div class="col-md">
+          <div class="d-flex justify-content-end">
+            <div class="checklist mr-1">
+              <label class="btn btn-outline-primary">
+                <input
+                  aria-label="show_void"
+                  class="mr-1"
+                  v-model="isShowVoid"
+                  type="checkbox"
+                  name="show void"
+                  id="show_void"
+                  @change="onRefreshData"
+                />
+                {{ $t('transaction.filter.showVoid') }}
+              </label>
+            </div>
+            <div class="checklist mr-1">
+              <label class="btn btn-outline-primary">
+                <input
+                  aria-label="Display transactions that has been correction"
+                  class="mr-1"
+                  type="checkbox"
+                  v-model="isShowCorrection"
+                  name="show correction"
+                  id="show_correction"
+                  @change="onRefreshData"
+                />
+                {{ $t('transaction.filter.showCorrection') }}
+              </label>
+            </div>
+            <button
+              v-if="bnqFormType != $global.formType.booking"
+              :disabled="!getUserAccessUtility(
+              userAccessDeposit,
+              $global.frontDeskAccessOrder.accessDeposit.transfer,userID
+            ) || showForm"
+              type="button"
+              class="btn btn-primary mr-1"
+              @click="onClickPayment($global.modeDeposit.transfer)"
+            >
+              <i class="fa fa-share" aria-hidden="true"></i>
+              {{$t('buttons.transfer')}}
+            </button>
+            <c-dropdown ref="dropdownRef">
+              <template v-slot:dropdown-button>
+                <button
+                  :disabled="showForm"
+                  class="btn btn-success dropdown-toggle"
+                  type="button"
+                  id="dropdownMenuButton1"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <i class="fa fa-plus" aria-hidden="true"></i>
+                  {{$t('buttons.payment')}}
+                </button>
+              </template>
+              <template v-slot:dropdown-menu>
+                <button
+                  :disabled="!getUserAccessUtility(
+                    userAccessDeposit,
+                    $global.frontDeskAccessOrder.accessDeposit.cash,userID
+                  )"
+                  type="button"
+                  class="dropdown-item"
+                  @click="onClickPayment($global.modeDeposit.cash)"
+                >
+                  <img
+                    alt="cash"
+                    border="0"
+                    width="16"
+                    height="16"
+                    src="/images/icons/cash_icon24.png"
+                  />
+                  <span class="ml-2">{{$t('buttons.cash')}}</span>
+                </button>
+                <button
+                  :disabled="!getUserAccessUtility(
+                  userAccessDeposit,
+                  $global.frontDeskAccessOrder.accessDeposit.card,userID
+                )"
+                  type="button"
+                  class="dropdown-item"
+                  @click="onClickPayment($global.modeDeposit.card)"
+                >
+                  <img
+                    alt="card"
+                    border="0"
+                    width="16"
+                    height="16"
+                    src="/images/icons/card_icon24.png"
+                  />
+                  <span class="ml-2">{{$t('buttons.card')}}</span>
+                </button>
+                <button
+                  :disabled="!getUserAccessUtility(
+                  userAccessDeposit,
+                  $global.frontDeskAccessOrder.accessDeposit.refund,userID
+                )"
+                  type="button"
+                  class="dropdown-item"
+                  @click="onClickPayment($global.modeDeposit.refund)"
+                >
+                  <img
+                    alt="refund"
+                    border="0"
+                    width="16"
+                    height="16"
+                    src="/images/icons/cash_refund_icon24.png"
+                  />
+                  <span class="ml-2">{{$t('buttons.cashRefund')}}</span>
+                </button>
+                <button
+                  :disabled="!getUserAccessUtility(
+                  userAccessDeposit,
+                  $global.frontDeskAccessOrder.accessDeposit.insert,userID
+                )"
+                  type="button"
+                  class="dropdown-item"
+                  @click="onClickPayment($global.modeDeposit.other)"
+                >
+                  <img
+                    alt="other"
+                    border="0"
+                    width="16"
+                    height="16"
+                    src="/images/icons/other_payment_icon24.png"
+                  />
+                  <span class="ml-2">{{$t('buttons.otherPayment')}}</span>
+                </button>
+              </template>
+            </c-dropdown>
+            <!-- <div class="dropdown">
+              <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                {{$t('buttons.payment')}}
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li>
+                  <button type="button" class="dropdown-item" @click="onClickPayment($global.modeDeposit.cash)">
+                    <img alt="cash" border="0" width="16" height="16" src="/images/icons/cash_icon24.png" />
+                    <span class="ml-2">{{$t('buttons.cash')}}</span>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" class="dropdown-item" @click="onClickPayment($global.modeDeposit.card)">
+                    <img alt="card" border="0" width="16" height="16" src="/images/icons/card_icon24.png" />
+                    <span class="ml-2">{{$t('buttons.card')}}</span>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" class="dropdown-item" @click="onClickPayment($global.modeDeposit.refund)">
+                    <img alt="refund" border="0" width="16" height="16" src="/images/icons/cash_refund_icon24.png" />
+                    <span class="ml-2">{{$t('buttons.cashRefund')}}</span>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" class="dropdown-item" @click="onClickPayment($global.modeDeposit.other)">
+                    <img alt="other" border="0" width="16" height="16" src="/images/icons/other_payment_icon24.png" />
+                    <span class="ml-2">{{$t('buttons.otherPayment')}}</span>
+                  </button>
+                </li>
+              </ul>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <transition name="slide-fade">
+    <correction-form
+      v-if="showCorrectionForm"
+      isDeposit
+      :credential="credentialForm"
+      :titleID="paramsData.id"
+      :ID="paramsData.id"
+      @save="onSaveCorrection"
+      @close="showCorrectionForm=false"
+    >
+    </correction-form>
+    <div v-else-if="showChangeCorrectionForm" class="transfer-form row mt-3">
+      <change-correction-date-form
+        @close="showChangeCorrectionForm=false;onRefreshData"
+        :isDeposit="true"
+        :number="reservationNumber"
+      ></change-correction-date-form>
+    </div>
+    <DepositForm
+      v-else
+      ref="depositForm"
+      :reservation-number="reservationNumber"
+      :isBanquet="isBanquet"
+      @refresh="onRefreshData"
+    />
+  </transition>
+  <ag-grid-vue
+    pagination="true"
+    :style="$global.agGrid.styleAgGridFrame3"
+    :class="$global.agGrid.themeAgGrid"
+    :paginationPageSize="paginationPageSize"
+    :enableRangeSelection="true"
+    :gridOptions="gridOptions"
+    :context="context"
+    :columnDefs="columnDefs"
+    :frameworkComponents="frameworkComponents"
+    :rowData="rowData"
+    :defaultColDef="$global.agGrid.defColDef"
+    :getContextMenuItems="getContextMenu"
+    :statusBar="statusBar"
+    :suppressDragLeaveHidesColumns="true"
+    :suppressMakeColumnVisibleAfterUnGroup="true"
+    :enableCellChangeFlash="true"
+    :getRowStyle="getRowStyle"
+    :rowSelection="rowSelection"
+    :rowClassRules="rowClassRules"
+    @filterChanged="onFilterChanged"
+    @grid-ready="onGridReady"
+    @cellContextMenu="handleRowRightClicked"
+  ></ag-grid-vue>
+  <Credential
+    :module="$global.accessModule.hotel"
+    ref="credentialElement"
+  ></Credential>
+
+  <c-dialog
+    v-if="showDialogUpdateSubDepartment"
+    @cancel="showDialogUpdateSubDepartment=false"
+    :title="$t('title.updateSubDepartment')"
+    :confirmText="$t('buttons.save')"
+    :cancelText="$t('buttons.close')"
+    confirmClass="btn-primary"
+    cancelClass="btn-danger"
+    @confirm="updateSubDepartment"
+  >
+    <template #body>
+      <c-select
+        :inlineLabel="false"
+        required
+        :label="$t('labels.subDepartment')"
+        v-model="subDepartmentCode"
+        :options="options.subDepartments"
+        @load="loadSubDepartment"
+        labelName="name"
+        keyName="code"
+        name="subDepartment"
+      />
+    </template>
+  </c-dialog>
+  <c-dialog
+    v-if="showDialogUpdateRemark"
+    @cancel="showDialogUpdateRemark=false"
+    :title="$t('title.updateRemark')"
+    :confirmText="$t('buttons.save')"
+    :cancelText="$t('buttons.close')"
+    confirmClass="btn-primary"
+    cancelClass="btn-danger"
+    @confirm="updateRemark"
+  >
+    <template #body>
+      <c-input
+        :inlineLabel="false"
+        :label="$t('labels.remark')"
+        type="textarea"
+        v-model="remark"
+      ></c-input>
+    </template>
+  </c-dialog>
+  <c-dialog
+    v-if="showDialogUpdateDocumentNumber"
+    @cancel="showDialogUpdateDocumentNumber=false"
+    :title="$t('title.updateDocumentNumber')"
+    :confirmText="$t('buttons.save')"
+    :cancelText="$t('buttons.close')"
+    confirmClass="btn-primary"
+    cancelClass="btn-danger"
+    @confirm="updateDocumentNumber"
+  >
+    <template #body>
+      <c-input
+        :inlineLabel="false"
+        :label="$t('labels.documentNumber')"
+        type="text"
+        v-model="documentNumber"
+      ></c-input>
+    </template>
+  </c-dialog>
+</div>

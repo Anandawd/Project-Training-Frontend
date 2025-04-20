@@ -1,0 +1,76 @@
+<div
+  class="c-datepicker"
+  :class="{ 'has-error': !meta.valid && meta.touched, 'row': inlineLabel, 'focus':focus }, ID"
+>
+  <slot name="label">
+    <label
+      v-if="label"
+      :for="ID"
+      class="col-form-label d-flex"
+      :class="[!inlineLabel ? '': (multicol ? 'col-6'
+        : (customLabelClass ? customLabelClass : 'col-3')), {'required': required} ]"
+      >{{ label }}
+    </label>
+  </slot>
+  <!-- <div class="c-datepicker/" -->
+  <date-picker
+    ref="refElement"
+    :disabled="disabled"
+    :range="range"
+    class="align-items-center input-group"
+    :class="[ !inlineLabel ? '' : ( multicol ? 'col-6' : half ? 'col-4' : (customClass ? customClass : 'col'))]"
+    :required="required"
+    :type="type"
+    :show-second="false"
+    :minute-step="30"
+    :value-type="valueType"
+    :format="format"
+    :clearable="clearable"
+    :confirm-text="$t('datepicker.ok')"
+    :disabled-date="disabledDate"
+    :show-time-panel="showTimePanel"
+    :confirm="confirm"
+    @close="showTimePanel = false"
+    @pick="pick"
+    v-model:value="displayValue"
+    @change="onchange"
+    @click="click"
+  >
+    <template v-slot:footer="{emit}">
+      <button
+        v-if="resetButton"
+        type="button"
+        class="btn reset btn-danger"
+        @click="$emit('reset')"
+      >
+        {{ $t('datepicker.reset') }}
+      </button>
+      <button
+        v-if="type === 'datetime'"
+        type="button"
+        class="btn time btn-primary"
+        @click="toggleTimePanelDatePicker"
+      >
+        {{ showTimePanel ? $t('datepicker.selectDate') :
+        $t('datepicker.selectTime') }}
+      </button>
+      <button class="btn reset btn-outline" @click="emit(new Date())">
+        {{ $t('datepicker.today') }}
+      </button>
+    </template>
+  </date-picker>
+  <slot name="append-end"></slot>
+
+  <div v-if="showError" class="row">
+    <div
+      class="col-form-label d-flex"
+      :class="[!inlineLabel ? '': (multicol ? 'col-6'
+      : (customLabelClass ? customLabelClass : 'col-3')), {'required': required} ]"
+    ></div>
+    <span
+      class="text-danger pl-2 text-error"
+      :class="[ !inlineLabel ? '' : ( multicol ? 'col-6' : half ? 'col-4' : (customClass ? customClass : 'col'))]"
+      >{{errorText ?? errorMessage}}</span
+    >
+  </div>
+</div>

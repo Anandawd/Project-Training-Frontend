@@ -1,0 +1,18 @@
+<div class="d-flex content h-100 align-center">
+  <div class="align-self-center text-center w-100">
+    <clock></clock>
+    <div class="align-center text-center">
+      <h1>Dayend Close has been running</h1>
+      <p>Please wait until the page is reload automatically.</p>
+      <button
+        class="btn btn-danger"
+        type="button"
+        :title="$t('buttons.cancelDayendClose')"
+        @click="handleCancelDayendClose"
+      >
+        <i class="fa fa-times mr-1"></i> {{$t('buttons.cancelDayendClose')}}
+      </button>
+    </div>
+  </div>
+  <c-confirmation ref="confirmationElement"></c-confirmation>
+</div>

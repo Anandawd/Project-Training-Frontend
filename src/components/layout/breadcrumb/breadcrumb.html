@@ -1,0 +1,40 @@
+<section v-if="routeTitle!='title.transactionTerminal'" class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>
+          <img
+            v-if="icon"
+            class="mb-1 mr-1"
+            height="24"
+            width="24"
+            :src="icon"
+            alt=""
+          />
+          {{ $t(routeTitle) }}
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li
+            v-for="(link, index) in breadcrumb.slice(0,-1)"
+            :key="index"
+            class="breadcrumb-item"
+          >
+            <router-link :to="link.url" v-if="link.url"
+              >{{ $t(link.title) }}</router-link
+            >
+            <span class="text-primary cursor-default" v-else
+              >{{ $t(link.title) }}</span
+            >
+          </li>
+          <li class="breadcrumb-item active">
+            <span v-if="breadcrumb.slice(-1)[0].active" class="cursor-default"
+              >{{ $t(breadcrumb.slice(-1)[0].title) }}</span
+            >
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>

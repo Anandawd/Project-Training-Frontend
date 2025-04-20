@@ -1,0 +1,26 @@
+<div class="c-checkbox row plx-3">
+  <div
+    class="d-flex align-items-center"
+    :class="{'icheck-primary': type === 'icheck', 'form-check': type === 'default', 'custom-control custom-checkbox': type === 'custom'}"
+  >
+    <input
+      :title="title??label"
+      :disabled="disabled"
+      :id="ID"
+      class="checkbox mr-2"
+      type="radio"
+      :name="name"
+      :checked="isChecked"
+      @change="onValueChange($event)"
+      :value="value"
+    />
+    <label
+      class="d-flex col-form-label"
+      :for="ID"
+      :class="{'form-check-label': type === 'default', 'custom-control-label': type === 'custom'}"
+    >
+      <slot> {{label}} </slot>
+    </label>
+    <slot name="body"></slot>
+  </div>
+</div>

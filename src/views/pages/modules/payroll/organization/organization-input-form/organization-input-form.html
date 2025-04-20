@@ -1,0 +1,405 @@
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">{{title}}</div>
+    <div class="card-body">
+      <div class="tabs">
+        <!-- tab nav -->
+        <div>
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                id="form-department-tab"
+                class="nav-link active"
+                role="tab"
+                data-bs-toggle="tab"
+                data-bs-target="#form-department"
+                aria-controls="form-department"
+                aria-selected="true"
+                tabindex="-1"
+              >
+                {{$t('labels.payroll.employee.department')}}
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                id="form-position-tab"
+                class="nav-link"
+                role="tab"
+                data-bs-toggle="tab"
+                data-bs-target="#form-position"
+                aria-controls="form-position"
+                aria-selected="false"
+                tabindex="-1"
+              >
+                {{$t('labels.payroll.employee.position')}}
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                id="form-placement-tab"
+                class="nav-link"
+                role="tab"
+                data-bs-toggle="tab"
+                data-bs-target="#form-placement"
+                aria-controls="form-placement"
+                aria-selected="false"
+                tabindex="-1"
+              >
+                {{$t('labels.payroll.employee.placement')}}
+              </button>
+            </li>
+          </ul>
+        </div>
+        <!-- tab content -->
+        <div class="tab-content mt-3">
+          <!-- form department -->
+          <div
+            id="form-department"
+            class="tab-pane active show fade"
+            role="tabpanel"
+            aria-labelledby="form-department-tab"
+          >
+            <p class="h3 py-2">{{$t('labels.payroll.employee.department')}}</p>
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <c-input
+                  required
+                  type="text"
+                  name="DepartmentCode"
+                  id="DepartmentCode"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.employee.code')"
+                  v-model="form.departmentCode"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  required
+                  type="text"
+                  name="DepartmentName"
+                  id="DepartmentName"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.employee.departmentName')"
+                  v-model="form.departmentName"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  type="textarea"
+                  name="DepartmentDescription"
+                  id="DepartmentDescription"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.employee.description')"
+                  v-model="form.departmentDescription"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-select
+                  offset="right"
+                  class="row mb-1"
+                  selectType="column"
+                  name="manager"
+                  labelName="name"
+                  keyName="code"
+                  v-model="form.manager"
+                  :label="$t('labels.payroll.employee.manager')"
+                  :columnOptions="columnOptions"
+                  :options="managerOptions"
+                >
+                </c-select>
+              </div>
+              <div class="col-md-4">
+                <c-select
+                  multiple
+                  offset="right"
+                  class="row mb-1"
+                  selectType="column"
+                  name="supervisor"
+                  labelName="name"
+                  keyName="code"
+                  v-model="form.supervisor"
+                  :label="$t('labels.payroll.employee.supervisor')"
+                  :columnOptions="columnOptions"
+                  :options="supervisorOptions"
+                >
+                </c-select>
+              </div>
+              <div class="col-md-4 mb-sm-1">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label
+                      class="form-label"
+                      style="font-size: 12px; font-weight: 700; color: red"
+                      >{{$t('labels.status')}}</label
+                    >
+                  </div>
+                  <div class="col-sm-9 d-flex align-items-center p-0">
+                    <c-radio
+                      class="me-3"
+                      :label="$t('labels.active')"
+                      v-model="form.departmentStatus"
+                      :value="A"
+                    ></c-radio>
+                    <c-radio
+                      class="me-3"
+                      :label="$t('labels.inactive')"
+                      v-model="form.departmentStatus"
+                      value="I"
+                    ></c-radio>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- buttons -->
+            <div class="d-flex justify-content-end mt-2">
+              <button
+                type="button"
+                class="btn btn-danger mr-1 px-3"
+                @click="onClose"
+              >
+                <i class="fa fa-times" aria-hidden="true"></i>
+                {{$t('buttons.close')}}
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary px-3"
+                @click="onSubmit"
+              >
+                <i class="fa fa-save"></i>
+                {{$t('buttons.save')}}
+              </button>
+            </div>
+          </div>
+
+          <!-- form position -->
+          <div
+            id="form-position"
+            class="tab-pane fade"
+            role="tabpanel"
+            aria-labelledby="form-position-tab"
+          >
+            <p class="h3 py-2">{{$t('labels.payroll.employee.position')}}</p>
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <c-input
+                  required
+                  type="text"
+                  name="PositionCode"
+                  id="PositionCode"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.employee.code')"
+                  v-model="form.positionCode"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  required
+                  type="text"
+                  name="PositionName"
+                  id="PositionName"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.employee.positionName')"
+                  v-model="form.positionName"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  type="textarea"
+                  name="PositionDescription"
+                  id="PositionDescription"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.employee.description')"
+                  v-model="form.positionDescription"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-select
+                  offset="right"
+                  class="row mb-1"
+                  selectType="column"
+                  name="positionLevel"
+                  labelName="name"
+                  keyName="code"
+                  v-model="form.manager"
+                  :label="$t('labels.payroll.employee.level')"
+                  :columnOptions="columnOptions"
+                  :options="positionLevelOptions"
+                >
+                </c-select>
+              </div>
+              <div class="col-md-4 mb-sm-1">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label
+                      class="form-label"
+                      style="font-size: 12px; font-weight: 700; color: red"
+                      >{{$t('labels.status')}}</label
+                    >
+                  </div>
+                  <div class="col-sm-9 d-flex align-items-center p-0">
+                    <c-radio
+                      class="me-3"
+                      :label="$t('labels.active')"
+                      v-model="form.positionStatus"
+                      :value="A"
+                    ></c-radio>
+                    <c-radio
+                      class="me-3"
+                      :label="$t('labels.inactive')"
+                      v-model="form.positionStatus"
+                      value="I"
+                    ></c-radio>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- buttons -->
+            <div class="d-flex justify-content-end mt-2">
+              <button
+                type="button"
+                class="btn btn-danger mr-1 px-3"
+                @click="onClose"
+              >
+                <i class="fa fa-times" aria-hidden="true"></i>
+                {{$t('buttons.close')}}
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary px-3"
+                @click="onSubmit"
+              >
+                <i class="fa fa-save"></i>
+                {{$t('buttons.save')}}
+              </button>
+            </div>
+          </div>
+
+          <!-- form placement -->
+          <div
+            id="form-placement"
+            class="tab-pane fade"
+            role="tabpanel"
+            aria-labelledby="form-placement-tab"
+          >
+            <p class="h3 py-2">{{$t('labels.payroll.employee.placement')}}</p>
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <c-input
+                  required
+                  type="text"
+                  name="PlacementCode"
+                  id="PlacementCode"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.employee.code')"
+                  v-model="form.placementCode"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  required
+                  type="text"
+                  name="PlacementName"
+                  id="PlacementName"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.employee.placementName')"
+                  v-model="form.placementName"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-select
+                  offset="right"
+                  class="row mb-1"
+                  selectType="column"
+                  name="PlacementCountry"
+                  labelName="name"
+                  keyName="code"
+                  v-model="form.placementCountry"
+                  :label="$t('labels.payroll.employee.country')"
+                  :columnOptions="columnOptions"
+                  :options="placementCountryOptions"
+                >
+                </c-select>
+              </div>
+              <div class="col-md-4">
+                <c-select
+                  offset="right"
+                  class="row mb-1"
+                  selectType="column"
+                  name="placementCity"
+                  labelName="name"
+                  keyName="code"
+                  v-model="form.placementCity"
+                  :label="$t('labels.payroll.employee.city')"
+                  :columnOptions="columnOptions"
+                  :options="placementCityOptions"
+                >
+                </c-select>
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  type="textarea"
+                  name="PlacementAddress"
+                  id="PlacementAddress"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.employee.address')"
+                  v-model="form.placementAddress"
+                />
+              </div>
+              <div class="col-md-4 mb-sm-1">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label
+                      class="form-label"
+                      style="font-size: 12px; font-weight: 700; color: red"
+                      >{{$t('labels.status')}}</label
+                    >
+                  </div>
+                  <div class="col-sm-9 d-flex align-items-center p-0">
+                    <c-radio
+                      class="me-3"
+                      :label="$t('labels.active')"
+                      v-model="form.placementStatus"
+                      :value="A"
+                    ></c-radio>
+                    <c-radio
+                      class="me-3"
+                      :label="$t('labels.inactive')"
+                      v-model="form.placementStatus"
+                      value="I"
+                    ></c-radio>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- buttons -->
+            <div class="d-flex justify-content-end mt-2">
+              <button
+                type="button"
+                class="btn btn-danger mr-1 px-3"
+                @click="onClose"
+              >
+                <i class="fa fa-times" aria-hidden="true"></i>
+                {{$t('buttons.close')}}
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary px-3"
+                @click="onSubmit"
+              >
+                <i class="fa fa-save"></i>
+                {{$t('buttons.save')}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</c-form>

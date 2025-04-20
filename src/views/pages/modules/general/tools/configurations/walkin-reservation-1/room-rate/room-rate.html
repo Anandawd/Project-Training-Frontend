@@ -1,0 +1,91 @@
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="d-flex justify-content-end mb-2">
+      <button v-if="!hideButton" type="button" :class="fullSync ? 'btn btn-primary mr-1' : 'btn btn-secondary mr-1'"
+        @click="clickFullSync">
+        <i :class="fullSync ? 'fas fa-check-square mr-2' : 'fas fa-square mr-2'"></i>
+        {{$t('labels.fullSync')}}
+      </button>
+      <button :disabled="isDisabled" v-if="!hideButton" title="Post To Channel Manager" type="button" class="btn btn-primary mr-1"
+        @click="postChannelManager">{{
+        $t('buttons.postToCM') }}</button>
+      <button v-if="!hideButton" title="Insert Room Rate" type="button" class="btn btn-primary mr-1"
+        @click="handleShowForm('', $global.modeData.insert)"><i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insert') }}</button>
+    </div>
+    <transition name="slide-fade">
+      <multi-form :focus="focus" :isSaving="isSaving" ref="multiFormElement" v-show="showForm" :default-form="form" :schema="schema"
+        :formType="$global.formType.roomRate" :modeData="modeData" @save="handleSave" @close="onClose"
+        @postChannel="postChannelManager" @repeatLoadDropdown="loadDropdown">
+      </multi-form>
+    </transition>
+    <transition name="slide-fade">
+      <breakdown @save="refreshAfterSave" @close="onClose" @update="refreshAfterSave" ref="breakdownFormElement">
+      </breakdown>
+    </transition>
+    <transition name="slide-fade">
+      <business-source @save="refreshAfterSave" @close="onClose" @update="refreshAfterSave"
+        ref="businessSourceFormElement">
+      </business-source>
+    </transition>
+    <transition name="slide-fade">
+      <currency @save="refreshAfterSave" @close="onClose" @update="refreshAfterSave" ref="currencyFormElement">
+      </currency>
+    </transition>
+    <transition name="slide-fade">
+      <base-occupancy @save="refreshAfterSave" @close="onClose" @update="refreshAfterSave" ref="baseOccupancyElement">
+      </base-occupancy>
+    </transition>
+    <transition name="slide-fade">
+      <base-session @save="refreshAfterSave" @close="onClose" @update="refreshAfterSave" ref="baseSessionElement">
+      </base-session>
+    </transition>
+    <search-filter :options="searchOptions" :searchDefault="searchDefault" @search="refreshData"
+      :formType="$global.formType.roomRate">
+      <template v-slot="{search, onRefresh}">
+        <div class="col-md-6 d-flex">
+          <div class="row mr-1">
+            <c-radio class="" :label="$t('commons.filter.checkList.all')" v-model="search.filter[0]" value="0"
+              @change="onRefresh">
+            </c-radio>
+          </div>
+          <div class="row">
+            <c-radio class="mr-1" :label="$t('commons.filter.checkList.active')" v-model="search.filter[0]" value="1"
+              @change="onRefresh">
+            </c-radio>
+          </div>
+          <div class="row">
+            <c-radio class="mr-1" :label="$t('commons.filter.checkList.notActive')" v-model="search.filter[0]" value="2"
+              @change="onRefresh">
+            </c-radio>
+          </div>
+        </div>
+      </template>
+    </search-filter>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{ $t('title.roomRate') }} {{ $t('commons.list') }}</h3>
+      </div>
+      <div class="card-body">
+        <!-- //Table -->
+        <ag-grid-vue :style="agGridSetting.styleAgGridFrame" :class="agGridSetting.themeAgGrid" :columnDefs="columnDefs"
+          :rowData="rowData" :paginationPageSize="paginationPageSize" :gridOptions="gridOptions" :context="context"
+          :frameworkComponents="frameworkComponents" :enableCellChangeFlash="true" :rowSelection="rowSelection"
+          :getContextMenuItems="getContextMenu" :defaultColDef="agGridSetting.defColDef" :masterDetail="true"
+          :detailCellRenderer="detailCellRenderer" :detailRowAutoHeight="detailRowAutoHeight"
+          :suppressDragLeaveHidesColumns="true" :suppressMakeColumnVisibleAfterUnGroup="true" :statusBar="statusBar"
+          @grid-ready="onGridReady" @cellContextMenu="handleRowRightClicked" :rowGroupPanelShow="rowGroupPanelShow" @rowDoubleClicked="rowDoubleClicked"
+          @selection-changed="rowSelected " />
+      </div>
+    </div>
+    <CDialog v-show="showDialog" w100 dialogTitle="Confirm" @confirm="deleteData" @cancel="showDialog= false" confirm>
+      <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+    </CDialog>
+
+    <CDialog v-show="showUpdateRate" w100 dialogTitle="Confirmation" @confirm="updateDataAllGuestInHouseRate"
+      @cancel="showUpdateRate= false" confirm>
+      <template #body> {{ $t('messages.areYouSure')}} </template>
+    </CDialog>
+  </div>
+</section>

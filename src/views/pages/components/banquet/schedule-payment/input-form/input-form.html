@@ -1,0 +1,41 @@
+<Form @submit="onSave" ref="inputFormValidation" :validation-schema="schema" @invalid-submit="onInvalidSubmit"
+  class="input-form row" v-slot="{resetForm}">
+  <div class="card">
+    <div class="card-header">
+      {{ title }}
+      <button type="button" class="close-button btn" @click="onClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="card-body">
+      <div class="row mb-1">
+        <div class="col-md-6">
+          <c-input required id="name" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.name"
+            :label="$t('labels.name')" type="text" name="name">
+          </c-input>
+          <c-datepicker required id="date" class="row mb-1" customLabelClass="col-3" customClass="col-9"
+            v-model="form.date" :label="$t('labels.date')" type="date" valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY" name="date">
+          </c-datepicker>
+          <c-input required showZeroNumber formatted id="amount" customLabelClass="col-3" customClass="col-9" class="mb-1"
+            v-model="form.amount" :label="$t('labels.amount')" type="number" name="amount" />
+          <c-input required formatted showZeroNumber id="remark" customLabelClass="col-3" customClass="col-9"
+            class="mb-1" v-model="form.remark" :label="$t('labels.remark')" type="textarea" name="remark">
+          </c-input>
+        </div>
+        <div class="col-md-6">
+          <CSelect id="paymentWith" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.guest_deposit_id" @change="onChangePaymentWith" @load="repeatLoadDropdown"
+          keyName="id" :options="listDropdown" labelName="Account" selectType="column" :columnOptions="columnOptions" :label="$t('labels.paymentWith')" name="paymentWith" />
+          <c-datepicker disabled id="paymentDate" class="row mb-1" customLabelClass="col-3" customClass="col-9"
+            v-model="form.payment_date" :label="$t('labels.paymentDate')" type="date" valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY" name="paymentDate">
+          </c-datepicker>
+          <c-input disabled showZeroNumber formatted id="paymentAmount" customLabelClass="col-3" customClass="col-9" class="mb-1"
+            v-model="form.payment_amount" :label="$t('labels.paymentAmount')" type="number" name="paymentAmount" />
+          <c-input formatted showZeroNumber id="paymentRemark" customLabelClass="col-3" customClass="col-9"
+            class="mb-1" v-model="form.payment_remark" :label="$t('labels.paymentRemark')" type="textarea" name="paymentRemark">
+          </c-input>
+        </div>
+      </div>
+      <save-close-button :isSaving="isSaving" @save="onSubmit" @close="onClose"></save-close-button>
+    </div>
+  </div>
+</Form>

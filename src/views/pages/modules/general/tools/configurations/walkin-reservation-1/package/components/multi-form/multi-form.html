@@ -1,0 +1,265 @@
+<section class="content">
+  <div class="card">
+    <div class="card-header">
+      {{ title }}
+      <button type="button" class="close-button btn" @click="onClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="card-body">
+      <v-form
+        @submit="onSave"
+        ref="multiFormElement"
+        :validation-schema="schema"
+        @invalid-submit="onInvalidSubmit"
+        class="input-form row"
+        v-slot="{resetForm}"
+      >
+        <div class="col-md-4 col-sm-6 row mb-1">
+          <div class="col-3"></div>
+          <c-checkbox
+            id="isUtility"
+            class="col"
+            v-model="form.is_utility"
+            :label="$t('labels.isUtility')"
+            name="isUtility"
+          >
+          </c-checkbox>
+        </div>
+        <div class="row">
+          <div class="col-md-4 col-sm-6">
+            <c-input
+              :focus="focus"
+              class="mb-1"
+              required
+              :disabled="modeData==$global.modeData.edit"
+              v-model="form.code"
+              :max="10"
+              :label="$t('labels.code')"
+              type="text"
+              name="Code"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+            <c-input
+              class="mb-1"
+              required
+              v-model="form.name"
+              :max="100"
+              :label="$t('labels.name')"
+              type="text"
+              name="Name"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+            <c-select
+              filter
+              required
+              class="mb-1"
+              v-model="form.sub_department_code"
+              :options="listDropdown.SubDepartment"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.subDepartment')"
+              name="Sub Department"
+              customLabelClass="col-3"
+              customClass="col-9"
+            >
+            </c-select>
+            <c-select
+              filter
+              required
+              class="mb-1"
+              v-model="form.account_code"
+              :options="listDropdown.Account"
+              keyName="code"
+              @load="repeatLoadDropdownList"
+              labelName="name"
+              :label="$t('labels.account')"
+              name="Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+            >
+            </c-select>
+            <c-input
+              :disabled="form.per_pax"
+              required
+              half
+              showZeroNumber
+              formatted
+              class="mb-1"
+              v-model="form.quantity"
+              :label="$t('labels.quantity')"
+              type="number"
+              name="Quantity"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-input>
+          </div>
+          <div class="col-md-4 col-sm-6 mb-2">
+            <c-input
+              required
+              showZeroNumber
+              formatted
+              class="mb-1"
+              v-model="form.amount"
+              :label="$t('labels.amount')"
+              type="number"
+              name="Amount"
+              customLabelClass="col-3"
+              customClass="col-9"
+            >
+            </c-input>
+            <div class="row justify-content-end">
+              <div class="col-3 align-items-end">
+                <c-checkbox
+                  :disabled="form.is_utility"
+                  :label="$t('labels.perPax')"
+                  v-model="form.per_pax"
+                  @change="onChangePerPax"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </c-checkbox>
+              </div>
+              <div class="col-6">
+                <c-checkbox
+                  :disabled="!form.per_pax"
+                  :label="$t('labels.includeChild')"
+                  v-model="form.include_child"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </c-checkbox>
+              </div>
+            </div>
+            <c-select
+              filter
+              required
+              class="mb-1"
+              v-model="form.tax_and_service_code"
+              :options="listDropdown.TaxAndService"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.taxAndService')"
+              name="Tax & Service"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-select>
+            <c-select
+              filter
+              required
+              v-model="form.charge_frequency_code"
+              class="mb-1"
+              :options="listDropdown.ChargeFrequency"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.chargeFrequency')"
+              name="Charge Frequency"
+              customLabelClass="col-3"
+              customClass="col-9"
+            ></c-select>
+            <div class="row justify-content-end">
+              <div class="col-2 d-flex align-items-end">
+                <c-checkbox
+                  :label="$t('labels.active')"
+                  v-model="form.is_active"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                ></c-checkbox>
+              </div>
+              <div class="col-2 d-flex align-items-end">
+                <c-checkbox
+                  :label="$t('labels.online')"
+                  v-model="form.is_online"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                ></c-checkbox>
+              </div>
+              <div class="col-5 d-flex align-items-end">
+                <c-checkbox
+                  :label="$t('labels.showInTransaction')"
+                  v-model="form.show_in_transaction"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                ></c-checkbox>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-6">
+            <div class="row">
+              <div
+                :disabled="!form.is_utility"
+                class="accordion h-100"
+                id="accordionPanelsStayOpenExample"
+              >
+                <div class="accordion-item h-100">
+                  <h2 class="accordion-header" id="panelsStayOpen-costing">
+                    <button
+                      class="accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-collapseOne"
+                      aria-expanded="true"
+                      aria-controls="panelsStayOpen-collapseOne"
+                    >
+                      {{ $t('labels.extraCharge') }}
+                    </button>
+                  </h2>
+                  <div
+                    id="panelsStayOpen-collapseOne"
+                    class="accordion-collapse collapse show"
+                    aria-labelledby="panelsStayOpen-costing"
+                  >
+                    <div class="accordion-body row">
+                      <c-input
+                        :disabled="form.is_utility"
+                        class="mb-1"
+                        spinner
+                        b-s
+                        v-model="form.max_pax"
+                        :label="$t('labels.maxPax')"
+                        type="text"
+                        name="Max Pax"
+                      >
+                        <template #append-end>
+                          <c-checkbox
+                            :disabled="form.is_utility"
+                            @change="onChangePerPaxExtra"
+                            :label="$t('labels.perPax')"
+                            v-model="form.per_pax_extra"
+                            customClass="pl-0 prx-75"
+                          ></c-checkbox>
+                        </template>
+                      </c-input>
+                      <c-input
+                        :disabled="form.is_utility"
+                        class="md-1"
+                        showZeroNumber
+                        formatted
+                        v-model="form.extra_pax"
+                        :label="$t('labels.extraPax')"
+                        type="number"
+                        name="Extra Pax"
+                        customLabelClass="col-3"
+                        customClass="col-9"
+                      ></c-input>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </v-form>
+    </div>
+    <save-close-button
+      :isSaving="isSaving"
+      @save="onSubmit"
+      @close="onClose"
+    ></save-close-button>
+  </div>
+</section>

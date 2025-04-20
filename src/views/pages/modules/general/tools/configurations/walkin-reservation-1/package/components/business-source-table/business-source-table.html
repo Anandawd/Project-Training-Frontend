@@ -1,0 +1,28 @@
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg">
+        <!-- <search-filter :options="searchOptions" :searchDefault="searchDefault" @search="refreshData"></search-filter> -->
+        <div class="card h-100">
+          <div class="card-header">
+            <h3 class="card-title">{{ $t('title.businessSourceAndAP') }} {{ $t('commons.list') }}</h3>
+          </div>
+          <div class="card-body">
+            <!-- //Table -->
+            <ag-grid-vue :isSaveData="isSaveDataBusiness" :style="agGridSetting.styleAgGridFrame0" :class="agGridSetting.themeAgGrid"
+              :columnDefs="columnDefs" :rowData="rowData" :paginationPageSize="paginationPageSize"
+              :gridOptions="gridOptions" :context="context" :frameworkComponents="frameworkComponents"
+              :enableCellChangeFlash="true" :rowSelection="rowSelection" :getContextMenuItems="getContextMenu" :defaultColDef="agGridSetting.defColDef"
+              @grid-ready="onGridReady" @cellContextMenu="handleRowRightClicked" :rowGroupPanelShow="rowGroupPanelShow"  @rowDoubleClicked="rowDoubleClicked"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <CDialog v-show="showDialog" w100 dialogTitle="Confirm" @confirm="deleteData" @cancel="showDialog= false" confirm>
+    <template #body>
+      Are you sure to delete this data?
+    </template>
+  </CDialog>
+</section>

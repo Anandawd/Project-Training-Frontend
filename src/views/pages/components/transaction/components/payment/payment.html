@@ -1,0 +1,155 @@
+<v-form
+  @submit="onSave"
+  ref="formElement"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+>
+  <div v-if="transactionType === $global.modeTransaction.directBill">
+    <direct-bill-form
+      ref="directBillElement"
+      @change-account="onChangeAccount"
+      @change-subDepartment="onChangeSubDepartment"
+      :folio-number="folioNumber"
+    ></direct-bill-form>
+  </div>
+  <div
+    v-else-if="transactionType === $global.modeTransaction.card"
+    class="row mt-3"
+  >
+    <bank-card-form
+      ref="cardElement"
+      :folio-number="folioNumber"
+      @changeSubDepartment="onChangeSubDepartment"
+    ></bank-card-form>
+  </div>
+
+  <div v-else>
+    <div class="payment-form mt-3">
+      <div class="row">
+        <div class="col-md">
+          <div class="row">
+            <div class="col-md">
+              <c-select
+                required
+                class="row mb-1"
+                customClass="col-md-2 col-4"
+                :label="$t('transaction.subFolio')"
+                name="subFolioGroup"
+                v-model="form.subFolioGroupCode"
+                :options="$global.subFolioGroup"
+              ></c-select>
+            </div>
+            <div v-show="folioTransfer" class="col">
+              <c-checkbox
+                class="row mb-1"
+                :label="$t('transaction.automaticTransfer')"
+                name="automaticTransfer"
+                v-model="form.automaticTransfer"
+              >
+              </c-checkbox>
+            </div>
+          </div>
+          <c-select
+            required
+            class="mb-1"
+            :label="$t('transaction.currency')"
+            labelName="code"
+            keyName="code"
+            name="currency"
+            v-model="form.currencyCode"
+            :options="options.currencies"
+            @change="onChangeCurrency"
+          >
+            <template #append-end>
+              <c-input
+                required
+                class="col-6 pr-0 pl-0"
+                disabled
+                formatted
+                type="number"
+                name="excRate"
+                v-model="form.exchangeRate"
+              ></c-input></template
+          ></c-select>
+          <c-select
+            required
+            class="row mb-1"
+            :label="$t('transaction.subDept')"
+            labelName="name"
+            keyName="code"
+            name="subDepartment"
+            v-model="form.subDepartmentCode"
+            :options="options.subDepartments"
+            @change="onChangeSubDepartment"
+          ></c-select>
+        </div>
+        <div class="col-md">
+          <c-select
+            required
+            class="row mb-1"
+            :label="$t('transaction.account')"
+            labelName="name"
+            keyName="code"
+            name="account"
+            v-model="form.accountCode"
+            :options="options.accounts"
+            @change="onChangeAccount"
+          ></c-select>
+          <c-input
+            focus
+            showZeroNumber
+            required
+            class="row mb-1"
+            type="number"
+            formatted
+            :label="$t('transaction.amount') + ' ' +form.currencyCode"
+            name="amountForeign"
+            v-model="form.amountForeign"
+            @input="onChangeAmount"
+          ></c-input>
+          <c-input
+            required
+            disabled
+            showZeroNumber
+            class="row mb-1"
+            type="number"
+            formatted
+            :label="$t('transaction.amount')+' '+defaultCurrency"
+            name="amount"
+            v-model="form.amount"
+          ></c-input>
+        </div>
+        <div class="col-md">
+          <div class="row mb-1">
+            <label for="remarkPayment" class="col-md-3 col-form-label"
+              >{{ $t("transaction.remark") }}</label
+            >
+            <div class="col-md-9">
+              <textarea
+                type="text"
+                class="form-control"
+                rows="2"
+                id="remarkPayment"
+                name="remark"
+                v-model="form.remark"
+              />
+            </div>
+          </div>
+          <c-input
+            required
+            class="row mb-1"
+            :label="$t('transaction.docNumber')"
+            name="documentNumber"
+            v-model="form.documentNumber"
+          ></c-input>
+        </div>
+      </div>
+    </div>
+  </div>
+  <save-close-button
+    :is-saving="isSaving"
+    @save="onSubmit"
+    @close="$emit('close')"
+  ></save-close-button>
+</v-form>

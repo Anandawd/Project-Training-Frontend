@@ -1,0 +1,70 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="d-flex justify-content-end mb-2">
+      <button
+        title="Insert Sales Salary"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleShowForm('', $global.modeData.insert)"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insert') }}
+      </button>
+    </div>
+    <div class="pl-2 pr-2">
+      <transition>
+        <InputForm
+          ref="inputFormElement"
+          v-show="showForm"
+          :schema="schema"
+          :formType="$global.formType.salesSalary"
+          :modeData="modeData"
+          @save="handleSave"
+          @close="showForm=false"
+        />
+      </transition>
+    </div>
+    <!-- defaultSearchBy : mengatur option mana yg akan jadi selected option -->
+    <search-filter
+      :options="searchOptions"
+      :defaultSearchBy="1"
+      @search="refreshData"
+    ></search-filter>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{ $t('title.salesSalary') }}</h3>
+      </div>
+      <div id="tooltip" class="card-body">
+        <!-- //Table -->
+        <ag-grid-vue
+          :style="agGridSetting.styleAgGridFrame"
+          :class="agGridSetting.themeAgGrid"
+          :columnDefs="columnDefs"
+          :rowData="rowData"
+          :paginationPageSize="paginationPageSize"
+          :gridOptions="gridOptions"
+          :context="context"
+          :frameworkComponents="frameworkComponents"
+          :enableCellChangeFlash="true"
+          :rowSelection="rowSelection"
+          :defaultColDef="agGridSetting.defColDef"
+          :suppressDragLeaveHidesColumns="true"
+          :statusBar="statusBar"
+          @grid-ready="onGridReady"
+          @cellContextMenu="handleRowRightClicked"
+        />
+      </div>
+    </div>
+    <CDialog
+      v-show="showDialog"
+      w100
+      dialogTitle="Confirm"
+      @confirm="deleteData"
+      @cancel="showDialog= false"
+      confirm
+      @close="closeDialog"
+    >
+      <template #body> Are you sure to delete this data? </template>
+    </CDialog>
+  </div>
+</section>

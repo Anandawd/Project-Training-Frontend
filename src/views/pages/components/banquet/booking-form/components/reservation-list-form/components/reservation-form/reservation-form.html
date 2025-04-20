@@ -1,0 +1,251 @@
+<div class="card h-100">
+  <div class="card-header">
+    <h3 class="card-title">
+      {{ $t('title.stayInformation') }}
+      <button type="button" class="close-button btn" @click="onClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </h3>
+  </div>
+  <v-form
+    class="booking-information-form"
+    ref="reservationFormValidate"
+    @submit="onSave"
+    :class="card"
+    :validation-schema="schema"
+    @invalid-submit="onInvalidSubmit"
+  >
+    <!-- <div ref="bookingInformationForm" id="accordionRegistrationForm" class="accordion">
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="accordion-bookingInformationHeader">
+        <button type="button" class="accordion-button" aria-expanded="true" aria-controls="accordion-bookingInformation"
+          data-bs-target="#accordion-bookingInformation" data-bs-toggle="collapse">
+          
+        </button>
+      </h3> -->
+    <div
+      id="accordion-bookingInformation"
+      class="accordion-collapse collapse show"
+      aria-labelledby="accordion-bookingInformationHeader"
+    >
+      <!-- <form class="accordion-body row" :validation-schema="schema"> -->
+      <div class="accordion-body row">
+        <div class="col-md-6">
+          <c-datepicker
+            :focus="focus"
+            :disabled-date="dateDisabledArrival"
+            class="mb-1"
+            customLabelClass="col-3"
+            customClass="col-9"
+            required
+            confirm
+            :label="$t('labels.startDate')"
+            v-model="detail.start_date"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            :clearable="false"
+            name="Start Date"
+            resetButton
+            @input="onChangeStartDate"
+            @reset="onResetDate"
+          ></c-datepicker>
+          <c-datepicker
+            :disabled-date="dateDisabledDeparture"
+            disabled
+            class="mb-1"
+            customLabelClass="col-3"
+            customClass="col-9"
+            required
+            confirm
+            :label="$t('labels.endDate')"
+            v-model="detail.end_date"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            :clearable="false"
+            name="End Date"
+            resetButton
+            @input="onChangeDeparture"
+            @reset="onResetDate"
+          ></c-datepicker>
+          <div class="row">
+            <div class="col-md-6">
+              <c-datepicker
+                class="mb-1"
+                customLabelClass="col-6"
+                customClass="col-6"
+                required
+                confirm
+                :label="$t('labels.startTime')"
+                v-model="detail.start_time"
+                type="time"
+                valueType="HH:mm:ss"
+                format="HH:mm:ss"
+                :clearable="false"
+                name="Start Time"
+                resetButton
+                @reset="onResetDate"
+              ></c-datepicker>
+            </div>
+            <div class="col-md-6">
+              <c-datepicker
+                class="mb-1"
+                customLabelClass="col-6"
+                customClass="col-6"
+                required
+                confirm
+                :label="$t('labels.endTime')"
+                v-model="detail.end_time"
+                type="time"
+                valueType="HH:mm:ss"
+                format="HH:mm:ss"
+                :clearable="false"
+                name="End Time"
+                resetButton
+                @reset="onResetDate"
+              ></c-datepicker>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-3 mt-1 mb-1">
+              <label for="type" class="col-form-label required"
+                >{{ $t("title.location") }}</label
+              >
+            </div>
+            <div class="col-9">
+              <div class="d-flex">
+                <c-radio
+                  class="col-6"
+                  :label="$t('labels.inside')"
+                  v-model="detail.is_inside"
+                  value="1"
+                  @change="onRefresh"
+                >
+                </c-radio>
+                <c-radio
+                  class="col-6"
+                  :label="$t('labels.outside')"
+                  v-model="detail.is_inside"
+                  value="0"
+                  @change="onRefresh"
+                >
+                </c-radio>
+              </div>
+              <!-- <div class="d-flex justify-content-start">
+                <c-radio class="m-1" :label="$t('labels.inside')" v-model="detail.type_code" value="M"
+                  @change="onRefresh">
+                </c-radio>
+                <c-radio class="m-1" :label="$t('labels.outside')" v-model="detail.type_code"
+                  value="A" @change="onRefresh">
+                </c-radio>
+              </div> -->
+            </div>
+          </div>
+          <c-select filter
+            required
+            class="mb-1"
+            customLabelClass="col-3"
+            customClass="col-9"
+            @change="onChangVenue"
+            @load="loadDropdown"
+            :label="$t('labels.venue')"
+            v-model="detail.venue_code"
+            labelName="name"
+            keyName="code"
+            id="venue"
+            :options="listDropdown.Venue"
+            name="Venue"
+          />
+        </div>
+        <div class="col-md-6">
+          <c-select filter
+            required
+            class="mb-1"
+            customLabelClass="col-3"
+            customClass="col-9"
+            @change="onChangeRoomType"
+            @load="loadDropdown"
+            :options="listDropdown.Theme"
+            :label="$t('labels.theme')"
+            v-model="detail.theme_code"
+            labelName="name"
+            keyName="code"
+            id="theme"
+            name="Theme"
+          />
+          <c-select filter
+            required
+            class="mb-1"
+            customLabelClass="col-3"
+            customClass="col-9"
+            @change="onChangeRoomType"
+            @load="loadDropdown"
+            :options="listDropdown.SeatingPlan"
+            :label="$t('labels.seatingPlan')"
+            v-model="detail.seating_plan_code"
+            labelName="name"
+            keyName="code"
+            id="seatingh-plan"
+            name="Seating Plan"
+          />
+          <div class="row">
+            <div class="col-md-6 mb-1">
+              <c-input
+                spinner
+                required
+                customLabelClass="col-6"
+                customClass="col-6"
+                v-model="detail.adult"
+                :label="$t('labels.adult')"
+                type="number"
+                name="Adult"
+              />
+            </div>
+            <div class="col-md-6 mb-1">
+              <c-input
+                customLabelClass="col-6"
+                customClass="col-6"
+                spinner
+                class="row"
+                v-model="detail.child"
+                :label="$t('labels.child')"
+                type="number"
+                name="Child"
+              />
+            </div>
+          </div>
+          <c-input
+            id="note"
+            customLabelClass="col-3"
+            customClass="col-9"
+            class="mb-1"
+            v-model="detail.notes"
+            :label="$t('labels.notes')"
+            type="textarea"
+            name="Note"
+          />
+        </div>
+      </div>
+    </div>
+    <!-- </div> -->
+    <!-- </div>
+
+<div
+  ref="bookingInformationForm"
+  id="accordionRegistrationForm"
+  class="accordion"
+> -->
+    <!--TODO credential not working -->
+    <!-- <credential
+ref="credentialElement"
+:module="$global.accessModule.hotel"
+></credential> -->
+    <!-- </v-form> -->
+    <save-close-button
+      :isSaving="isSaving"
+      @save="onSubmit"
+      @close="onClose"
+    ></save-close-button>
+  </v-form>
+</div>

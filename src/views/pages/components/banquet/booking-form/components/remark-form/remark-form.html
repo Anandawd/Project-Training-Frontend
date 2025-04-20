@@ -1,0 +1,67 @@
+<v-form ref="remarkInformationValidation" class="booking-information-form row mb-2" @submit="onSave"
+  :validation-schema="schema" @invalid-submit="onInvalidSubmit">
+  <div id="beoNotesForm" class="accordion col-md-5">
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="beoNotesHeader">
+        <button type="button" class="accordion-button" aria-expanded="true" aria-controls="beoNotes"
+          data-bs-target="#beoNotes" data-bs-toggle="collapse">
+          {{ $t('title.beoNotes') }}
+        </button>
+      </h3>
+      <div id="beoNotes" class="accordion-collapse collapse show" aria-labelledby="beoNotesHeader"
+        data-bs-parent="beoNotesForm">
+        <!-- <form class="accordion-body row" :validation-schema="schema"> -->
+        <div class="accordion-body">
+          <c-input :focus="focus" required class="mb-1" :rows="13" v-model="form.booking_data.beo_note" :title="$t('labels.beoNotes')"
+            type="textarea" name="beoNotes" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div ref="bookingInformationForm" id="accordionRegistrationForm" class="accordion col-md-7">
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="accordion-bookingInformationHeader">
+        <button type="button" class="accordion-button" aria-expanded="true" aria-controls="accordion-bookingInformation"
+          data-bs-target="#accordion-bookingInformation" data-bs-toggle="collapse">
+          {{ $t('title.remark') }}
+        </button>
+      </h3>
+      <div id="accordion-bookingInformation" class="accordion-collapse collapse show"
+        aria-labelledby="accordion-bookingInformationHeader">
+        <!-- <form class="accordion-body row" :validation-schema="schema"> -->
+        <div class="accordion-body row">
+          <div class="col-md-6">
+            <c-input customLabelClass="col-3" customClass="col-9" class="mb-1 memo" v-model="memo[0]"
+              :label="$t('labels.frontOffice')" type="textarea" name="Front Office" />
+            <c-input customLabelClass="col-3" customClass="col-9" class="mb-1 memo" v-model="memo[1]"
+              :label="$t('labels.accounting')" type="textarea" name="Accounting" />
+            <c-input customLabelClass="col-3" customClass="col-9" class="mb-1 memo" v-model="memo[2]"
+              :label="$t('labels.it')" type="textarea" name="It" />
+            <c-input customLabelClass="col-3" customClass="col-9" class="mb-1 memo" v-model="memo[3]"
+              :label="$t('labels.engineering')" type="textarea" name="Engineering" />
+            <c-input customLabelClass="col-3" customClass="col-9" class="mb-1 memo" v-model="memo[4]"
+              :label="$t('labels.housekeeping')" type="textarea" name="Housekeeping" />
+          </div>
+          <div class="col-md-6">
+            <c-input customLabelClass="col-3" customClass="col-9" class="mb-1 memo" v-model="memo[5]"
+              :label="$t('labels.hrd')" type="textarea" name="HRD1" />
+            <c-input customLabelClass="col-3" customClass="col-9" class="mb-1 memo" v-model="memo[6]"
+              :label="$t('labels.security')" type="textarea" name="Security" />
+            <c-input customLabelClass="col-3" customClass="col-9" class="mb-1 memo" v-model="memo[7]"
+              :label="$t('labels.other')" type="textarea" name="Other" />
+            <c-input customLabelClass="col-3" customClass="col-9" class="mb-1 memo" v-model="memo[8]"
+              :label="$t('labels.kitchen')" type="textarea" name="Kitchen" />
+            <c-input customLabelClass="col-3" customClass="col-9" class="mb-1 memo" v-model="memo[9]"
+              :label="$t('labels.hrd')" type="textarea" name="HRD2" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--TODO credential not working -->
+  <!-- <credential
+  ref="credentialElement"
+  :module="$global.accessModule.hotel"
+></credential> -->
+  <!-- </v-form> -->
+</v-form>

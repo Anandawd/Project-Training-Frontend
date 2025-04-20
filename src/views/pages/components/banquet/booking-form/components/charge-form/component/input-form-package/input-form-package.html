@@ -1,0 +1,349 @@
+<!-- Main content -->
+<div class="card h-100">
+  <div class="card-header">
+    <h3 class="card-title">
+      {{ title }}
+      <button type="button" class="close-button btn" @click="onClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </h3>
+  </div>
+  <div class="card-body">
+    <v-form
+      @submit="onSave"
+      ref="inputFormPackageElement"
+      :validation-schema="schema"
+      @invalid-submit="onInvalidSubmit"
+      class="input-form row"
+      v-slot="{resetForm}"
+    >
+      <div class="row">
+        <div class="col-md-4">
+          <div class="row justify-content-center">
+            <div class="col-6">
+              <c-checkbox
+                :disabled="this.formType == this.$global.formType.banquetInProgress"
+                :label="$t('labels.postingAtCheckIn')"
+                v-model="form.is_posting"
+                customLabelClass="col-3"
+                customClass="col-9"
+              >
+              </c-checkbox>
+            </div>
+          </div>
+          <c-select
+            :focus="focus"
+            filter
+            class="mb-1"
+            v-model="form.business_source_code"
+            :options="comboList.BusinessSource"
+            @change="onChangeBnsSource"
+            @load="loadPackageComboList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.businessSource')"
+            name="Business Source"
+            customLabelClass="col-3"
+            customClass="col-9"
+          >
+          </c-select>
+          <c-select
+            filter
+            class="mb-1"
+            v-model="form.commission_type_code"
+            :options="comboList.CommissionType"
+            @load="loadPackageComboList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.commissionType')"
+            name="Commission Type"
+            customLabelClass="col-3"
+            customClass="col-9"
+          >
+          </c-select>
+          <c-input
+            formatted
+            showZeroNumber
+            class="mb-1"
+            v-model="form.commission_value"
+            :label="$t('labels.commissionValue')"
+            type="number"
+            name="Commission Value"
+            customLabelClass="col-3"
+            customClass="col-9"
+          >
+          </c-input>
+          <!-- <c-select filter :required="hasBnsSource" disabled class="mb-1" v-model="form.account_code"
+            @load="loadAccountList" :options="accountList" keyName="account_code" labelName="account_code"
+            :label="$t('labels.account')" name="account" customLabelClass="col-3" customClass="col-9">
+          </c-select> -->
+          <c-input
+            :required="hasBnsSource"
+            disabled
+            class="mb-1"
+            v-model="form.account_code"
+            :label="$t('labels.account')"
+            type="string"
+            name="Account"
+            customLabelClass="col-3"
+            customClass="col-9"
+          >
+          </c-input>
+          <c-select
+            filter
+            required
+            class="mb-1"
+            v-model="form.reservation_number"
+            @load="loadPackageComboList"
+            :options="comboList.Reservation"
+            keyName="Number"
+            labelName="Number"
+            :label="$t('labels.reservationNumber')"
+            name="Reservation Number"
+            customLabelClass="col-3"
+            customClass="col-9"
+            selectType="column"
+            :columnOptions="ColumnResOptions"
+            @change="onChangeReservation"
+          >
+          </c-select>
+          <c-select
+            filter
+            required
+            class="mb-1"
+            v-model="form.venue_code"
+            :options="comboList.Venue"
+            @load="loadPackageComboList"
+            keyName="venue_code"
+            labelName="name"
+            :label="$t('labels.venue')"
+            name="Venue"
+            customLabelClass="col-3"
+            customClass="col-9"
+          >
+          </c-select>
+        </div>
+        <div class="col-md-4">
+          <c-select
+            filter
+            class="mb-1"
+            v-model="form.seating_plan_code"
+            :options="comboList.SeatingPlan"
+            @load="loadPackageComboList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.seatingPlan')"
+            name="Seating Plan"
+            customLabelClass="col-3"
+            customClass="col-9"
+          >
+          </c-select>
+          <c-datepicker
+            :disabled="this.formType == this.$global.formType.banquetInProgress"
+            class="mb-1"
+            confirm
+            :label="$t('labels.servedDate')"
+            v-model="form.served_date"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            :clearable="false"
+            name="Served Date"
+            resetButton
+            customLabelClass="col-3"
+            customClass="col-9"
+            @reset="onResetDate"
+          ></c-datepicker>
+          <div class="row">
+            <div class="col-md-6">
+              <c-datepicker
+                @change="onChangeStartTime"
+                :disabled="this.formType == this.$global.formType.banquetInProgress"
+                class="mb-1"
+                customLabelClass="col-6"
+                customClass="col-6"
+                confirm
+                :label="$t('labels.start')"
+                v-model="form.start_time"
+                type="time"
+                valueType="HH:mm:ssZZ"
+                format="HH:mm:ss"
+                :clearable="false"
+                name="Start"
+                resetButton
+                @reset="onResetDate"
+              ></c-datepicker>
+            </div>
+            <div class="col-md-6">
+              <c-datepicker
+                @change="onChangeEndTime"
+                :disabled="this.formType == this.$global.formType.banquetInProgress"
+                class="mb-1"
+                customLabelClass="col-6"
+                customClass="col-6"
+                confirm
+                :label="$t('labels.end')"
+                v-model="form.end_time"
+                type="time"
+                valueType="HH:mm:ssZZ"
+                format="HH:mm:ss"
+                :clearable="false"
+                name="End"
+                resetButton
+                @reset="onResetDate"
+              ></c-datepicker>
+            </div>
+          </div>
+          <c-select
+            filter
+            required
+            @change="onChangePackage"
+            class="mb-1"
+            v-model="form.package_code"
+            :options="packageList"
+            @load="loadPackageList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.package')"
+            name="Package"
+            customLabelClass="col-3"
+            customClass="col-9"
+          >
+          </c-select>
+          <div class="row">
+            <div class="col-md-6 mb-1">
+              <c-input
+                spinner
+                required
+                customLabelClass="col-6"
+                customClass="col-6"
+                v-model="form.adult"
+                :label="$t('labels.adult')"
+                type="number"
+                name="adult"
+              />
+            </div>
+            <div class="col-md-6 mb-1">
+              <c-input
+                customLabelClass="col-6"
+                customClass="col-6"
+                spinner
+                class="row"
+                v-model="form.child"
+                :label="$t('labels.child')"
+                type="number"
+                name="Child"
+              />
+            </div>
+          </div>
+          <c-input
+            class="mb-1"
+            spinner
+            customLabelClass="col-3"
+            customClass="col-9"
+            v-model="form.quantity"
+            :label="$t('labels.quantity')"
+            type="number"
+            name="Quantity"
+          />
+          <c-input
+            class="mb-1"
+            formatted
+            showZeroNumber
+            customLabelClass="col-3"
+            customClass="col-9"
+            v-model="form.amount"
+            :label="$t('labels.amount')"
+            type="number"
+            name="Amount"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            filter
+            :disabled="this.formType == this.$global.formType.banquetInProgress"
+            class="mb-1"
+            v-model="form.layout_id"
+            :options="comboList.Layout"
+            @load="loadPackageComboList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.layout')"
+            name="Layout"
+            customLabelClass="col-3"
+            customClass="col-9"
+          >
+          </c-select>
+          <div class="row mb-2 mt-2">
+            <div class="col-md-3"></div>
+            <div class="col-md-9">
+              <div
+                class="card card-outline position-relative"
+                style="height: 100px"
+              >
+                <div
+                  class="card-body box-profile"
+                  @contextmenu="onContextMenu($event)"
+                >
+                  <div
+                    class="d-flex h-100 justify-content-center align-items-center"
+                  >
+                    <div v-if="imgDataUrl != ''">
+                      <img :src="imgDataUrl" class="justify-content-center" />
+                    </div>
+                    <div v-else-if="imgDataUrl == ''">
+                      <a style="cursor: pointer">Image</a>
+                    </div>
+                    <div else>
+                      <my-upload
+                        field="img"
+                        @crop-success="cropSuccess"
+                        @crop-upload-success="cropUploadSuccess"
+                        @crop-upload-fail="cropUploadFail"
+                        v-model="show"
+                        :width="250"
+                        :height="250"
+                        url="https://httpbin.org/post"
+                        :params="params"
+                        :headers="headers"
+                        :maxSize="2000"
+                        langType="en"
+                        img-format="png"
+                      ></my-upload>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ag-grid-vue
+        :style="agGridSetting.styleAgGridFrame2"
+        :class="agGridSetting.themeAgGrid"
+        :columnDefs="columnDefs"
+        :paginationPageSize="paginationPageSize"
+        :gridOptions="gridOptions"
+        :context="context"
+        :frameworkComponents="frameworkComponents"
+        :enableCellChangeFlash="true"
+        :rowSelection="rowSelection"
+        :getContextMenuItems="getContextMenu"
+        :defaultColDef="agGridSetting.defColDef"
+        :suppressDragLeaveHidesColumns="true"
+        :suppressMakeColumnVisibleAfterUnGroup="true"
+        :statusBar="statusBar"
+        @grid-ready="onGridReady"
+        @cellContextMenu="handleRowRightClicked"
+        :rowGroupPanelShow="rowGroupPanelShow"
+        :getRowNodeId="getRowNodeId"
+        @rowDataUpdated="getRowData"
+      />
+    </v-form>
+  </div>
+  <save-close-button
+    :isSaving="isSaving"
+    @save="onSubmit"
+    @close="onClose"
+  ></save-close-button>
+</div>

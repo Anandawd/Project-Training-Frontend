@@ -1,0 +1,22 @@
+<c-dialog v-if="show" confirm close :title="setTitle" @close="onCancelX">
+  <template #body> {{ setText }} </template>
+  <template #footer>
+    <button
+      :disabled="isLoading || isSaving"
+      type="button"
+      class="btn btn-primary mr-1"
+      @click="onConfirmX"
+    >
+      <span
+        v-if="isSaving || isLoading"
+        class="spinner-border spinner-border-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      {{ confirmText }}
+    </button>
+    <button type="button" class="btn btn-secondary" @click="onCancelX">
+      {{ cancelText }}
+    </button>
+  </template>
+</c-dialog>

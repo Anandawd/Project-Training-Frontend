@@ -1,0 +1,49 @@
+.close-button{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 9;
+}
+
+.slide-fade-right-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-right-leave-active {
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-right-enter-from,
+.slide-fade-right-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.card-grid {
+  height: 36.5%;
+}
+
+.rate {
+  font-size: 11px;
+  height: 24px;
+  padding: 2px 2px;
+  font-family: Tahoma, Geneva, Verdana, sans-serif;
+  border-radius: 0px;
+  color: black;
+}
+
+.h-30 {
+  height: 30%;
+}
+
+.h-33 {
+  height: 33%;
+}
+
+.h-35 {
+  height: 35%;
+}
+
+.week-day-week-end {
+  border: 0px !important;
+}

@@ -1,0 +1,177 @@
+<div class="package-form">
+  <v-form
+    @submit="onSave"
+    ref="formPackageElement"
+    :validation-schema="schema"
+    @invalid-submit="onInvalidSubmit"
+    class="input-form row"
+    v-slot="{resetForm}"
+  >
+    <div class="col-md-4">
+      <c-select
+        class="row mb-1"
+        :label="$t('transaction.businessSource')"
+        labelName="name"
+        keyName="code"
+        name="businessSource"
+        v-model="form.businessSourceCode"
+        :options="options.businessSources"
+        @change="onChangeBusinessSource"
+      ></c-select>
+      <c-select
+        class="row mb-1"
+        :label="$t('transaction.commissionType')"
+        labelName="name"
+        keyName="code"
+        name="commissionType"
+        v-model="form.commissionTypeCode"
+        :options="options.commissionTypes"
+      ></c-select>
+      <c-input
+        formatted
+        class="row mb-1"
+        type="number"
+        :label="$t('transaction.commissionValue')"
+        name="commissionValue"
+        v-model="form.commissionValue"
+      ></c-input>
+      <c-select
+        :required="hasBnsSource"
+        disabled
+        class="row mb-1"
+        :label="$t('transaction.account')"
+        labelName="name"
+        keyName="code"
+        name="account"
+        v-model="form.accountCode"
+        :options="options.accounts"
+      ></c-select>
+      <!-- <c-select v-if="formType == $global.formType.banquetInProgress" required class="mb-1"
+        v-model="form.reservation_number" @load="loadPackageComboList" :options="comboList.Reservation" keyName="Number"
+        labelName="Number" :label="$t('labels.reservationNumber')" name="Reservation Number" customLabelClass="col-3"
+        customClass="col-9" selectType="column" :columnOptions="ColumnResOptions" @change="onChangeReservation">
+      </c-select> -->
+      <c-select
+        v-if="formType == $global.formType.banquetInProgress"
+        required
+        class="mb-1"
+        v-model="form.venue_code"
+        :options="comboList.Venue"
+        @load="loadPackageComboList"
+        keyName="venue_code"
+        labelName="name"
+        :label="$t('labels.venue')"
+        name="Venue"
+        customLabelClass="col-3"
+        customClass="col-9"
+      >
+      </c-select>
+      <c-select
+        v-if="formType != $global.formType.banquetInProgress"
+        required
+        class="row mb-1"
+        :label="$t('transaction.package')"
+        labelName="name"
+        keyName="code"
+        name="package"
+        selectType="column"
+        :columnOptions="columnOptions"
+        v-model="form.packageCode"
+        :options="options.packages"
+        @change="onChangePackage"
+      ></c-select>
+      <c-select
+        v-else
+        required
+        @change="onChangeBanPackage"
+        class="mb-1"
+        v-model="form.package_code"
+        selectType="column"
+        :columnOptions="columnOptions"
+        :options="packageList"
+        @load="loadPackageList"
+        keyName="code"
+        labelName="name"
+        :label="$t('labels.package')"
+        name="package"
+        customLabelClass="col-3"
+        customClass="col-9"
+      >
+      </c-select>
+      <div class="row mb-1">
+        <div class="col-lg-12 col-xl-6 mb-1 mb-xl-0">
+          <c-input
+            required
+            class="row"
+            spinner
+            :min="1"
+            :max="10000"
+            v-model="form.adult"
+            :label="$t('labels.adult')"
+            customLabelClass="col-3 col-xl-6"
+            type="number"
+            name="adult"
+            @change="onChangeAdult"
+          />
+        </div>
+        <div class="col-lg-12 col-xl-6">
+          <c-input
+            show-zero-number
+            class="row"
+            :max="10000"
+            spinner
+            v-model="form.child"
+            :label="$t('labels.child')"
+            customLabelClass="col-3 col-xl-6"
+            type="number"
+            name="child"
+            @change="onChangeAdult"
+          />
+        </div>
+      </div>
+      <c-input
+        half
+        disabled
+        formatted
+        required
+        class="row mb-1"
+        type="number"
+        :label="$t('transaction.quantity')"
+        name="quantity"
+        v-model="form.quantity"
+        @change="onChangeAmount"
+      />
+      <c-input
+        disabled
+        required
+        class="row mb-1"
+        type="number"
+        formatted
+        :label="$t('transaction.amount')"
+        name="amount"
+        v-model="form.totalAmount"
+      ></c-input>
+    </div>
+    <div class="col-md">
+      <div>
+        <ag-grid-vue
+          :style="$global.agGrid.styleAgGridFramePackage"
+          :class="$global.agGrid.themeAgGrid"
+          :gridOptions="gridOptions"
+          @grid-ready="onGridReady"
+          :columnDefs="columnDefs"
+          :rowData="rowData"
+          :suppressRowClickSelection="true"
+          :defaultColDef="$global.agGrid.colDef1"
+          :getRowNodeId="getRowNodeId"
+        >
+        </ag-grid-vue>
+      </div>
+    </div>
+    <save-close-button
+      :is-saving="isSaving"
+      @save="onSubmit"
+      @close="$emit('close')"
+    ></save-close-button>
+  </v-form>
+</div>

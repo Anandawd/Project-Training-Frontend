@@ -1,0 +1,17 @@
+.main-footer.fixed {
+  height: 40px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  /* left: 0; */
+  z-index: 1050;
+  right: 0;
+  padding: 5px !important;
+
+  > .footer-wrapper {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

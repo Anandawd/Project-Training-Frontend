@@ -1,0 +1,52 @@
+<div class="d-flex justify-content-between">
+  <span class="text-bold">{{title}}</span>
+  <nav
+    class="c-pagination d-flex align-items-center align-content-center"
+    aria-label="Page navigation"
+  >
+    <ul class="pagination align-self-center">
+      <li v-if="screenSize == 'xs'" class="col-form-label pr-2 mb-0">Page</li>
+      <li v-else class="col-form-label pr-2 mb-0">
+        Page {{currentPage}} of {{totalPage}}
+      </li>
+      <li
+        :class="{'disabled':previousButtonDisabled}"
+        class="page-item"
+        @click="onPreviousPage"
+      >
+        <div class="page-link" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span>
+        </div>
+      </li>
+      <li class="page-item" v-for="page in pagesArray">
+        <div
+          class="page-link"
+          :class="{'active': currentPage == page}"
+          @click="onPage(page)"
+        >
+          {{page}}
+        </div>
+      </li>
+      <li
+        class="page-item"
+        :class="{'disabled':nextButtonDisabled}"
+        @click="onNextPage"
+      >
+        <div class="page-link" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span>
+        </div>
+      </li>
+    </ul>
+    <c-select
+      :clearable="false"
+      class="col-md-4"
+      label="Size"
+      v-model="paginationSize"
+      :options="pageSizeOptions"
+      @change="onChangePageSize"
+      name="Size"
+    ></c-select>
+  </nav>
+</div>

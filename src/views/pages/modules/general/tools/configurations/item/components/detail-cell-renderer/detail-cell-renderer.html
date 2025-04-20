@@ -1,0 +1,6 @@
+<section>
+  <multi-uom @insert="onInsertUom" @edit="onEditUom" @delete="onDeleteUom" @disableActionGrid="disableActionGrid" id="multiUom" :rowData="multiUomRowData" ref="multiUomElement"></multi-uom>
+  <CDialog v-show="showDialog" w100 dialogTitle="Confirm" @confirm="deleteData" @cancel="showDialog= false" confirm>
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </CDialog>
+</section>

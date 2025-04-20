@@ -1,0 +1,126 @@
+<v-form
+  @submit="onSubmit"
+  ref="inputForm"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="card"
+>
+  <div class="card-header">{{title}}</div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6 col-lg-4">
+        <c-input
+          half
+          disabled
+          class="mb-1"
+          v-model="form.audit_date"
+          :label="$t('labels.transactionDate')"
+          name="date"
+        >
+        </c-input>
+        <c-input
+          disabled
+          class="mb-1"
+          v-model="form.sub_department_code"
+          :label="$t('labels.subDepartment')"
+          name="sub_department_code"
+        >
+        </c-input>
+        <c-input
+          disabled
+          class="mb-1"
+          v-model="form.account"
+          :label="$t('labels.account')"
+          name="account"
+        ></c-input>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <c-input
+          half
+          disabled
+          class="mb-1"
+          v-model="form.type"
+          :label="$t('labels.type')"
+          name="type"
+        ></c-input>
+        <c-input
+          disabled
+          formatted
+          type="number"
+          class="mb-1"
+          v-model="form.amount_before"
+          :label="$t('labels.amountBefore')"
+          name="amount_before"
+        >
+        </c-input>
+        <c-input
+          disabled
+          formatted
+          type="number"
+          class="mb-1"
+          v-model="form.quantity_before"
+          :label="$t('labels.quantityBefore')"
+          name="quantity_before"
+        >
+        </c-input>
+      </div>
+      <div class="col-md-6 col-lg-4 mt-lg-4">
+        <c-input
+          class="mb-1 mt-lg-1"
+          formatted
+          type="number"
+          focus
+          showZeroNumber
+          v-model="form.amount"
+          label=" "
+          name="amount"
+        >
+          <template #label-left>
+            <div class="d-flex">
+              <input
+                class="checklist"
+                id="byAmount"
+                v-model="form.by_amount"
+                :value="true"
+                type="radio"
+              />&nbsp;
+              <label class="col-form-label" for="byAmount"
+                >{{$t('labels.byAmount')}}</label
+              >
+            </div>
+          </template>
+        </c-input>
+        <c-input
+          :disabled="!form.is_from_cpos"
+          formatted
+          type="number"
+          v-model="form.quantity"
+          label=" "
+          name="quantity"
+        >
+          <template #label-left>
+            <div class="d-flex">
+              <input
+                :disabled="!form.is_from_cpos"
+                class="checklist"
+                id="byQuantity"
+                v-model="form.by_amount"
+                :value="false"
+                :label="$t('labels.byQuantity')"
+                type="radio"
+              />&nbsp;
+              <label class="col-form-label" for="byQuantity"
+                >{{$t('labels.byQuantity')}}</label
+              >
+            </div>
+          </template>
+        </c-input>
+      </div>
+    </div>
+  </div>
+  <save-close-button
+    :isSaving="isSaving"
+    @save="onSave"
+    @close="$emit('close')"
+  ></save-close-button>
+</v-form>

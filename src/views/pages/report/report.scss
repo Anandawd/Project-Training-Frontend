@@ -1,0 +1,51 @@
+.disabled-grid {
+    position: absolute;
+    z-index: 999;
+    width: inherit;
+    height: 550px;
+    //  background: rgba(0, 0, 0, 0.023);
+    cursor: not-allowed;
+}
+.slide-fade-enter-active {
+    transition: all 0.8s ease-out;
+  }
+  
+  .slide-fade-leave-active {
+    transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+  }
+  
+  .slide-fade-enter-from,
+  .slide-fade-leave-to {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  .title-width{
+    min-width: 100px;
+  }
+  
+  .transaction-header{
+    label{
+      margin-bottom: 0;
+      font-size: 12px;
+    }
+    span{
+      font-size: 12px;
+    }
+  }
+  
+  #searchOption {
+    .input-group{
+      padding-right: 0;
+      padding-left: 0;
+    }
+  }
+   
+  @media only screen and (min-width: 900px) {
+    .transaction {
+      .btn-transaction {
+        max-width: 120px;
+        min-width: 120px;
+      }
+    }
+  }

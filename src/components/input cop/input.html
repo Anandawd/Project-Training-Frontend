@@ -1,0 +1,32 @@
+<div class="c-input"
+    :class="{ 'has-error': !meta.valid && meta.touched}">
+    <label v-if="label" :for="ID" class="col-form-label d-flex" 
+      :class="[ multicol ? 'col-md-6' : 'col-md-3', {'required': required} ]">{{ label }}<slot name="label"></slot>
+    </label>      
+    <div :class="[ multicol ? 'col-md-6' : half ? 'col-md-4' : 'col-md']" class="input-group">   
+      <input
+            :disabled="disabled"
+            :required="required"
+            :type="type"
+            :id="ID"
+            class="form-control"
+            :placeholder="placeholder"
+            :value="modelValue"
+            @update:modelValue="(val)=>inputValue = val"
+            :autocomplete="autocomplete"   
+            :maxlength="max"
+            @input="handleChange"
+            @blur="handleBlur"
+        />
+        <!-- <p class="help-message" v-show="errorMessage|| meta.valid">
+        {{ errorMessage || successMessage }}
+        </p> -->
+      <div v-if="icon" class="input-group-append">
+          <div class="input-group-text">
+              <font-awesome-icon :icon="icon" />
+          </div>
+      </div> 
+      <slot name="append-end"></slot>
+    </div>
+</div>
+

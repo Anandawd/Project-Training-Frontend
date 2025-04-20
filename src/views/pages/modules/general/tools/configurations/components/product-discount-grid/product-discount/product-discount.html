@@ -1,0 +1,80 @@
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg">
+        <!-- <search-filter :options="searchOptions" :searchDefault="searchDefault" @search="refreshData"></search-filter> -->
+        <div id="parrentAccordion" class="accordion">
+          <div class="accordion-item">
+            <h6 class="accordion-header" id="itemInformationHeader">
+              <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                data-bs-target="#itemInformation" aria-controls="itemInformation" aria-expanded="true">
+                {{ $t('commons.productDiscount')}}
+              </button>
+            </h6>
+            <div id="itemInformation" class="accordion-collapse collapse show"
+              aria-labelledby="itemInformationHeader">
+              <div class="accordion-body marginGrid">
+                  <ag-grid-vue :style="agGridSetting.styleAgGridFrame2" :class="agGridSetting.themeAgGrid"
+                    :columnDefs="columnDefs" :rowData="rowData" :paginationPageSize="paginationPageSize"
+                    :gridOptions="gridOptions" :context="context" :frameworkComponents="frameworkComponents"
+                    :enableCellChangeFlash="true" :rowSelection="rowSelection" :getContextMenuItems="getContextMenu"
+                    :defaultColDef="agGridSetting.defColDef" :masterDetail="true" :suppressDragLeaveHidesColumns="true"
+                    :detailRowAutoHeight="detailRowAutoHeight" :suppressMakeColumnVisibleAfterUnGroup="true"
+                    :statusBar="statusBar" @grid-ready="onGridReady" @cellContextMenu="handleRowRightClicked"
+                    :rowGroupPanelShow="rowGroupPanelShow" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+  <CDialog @keydown.esc="showDialog=false" v-if="showDialog" size="md" class="credential-dialog" confirm close
+    :title="title" @close="showDialog=false">
+    <template #body>
+      <div class="user">
+        <c-input required class="row mb-1" type="number" :label="$t('labels.discount')" name="id"
+          v-model="formDiscount"></c-input>
+      </div>
+    </template>
+    <template #footer>
+      <button :disabled="verifying || isSaving" type="button" class="btn btn-primary mr-1" @click="handleSaveDiscount">
+        <span v-if="verifying || isSaving" class="spinner-border spinner-border-sm" role="status"
+          aria-hidden="true"></span>
+        {{ $t('buttons.save') }}
+      </button>
+      <button :disabled="verifying || isSaving" type="button" class="btn btn-secondary" @click="showDialog=false">
+        {{ $t('buttons.cancel') }}
+      </button>
+    </template>
+  </CDialog>
+  <CDialog @keydown.esc="showDialogEdit=false" v-if="showDialogEdit" size="md" class="credential-dialog" confirm close
+    :title="title" @close="showDialogEdit=false">
+    <template #body>
+      <div class="user">
+        <div class="col-md-12">
+          <c-select required class="mb-1" v-model="formEdit.product_code" :options="listDropdown.Product"
+            @load="repeatLoadDropdownList" keyName="code" labelName="name" :label="$t('labels.product')" name="Product"
+            customLabelClass="col-3" customClass="col-9"></c-select>
+          <c-input required class="row mb-1" type="number" :label="$t('labels.discount')" name="id"
+            v-model="formEdit.discount"></c-input>
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <button :disabled="verifying || isSaving" type="button" class="btn btn-primary mr-1" @click="updateData">
+        <span v-if="verifying || isSaving" class="spinner-border spinner-border-sm" role="status"
+          aria-hidden="true"></span>
+        {{ $t('buttons.save') }}
+      </button>
+      <button :disabled="verifying || isSaving" type="button" class="btn btn-secondary" @click="showDialogEdit=false">
+        {{ $t('buttons.cancel') }}
+      </button>
+    </template>
+  </CDialog>
+  <CDialog v-show="showDialogDelete" w100 dialogTitle="Confirm" @confirm="deleteData" @cancel="showDialogDelete= false"
+    confirm>
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </CDialog>
+</section>

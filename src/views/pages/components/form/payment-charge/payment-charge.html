@@ -1,0 +1,116 @@
+<v-form
+  @submit="onSubmit"
+  ref="paymentChargeForm"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="payment-charge-form row"
+  v-slot="{resetForm}"
+>
+  <div class="col-lg col-md-6">
+    <c-select
+      required
+      customLabelClass="col-3"
+      class="mb-1"
+      :label="$t('transaction.currency')"
+      labelName="code"
+      keyName="code"
+      name="Currency"
+      v-model="form.currency_code"
+      :options="options.currencies"
+      @change="onChangeCurrencyCode"
+    ></c-select>
+    <c-input
+      required
+      customLabelClass="col-3"
+      formatted
+      disabled
+      class="row mb-1"
+      type="number"
+      :label="$t('transaction.excRate')"
+      name="Exchange Rate"
+      v-model="form.exchange_rate"
+    ></c-input>
+    <c-select
+      required
+      customLabelClass="col-3"
+      class="row mb-1"
+      :label="$t('transaction.subDept')"
+      labelName="name"
+      keyName="code"
+      name="Sub Department"
+      v-model="form.sub_department_code"
+      :options="options.subDepartments"
+      @change="getAccountList($event.target.value)"
+    ></c-select>
+  </div>
+  <div class="col-lg col-md-6">
+    <c-select
+      required
+      customLabelClass="col-3"
+      class="row mb-1"
+      :label="$t('transaction.account')"
+      labelName="name"
+      keyName="code"
+      name="Account"
+      v-model="form.account_code"
+      :options="options.accounts"
+    ></c-select>
+    <c-input
+      focus
+      required
+      customLabelClass="col-3"
+      class="row mb-1"
+      type="number"
+      formatted
+      :label="$t('transaction.amount') + ' ' +form.currency_code"
+      name="Amount Foreign"
+      v-model="form.amount_foreign"
+      @input="onChangeAmount"
+    ></c-input>
+    <c-input
+      required
+      customLabelClass="col-3"
+      disabled
+      class="row mb-1"
+      type="number"
+      formatted
+      :label="$t('transaction.amount')+' '+defaultCurrency"
+      name="Amount"
+      v-model="form.amount"
+    ></c-input>
+  </div>
+  <div class="col-lg col-md-6">
+    <div class="row mb-1">
+      <label for="remarkPaymentCharge" class="col-3 col-form-label"
+        >{{ $t("transaction.remark") }}</label
+      >
+      <div class="col-9">
+        <textarea
+          type="text"
+          class="form-control"
+          rows="2"
+          id="remarkPaymentCharge"
+          name="remark"
+          v-model="form.remark"
+        />
+      </div>
+    </div>
+    <c-input
+      :required="modeEditorTransaction === $global.modeEditorTransaction.depositCashPayment
+         || modeEditorTransaction === $global.modeEditorTransaction.folioCashPayment
+         || modeEditorTransaction === $global.modeEditorTransaction.depositCashRefund
+         || modeEditorTransaction === $global.modeEditorTransaction.folioCashRefund"
+      customLabelClass="col-3"
+      class="row mb-1"
+      aria-label="document number"
+      :label="$t('transaction.docNumber')"
+      name="Document Number"
+      v-model="form.document_number"
+    ></c-input>
+  </div>
+  <save-close-button
+    :isSaving="isSaving"
+    @save="onSave"
+    @close="onClose"
+  ></save-close-button>
+</v-form>

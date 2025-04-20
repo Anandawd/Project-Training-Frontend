@@ -1,0 +1,32 @@
+<div class="package-form">
+  <div class="col-md">
+    <div>
+      <ag-grid-vue
+        :style="$global.agGrid.styleAgGridFramePackage"
+        :class="$global.agGrid.themeAgGrid"
+        :gridOptions="gridOptions"
+        @grid-ready="onGridReady"
+        :columnDefs="columnDefs"
+        :rowData="rowData"
+        :suppressRowClickSelection="true"
+        :defaultColDef="$global.agGrid.colDef1"
+        :getRowNodeId="getRowNodeId"
+      >
+      </ag-grid-vue>
+    </div>
+  </div>
+  <save-close-button
+    :is-saving="isSaving"
+    @save="onSave"
+    @close="$emit('close')"
+  >
+    <template #append-start>
+      <c-select
+        required
+        class="mr-1"
+        v-model="auditDate"
+        :options="options.audit_date"
+      ></c-select>
+    </template>
+  </save-close-button>
+</div>

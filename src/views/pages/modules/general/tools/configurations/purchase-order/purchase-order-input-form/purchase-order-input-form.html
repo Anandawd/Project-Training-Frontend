@@ -1,0 +1,32 @@
+<section class="content">
+        <div class="card">
+            <div class="card-header">
+            {{ title }}
+    <button type="button" class="close-button btn" style="float: right;" @click="onClose"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="card-body">
+            <Form @submit="onSave" ref="inputFormElement" :validation-schema="schema"
+                @invalid-submit="onInvalidSubmit" class="input-form row" v-slot="{resetForm}">
+                <general-form ref="generalFormElement" @getFormHeader="onGetFormListGeneral"></general-form>
+                <expedition-form ref="expeditionFormElement" @getFormHeader="onGetFormListExpedition"></expedition-form>
+                <supplier-shipping-form  ref="supplierFormElement" :formType="$global.formType.supplier" @getFormHeader="onGetFormListSupplier"></supplier-shipping-form>
+                <supplier-shipping-form  ref="shippingFormElement" :formType="$global.formType.shipping" @getFormHeader="onGetFormListShipping"></supplier-shipping-form>
+                <detail-form ref="detailFormElement" @getFormHeader="onGetFormListHeader"></detail-form>
+            </Form> 
+            </div>
+        
+        <div class="card-footer">
+            <div class="d-flex justify-content-end mt-2">
+            <button type="button" class="btn btn-danger mr-1" @click="onClose">
+                <i class="fa fa-times" aria-hidden="true"></i>
+                {{$t('buttons.close')}}
+            </button>
+            <button type="button" class="btn btn-primary" @click="onSubmit">
+                <i class="fas fa-save"></i>
+                {{ $t('buttons.save') }}
+            </button>
+            </div>
+        </div>
+    </div>
+</section>

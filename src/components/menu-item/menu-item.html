@@ -1,0 +1,44 @@
+<li
+  v-if="authorized && !menuItemX.hidden"
+  class="nav-item"
+  :class="{'menu-open': isMenuExtended}"
+>
+  <a
+    class="nav-link"
+    :class="{'active': isMainActive || isOneOfChildrenActive}"
+    @click="handleMainMenuAction"
+  >
+    <img
+      v-if="menuItemX.cIcon"
+      class="mr-1 mb-1"
+      :src="generateIcon(menuItemX.cIcon)"
+      height="16"
+      width="16"
+      alt=""
+    />
+    <!-- <i v-else class="nav-icon fa fa-circle"></i> -->
+    <p>{{ $t(menuItemX.name) }}</p>
+    <i v-if="isExpandable" class="right fas fa-angle-left"></i>
+  </a>
+  <ul class="nav nav-treeview" v-for="item in menuItemX.children">
+    <li v-if="!item.hidden" class="nav-item" @click="handleMenuChildren(item)">
+      <router-link
+        :to="item.path"
+        class="nav-link"
+        exact
+        exact-active-class="active"
+      >
+        <img
+          v-if="item.cIcon"
+          class="mr-1 mb-1"
+          :src="generateIcon(item.cIcon)"
+          height="16"
+          width="16"
+          alt=""
+        />
+        <i v-else class="far fa-circle nav-icon"></i>
+        <p>{{ $t(item.name)}}</p>
+      </router-link>
+    </li>
+  </ul>
+</li>

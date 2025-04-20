@@ -1,0 +1,48 @@
+@import url("https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.3.0/css/flag-icon.min.css");
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700");
+
+// @import 'bootstrap-vue/dist/bootstrap-vue.css';
+@import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+// @import "admin-lte/plugins/icheck-bootstrap/icheck-bootstrap.min.css";
+@import "admin-lte/dist/css/adminlte.min.css";
+@import "vue-toastification/dist/index.css";
+@import "@imengyu/vue3-context-menu/lib/vue3-context-menu.css";
+//ag-grid
+@import "ag-grid-community/dist/styles/ag-grid.css";
+@import "ag-grid-community/dist/styles/ag-theme-balham.css";
+// @import "ag-grid-community/dist/styles/ag-theme-apine.css";
+
+@import "vue-loading-overlay/dist/css/index.css";
+@import "vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css";
+@import "@marcoschulte/vue3-progress/dist/index.css";
+
+@import "vue-loading-skeleton/dist/style.css";
+// @import "vue-transitions-css";
+// fade-x
+// fade-y
+// fade
+// flip-x.css
+// roll-in-left.css
+// rotate.css
+// scale-in.css
+// shrink.css
+// swirl.css
+// tilt-in.css
+// @import '~vue-js-modal/dist/styles.css';
+#app {
+  width: 100vw;
+  height: 100vh;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+.main-header .navbar-nav .nav-item .nav-link {
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}

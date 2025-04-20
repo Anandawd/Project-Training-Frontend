@@ -1,0 +1,1115 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<StiSerializer version="1.02" type="Net" application="StiReport">
+  <Dictionary Ref="1" type="Dictionary" isKey="true">
+    <BusinessObjects isList="true" count="0" />
+    <Databases isList="true" count="1">
+      <json Ref="2" type="Stimulsoft.Report.Dictionary.StiJsonDatabase" isKey="true">
+        <Alias>json</Alias>
+        <HeadersString />
+        <Key>36679633471a45988eb22c2303f45ac0</Key>
+        <Name>json</Name>
+        <PathData>D:\json.json</PathData>
+      </json>
+    </Databases>
+    <DataSources isList="true" count="2">
+      <root_CompanyInformation Ref="3" type="DataTableSource" isKey="true">
+        <Alias>root_CompanyInformation</Alias>
+        <Columns isList="true" count="17">
+          <value>Country,System.String</value>
+          <value>State,System.String</value>
+          <value>city,System.String</value>
+          <value>code,System.String</value>
+          <value>country_code,System.String</value>
+          <value>email,System.String</value>
+          <value>fax,System.String</value>
+          <value>foto,System.String</value>
+          <value>image_url,System.String</value>
+          <value>name,System.String</value>
+          <value>phone1,System.String</value>
+          <value>phone2,System.String</value>
+          <value>postal_code,System.String</value>
+          <value>state_code,System.String</value>
+          <value>street,System.String</value>
+          <value>website,System.String</value>
+          <value>relationId,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>73593bf83275427f8e2c62a1548fbf53</Key>
+        <Name>root_CompanyInformation</Name>
+        <NameInSource>json.root_company</NameInSource>
+      </root_CompanyInformation>
+      <root_MiscellaneousCharge Ref="4" type="DataTableSource" isKey="true">
+        <Alias>root_MiscellaneousCharge</Alias>
+        <Columns isList="true" count="18">
+          <value>ORIGINAL,Amount,Amount,Amount,System.Double,_x0032_823d574b6c848c097c5eb602dc9ed24</value>
+          <value>BillReceive,System.String</value>
+          <value>Description,System.String</value>
+          <value>GuestName,System.String</value>
+          <value>account_code,System.String</value>
+          <value>arrival,System.DateTime</value>
+          <value>audit_date,System.DateTime</value>
+          <value>belongs_to,System.Decimal</value>
+          <value>building,System.String</value>
+          <value>created_by,System.String</value>
+          <value>departure,System.DateTime</value>
+          <value>document_number,System.String</value>
+          <value>floor,System.String</value>
+          <value>id,System.Decimal</value>
+          <value>reservation_number,System.Decimal</value>
+          <value>room_number,System.String</value>
+          <value>street,System.String</value>
+          <value>relationId,System.String</value>
+        </Columns>
+        <Dictionary isRef="1" />
+        <Key>0f85afd27ab740648c422beaecd021ad</Key>
+        <Name>root_MiscellaneousCharge</Name>
+        <NameInSource>json.root_data</NameInSource>
+      </root_MiscellaneousCharge>
+    </DataSources>
+    <Relations isList="true" count="0" />
+    <Report isRef="0" />
+    <Resources isList="true" count="0" />
+    <UserFunctions isList="true" count="0" />
+    <Variables isList="true" count="1">
+      <value>,Terbilang,Terbilang,,System.String,,False,False,False,False</value>
+    </Variables>
+  </Dictionary>
+  <EngineVersion>EngineV2</EngineVersion>
+  <GlobalizationStrings isList="true" count="0" />
+  <Key>6a74aa3fb4794a929f29fabcaa07e499</Key>
+  <MetaTags isList="true" count="0" />
+  <Pages isList="true" count="1">
+    <Page1 Ref="5" type="Page" isKey="true">
+      <Border>None;Black;2;Solid;False;4;Black</Border>
+      <Brush>Transparent</Brush>
+      <Components isList="true" count="4">
+        <ReportTitle1 Ref="6" type="ReportTitleBand" isKey="true">
+          <Brush>EmptyBrush</Brush>
+          <ClientRectangle>0,0.4,19,5.7</ClientRectangle>
+          <Components isList="true" count="21">
+            <Picture1 Ref="7" type="Image" isKey="true">
+              <AspectRatio>True</AspectRatio>
+              <Brush>White</Brush>
+              <ClientRectangle>0,0,2,2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <IconColor>68, 114, 196</IconColor>
+              <ImageURL>{root_CompanyInformation.image_url}</ImageURL>
+              <Margins>2,2,2,2</Margins>
+              <Name>Picture1</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Stretch>True</Stretch>
+            </Picture1>
+            <Memo1 Ref="8" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2,0,12.1,0.7</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,12,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo1</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.name}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo1>
+            <Memo2 Ref="9" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>2,0.7,16.7,1.3</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo2</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_CompanyInformation.street}, {root_CompanyInformation.city}
+{root_CompanyInformation.state} {root_CompanyInformation.country}. {root_CompanyInformation.postal_code}
+Phone: {root_CompanyInformation.phone1}  Fax: {root_CompanyInformation.fax}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo2>
+            <MemoHeaderLine Ref="10" type="Text" isKey="true">
+              <Border>Top;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,2.2,19,0.1</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoHeaderLine</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </MemoHeaderLine>
+            <MemoReportTitle Ref="11" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,2.3,19,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,14,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>MemoReportTitle</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>INVOICE</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </MemoReportTitle>
+            <Memo16 Ref="12" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,2.9,19,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo16</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_MiscellaneousCharge.GuestName}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <VertAlignment>Center</VertAlignment>
+            </Memo16>
+            <Memo3 Ref="13" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,3.6,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo3</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Tanggal Invoice</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo3>
+            <Memo13 Ref="14" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>4.2,3.6,0.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo13</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Memo13>
+            <Memo15 Ref="15" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>4.8,3.6,4.7,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo15</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:dd MMMM yyyy}", Today )}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo15>
+            <Text1 Ref="16" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,4.2,4.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text1</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Tanggal Jatuh Tempo</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text1>
+            <Text2 Ref="17" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>4.2,4.2,0.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text2</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Text2>
+            <Text3 Ref="18" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>4.8,4.2,4.7,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text3</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{Format("{0:dd MMMM yyyy}", Today )}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text3>
+            <Text4 Ref="19" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,4.8,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text4</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Nomor Invoice</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text4>
+            <Text5 Ref="20" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>4.2,4.8,0.4,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text5</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Text5>
+            <Text6 Ref="21" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>4.8,4.8,4.7,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text6</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_MiscellaneousCharge.id}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text6>
+            <Text7 Ref="22" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.6,3.6,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text7</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Lantai</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text7>
+            <Text8 Ref="23" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.6,3.6,0.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text8</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Text8>
+            <Text9 Ref="24" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.8,3.6,4.7,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text9</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_MiscellaneousCharge.floor}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text9>
+            <Text10 Ref="25" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>10.6,4.2,3,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text10</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Unit</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text10>
+            <Text11 Ref="26" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.6,4.2,0.2,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text11</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>:</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+            </Text11>
+            <Text12 Ref="27" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.8,4.2,4.7,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,10,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text12</Name>
+              <Page isRef="5" />
+              <Parent isRef="6" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_MiscellaneousCharge.room_number}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text12>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>ReportTitle1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+        </ReportTitle1>
+        <DataBand1 Ref="28" type="DataBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <BusinessObjectGuid isNull="true" />
+          <ClientRectangle>0,6.9,19,1.6</ClientRectangle>
+          <Components isList="true" count="5">
+            <Memo17 Ref="29" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,14,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo17</Name>
+              <Page isRef="5" />
+              <Parent isRef="28" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>KETERANGAN</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo17>
+            <Memo18 Ref="30" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14,0,5,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9,Bold</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo18</Name>
+              <Page isRef="5" />
+              <Parent isRef="28" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>JUMLAH</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo18>
+            <Memo22 Ref="31" type="Text" isKey="true">
+              <Border>Top, Left, Right;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14,0.6,5,1.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo22</Name>
+              <Page isRef="5" />
+              <Parent isRef="28" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Rp. {Format("{0:N2}",root_MiscellaneousCharge.Amount)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Memo22>
+            <Memo21 Ref="32" type="Text" isKey="true">
+              <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.6,14,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Bold</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Memo21</Name>
+              <Page isRef="5" />
+              <Parent isRef="28" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>{root_MiscellaneousCharge.Description} ({Format("{0:MMMM yyyy}", root_MiscellaneousCharge.audit_date)})</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Memo21>
+            <Text23 Ref="33" type="Text" isKey="true">
+              <Border>Left, Right;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,1.1,14,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8,Italic</Font>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text23</Name>
+              <Page isRef="5" />
+              <Parent isRef="28" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>1.00 x {Format("{0:N2}", root_MiscellaneousCharge.Amount)}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text23>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <DataRelationName isNull="true" />
+          <DataSourceName>root_MiscellaneousCharge</DataSourceName>
+          <Expressions isList="true" count="0" />
+          <Filters isList="true" count="0" />
+          <Name>DataBand1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+          <Sort isList="true" count="0" />
+        </DataBand1>
+        <FooterBand1 Ref="34" type="FooterBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,9.3,19,1.4</ClientRectangle>
+          <Components isList="true" count="3">
+            <Text15 Ref="35" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>14,0,5,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Right</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text15</Name>
+              <Page isRef="5" />
+              <Parent isRef="34" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Rp. { Format("{0:N2}", Sum(DataBand1, root_MiscellaneousCharge.Amount))}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text15>
+            <Text16 Ref="36" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0,14,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Width</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text16</Name>
+              <Page isRef="5" />
+              <Parent isRef="34" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>TOTAL TAGIHAN BULAN INI</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+              <VertAlignment>Center</VertAlignment>
+            </Text16>
+            <Text18 Ref="37" type="Text" isKey="true">
+              <Border>All;Black;1;Solid;False;4;Black</Border>
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.6,19,0.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Width</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text18</Name>
+              <Page isRef="5" />
+              <Parent isRef="34" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>Terbilang:
+{Terbilang}</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text18>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>FooterBand1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+        </FooterBand1>
+        <ReportSummaryBand1 Ref="38" type="ReportSummaryBand" isKey="true">
+          <Brush>Transparent</Brush>
+          <ClientRectangle>0,11.5,19,8.2</ClientRectangle>
+          <Components isList="true" count="7">
+            <Text21 Ref="39" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,1.7,3.8,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text21</Name>
+              <Page isRef="5" />
+              <Parent isRef="38" />
+              <Text>Catatan Invoice</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text21>
+            <Text27 Ref="40" type="Text" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>0,2.1,18.8,4.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text27</Name>
+              <Page isRef="5" />
+              <Parent isRef="38" />
+              <Text> 1. Bila tanggal jatuh tempo bertepatan pada hari Minggu/hari libur 
+     resmi, maka dapat diundur pada hari berikutnya (N+1)
+ 2. Bila pembayaran lewat dari tanggal jatuh tempo akan dikenakan 
+     denda keterlambatan
+ 3. Lakukanlah pembayaran tepat waktu, untuk menghindari denda 
+     keterlambatan dan pemutusan aliran
+ 4. Kwitansi akan diterbitkan setelah pembayaran dilakukan
+ 5. Untuk unit sewa APPLE-1 pembayaran dilakukan melalui No. Rek. 
+     7180545454, Bank BCA, a/n PT. PERMATA CITRA INOVASI
+ 6. Untuk unit sewa kost River - Crystal - Primehome pembayaran 
+     dilakukan melalui No. Rek. 7180551551, Bank BCA, a/n PT. 
+     PERMATA CITRA INOVASI
+ 7. Untuk unit sewa DAVE Apartemen pembayaran dilakukan melalui 
+     No. Rek. 157.000.6615.091, Bank MANDIRI, a/n PT. PERMATA 
+     CITRA INOVASI</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text27>
+            <Text17 Ref="41" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.8,7.1,5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text17</Name>
+              <Page isRef="5" />
+              <Parent isRef="38" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>(Budi Budiman)</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text17>
+            <Text22 Ref="42" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>13.8,7.7,5,0.5</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <HorAlignment>Center</HorAlignment>
+              <Margins>2,2,2,2</Margins>
+              <Name>Text22</Name>
+              <Page isRef="5" />
+              <Parent isRef="38" />
+              <ShiftMode>IncreasingSize, DecreasingSize</ShiftMode>
+              <Text>(Building &amp; Property Management)</Text>
+              <TextBrush>Black</TextBrush>
+              <TextOptions>,,,,WordWrap=True,A=0</TextOptions>
+              <Type>Expression</Type>
+            </Text22>
+            <Text19 Ref="43" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.5,19,1.2</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,8</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text19</Name>
+              <Page isRef="5" />
+              <Parent isRef="38" />
+              <Text>1. Pembayaran dengan Bilyet Giro/Cek/Transfer ke:
+   157.000.6615.091 Bank Mandiri, a/n PT. PERMATA CITRA INOVASI (DAVE) 7180545454 Bank 
+   BCA, a/n PT. PERMATA CITRA INOVASI (APPLE 1)</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text19>
+            <Text20 Ref="44" type="Text" isKey="true">
+              <Brush>EmptyBrush</Brush>
+              <ClientRectangle>0,0.1,3.8,0.6</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <Font>Arial,9,Bold</Font>
+              <Margins>0,0,0,0</Margins>
+              <Name>Text20</Name>
+              <Page isRef="5" />
+              <Parent isRef="38" />
+              <Text>Cara Pembayaran</Text>
+              <TextBrush>Black</TextBrush>
+              <Type>Expression</Type>
+            </Text20>
+            <Image2 Ref="45" type="Image" isKey="true">
+              <Brush>Transparent</Brush>
+              <ClientRectangle>14,5.3,4.6,1.8</ClientRectangle>
+              <Conditions isList="true" count="0" />
+              <Expressions isList="true" count="0" />
+              <IconColor>68, 114, 196</IconColor>
+              <ImageBytes>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</ImageBytes>
+              <Margins>0,0,0,0</Margins>
+              <Name>Image2</Name>
+              <Page isRef="5" />
+              <Parent isRef="38" />
+              <Stretch>True</Stretch>
+            </Image2>
+          </Components>
+          <Conditions isList="true" count="0" />
+          <Expressions isList="true" count="0" />
+          <Name>ReportSummaryBand1</Name>
+          <Page isRef="5" />
+          <Parent isRef="5" />
+        </ReportSummaryBand1>
+      </Components>
+      <Conditions isList="true" count="0" />
+      <Expressions isList="true" count="0" />
+      <Guid>ae8acfaf3a20425fbf114b0b6b02e8f1</Guid>
+      <Margins>1,1,1,1</Margins>
+      <Name>Page1</Name>
+      <PageHeight>26</PageHeight>
+      <PageWidth>21</PageWidth>
+      <Report isRef="0" />
+      <TitleBeforeHeader>True</TitleBeforeHeader>
+    </Page1>
+  </Pages>
+  <ReferencedAssemblies isList="true" count="8">
+    <value>System.Dll</value>
+    <value>System.Drawing.Dll</value>
+    <value>System.Windows.Forms.Dll</value>
+    <value>System.Data.Dll</value>
+    <value>System.Xml.Dll</value>
+    <value>Stimulsoft.Controls.Dll</value>
+    <value>Stimulsoft.Base.Dll</value>
+    <value>Stimulsoft.Report.Dll</value>
+  </ReferencedAssemblies>
+  <ReportAlias>Report</ReportAlias>
+  <ReportChanged>9/13/2024 1:48:51 PM</ReportChanged>
+  <ReportCreated>6/5/2023 12:31:17 PM</ReportCreated>
+  <ReportFile>D:\CODING\_Cakrasoft\Web\chs_cloud_frontend\public\report\reports\CHS\MiscellaneousChargeDave.mrt</ReportFile>
+  <ReportGuid>67f7d99439af43a3afd6580d391ec614</ReportGuid>
+  <ReportName>Report</ReportName>
+  <ReportUnit>Centimeters</ReportUnit>
+  <ReportVersion>2024.1.1.0</ReportVersion>
+  <Script>using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Data;
+using Stimulsoft.Controls;
+using Stimulsoft.Base.Drawing;
+using Stimulsoft.Report;
+using Stimulsoft.Report.Dialogs;
+using Stimulsoft.Report.Components;
+
+namespace Reports
+{
+    public class Report : Stimulsoft.Report.StiReport
+    {
+        public Report()        {
+            this.InitializeComponent();
+        }
+
+        #region StiReport Designer generated code - do not modify
+		#endregion StiReport Designer generated code - do not modify
+    }
+}
+  </Script>
+  <ScriptLanguage>CSharp</ScriptLanguage>
+  <Styles isList="true" count="0" />
+</StiSerializer>

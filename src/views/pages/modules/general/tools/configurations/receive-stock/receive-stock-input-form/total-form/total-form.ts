@@ -1,0 +1,148 @@
+import { Options, Vue } from "vue-class-component";
+import { AgGridVue } from "ag-grid-vue3";
+import "ag-grid-enterprise";
+import {
+  formatDate,
+  formatDateTime,
+  formatDateTimeUTC,
+  formatNumber,
+} from "@/utils/format";
+
+import CDatepicker from "@/components/datepicker/datepicker.vue";
+import CSelect from "@/components/select/select.vue";
+import CInput from "@/components/input/input.vue";
+import { Form } from "vee-validate";
+import $global from "@/utils/global";
+import Checkbox from "@/components/checkbox/checkbox.vue";
+import CRadio from "@/components/radio/radio.vue";
+import * as Yup from "yup";
+import { focusOnInvalid } from "@/utils/validation";
+import { reactive, ref } from "vue";
+
+@Options({
+  name: "TotalForm",
+  components: {
+    Form,
+    CRadio,
+    CSelect,
+    CInput,
+    Checkbox,
+    CDatepicker,
+    AgGridVue,
+  },
+  props: {
+    modeData: {
+      type: Number,
+      require: true,
+    },
+    disableForm: {
+      type: Boolean,
+      require: true,
+    },
+    subTotal: {
+      type: Number,
+      require: true,
+    },
+  },
+  watch: {
+    "form.date"(val) {
+      this.$emit("getFormHeader", this.form);
+    },
+    "form.request_by"(val) {
+      this.$emit("getFormHeader", this.form);
+    },
+    "form.remark"(val) {
+      this.$emit("getFormHeader", this.form);
+    },
+    subTotal(val) {
+      this.form.sub_total = val;
+      this.calculateTotal();
+    },
+  },
+  emits: ["save", "close"],
+})
+export default class TotalForm extends Vue {
+  receiveFormElement: any = ref();
+  modeData: any;
+  public rowData: any = [];
+  public sendData: any = reactive({});
+  public defaultForm: any = {};
+  public form: any = reactive({});
+  public subTotal: any;
+  listDropdown: any = {};
+  public adjustment: boolean = false;
+
+  async resetForm() {
+    await this.$nextTick();
+    this.form = {
+      date: formatDateTimeUTC(new Date()),
+      discount: "",
+      tax: "",
+      shipping: "",
+    };
+  }
+
+  changeAdjustment() {
+    this.form.adjustment = !this.adjustment;
+  }
+
+  onSave() {
+    this.$emit("save", this.form);
+  }
+
+  async initialize() {
+    await this.resetForm();
+  }
+
+  onSubmit() {
+    this.receiveFormElement.$el.requestSubmit();
+  }
+
+  onChangeDiscount() {
+    this.calculateTotal();
+  }
+
+  onChangeTax() {
+    this.calculateTotal();
+  }
+
+  onChangeShiping() {
+    this.calculateTotal();
+  }
+
+  calculateTotal() {
+    const discount = this.form.discount > 0 ? this.form.discount : 0;
+    const bankAdmin = this.form.tax > 0 ? this.form.tax : 0;
+    const otherExpense = this.form.shipping > 0 ? this.form.shipping : 0;
+    this.form.total =
+      this.form.sub_total -
+      parseFloat(discount) +
+      parseFloat(bankAdmin) +
+      parseFloat(otherExpense);
+    // this.paymentFormElement.form = this.form
+  }
+
+  onClose() {
+    this.$emit("close");
+  }
+
+  onInvalidSubmit() {
+    focusOnInvalid();
+  }
+
+  get title() {
+    if (this.modeData === $global.modeData.insert) {
+      return `${this.$t("commons.insert")} ${this.$t(
+        `${this.$route.meta.pageTitle}`
+      )}`;
+    } else if (this.modeData === $global.modeData.edit) {
+      return `${this.$t("commons.update")} ${this.$t(
+        `${this.$route.meta.pageTitle}`
+      )}`;
+    } else if (this.modeData === $global.modeData.duplicate) {
+      return `${this.$t("commons.duplicate")} ${this.$t(
+        `${this.$route.meta.pageTitle}`
+      )}`;
+    }
+  }
+}

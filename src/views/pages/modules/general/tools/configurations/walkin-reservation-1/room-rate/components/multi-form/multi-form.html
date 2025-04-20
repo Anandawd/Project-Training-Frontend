@@ -1,0 +1,1163 @@
+<section class="content">
+  <div class="card">
+    <div class="card-header">
+      {{ title }}
+      <button type="button" class="close-button btn" @click="onClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="card-body">
+      <v-form
+        @submit="onSave"
+        ref="multiFormElement"
+        :validation-schema="schema"
+        @invalid-submit="onInvalidSubmit"
+        class="input-form"
+        v-slot="{resetForm}"
+      >
+        <div class="row heightCustom">
+          <!-- rate information -->
+          <div class="col-md-4 col-sm-6 mb-2">
+            <div
+              class="accordion mt-2 h-100"
+              id="accordionPanelsStayOpenExample"
+            >
+              <div class="accordion-item h-100">
+                <h2
+                  class="accordion-header"
+                  id="panelsStayOpen-rate-information"
+                >
+                  <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne"
+                    aria-expanded="true"
+                    aria-controls="panelsStayOpen-collapseOne"
+                  >
+                    {{ $t('labels.rateInformation') }}
+                  </button>
+                </h2>
+                <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse show"
+                  aria-labelledby="panelsStayOpen-rate-information"
+                >
+                  <div class="accordion-body row">
+                    <!-- bodyyyyyy -->
+                    <div class="col-md-12">
+                      <c-input
+                        :focus="focus"
+                        class="mb-1"
+                        required
+                        :disabled="modeData==$global.modeData.edit"
+                        v-model="form.code"
+                        :max="10"
+                        :label="$t('labels.code')"
+                        type="text"
+                        name="Code"
+                        uppercase
+                        customLabelClass="col-3"
+                        customClass="col-4"
+                      ></c-input>
+                      <c-input
+                        required
+                        class="mb-1"
+                        v-model="form.name"
+                        :label="$t('labels.name')"
+                        type="text"
+                        name="Name"
+                        customLabelClass="col-3"
+                        customClass="col-9"
+                      ></c-input>
+                      <c-select
+                        multiple
+                        required
+                        class="mb-1"
+                        v-model="form.room_type_code"
+                        @load="repeatLoadDropdownList"
+                        :options="listDropdown.RoomType"
+                        keyName="code"
+                        labelName="name"
+                        :label="$t('labels.roomType')"
+                        name="Room Type"
+                        customLabelClass="col-3"
+                        customClass="col-9"
+                      >
+                      </c-select>
+                      <c-datepicker
+                        required
+                        class="mb-1"
+                        customLabelClass="col-3"
+                        customClass="col-9"
+                        :label="$t('labels.startDate')"
+                        v-model="form.from_date"
+                        id="Date"
+                        type="date"
+                        valueType="YYYY-MM-DD"
+                        format="DD/MM/YYYY"
+                        name="Start Date"
+                      ></c-datepicker>
+                      <c-datepicker
+                        required
+                        class="mb-1"
+                        customLabelClass="col-3"
+                        customClass="col-9"
+                        :label="$t('labels.endDate')"
+                        v-model="form.to_date"
+                        id="Date"
+                        type="date"
+                        valueType="YYYY-MM-DD"
+                        format="DD/MM/YYYY"
+                        name="End Date"
+                      ></c-datepicker>
+                      <c-select
+                        filter
+                        class="mb-1"
+                        v-model="form.sub_category_code"
+                        @load="repeatLoadDropdownList"
+                        :options="listDropdown.RoomRateSubCategory"
+                        keyName="code"
+                        labelName="name"
+                        :label="$t('labels.subCategory')"
+                        name="Sub Category"
+                        customLabelClass="col-3"
+                        customClass="col-9"
+                      >
+                      </c-select>
+                      <c-select
+                        filter
+                        class="mb-1"
+                        v-model="form.company_code"
+                        :options="listDropdown.Company"
+                        @load="repeatLoadDropdownList"
+                        keyName="code"
+                        labelName="name"
+                        :label="$t('labels.company')"
+                        name="Company"
+                        customLabelClass="col-3"
+                        customClass="col-9"
+                      >
+                      </c-select>
+                      <c-select
+                        filter
+                        class="mb-1"
+                        v-model="form.market_code"
+                        :options="listDropdown.Market"
+                        @load="repeatLoadDropdownList"
+                        keyName="code"
+                        labelName="name"
+                        :label="$t('labels.sales')"
+                        name="Market"
+                        customLabelClass="col-3"
+                        customClass="col-9"
+                      >
+                      </c-select>
+                      <c-select
+                        filter
+                        required
+                        multiple
+                        class="mb-1"
+                        v-model="form.dynamic_rate_type_code"
+                        @load="repeatLoadDropdownList"
+                        :options="listDropdown.DynamicRateType"
+                        keyName="code"
+                        labelName="name"
+                        :label="$t('labels.dynamicRate')"
+                        name="Dynamic Rate"
+                        customLabelClass="col-3"
+                        customClass="col-9"
+                      >
+                      </c-select>
+                      <c-input
+                        class="mb-1"
+                        v-model="form.cm_inv_code"
+                        :label="$t('labels.cmInvCode')"
+                        type="text"
+                        name="CM Inv"
+                        customLabelClass="col-3"
+                        customClass="col-9"
+                      ></c-input>
+                      <c-input
+                        v-model="form.id_sort"
+                        :label="$t('labels.idSort')"
+                        showZeroNumber
+                        formatted
+                        type="number"
+                        name="Id Sort"
+                        customLabelClass="col-3"
+                        customClass="col-9"
+                      >
+                      </c-input>
+                      <div class="row justify-content-end">
+                        <div class="col-3 d-flex align-items-end">
+                          <c-checkbox
+                            :label="$t('labels.active')"
+                            v-model="form.is_active"
+                            customLabelClass="col-3"
+                            customClass="col-9"
+                          ></c-checkbox>
+                        </div>
+                        <div class="col-6 d-flex align-items-end">
+                          <c-checkbox
+                            :label="$t('labels.rateStructure')"
+                            v-model="form.is_rate_structure"
+                            customLabelClass="col-3"
+                            customClass="col-9"
+                          ></c-checkbox>
+                        </div>
+                      </div>
+                      <div class="row justify-content-end">
+                        <div class="col-3 d-flex align-items-end">
+                          <c-checkbox
+                            :label="$t('labels.online')"
+                            v-model="form.is_online"
+                            customLabelClass="col-3"
+                            customClass="col-9"
+                          ></c-checkbox>
+                        </div>
+                        <div class="col-6 d-flex align-items-end">
+                          <c-checkbox
+                            :label="$t('labels.cmStopSell')"
+                            v-model="form.cm_stop_sell"
+                            customLabelClass="col-3"
+                            customClass="col-9"
+                          ></c-checkbox>
+                        </div>
+                        <div class="col-9 d-flex align-items-end">
+                          <c-checkbox
+                            :label="$t('labels.lastDeal')"
+                            v-model="form.is_last_deal"
+                            customLabelClass="col-3"
+                            customClass="col-9"
+                          ></c-checkbox>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- rate amount -->
+          <div class="col-md-4 col-sm-6 d-none d-md-block d-sm-none mb-2">
+            <div
+              class="accordion mt-2 h-100"
+              id="accordionPanelsStayOpenExample"
+            >
+              <div class="accordion-item h-100">
+                <h2 class="accordion-header" id="panelsStayOpen-costing">
+                  <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne"
+                    aria-expanded="true"
+                    aria-controls="panelsStayOpen-collapseOne"
+                  >
+                    {{ $t('labels.rateAmount') }}
+                  </button>
+                </h2>
+                <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse show"
+                  aria-labelledby="panelsStayOpen-costing"
+                >
+                  <div class="accordion-body row">
+                    <!-- body -->
+                    <div class="row mb-4 mt-3 ml-3">
+                      <div class="col-5">
+                        <c-checkbox
+                          :label="$t('labels.complimentRate')"
+                          v-model="form.is_compliment"
+                          @change="onChangeCompliment"
+                          customLabelClass="col-3"
+                          customClass="col-9"
+                        ></c-checkbox>
+                      </div>
+                      <div class="col-7">
+                        <c-checkbox
+                          :label="$t('labels.includeBreakfast')"
+                          v-model="form.include_breakfast"
+                          customLabelClass="col-3"
+                          customClass="col-9"
+                        ></c-checkbox>
+                      </div>
+                    </div>
+                    <b-tabs class="mb-3">
+                      <b-tab :title="$t('title.adultRate')">
+                        <b-card-text>
+                          <div class="row">
+                            <div class="row mt-1 mb-1">
+                              <div class="col-3"></div>
+                              <div class="col input-group align-items-center">
+                                <span
+                                  class="form-control text-center week-day-week-end"
+                                  >{{$t('labels.weekDay')}}</span
+                                >
+                                <div class="row w-50">
+                                  <div
+                                    class="pl-0 prx-75 input-group align-items-center"
+                                  >
+                                    <span
+                                      class="form-control text-center week-day-week-end"
+                                      >{{$t('labels.weekEnd')}}</span
+                                    >
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <c-input
+                              :disabled="form.is_compliment == 1"
+                              @input="onChangeFlat"
+                              class="mb-1"
+                              v-model="form.weekday_rate1"
+                              :label="$t('labels.onePax')"
+                              showZeroNumber
+                              formatted
+                              type="number"
+                              name="Week Day1"
+                            >
+                              <template #append-end>
+                                <c-input
+                                  :disabled="form.is_compliment == 1"
+                                  @input="onChangeFlat"
+                                  class="w-50"
+                                  v-model="form.weekend_rate1"
+                                  showZeroNumber
+                                  formatted
+                                  type="number"
+                                  name="Week End1"
+                                  customClass="pl-0 prx-75"
+                                />
+                              </template>
+                            </c-input>
+                            <div class="row mb-1 justify-content-end mr-2">
+                              <button
+                                :disabled="form.is_compliment == 1"
+                                type="button"
+                                class="col btn btn-outline-danger col-3 mr-1"
+                                @click="onClearRate"
+                              >
+                                Clear
+                              </button>
+                              <button
+                                :disabled="form.is_compliment == 1"
+                                type="button"
+                                class="col btn btn-outline-primary col-3 mr-1"
+                                @click="onCalculateFlat"
+                              >
+                                Flat
+                              </button>
+
+                              <button
+                                :disabled="form.is_compliment == 1"
+                                type="button"
+                                class="col btn btn-outline-primary col-3 mr-1"
+                                @click="onCalculateMultiply"
+                              >
+                                Multiply
+                              </button>
+                            </div>
+                            <c-input
+                              :disabled="form.is_compliment == 1"
+                              class="mb-1"
+                              v-model="form.weekday_rate2"
+                              :label="$t('labels.twoPax')"
+                              showZeroNumber
+                              formatted
+                              type="number"
+                              name="Week Day2"
+                            >
+                              <template #append-end>
+                                <c-input
+                                  :disabled="form.is_compliment == 1"
+                                  class="w-50"
+                                  v-model="form.weekend_rate2"
+                                  showZeroNumber
+                                  formatted
+                                  type="number"
+                                  name="Week End2"
+                                  customClass="pl-0 prx-75"
+                                />
+                              </template>
+                            </c-input>
+
+                            <c-input
+                              :disabled="form.is_compliment == 1"
+                              class="mb-1"
+                              v-model="form.weekday_rate3"
+                              :label="$t('labels.threePax')"
+                              showZeroNumber
+                              formatted
+                              type="number"
+                              name="Week Day3"
+                            >
+                              <template #append-end>
+                                <c-input
+                                  :disabled="form.is_compliment == 1"
+                                  class="w-50"
+                                  v-model="form.weekend_rate3"
+                                  showZeroNumber
+                                  formatted
+                                  type="number"
+                                  name="Week End3"
+                                  customClass="pl-0 prx-75"
+                                />
+                              </template>
+                            </c-input>
+                            <c-input
+                              :disabled="form.is_compliment == 1"
+                              class="mb-1"
+                              v-model="form.weekday_rate4"
+                              :label="$t('labels.fourPax')"
+                              showZeroNumber
+                              formatted
+                              type="number"
+                              name="Week Day4"
+                            >
+                              <template #append-end>
+                                <c-input
+                                  :disabled="form.is_compliment == 1"
+                                  class="w-50"
+                                  v-model="form.weekend_rate4"
+                                  showZeroNumber
+                                  formatted
+                                  type="number"
+                                  name="Week End4"
+                                  customClass="pl-0 prx-75"
+                                />
+                              </template>
+                            </c-input>
+                          </div>
+                        </b-card-text>
+                      </b-tab>
+                      <!-- child rate -->
+                      <b-tab v-if="useRateChild" :title="$t('title.childRate')">
+                        <b-card-text>
+                          <div class="row">
+                            <div class="row mt-1 mb-1">
+                              <div class="col-3"></div>
+                              <div class="col input-group align-items-center">
+                                <span
+                                  class="form-control text-center week-day-week-end"
+                                  >{{$t('labels.weekDay')}}</span
+                                >
+                                <div class="row w-50">
+                                  <div
+                                    class="pl-0 prx-75 input-group align-items-center"
+                                  >
+                                    <span
+                                      class="form-control text-center week-day-week-end"
+                                      >{{$t('labels.weekEnd')}}</span
+                                    >
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <c-input
+                              :disabled="form.is_compliment == 1"
+                              @input="onChangeFlatChild"
+                              class="mb-1"
+                              v-model="form.weekday_rate_child1"
+                              :label="$t('labels.onePax')"
+                              showZeroNumber
+                              formatted
+                              type="number"
+                              name="Week Day Child 1"
+                            >
+                              <template #append-end>
+                                <c-input
+                                  :disabled="form.is_compliment == 1"
+                                  @input="onChangeFlatChild"
+                                  class="w-50"
+                                  v-model="form.weekend_rate_child1"
+                                  showZeroNumber
+                                  formatted
+                                  type="number"
+                                  name="Week End Child 1"
+                                  customClass="pl-0 prx-75"
+                                />
+                              </template>
+                            </c-input>
+                            <div class="row mb-1 justify-content-end mr-2">
+                              <button
+                                :disabled="form.is_compliment == 1"
+                                type="button"
+                                class="col btn btn-outline-danger col-3 mr-1"
+                                @click="onClearRateChild"
+                              >
+                                Clear
+                              </button>
+                              <button
+                                :disabled="form.is_compliment == 1"
+                                type="button"
+                                class="col btn btn-outline-primary col-3 mr-1"
+                                @click="onCalculateFlatChild"
+                              >
+                                Flat
+                              </button>
+
+                              <button
+                                :disabled="form.is_compliment == 1"
+                                type="button"
+                                class="col btn btn-outline-primary col-3 mr-1"
+                                @click="onCalculateMultiplyChild"
+                              >
+                                Multiply
+                              </button>
+                            </div>
+                            <c-input
+                              :disabled="form.is_compliment == 1 || form.is_flat_child == 1"
+                              class="mb-1"
+                              v-model="form.weekday_rate_child2"
+                              :label="$t('labels.twoPax')"
+                              showZeroNumber
+                              formatted
+                              type="number"
+                              name="Week Day Child 2"
+                            >
+                              <template #append-end>
+                                <c-input
+                                  :disabled="form.is_compliment == 1 || form.is_flat_child == 1"
+                                  class="w-50"
+                                  v-model="form.weekend_rate_child2"
+                                  showZeroNumber
+                                  formatted
+                                  type="number"
+                                  name="Week End Child 2"
+                                  customClass="pl-0 prx-75"
+                                />
+                              </template>
+                            </c-input>
+                            <c-input
+                              :disabled="form.is_compliment == 1 || form.is_flat_child == 1"
+                              class="mb-1"
+                              v-model="form.weekday_rate_child3"
+                              :label="$t('labels.threePax')"
+                              showZeroNumber
+                              formatted
+                              type="number"
+                              name="Week Day Child 3"
+                            >
+                              <template #append-end>
+                                <c-input
+                                  :disabled="form.is_compliment == 1 || form.is_flat_child == 1"
+                                  class="w-50"
+                                  v-model="form.weekend_rate_child3"
+                                  showZeroNumber
+                                  formatted
+                                  type="number"
+                                  name="Week End Child 3"
+                                  customClass="pl-0 prx-75"
+                                />
+                              </template>
+                            </c-input>
+                            <c-input
+                              :disabled="form.is_compliment == 1 || form.is_flat_child == 1"
+                              class="mb-1"
+                              v-model="form.weekday_rate_child4"
+                              :label="$t('labels.fourPax')"
+                              showZeroNumber
+                              formatted
+                              type="number"
+                              name="Week Day Child 4"
+                            >
+                              <template #append-end>
+                                <c-input
+                                  :disabled="form.is_compliment == 1 || form.is_flat_child == 1"
+                                  class="w-50"
+                                  v-model="form.weekend_rate_child4"
+                                  showZeroNumber
+                                  formatted
+                                  type="number"
+                                  name="Week End Child 4"
+                                  customClass="pl-0 prx-75"
+                                />
+                              </template>
+                            </c-input>
+                          </div>
+                        </b-card-text>
+
+                        <!-- <b-card-text>
+                          <div class="row ml-2">
+                            <div class="col-6">
+                              <c-checkbox class="col-form-label d-flex col-3" :label="$t('labels.flat')"
+                              v-model="form.is_flat_child" @change=""></c-checkbox>
+                            <div class="col input-group align-items-center">
+                              <span class="form-control text-center week-day-week-end">{{$t('labels.weekDay')}}</span>
+                              <div class="row w-50">
+                                <div class="pl-0 prx-75 input-group align-items-center">
+                                  <span
+                                    class="form-control text-center week-day-week-end">{{$t('labels.weekEnd')}}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                              <c-input :disabled="form.is_compliment == 1" class="mb-1"
+                                v-model="form.weekday_rate_child1" :label="$t('labels.onePax')" showZeroNumber formatted
+                                type="number" name="Week Day Child1" customLabelClass="col-3"
+                                customClass="col-9"></c-input>
+                              <c-input :disabled="form.is_compliment == 1" class="mb-1"
+                                v-model="form.weekday_rate_child2" :label="$t('labels.twoPax')" showZeroNumber formatted
+                                type="number" name="Week Day Child2" customLabelClass="col-3"
+                                customClass="col-9"></c-input>
+                              <c-input :disabled="form.is_compliment == 1" class="mb-1"
+                                v-model="form.weekday_rate_child3" :label="$t('labels.threePax')" showZeroNumber
+                                formatted type="number" name="Week Day Child3" customLabelClass="col-3"
+                                customClass="col-9"></c-input>
+                              <c-input :disabled="form.is_compliment == 1" class="mb-1"
+                                v-model="form.weekday_rate_child4" :label="$t('labels.fourPax')" showZeroNumber
+                                formatted type="number" name="Week Day Child4" customLabelClass="col-3"
+                                customClass="col-9"></c-input>
+                            </div>
+                            <div class="col-6">
+                              <div class="row justify-content-center mb-2 mt-3">
+                                <div class="col-5 pl-0 ml-5 rate">
+                                  <span>{{$t('labels.weekEnd')}}</span>
+                                </div>
+                              </div>
+                              <c-input :disabled="form.is_compliment == 1" class="justify-content-center mb-1"
+                                v-model="form.weekend_rate_child1" showZeroNumber formatted type="number"
+                                name="Week End Child1" customLabelClass="col-3" customClass="col-9" />
+                              <c-input :disabled="form.is_compliment == 1" class="justify-content-center mb-1"
+                                v-model="form.weekend_rate_child2" showZeroNumber formatted type="number"
+                                name="Week End Child2" customLabelClass="col-3" customClass="col-9" />
+                              <c-input :disabled="form.is_compliment == 1" class="justify-content-center mb-1"
+                                v-model="form.weekend_rate_child3" showZeroNumber formatted type="number"
+                                name="Week End Child3" customLabelClass="col-3" customClass="col-9" />
+                              <c-input :disabled="form.is_compliment == 1" class="justify-content-center mb-1"
+                                v-model="form.weekend_rate_child4" showZeroNumber formatted type="number"
+                                name="Week End Child4" customLabelClass="col-3" customClass="col-9" />
+                            </div>
+                          </div>
+                        </b-card-text> -->
+                      </b-tab>
+                    </b-tabs>
+                    <b-tab>
+                      <div class="row d-none d-md-block d-sm-none">
+                        <c-select
+                          filter
+                          :disabled="form.is_compliment == 1"
+                          class="mb-1"
+                          v-model="form.tax_and_service_code"
+                          :options="listDropdown.TaxAndService"
+                          @load="repeatLoadDropdownList"
+                          keyName="code"
+                          labelName="name"
+                          :label="$t('labels.taxAndService')"
+                          name="Tax & Service"
+                        >
+                        </c-select>
+                        <c-select
+                          filter
+                          :disabled="form.is_compliment == 1"
+                          class="mb-1"
+                          required
+                          v-model="form.charge_frequency_code"
+                          :options="listDropdown.ChargeFrequency"
+                          @load="repeatLoadDropdownList"
+                          keyName="code"
+                          labelName="name"
+                          :label="$t('labels.chargeFrequency')"
+                          name="Charge Frequency"
+                        ></c-select>
+                      </div>
+                    </b-tab>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 col-sm-6 d-md-none d-sm-block mb-2">
+            <div class="accordion mt-2" id="accordionPanelsStayOpenExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="panelsStayOpen-costing">
+                  <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne"
+                    aria-expanded="true"
+                    aria-controls="panelsStayOpen-collapseOne"
+                  >
+                    {{ $t('labels.rateAmount') }}
+                  </button>
+                </h2>
+                <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse show"
+                  aria-labelledby="panelsStayOpen-costing"
+                >
+                  <div class="accordion-body row">
+                    <div class="row mb-4 mt-3 ml-3">
+                      <div class="col-5">
+                        <c-checkbox
+                          :label="$t('labels.complimentRate')"
+                          v-model="form.is_compliment"
+                          customLabelClass="col-3"
+                          customClass="col-9"
+                        ></c-checkbox>
+                      </div>
+                      <div class="col-7">
+                        <c-checkbox
+                          :label="$t('labels.includeBreakfast')"
+                          v-model="form.include_breakfast"
+                          customLabelClass="col-3"
+                          customClass="col-9"
+                        ></c-checkbox>
+                      </div>
+                    </div>
+                    <b-tabs class="mb-4">
+                      <b-tab :title="$t('title.adultRate')">
+                        <b-card-text>
+                          <div class="row ml-2">
+                            <div class="col-md-6 col-sm-6">
+                              <div class="row justify-content-end mb-2 mt-3">
+                                <div class="col-5 pl-0">
+                                  <span>{{$t('labels.weekDay')}}</span>
+                                </div>
+                              </div>
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekday_rate1"
+                                :label="$t('labels.onePax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week Day1"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              >
+                              </c-input>
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekday_rate2"
+                                :label="$t('labels.twoPax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week Day2"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              ></c-input>
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekday_rate3"
+                                :label="$t('labels.threePax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week Day3"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              ></c-input>
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekday_rate4"
+                                :label="$t('labels.fourPax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week Day4"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              ></c-input>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                              <div class="row justify-content-end mb-2 mt-3">
+                                <div class="col-5 pl-0">
+                                  <span>{{$t('labels.weekEnd')}}</span>
+                                </div>
+                              </div>
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekend_rate1"
+                                :label="$t('labels.onePax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week End1"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              />
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekend_rate2"
+                                :label="$t('labels.twoPax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week End2"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              />
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekend_rate3"
+                                :label="$t('labels.threePax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week End3"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              />
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekend_rate4"
+                                :label="$t('labels.fourPax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week End4"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              />
+                            </div>
+                          </div>
+                        </b-card-text>
+                      </b-tab>
+                      <!-- child rate -->
+                      <b-tab v-if="useRateChild" :title="$t('title.childRate')">
+                        <b-card-text>
+                          <div class="row ml-2">
+                            <div class="col-md-6 col-sm-6">
+                              <div class="row justify-content-end mb-2 mt-3">
+                                <div class="col-5 pl-0">
+                                  <span>{{$t('labels.weekDay')}}</span>
+                                </div>
+                              </div>
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekday_rate_child1"
+                                :label="$t('labels.onePax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week Day Child1"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              ></c-input>
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekday_rate_child2"
+                                :label="$t('labels.twoPax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week Day Child2"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              ></c-input>
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekday_rate_child3"
+                                :label="$t('labels.threePax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week Day Child3"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              ></c-input>
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekday_rate_child4"
+                                :label="$t('labels.fourPax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week Day Child4"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              ></c-input>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                              <div class="row justify-content-end mb-2 mt-3">
+                                <div class="col-5 pl-0">
+                                  <span>{{$t('labels.weekEnd')}}</span>
+                                </div>
+                              </div>
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekend_rate_child1"
+                                :label="$t('labels.onePax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week End Child1"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              />
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekend_rate_child2"
+                                :label="$t('labels.twoPax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week End Child2"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              />
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekend_rate_child3"
+                                :label="$t('labels.threePax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week End Child3"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              />
+                              <c-input
+                                :disabled="form.is_compliment == 1"
+                                class="mb-1"
+                                v-model="form.weekend_rate_child4"
+                                :label="$t('labels.fourPax')"
+                                showZeroNumber
+                                formatted
+                                type="number"
+                                name="Week End Child4"
+                                customLabelClass="col-5"
+                                customClass="col-7"
+                              />
+                            </div>
+                          </div>
+                        </b-card-text>
+                      </b-tab>
+                    </b-tabs>
+                    <div class="justify-content-end mb-2 mt-1">
+                      <c-select
+                        filter
+                        :disabled="form.is_compliment == 1"
+                        class="mb-1"
+                        v-model="form.tax_and_service_code"
+                        @load="repeatLoadDropdownList"
+                        :options="listDropdown.TaxAndService"
+                        keyName="code"
+                        labelName="name"
+                        :label="$t('labels.taxAndService')"
+                        name="Tax & Service"
+                        customLabelClass="col-5"
+                        customClass="col-7"
+                      ></c-select>
+                      <c-select
+                        filter
+                        :disabled="form.is_compliment == 1"
+                        class="mb-1"
+                        required
+                        v-model="form.charge_frequency_code"
+                        :options="listDropdown.ChargeFrequency"
+                        @load="repeatLoadDropdownList"
+                        keyName="code"
+                        labelName="name"
+                        :label="$t('labels.chargeFrequency')"
+                        name="Charge Frequency"
+                        customLabelClass="col-5"
+                        customClass="col-7"
+                      ></c-select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Extra Charge -->
+          <div class="col-md-4 col-sm-6">
+            <div
+              class="accordion mt-2 h-100"
+              id="accordionPanelsStayOpenExample"
+            >
+              <div class="accordion-item mt-2 h-30">
+                <h2 class="accordion-header" id="panelsStayOpen-costing">
+                  <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne"
+                    aria-expanded="true"
+                    aria-controls="panelsStayOpen-collapseOne"
+                  >
+                    {{ $t('labels.extraCharge') }}
+                  </button>
+                </h2>
+                <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse show"
+                  aria-labelledby="panelsStayOpen-costing"
+                >
+                  <div class="accordion-body row">
+                    <div class="row mb-3">
+                      <c-input
+                        class=""
+                        v-model="form.extra_pax"
+                        :label="$t('labels.extraPax')"
+                        showZeroNumber
+                        formatted
+                        type="number"
+                        name="Extra Pax"
+                        customLabelClass="col-3"
+                        customClass="col-9"
+                      />
+                      <div class="row justify-content-end">
+                        <div class="col-4 align-items-end">
+                          <c-checkbox
+                            :label="$t('labels.perPax')"
+                            v-model="form.per_pax"
+                            customLabelClass="col-3"
+                            customClass="col-9"
+                          ></c-checkbox>
+                        </div>
+                        <div class="col-5 align-items-end">
+                          <c-checkbox
+                            :disabled="!form.per_pax"
+                            :label="$t('labels.includeChild')"
+                            v-model="form.include_child"
+                            customLabelClass="col-3"
+                            customClass="col-9"
+                          ></c-checkbox>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item h-33">
+                <h2 class="accordion-header" id="panelsStayOpen-costing">
+                  <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne"
+                    aria-expanded="true"
+                    aria-controls="panelsStayOpen-collapseOne"
+                  >
+                    {{ $t('labels.rateAvai') }}
+                  </button>
+                </h2>
+                <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse show"
+                  aria-labelledby="panelsStayOpen-costing"
+                >
+                  <div class="accordion-body row">
+                    <div class="row ml-2 justify-content-center">
+                      <div class="col-4">
+                        <c-checkbox
+                          :label="$t('labels.monday')"
+                          v-model="form.day1"
+                          customLabelClass="col-4"
+                          customClass="col-9"
+                        ></c-checkbox>
+                        <c-checkbox
+                          :label="$t('labels.thursday')"
+                          v-model="form.day4"
+                          customLabelClass="col-4"
+                          customClass="col-9"
+                        ></c-checkbox>
+                        <c-checkbox
+                          :label="$t('labels.sunday')"
+                          v-model="form.day7"
+                          customLabelClass="col-3"
+                          customClass="col-9"
+                        ></c-checkbox>
+                      </div>
+                      <div class="col-4">
+                        <c-checkbox
+                          :label="$t('labels.tuesday')"
+                          v-model="form.day2"
+                          customLabelClass="col-3"
+                          customClass="col-9"
+                        ></c-checkbox>
+                        <c-checkbox
+                          :label="$t('labels.friday')"
+                          v-model="form.day5"
+                          customLabelClass="col-3"
+                          customClass="col-9"
+                        ></c-checkbox>
+                      </div>
+                      <div class="col-4">
+                        <c-checkbox
+                          :label="$t('labels.wednesday')"
+                          v-model="form.day3"
+                          customLabelClass="col-3"
+                          customClass="col-9"
+                        ></c-checkbox>
+                        <c-checkbox
+                          :label="$t('labels.saturday')"
+                          v-model="form.day6"
+                          customLabelClass="col-3"
+                          customClass="col-9"
+                        ></c-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- </div> -->
+              <!-- <div class="accordion mt-2" id="accordionPanelsStayOpenExample"> -->
+              <div class="accordion-item h-35">
+                <h2 class="accordion-header" id="panelsStayOpen-costing">
+                  <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne"
+                    aria-expanded="true"
+                    aria-controls="panelsStayOpen-collapseOne"
+                  >
+                    {{ $t('labels.note') }}
+                  </button>
+                </h2>
+                <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse show"
+                  aria-labelledby="panelsStayOpen-costing"
+                >
+                  <div class="accordion-body">
+                    <div class="justify-content-around mb-2">
+                      <textarea
+                        rows="4"
+                        class="col"
+                        v-model="form.notes"
+                        :label="$t('labels.note')"
+                        type="text"
+                        name="Note"
+                        customLabelClass="col-3"
+                        customClass="col-9"
+                      >
+                      </textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </v-form>
+    </div>
+    <save-close-button
+      :isSaving="isSaving"
+      @save="onSubmit"
+      @close="onClose"
+    ></save-close-button>
+  </div>
+</section>

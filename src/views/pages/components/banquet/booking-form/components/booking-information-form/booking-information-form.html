@@ -1,0 +1,860 @@
+<v-form
+  class="booking-information-form"
+  ref="bookInformationValidation"
+  @submit="onSave"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+>
+  <div id="bookingForm" class="accordion">
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="bookingHeader">
+        <button
+          type="button"
+          class="accordion-button"
+          aria-expanded="true"
+          aria-controls="bookingInformation"
+          data-bs-target="#bookingInformation"
+        >
+          {{ $t('title.stayInformation') }}
+        </button>
+      </h3>
+      <div
+        id="bookingInformation"
+        class="accordion-collapse collapse show"
+        aria-labelledby="bookingHeader"
+        data-bs-parent="#bookingForm"
+      >
+        <div class="accordion-body row">
+          <div
+            :class="formType == $global.formType.booking && modeData != $global.modeData.checkIn || formType == $global.formType.banquetView ? 'col-md-6' : 'col-md-4 col-sm-6'"
+          >
+            <div class="row justify-content-center">
+              <div
+                :class="formType == $global.formType.booking && modeData != $global.modeData.checkIn || formType == $global.formType.banquetView ? 'col-6' : 'col-3'"
+              >
+                <c-checkbox
+                  :label="$t('labels.isPublic')"
+                  value="1"
+                  v-model="form.booking_data.is_public"
+                >
+                </c-checkbox>
+              </div>
+              <div
+                v-if="formType == $global.formType.banquetInProgress || modeData == $global.modeData.checkIn"
+                class="col-3"
+              >
+                <c-checkbox
+                  :label="$t('labels.continueEvent')"
+                  value="1"
+                  v-model="form.booking_data.is_continue_event"
+                >
+                </c-checkbox>
+              </div>
+            </div>
+            <c-datepicker
+              :disabled="formType == $global.formType.banquetInProgress || modeData == $global.modeData.checkIn"
+              :focus="focus"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              required
+              confirm
+              :disabled-date="dateDisabledArrival"
+              :label="$t('labels.startDate')"
+              v-model="form.guest_detail_data.arrival"
+              type="datetime"
+              valueType="YYYY-MM-DDTHH:mm:ssZZ"
+              format="DD/MM/YYYY HH:mm:ss"
+              :clearable="false"
+              id="startDate"
+              name="Start Date"
+              resetButton
+              @input="onChangeArrival"
+              @reset="onResetDate"
+            ></c-datepicker>
+            <c-datepicker
+              :disabled="formType == $global.formType.banquetInProgress || modeData == $global.modeData.checkIn"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              required
+              confirm
+              id="endDate"
+              :disabled-date="dateDisabledDeparture"
+              :label="$t('labels.endDate')"
+              v-model="form.guest_detail_data.departure"
+              type="datetime"
+              valueType="YYYY-MM-DDTHH:mm:ssZZ"
+              format="DD/MM/YYYY HH:mm:ss"
+              :clearable="false"
+              name="End Date"
+              resetButton
+              @input="onChangeDeparture"
+              @reset="onResetDate"
+            ></c-datepicker>
+            <div
+              v-if="formType == $global.formType.booking && modeData != $global.modeData.checkIn && !isSaved || formType == $global.formType.banquetView && modeData == $global.modeData.insert"
+              class="row mb-1 mt-1"
+            >
+              <div class="col-3">
+                <label for="type" class="col-form-label required"
+                  >{{ $t("title.location") }}</label
+                >
+              </div>
+              <div class="col-9">
+                <div class="d-flex">
+                  <c-radio
+                    class="col-6"
+                    :label="$t('labels.inside')"
+                    v-model="form.is_inside"
+                    value="1"
+                    @change="onRefresh"
+                  >
+                  </c-radio>
+                  <c-radio
+                    class="col-6"
+                    :label="$t('labels.outside')"
+                    v-model="form.is_inside"
+                    value="0"
+                    @change="onRefresh"
+                  >
+                  </c-radio>
+                </div>
+              </div>
+            </div>
+            <div
+              v-if="formType == $global.formType.banquetInProgress || modeData == $global.modeData.checkIn"
+              class="row"
+            >
+              <div class="col-md-6 mb-1">
+                <c-select
+                  filter
+                  @change="onChangeCurrency"
+                  @load="loadDropdown('Currency')"
+                  :options="comboList.Currency"
+                  class="mb-1"
+                  customLabelClass="col-3 col-md-6"
+                  customClass="col-9 col-md-6"
+                  id="currency"
+                  :label="$t('labels.currency')"
+                  v-model="form.guest_detail_data.currency_code"
+                  labelName="code"
+                  keyName="code"
+                  name="currency"
+                />
+              </div>
+              <div class="col-md-6 mb-1">
+                <c-checkbox
+                  disabled
+                  :label="$t('labels.isConstant')"
+                  value="1"
+                  v-model="form.guest_detail_data.is_constant_currency"
+                >
+                </c-checkbox>
+              </div>
+            </div>
+            <c-input
+              disabled
+              v-if="formType == $global.formType.banquetInProgress || modeData == $global.modeData.checkIn"
+              required
+              customLabelClass="col-3"
+              formatted
+              id="excRate"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.guest_detail_data.exchange_rate"
+              :label="$t('labels.excRate')"
+              type="number"
+              name="exch Rate"
+            />
+          </div>
+          <div
+            :class="formType == $global.formType.booking && modeData != $global.modeData.checkIn || formType == $global.formType.banquetView ? 'col-md-6' : 'col-md-4 col-sm-6'"
+          >
+            <div
+              v-if="formType == $global.formType.booking && modeData != $global.modeData.checkIn && !isSaved ||formType == $global.formType.banquetView && modeData == $global.modeData.insert"
+            >
+              <c-select
+                filter
+                @load="loadDropdown('Venue')"
+                required
+                class="mb-1"
+                customLabelClass="col-3"
+                customClass="col-9"
+                :options="comboList.Venue"
+                :label="$t('labels.venue')"
+                v-model="form.booking_data.venue_code"
+                id="venue"
+                labelName="name"
+                keyName="code"
+                name="venue"
+              />
+              <c-select
+                filter
+                @load="loadDropdown('Theme')"
+                required
+                class="mb-1"
+                customLabelClass="col-3"
+                customClass="col-9"
+                :options="comboList.Theme"
+                :label="$t('labels.theme')"
+                v-model="form.booking_data.theme_code"
+                id="theme"
+                labelName="name"
+                keyName="code"
+                name="theme"
+              />
+              <c-select
+                filter
+                @load="loadDropdown('SeatingPlan')"
+                required
+                class="mb-1"
+                customLabelClass="col-3"
+                customClass="col-9"
+                :options="comboList.SeatingPlan"
+                id="seatingPlan"
+                :label="$t('labels.seatingPlan')"
+                v-model="form.booking_data.seating_plan_code"
+                labelName="name"
+                keyName="code"
+                name="seatingPlan"
+              />
+            </div>
+            <div
+              v-if="!isSaved || formType == $global.formType.banquetInProgress || modeData == $global.modeData.checkIn"
+              class="row"
+            >
+              <div class="col-6 mb-1">
+                <c-input
+                  spinner
+                  required
+                  customLabelClass="col-6"
+                  id="adult"
+                  customClass="col-6"
+                  v-model="form.guest_detail_data.adult"
+                  :label="$t('labels.adult')"
+                  type="number"
+                  name="Adult"
+                />
+              </div>
+              <div class="col-6 mb-1">
+                <c-input
+                  showZeroNumber
+                  customLabelClass="col-6"
+                  customClass="col-6"
+                  spinner
+                  class="row"
+                  v-model="form.guest_detail_data.child"
+                  :label="$t('labels.child')"
+                  type="number"
+                  name="Child"
+                />
+              </div>
+            </div>
+            <div
+              v-if="formType == $global.formType.banquetInProgress || modeData == $global.modeData.checkIn"
+            >
+              <c-select
+                filter
+                @load="loadDropdown('BusinessSource')"
+                :options="comboList.BusinessSource"
+                class="mb-1"
+                customLabelClass="col-3"
+                customClass="col-9"
+                :label="$t('labels.businessSource')"
+                v-model="form.guest_detail_data.business_source_code"
+                labelName="name"
+                keyName="code"
+                name="businessSource"
+              />
+              <c-select
+                filter
+                @load="loadDropdown('CommissionType')"
+                :options="comboList.CommissionType"
+                class="mb-1"
+                customLabelClass="col-3"
+                customClass="col-9"
+                :label="$t('labels.commissionType')"
+                v-model="form.guest_detail_data.commission_type_code"
+                labelName="name"
+                keyName="code"
+                name="commissionType"
+              />
+              <c-input
+                showZeroNumber
+                formatted
+                customLabelClass="col-3"
+                customClass="col-9"
+                class="mb-1"
+                v-model="form.guest_detail_data.commission_value"
+                :label="$t('labels.commissionValue')"
+                type="number"
+                name="commissionValue"
+              />
+              <c-select
+                filter
+                @load="loadDropdown('PaymentType')"
+                :options="comboList.PaymentType"
+                required
+                id="paymentType"
+                class="mb-1"
+                customLabelClass="col-3"
+                customClass="col-9"
+                :label="$t('labels.paymentType')"
+                v-model="form.guest_detail_data.payment_type_code"
+                labelName="name"
+                keyName="code"
+                name="paymentType"
+              />
+            </div>
+          </div>
+          <!--  @load="getComboList -->
+          <div
+            v-if="formType == $global.formType.banquetInProgress || modeData == $global.modeData.checkIn"
+            class="col-md-4 col-sm-6"
+          >
+            <c-select
+              filter
+              @load="loadDropdown('Market')"
+              :options="comboList.Market"
+              required
+              id="market"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              :label="$t('labels.market')"
+              v-model="form.guest_detail_data.market_code"
+              labelName="name"
+              keyName="code"
+              name="market"
+            />
+            <c-select
+              filter
+              @load="loadDropdown('BookingSource')"
+              :options="comboList.BookingSource"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              :label="$t('labels.bookingSource')"
+              v-model="form.guest_detail_data.booking_source_code"
+              labelName="name"
+              keyName="code"
+              name="bookingSource"
+            />
+            <c-input
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.guest_detail_data.bill_instruction"
+              :label="$t('labels.billInstruction')"
+              type="textarea"
+              name="billInstruction"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- </div>
+
+<div
+  ref="bookingInformationForm"
+  id="accordionRegistrationForm"
+  class="accordion"
+> -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="personalInformationHeader">
+        <button
+          type="button"
+          class="accordion-button"
+          aria-expanded="true"
+          aria-controls="personalInformation"
+          data-bs-target="#personalInformation"
+        >
+          {{ $t('title.personalInformation') }}
+        </button>
+      </h3>
+      <div
+        id="personalInformation"
+        class="accordion-collapse collapse show"
+        aria-labelledby="personalInformationHeader"
+        data-bs-parent="bookingForm"
+      >
+        <!-- <form class="accordion-body row" :validation-schema="schema"> -->
+        <div class="accordion-body row">
+          <div class="col-md-4 col-sm-6">
+            <!-- todo: event, fieldname to send to backend? -->
+            <c-input
+              required
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.contact_person_data.full_name"
+              id="eventName"
+              :label="$t('labels.eventName')"
+              type="text"
+              name="eventName"
+            />
+            <c-input
+              required
+              id="bookedBy"
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.booking_data.reservation_by"
+              :label="$t('labels.bookedBy')"
+              type="text"
+              name="bookedBy"
+            />
+            <c-input
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.contact_person_data.street"
+              :label="$t('labels.street')"
+              type="text"
+              name="street"
+            />
+            <c-select
+              filter
+              @load="loadDropdown('Country')"
+              @change="onChangeCountry"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              :label="$t('labels.country')"
+              :options="comboList.Country"
+              v-model="form.contact_person_data.country_code"
+              labelName="name"
+              keyName="code"
+              name="country"
+            />
+            <c-select
+              filter
+              @load="repeatLoadDropdownList(true)"
+              @change="onChangeState"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              :label="$t('labels.state')"
+              :options="stateList"
+              v-model="form.contact_person_data.state_code"
+              labelName="name"
+              keyName="code"
+              name="state"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <c-select
+              filter
+              @load="repeatLoadDropdownList(false)"
+              @change="onChangeCity"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              :label="$t('labels.city')"
+              :options="cityList"
+              v-model="form.contact_person_data.city_code"
+              labelName="name"
+              keyName="code"
+              name="city"
+            />
+            <c-input
+              :disabled="disabledCity"
+              @change="onChangeCityInput"
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.contact_person_data.city"
+              :label="$t('labels.otherCity')"
+              type="text"
+              name="otherCity"
+            />
+            <c-input
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.contact_person_data.postal_code"
+              :label="$t('labels.postalCode')"
+              type="text"
+              name="postalCode"
+            />
+            <c-input
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.contact_person_data.phone1"
+              :label="$t('labels.phone1')"
+              type="text"
+              name="phone1"
+            />
+            <c-input
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.contact_person_data.phone2"
+              :label="$t('labels.phone2')"
+              type="text"
+              name="phone2"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <c-input
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.contact_person_data.fax"
+              :label="$t('labels.fax')"
+              type="text"
+              name="fax"
+            />
+            <c-input
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.contact_person_data.email"
+              :label="$t('labels.email')"
+              type="text"
+              name="email"
+            />
+            <c-input
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.contact_person_data.website"
+              :label="$t('labels.website')"
+              type="text"
+              name="website"
+            />
+            <c-select
+              filter
+              @load="loadCompanyDropdown"
+              required
+              id="company"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              :options="companyList"
+              :label="$t('labels.company')"
+              v-model="form.contact_person_data.company_code"
+              labelName="name"
+              keyName="code"
+              name="company"
+            />
+            <c-input
+              v-if="formType == $global.formType.booking && modeData != $global.modeData.checkIn"
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.contact_person_data.custom_field01"
+              :label="$t('labels.customField1')"
+              type="text"
+              name="customField1"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      v-if="formType == $global.formType.booking && modeData != $global.modeData.checkIn || formType == $global.formType.banquetView"
+      lass="accordion-item"
+    >
+      <h3 class="accordion-header" id="otherInformationHeader">
+        <button
+          type="button"
+          class="accordion-button"
+          aria-expanded="true"
+          aria-controls="otherInformation"
+          data-bs-target="#otherInformation"
+        >
+          {{ $t('title.otherInformation') }}
+        </button>
+      </h3>
+      <div
+        id="otherInformation"
+        class="accordion-collapse collapse show"
+        aria-labelledby="otherInformationHeader"
+        data-bs-parent="bookingForm"
+      >
+        <!-- <form class="accordion-body row" :validation-schema="schema"> -->
+        <div class="accordion-body row">
+          <div class="col-md-4 col-sm-6">
+            <div class="row">
+              <div class="col-md-6 mb-1">
+                <c-select
+                  filter
+                  @change="onChangeCurrency"
+                  @load="loadDropdown('Currency')"
+                  required
+                  customLabelClass="col-3 col-md-6"
+                  customClass="col-9 col-md-6"
+                  class="mb-1"
+                  id="currency"
+                  :options="comboList.Currency"
+                  :label="$t('labels.currency')"
+                  v-model="form.guest_detail_data.currency_code"
+                  labelName="code"
+                  keyName="code"
+                  name="currency"
+                />
+              </div>
+              <div class="col-md-6 mb-1">
+                <c-checkbox
+                  class=""
+                  disabled
+                  :label="$t('labels.isConstant')"
+                  value="1"
+                  v-model="form.guest_detail_data.is_constant_currency"
+                >
+                </c-checkbox>
+              </div>
+            </div>
+            <c-input
+              disabled
+              required
+              id="excRate"
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              formatted
+              v-model="form.guest_detail_data.exchange_rate"
+              :label="$t('labels.excRate')"
+              type="number"
+              name="exch Rate"
+            />
+            <c-select
+              filter
+              @load="loadDropdown('BusinessSource')"
+              :options="comboList.BusinessSource"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              :label="$t('labels.businessSource')"
+              v-model="form.guest_detail_data.business_source_code"
+              labelName="name"
+              keyName="code"
+              name="businessSource"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <c-select
+              filter
+              @load="loadDropdown('CommissionType')"
+              :options="comboList.CommissionType"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              :label="$t('labels.commissionType')"
+              v-model="form.guest_detail_data.commission_type_code"
+              labelName="name"
+              keyName="code"
+              name="commissionType"
+            />
+            <c-input
+              showZeroNumber
+              formatted
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.guest_detail_data.commission_value"
+              :label="$t('labels.commissionValue')"
+              type="number"
+              name="commissionValue"
+            />
+            <c-select
+              filter
+              @load="loadDropdown('PaymentType')"
+              :options="comboList.PaymentType"
+              required
+              id="paymentType"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              :label="$t('labels.paymentType')"
+              v-model="form.guest_detail_data.payment_type_code"
+              labelName="name"
+              keyName="code"
+              name="paymentType"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <c-select
+              filter
+              @load="loadDropdown('Market')"
+              required
+              id="market"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              :options="comboList.Market"
+              :label="$t('labels.market')"
+              v-model="form.guest_detail_data.market_code"
+              labelName="name"
+              keyName="code"
+              name="market"
+            />
+            <c-select
+              filter
+              @load="loadDropdown('BookingSource')"
+              :options="comboList.BookingSource"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              :label="$t('labels.bookingSource')"
+              v-model="form.guest_detail_data.booking_source_code"
+              labelName="name"
+              keyName="code"
+              name="bookingSource"
+            />
+            <c-input
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.guest_detail_data.bill_instruction"
+              :label="$t('labels.billInstruction')"
+              type="textarea"
+              name="billInstruction"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="generalInformationHeader">
+        <button
+          type="button"
+          class="accordion-button d-flex"
+          data-bs-target="#generalInformation"
+          aria-controls="generalInformation"
+          aria-expanded="false"
+        >
+          {{ $t('title.generalInformation') }}
+          <div class="col d-flex justify-content-end">
+            <c-checkbox
+              id="showNotesAtCheckOut"
+              value="1"
+              v-model="form.booking_data.show_notes"
+              :label="$t('labels.showNotesAtCheckOut')"
+            />
+          </div>
+        </button>
+      </h3>
+      <div
+        id="generalInformation"
+        class="accordion-collapse collapse show"
+        aria-labelledby="generalInformationHeader"
+        data-bs-parent="bookingForm"
+      >
+        <!-- <form class="accordion-body row" :validation-schema="schema"> -->
+        <div class="accordion-body row">
+          <div class="col-md-6">
+            <c-select
+              filter
+              @load="loadDropdown('GuestGroup')"
+              :options="comboList.GuestGroup"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              :label="$t('labels.group')"
+              v-model="form.booking_data.group_code"
+              labelName="name"
+              keyName="code"
+              name="group"
+            />
+            <c-select
+              filter
+              @load="loadDropdown('Sales')"
+              :options="comboList.Sales"
+              class="mb-1"
+              customLabelClass="col-3"
+              customClass="col-9"
+              :label="$t('labels.sales')"
+              v-model="form.booking_data.marketing_code"
+              labelName="name"
+              keyName="code"
+              name="sales"
+            />
+            <c-input
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.booking_data.document_number"
+              :label="$t('labels.doc#')"
+              type="text"
+              name="doc#"
+            />
+            <c-select
+              filter
+              @load="loadDropdown('BanquetReservationType')"
+              required
+              id="resType"
+              class="mb-1"
+              customLabelClass="col-3"
+              :options="comboList.BanquetReservationType"
+              customClass="col-9"
+              :label="$t('labels.resType')"
+              v-model="form.booking_data.reservation_type"
+              labelName="name"
+              keyName="code"
+              name="resType"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <!-- todo: booking# -->
+            <c-input
+              disabled
+              showZeroNumber
+              formatted
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.booking_number"
+              :label="$t('labels.booking#')"
+              type="number"
+              name="booking#"
+            />
+            <c-input
+              disabled
+              showZeroNumber
+              formatted
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.booking_data.folio_transfer"
+              :label="$t('labels.folio#')"
+              type="number"
+              name="folio#"
+            />
+            <c-input
+              v-if="formType == $global.formType.booking && modeData != $global.modeData.checkIn"
+              customLabelClass="col-3"
+              customClass="col-9"
+              formatted
+              showZeroNumber
+              class="mb-1"
+              v-model="form.booking_data.estimate_revenue"
+              :label="$t('labels.estimateRevenue')"
+              type="number"
+              name="estimateRevenue"
+            />
+            <c-input
+              customLabelClass="col-3"
+              customClass="col-9"
+              class="mb-1"
+              v-model="form.booking_data.notes"
+              :label="$t('labels.notes')"
+              type="textarea"
+              name="notes"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</v-form>

@@ -1,0 +1,31 @@
+
+
+
+// .c-input.success input {
+//   background-color: var(--success-bg-color);
+//   color: var(--success-color);
+// }
+
+// .c-input.success input:focus {
+//   border-color: var(--success-color);
+// }
+
+// .c-input.success .help-message {
+//   color: var(--success-color);
+// }\
+
+.number-spinner{ 
+  button{
+    height: 24px; 
+    &.btn-left{
+      border-radius: 2px 0px 0px 2px;
+    }
+    &.btn-right{
+      border-radius: 0 2px 2px 0;
+    }
+
+    &.btn{
+      font-size: 10px;
+    }
+  }
+}

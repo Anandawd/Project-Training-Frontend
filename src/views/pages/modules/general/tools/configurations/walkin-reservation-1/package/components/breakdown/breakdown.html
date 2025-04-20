@@ -1,0 +1,289 @@
+<!-- Main content -->
+<section class="content">
+  <!-- <div class="container-fluid"> -->
+  <transition name="slide-fade-right">
+    <div v-show="showForm">
+      <div class="card h-100">
+        <div class="card-header">
+          <h3 class="card-title">
+            {{ title }}
+            <button type="button" class="close-button btn" @click="handleClose">
+              <i class="fas fa-times"></i>
+            </button>
+          </h3>
+        </div>
+        <div class="card-body">
+          <v-form
+            @submit="handleSave"
+            ref="formElement"
+            :validation-schema="schema"
+            @invalid-submit="onInvalidSubmit"
+            class="input-form row"
+            v-slot="{resetForm}"
+          >
+            <div class="row">
+              <div class="col-md-4 col-sm-6">
+                <c-select
+                  :focus="focus"
+                  filter
+                  required
+                  class="mb-1"
+                  v-model="form.sub_department_code"
+                  :options="listDropdown.SubDepartment"
+                  @load="loadDropdown"
+                  keyName="code"
+                  labelName="name"
+                  :label="$t('labels.subDepartment')"
+                  name="Sub Department"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </c-select>
+                <c-select
+                  filter
+                  required
+                  class="mb-1"
+                  v-model="form.account_code"
+                  :options="listDropdown.Account"
+                  @load="loadDropdown"
+                  keyName="code"
+                  labelName="name"
+                  :label="$t('labels.account')"
+                  name="Account"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                  @change="onChangeAccount"
+                >
+                </c-select>
+                <c-select
+                  :disabled="subGroupCode != $global.subGroupAccount.accountPayable"
+                  :required="subGroupCode == $global.subGroupAccount.accountPayable"
+                  filter
+                  class="mb-1"
+                  v-model="form.company_code"
+                  :options="listDropdown.BusinessSource"
+                  keyName="code"
+                  @load="loadDropdown"
+                  labelName="name"
+                  :label="$t('labels.businessSource')"
+                  name="Business Source"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </c-select>
+                <c-input
+                  :disabled="this.form.per_pax"
+                  required
+                  showZeroNumber
+                  formatted
+                  class="mb-1"
+                  v-model="form.quantity"
+                  :label="$t('labels.quantity')"
+                  type="number"
+                  name="Quantity"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </c-input>
+                <div class="row mb-2 mt-1">
+                  <div class="col-3 pr-0">
+                    <label class="col-form-label d-flex mt-1" for="color"
+                      >{{$t('labels.amountType')}}</label
+                    >
+                  </div>
+                  <div class="col-9 mt-1">
+                    <div class="row justify-content-start">
+                      <div class="col-2 align-content-center">
+                        <c-radio
+                          :label="$t('labels.amount')"
+                          v-model="form.is_amount_percent"
+                          value="0"
+                        ></c-radio>
+                      </div>
+                      <div class="col-6 align-content-center">
+                        <c-radio
+                          class="grid align-items-center"
+                          label="Percentage (%)"
+                          v-model="form.is_amount_percent"
+                          value="1"
+                        ></c-radio>
+                      </div>
+                      <div class="col-2">
+                        <c-checkbox
+                          class="grid align-items-lg-baseline"
+                          :label="$t('labels.exclude')"
+                          v-model="form.is_exclude"
+                        ></c-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 col-sm-6 mb-2">
+                <c-input
+                  required
+                  showZeroNumber
+                  formatted
+                  class="mb-1"
+                  v-model="form.amount"
+                  :label="$t('labels.amount')"
+                  type="number"
+                  name="Amount"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                  <template #append-end>
+                    <span class="input-group-text"
+                      >{{ form.is_amount_percent == 1 ? '%' : '.00' }}</span
+                    >
+                  </template>
+                </c-input>
+                <div class="row justify-content-end">
+                  <div class="col-4">
+                    <c-checkbox
+                      :label="$t('labels.perPax')"
+                      v-model="form.per_pax"
+                      @change="onChangePerPax"
+                      customLabelClass="col-3"
+                      customClass="col-9"
+                    >
+                    </c-checkbox>
+                  </div>
+                  <div class="col-5">
+                    <c-checkbox
+                      :disabled="!this.form.per_pax"
+                      class="col"
+                      :label="$t('labels.includeChild')"
+                      v-model="form.include_child"
+                      customLabelClass="col-3"
+                      customClass="col-9"
+                    >
+                    </c-checkbox>
+                  </div>
+                </div>
+                <c-input
+                  class="mb-1"
+                  v-model="form.remark"
+                  :label="$t('labels.remark')"
+                  type="text"
+                  name="Remark"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </c-input>
+                <c-select
+                  filter
+                  required
+                  class="mb-1"
+                  v-model="form.tax_and_service_code"
+                  @load="loadDropdown"
+                  :options="listDropdown.TaxAndService"
+                  keyName="code"
+                  labelName="name"
+                  :label="$t('labels.taxAndService')"
+                  name="Tax & Service"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </c-select>
+                <c-select
+                  filter
+                  required
+                  class=""
+                  v-model="form.charge_frequency_code"
+                  :options="listDropdown.ChargeFrequency"
+                  @load="loadDropdown"
+                  keyName="code"
+                  labelName="name"
+                  :label="$t('labels.chargeFrequency')"
+                  name="Charge Frequency"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </c-select>
+              </div>
+              <div class="col-md-4 col-sm-6">
+                <div class="row">
+                  <div
+                    class="accordion h-100"
+                    id="accordionPanelsStayOpenExample"
+                  >
+                    <div class="accordion-item h-100">
+                      <h2 class="accordion-header" id="panelsStayOpen-costing">
+                        <button
+                          class="accordion-button"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#panelsStayOpen-collapseOne"
+                          aria-expanded="true"
+                          aria-controls="panelsStayOpen-collapseOne"
+                        >
+                          {{ $t('labels.extraCharge') }}
+                        </button>
+                      </h2>
+                      <div
+                        id="panelsStayOpen-collapseOne"
+                        class="accordion-collapse collapse show"
+                        aria-labelledby="panelsStayOpen-costing"
+                      >
+                        <div class="accordion-body row">
+                          <c-input
+                            class="mb-1"
+                            spinner
+                            b-s
+                            v-model="form.max_pax"
+                            :label="$t('labels.maxPax')"
+                            type="text"
+                            name="Max Pax"
+                          >
+                            <template #append-end>
+                              <c-checkbox
+                                class="mb-1"
+                                @change="onChangePerPaxExtra"
+                                :label="$t('labels.perPax')"
+                                v-model="form.per_pax_extra"
+                                customClass="pl-0 prx-75"
+                              ></c-checkbox>
+                            </template>
+                          </c-input>
+                          <c-input
+                            showZeroNumber
+                            formatted
+                            v-model="form.extra_pax"
+                            :label="$t('labels.extraPax')"
+                            type="number"
+                            name="Extra Pax"
+                            customLabelClass="col-3"
+                            customClass="col-9"
+                          ></c-input>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- </div> -->
+                </div>
+              </div>
+              <hr />
+            </div>
+          </v-form>
+        </div>
+        <save-close-button
+          :isSaving="isSaving"
+          @save="onSubmit"
+          @close="handleClose"
+        ></save-close-button>
+      </div>
+    </div>
+  </transition>
+  <CDialog
+    v-show="showDialog"
+    w100
+    dialogTitle="Confirm"
+    @confirm="deleteData"
+    @cancel="showDialog= false"
+    confirm
+  >
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </CDialog>
+</section>

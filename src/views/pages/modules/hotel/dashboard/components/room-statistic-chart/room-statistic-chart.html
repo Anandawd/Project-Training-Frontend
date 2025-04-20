@@ -1,0 +1,31 @@
+<div class="col-lg-3 mb-3">
+  <div class="card h-100">
+    <div class="card-header">{{$t('title.today')}}</div>
+    <div class="card-body">
+      <chart-donut
+        :total-value="chartData.total.value"
+        :total-label="chartData.total.label"
+        :chart-data="chartData"
+        :chart-options="chartOptions"
+      ></chart-donut>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li
+        class="list-group-item pt-2 pb-2"
+        v-for="(item,index) in chartData.labels"
+        :key="index"
+      >
+        <div class="d-flex justify-content-between">
+          <div class="">{{chartData.labels[index]}}</div>
+          <div
+            class="text-white text-center text-bold"
+            style="width: 40px; border-radius: 5px"
+            :style="{background:chartData.datasets[0].backgroundColor[index]}"
+          >
+            {{chartData.datasets[0].data[index]}}
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

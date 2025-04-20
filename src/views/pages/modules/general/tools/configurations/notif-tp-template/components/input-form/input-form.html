@@ -1,0 +1,70 @@
+<!-- <Form @submit="onSave" ref="inputFormElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit" -->
+<Form @submit="onSave" ref="inputFormElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit"
+  class="input-form row" v-slot="{resetForm}">
+  <div class="card">
+    <div class="card-header">{{ title }}
+      <button type="button" class="float-end close-button btn" @click="onClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <c-input disabled required id="id" class="row mb-1" v-model="form.id" :label="$t('labels.id')" type="text"
+            name="Id" />
+          <c-input disabled required id="event" class="row mb-1" v-model="form.event_name" :label="$t('labels.event')"
+            type="text" name="Event" />
+          <c-input disabled required id="type" class="row mb-1" v-model="form.type_name" :label="$t('labels.type')"
+            type="text" name="Type" />
+        </div>
+        <div class="col-md-6">
+          <CSelect required @change="onChangeFormat" id="format" class="row mb-1" v-model="form.format_type"
+            :options="formatComboList" keyName="code" labelName="name" :label="$t('labels.format')" name="Format"
+            customLabelClass="col-3" customClass="col-9" />
+          <c-input required id="subject" class="row mb-1" v-model="form.subject" :label="$t('labels.subject')"
+            type="text" name="Subject" customLabelClass="col-3" customClass="col-9" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div v-if="messageEmail" class="row mb-2">
+            <div class="col-3 pr-0">
+              <label class="col-form-label" style="color:red" for="message">{{$t('labels.message')}}</label>
+            </div>
+            <div class="col-9">
+              <div class="position-relative">
+                <quill-editor ref="quill" v-model:content="form.template_message" :contentType="contentType"
+                  toolbar="full" theme="snow"></quill-editor>
+              </div>
+            </div>
+          </div>
+          <c-input v-if="messageWhatsapp" required id="plainText" class="mb-1" v-model="form.plain_text" type="textarea"
+            name="Plain Text" customLabelClass="col-3" :label="$t('labels.message')" customClass="col-9" />
+        </div>
+        <div class="col-md-6">
+          <div id="parentAccordion col-md-6" class="accordion">
+            <div class="accordion-item h-35">
+              <h2 class="accordion-header" id="panelsStayOpen-costing">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+                  aria-controls="panelsStayOpen-collapseOne">
+                  {{ $t('labels.variable') }}
+                </button>
+              </h2>
+              <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"
+                aria-labelledby="panelsStayOpen-costing">
+                <div class="accordion-body">
+                  <ag-grid-vue id="uniqueAGGridID" :style="agGridSetting.styleAgGridFrame0" :class="agGridSetting.themeAgGrid"
+                    :columnDefs="columnDefs" @selection-changed="onSelectionChanged" :rowData="rowData"
+                    :getRowId="getRowId" :gridOptions="gridOptions" :context="context" :frameworkComponents="frameworkComponents"
+                    :enableCellChangeFlash="true" :rowSelection="rowSelection" :defaultColDef="agGridSetting.defColDef"
+                    :suppressDragLeaveHidesColumns="true" @grid-ready="onGridReady"
+                    @cellContextMenu="handleRowRightClicked" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <save-close-button :isSaving="isSaving" @save="onSubmit" @close="onClose"></save-close-button>
+    </div>
+  </div>
+</Form>

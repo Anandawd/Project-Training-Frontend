@@ -1,0 +1,83 @@
+<section>
+  <div>
+    <h2>Room Types</h2>
+    <div class="row justify-content-between">
+      <p class="col">
+        In this section, you will define the different types of rooms available
+        in your hotel. Each room type represents a distinct category or
+        classification of accommodations offered to guests. By defining room
+        types, you can provide clarity and help guests make informed decisions
+        when selecting their desired room.
+      </p>
+      <div class="mb-1 col-md-2 align-self-baseline">
+        <button
+          type="button"
+          class="btn btn-primary w-100"
+          @click="handleInsert"
+        >
+          <i class="fa fa-plus"></i>
+          {{$t('buttons.insert')}}
+        </button>
+      </div>
+    </div>
+    <ag-grid-vue
+      :style="$global.agGrid.styleAgGridFrame1"
+      :class="$global.agGrid.themeAgGrid"
+      :columnDefs="columnDefs"
+      :rowData="rowData"
+      :gridOptions="gridOptions"
+      :defaultColDef="$global.agGrid.defColDef"
+      :context="context"
+      :getRowNodeId="getRowNodeId"
+      :frameworkComponents="frameworkComponents"
+      @gridReady="onGridReady"
+    />
+  </div>
+  <c-modal
+    v-if="showForm"
+    size="md"
+    :title="title"
+    confirm
+    save
+    @save="handleSave"
+    close
+    @close="showForm=false"
+  >
+    <v-form ref="formElement" @submit="onSubmit" :validation-schema="schema">
+      <c-input
+        :disabled="modeData==1"
+        class="mb-1"
+        customClass="col-3 plx-9"
+        :label="$t('labels.code')"
+        v-model="form.code"
+        name="Code"
+        :max="4"
+        uppercase
+        showError
+      ></c-input>
+      <c-input
+        class="mb-1"
+        :label="$t('labels.name')"
+        v-model="form.name"
+        :max="100"
+        name="Name"
+        showError
+      ></c-input>
+      <c-input
+        spinner
+        class="mb-1"
+        :max="100"
+        customClass="col-3 plx-9"
+        :label="$t('labels.idSort')"
+        v-model="form.id_sort"
+        name="ID sort"
+        showError
+      ></c-input>
+    </v-form>
+  </c-modal>
+  <c-dialog
+    v-if="showConfirmation"
+    @confirm="onDelete"
+    @close="showConfirmation=false"
+  ></c-dialog>
+</section>

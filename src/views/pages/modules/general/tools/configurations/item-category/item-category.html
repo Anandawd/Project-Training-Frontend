@@ -1,0 +1,48 @@
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="d-flex justify-content-end mb-2">
+      <button v-if="!hideButtons" title="Insert Item Category" type="button" class="btn btn-primary mr-1"
+        @click="handleShowForm('', $global.modeData.insert)"><i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insert') }}</button>
+    </div>
+    <transition name="slide-fade">
+      <multi-form :isSaving="isSaving" ref="multiFormElement" v-show="showForm" :default-form="form" :schema="schema"
+        :formType="$global.formType.itemCategory" :modeData="modeData" @save="handleSave" @close="onClose"
+        @repeatLoadDropdown="loadDropdown">
+      </multi-form>
+    </transition>
+    <transition name="slide-fade">
+      <other-cogs @close="onClose" @save="onSaveData" ref="otherCogsFormElement" @repeatLoadDropdown="loadDropdown">
+      </other-cogs>
+    </transition>
+    <transition name="slide-fade">
+      <other-cogs2 @close="onClose" @save="onSaveData" ref="otherCogs2FormElement" @repeatLoadDropdown="loadDropdown">
+      </other-cogs2>
+    </transition>
+    <transition name="slide-fade">
+      <other-expense @close="onClose" @save="onSaveData" ref="otherExpenseFormElement"
+        @repeatLoadDropdown="loadDropdown">
+      </other-expense>
+    </transition>
+    <search-filter :options="searchOptions" :searchDefault="searchDefault" @search="refreshData"></search-filter>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{ $t('title.itemCategory') }}</h3>
+      </div>
+      <div id="tooltip" class="card-body">
+        <!-- //Table -->
+        <ag-grid-vue :style="agGridSetting.styleAgGridFrame" :class="agGridSetting.themeAgGrid" :columnDefs="columnDefs"
+          :rowData="rowData" :paginationPageSize="paginationPageSize" :gridOptions="gridOptions" :context="context"
+          :frameworkComponents="frameworkComponents" :enableCellChangeFlash="true" :rowSelection="rowSelection"
+          :getContextMenuItems="getContextMenu" :defaultColDef="agGridSetting.defColDef" :masterDetail="true"
+          :detailCellRenderer="detailCellRenderer" :detailRowAutoHeight="detailRowAutoHeight"
+          :suppressDragLeaveHidesColumns="true" :suppressMakeColumnVisibleAfterUnGroup="true" :statusBar="statusBar"
+          @grid-ready="onGridReady" @cellContextMenu="handleRowRightClicked" :rowGroupPanelShow="rowGroupPanelShow" @rowDoubleClicked="rowDoubleClicked" />
+      </div>
+    </div>
+    <CDialog v-show="showDialog" w100 dialogTitle="Confirm" @confirm="deleteData" @cancel="showDialog= false" confirm>
+      <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+    </CDialog>
+  </div>
+</section>

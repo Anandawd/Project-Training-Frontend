@@ -1,0 +1,103 @@
+<div id="reservationFormElement" class="reservation-form">
+  <div class="card">
+    <div class="card-header">
+      {{ title }}
+      <button type="button" class="close-button btn" @click="onClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="card-body">
+      <div
+        id="reservation"
+        class="accordion-collapse collapse show"
+        aria-labelledby="reservation-header"
+        data-bs-toggle="reservation-form"
+      >
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            <transition name="slide-fade">
+              <div class="mt-2">
+                <transition name="slide-fade">
+                  <InputForm
+                    v-show="showForm"
+                    ref="inputFormElement"
+                    :isSaving="isSaving"
+                    :modeData="modeData"
+                    :defaultForm="form"
+                    @repeatLoadDropdown="loadBookingDepositList"
+                    :columnOptions="columnOptionsPayment"
+                    @save="handleSave"
+                    @close="showForm=false"
+                  />
+                </transition>
+              </div>
+            </transition>
+            <div class="d-flex justify-content-end mb-2 mt-2">
+              <button
+                v-if="!showForm"
+                title="Insert Schedule Payment"
+                type="button"
+                class="btn btn-primary"
+                @click="handleShowForm('', $global.modeData.insert)"
+              >
+                <i class="fa fa-plus mr-1" aria-hidden="true"></i
+                >{{$t('buttons.insert') }}
+              </button>
+            </div>
+            <search-filter
+              ref="searchFilter"
+              :options="searchOptions"
+              :searchDefault="searchDefault"
+              @search="refreshData"
+            >
+            </search-filter>
+            <div class="card">
+              <div class="card-header">
+                <pagination
+                  :paginationData="paginationData"
+                  @onPaginationChange="onPaginationChange"
+                >
+                </pagination>
+              </div>
+              <div id="tooltip" class="card-body">
+                <ag-grid-vue
+                  :style="agGridSetting.styleAgGridFrame2"
+                  :class="agGridSetting.themeAgGrid"
+                  :columnDefs="columnDefs"
+                  :rowData="rowData"
+                  :paginationPageSize="paginationPageSize"
+                  :gridOptions="gridOptions"
+                  :context="context"
+                  :frameworkComponents="frameworkComponents"
+                  :enableCellChangeFlash="true"
+                  :rowSelection="rowSelection"
+                  :getContextMenuItems="getContextMenu"
+                  :defaultColDef="agGridSetting.defColDef"
+                  :suppressDragLeaveHidesColumns="true"
+                  :suppressMakeColumnVisibleAfterUnGroup="true"
+                  :statusBar="statusBar"
+                  @grid-ready="onGridReady"
+                  @cellContextMenu="handleRowRightClicked"
+                  :rowGroupPanelShow="rowGroupPanelShow"
+                />
+              </div>
+            </div>
+            <CDialog
+              v-show="showDialog"
+              w100
+              dialogTitle="Confirm"
+              @confirm="deleteData"
+              @cancel="showDialog=false"
+              confirm
+              :isLoading="isLoading"
+              @close="showDialog=false"
+            >
+              <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+            </CDialog>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,123 @@
+<div class="deposit">
+  <div class="d-flex justify-content-end mb-2">
+    <button
+      v-if="!showForm"
+      type="button"
+      class="btn btn-primary"
+      @click="onClickInsert"
+    >
+      <i class="fa fa-plus" aria-hidden="true"></i>
+      {{$t('buttons.insert')}}
+    </button>
+  </div>
+  <transition name="slide-fade">
+    <div v-show="showForm" class="card">
+      <v-form
+        @submit="onSave"
+        ref="inputForm"
+        :validation-schema="schema"
+        @invalid-submit="focusOnInvalid"
+      >
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg">
+              <c-select
+                required
+                class="row mb-1"
+                :label="$t('commons.compliment')"
+                labelName="name"
+                keyName="code"
+                name="compliment"
+                v-model="form.compliment_hu"
+                :options="options.complimentTypes"
+                @change="onChangeComplimentType"
+              ></c-select>
+            </div>
+            <div class="col-lg">
+              <c-datepicker
+                required
+                v-model="form.from_date"
+                class="mb-1"
+                :label="$t('labels.startDate')"
+                type="date"
+                valueType="YYYY-MM-DD"
+                format="DD/MM/YYYY"
+                :clearable="false"
+                :disabled-date="fromDateDisabled"
+                name="Start date"
+                @input="onChangeFromDate"
+              ></c-datepicker>
+              <c-datepicker
+                required
+                v-model="form.to_date"
+                class="mb-1"
+                :label="$t('labels.endDate')"
+                type="date"
+                valueType="YYYY-MM-DD"
+                format="DD/MM/YYYY"
+                :clearable="false"
+                :disabled-date="toDateDisabled"
+                name="End date"
+              ></c-datepicker>
+            </div>
+            <div class="col-lg">
+              <c-select
+                required
+                class="mb-1"
+                :label="$t('commons.roomRate')"
+                labelName="name"
+                keyName="code"
+                name="Room rate"
+                v-model="form.room_rate_code"
+                :options="options.roomRates"
+                @change="onChangeRoomRate()"
+              ></c-select>
+              <c-input
+                :disabled="form.compliment_hu!='N'"
+                formatted
+                class="mb-1"
+                type="number"
+                :label="$t('commons.rateAmount')"
+                name="rate"
+                v-model="form.rate"
+              ></c-input>
+            </div>
+          </div>
+          <save-close-button
+            @close="showForm=false"
+            :isSaving="isSaving"
+            @save="onClickSave()"
+          ></save-close-button>
+        </div>
+      </v-form>
+    </div>
+  </transition>
+  <ag-grid-vue
+    pagination="true"
+    :style="$global.agGrid.styleAgGridFrame3"
+    :class="$global.agGrid.themeAgGrid"
+    :paginationPageSize="paginationPageSize"
+    :enableRangeSelection="true"
+    :gridOptions="gridOptions"
+    :context="context"
+    :columnDefs="columnDefs"
+    :frameworkComponents="frameworkComponents"
+    :rowData="rowData"
+    :defaultColDef="$global.agGrid.defColDef"
+    :getContextMenuItems="getContextMenu"
+    :suppressDragLeaveHidesColumns="true"
+    :suppressMakeColumnVisibleAfterUnGroup="true"
+    :enableCellChangeFlash="true"
+    :rowSelection="rowSelection"
+    :statusBar="statusBar"
+    :rowClassRules="rowClassRules"
+    @grid-ready="onGridReady"
+    @cellContextMenu="handleRowRightClicked"
+  ></ag-grid-vue>
+  <c-dialog
+    v-if="showDialog"
+    :title="$t('messages.confirmationTitle')"
+    @close="showDialog=false"
+    @confirm="deleteScheduledRate"
+  ></c-dialog>
+</div>

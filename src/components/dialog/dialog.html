@@ -1,0 +1,78 @@
+<div class="modal-mask custom-dialog" @keydown="handleShortcut">
+  <div class="modal-wrapper">
+    <div @click="!confirm ? $emit('close') : ''" class="dialog-container">
+      <div
+        class="modal-dialog modal-dialog-centered"
+        :class="`modal-${size}`"
+        role="document"
+      >
+        <div class="dialog-content">
+          <div class="dialog-header">
+            <span class="dialog-title x4">
+              {{(dialogTitle || title) || $t('messages.confirmationTitle')}}
+            </span>
+            <button
+              type="button"
+              class="close d-flex justify-content-end"
+              data-dismiss="modal"
+              aria-label="Close"
+              @click="handleClose"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="dialog-body">
+            <slot name="body"> Are you sure? </slot>
+          </div>
+          <div class="dialog-footer">
+            <slot name="footer">
+              <button
+                v-if="close"
+                :disabled="isSaving || isLoading"
+                class="btn btn-primary modal-default-button"
+                @click="$emit('close')"
+              >
+                <span
+                  v-if="isSaving || isLoading"
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                OK
+              </button>
+              <div v-else>
+                <button
+                  :disabled="isSaving || isLoading"
+                  focus
+                  type="button"
+                  :class="cancelClass"
+                  class="btn mr-1"
+                  @click="$emit('cancel')"
+                >
+                  <i class="fa fa-times"></i>
+                  {{cancelText}}
+                </button>
+                <button
+                  :disabled="isSaving || isLoading"
+                  type="button"
+                  class="btn"
+                  :class="confirmClass"
+                  @click="$emit('confirm')"
+                >
+                  <span
+                    v-if="isSaving || isLoading"
+                    class="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  <i class="fa fa-check"></i>
+                  {{confirmText}}
+                </button>
+              </div>
+            </slot>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

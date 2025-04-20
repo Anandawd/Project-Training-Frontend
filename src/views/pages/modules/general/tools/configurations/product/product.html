@@ -1,0 +1,83 @@
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="d-flex justify-content-end mb-2">
+      <button v-if="!showForm && !showBarcodeForm" title="Set Empty Barcode" type="button"
+        class="btn btn-secondary mr-1" @click="handleShowFormBarcode()">
+        {{ $t('buttons.setEmptyBarcode') }}
+      </button>
+      <button v-if="!showForm && !showBarcodeForm" title="Set All Barcode" type="button" class="btn btn-secondary mr-1"
+        @click="handleShowFormBarcode()">
+        {{ $t('buttons.setAllBarcode') }}
+      </button>
+      <button v-if="!showForm && !showBarcodeForm" title="Insert Product" type="button" class="btn btn-primary mr-1"
+        @click="handleShowForm('', $global.modeData.insert)">
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insert') }}
+      </button>
+    </div>
+    <transition>
+      <div class="pl-2 pr-2">
+        <InputForm ref="inputFormElement" :maxLengthCode="10" :maxLengthName="100" :defaultForm="form" v-show="showForm"
+          :schema="schema" :formType="$global.formType.product" :modeData="modeData" @save="handleSave"
+          @close="showForm=false" @repeatLoadDropdown="loadDropdown" />
+      </div>
+    </transition>
+    <transition v-if="!$global.modeData.insert">
+      <div class="pl-2 pr-2">
+        <BarcodeForm ref="barcodeFormElement" :isSaving="isSaving" :maxLengthCode="10" :maxLengthName="100"
+          :defaultForm="form" v-show="showBarcodeForm" :schema="schema" :formType="$global.formType.product"
+          :modeData="modeData" @save="handleSave" @close="showBarcodeForm=false" @enter="onEnter" />
+      </div>
+    </transition>
+    <search-filter :options="searchOptions" :searchDefault="searchDefault" @search="refreshData">
+      <template v-slot="{search, onRefresh}">
+        <div class="col-md-6 d-flex mb-md-4 gap-1">
+          <c-select class="mb-1 w-50" @change="onRefresh" v-model="search.filter[0]" :options="listDropdown.Outlet"
+            keyName="code" labelName="name" :label="$t('labels.outlet')" name="Outlet">
+          </c-select>
+        </div>
+        <div class="col-md-6 d-flex mb-md-4 gap-1">
+          <div class="row mr-1">
+            <c-radio class="" :label="$t('commons.filter.checkList.all')" v-model="search.filter[1]" value="0"
+              @change="onRefresh">
+            </c-radio>
+          </div>
+          <div class="row">
+            <c-radio class="mr-1" :label="$t('commons.filter.checkList.active')" v-model="search.filter[1]" value="1"
+              @change="onRefresh">
+            </c-radio>
+          </div>
+          <div class="row">
+            <c-radio class="mr-1" :label="$t('commons.filter.checkList.notActive')" v-model="search.filter[1]" value="2"
+              @change="onRefresh">
+            </c-radio>
+          </div>
+          <div class="row">
+            <c-radio class="mr-1" :label="$t('commons.filter.checkList.sold')" v-model="search.filter[1]" value="3"
+              @change="onRefresh">
+            </c-radio>
+          </div>
+        </div>
+      </template>
+    </search-filter>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{ $t('title.product') }}</h3>
+      </div>
+      <div id="tooltip" class="card-body">
+        <!-- //Table -->
+        <ag-grid-vue :style="agGridSetting.styleAgGridFrame" :class="agGridSetting.themeAgGrid" :columnDefs="columnDefs"
+          :rowData="rowData" :paginationPageSize="paginationPageSize" :gridOptions="gridOptions" :context="context"
+          :frameworkComponents="frameworkComponents" :enableCellChangeFlash="true" :rowSelection="rowSelection"
+          :getContextMenuItems="getContextMenu" :defaultColDef="agGridSetting.defColDef"
+          :suppressDragLeaveHidesColumns="true" :suppressMakeColumnVisibleAfterUnGroup="true" :statusBar="statusBar"
+          @grid-ready="onGridReady" @cellContextMenu="handleRowRightClicked" :rowGroupPanelShow="rowGroupPanelShow"
+          @cellValueChanged="cellValueChanged" @rowDoubleClicked="rowDoubleClicked" />
+      </div>
+    </div>
+    <CDialog :isLoading="isLoading" v-show="showDialog" w100 dialogTitle="Confirm" @confirm="deleteData" @cancel="showDialog= false" confirm>
+      <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+    </CDialog>
+  </div>
+</section>

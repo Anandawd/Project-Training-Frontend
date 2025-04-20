@@ -1,0 +1,169 @@
+<div>
+  <div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+        <button
+          class="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#panelsStayOpen-collapseOne"
+          aria-expanded="true"
+          aria-controls="panelsStayOpen-collapseOne"
+        >
+          User Sub Department
+        </button>
+      </h2>
+      <div
+        id="panelsStayOpen-collapseOne"
+        class="accordion-collapse collapse show"
+        aria-labelledby="panelsStayOpen-headingOne"
+      >
+        <div class="accordion-body">
+          <div class="row mb-1">
+            <div class="col text-bold"></div>
+            <div class="col">
+              <button
+                class="btn btn-primary float-end"
+                type="button"
+                @click="handleInsert"
+              >
+                <i class="fa fa-plus"></i>
+                {{$t('buttons.insert')}}
+              </button>
+            </div>
+          </div>
+          <ag-grid-vue
+            disabled
+            :style="agGridSetting.styleAgGridFrame0"
+            :class="agGridSetting.themeAgGrid"
+            :columnDefs="columnDefs"
+            :rowData="rowData"
+            :paginationPageSize="paginationPageSize"
+            :gridOptions="gridOptions"
+            :context="context"
+            :frameworkComponents="frameworkComponents"
+            :enableCellChangeFlash="true"
+            :rowSelection="rowSelection"
+            :rowGroupPanelShow="false"
+            :getContextMenuItems="getContextMenu"
+            :defaultColDef="agGridSetting.defColDef"
+            :masterDetail="true"
+            :suppressDragLeaveHidesColumns="true"
+            :detailRowAutoHeight="detailRowAutoHeight"
+            :suppressMakeColumnVisibleAfterUnGroup="true"
+            @grid-ready="onGridReady"
+            @cellContextMenu="handleRowRightClicked"
+            @selection-changed="onSelectionChanged"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <c-modal
+    v-if="showInputForm"
+    size="md"
+    save
+    close
+    confirm
+    :title="title"
+    @close="showInputForm=false"
+    @save="handleSave"
+  >
+    <template #body>
+      <v-form
+        @submit="onSubmit"
+        ref="inputFormElement"
+        :validation-schema="schema"
+        @invalid-submit="onInvalidSubmit"
+        class="input-form"
+      >
+        <c-input
+          disabled
+          class="mb-1"
+          :label="$t('labels.userId')"
+          v-model="form.user_id"
+          showError
+          half
+          name="User ID"
+        ></c-input>
+        <c-select
+          required
+          class="mb-1"
+          :label="$t('labels.subDepartment')"
+          v-model="form.sub_department_code"
+          :options="subDepartments"
+          keyName="code"
+          labelName="name"
+          showError
+          name="Sub Department"
+        ></c-select>
+        <div class="row">
+          <div class="col-3"></div>
+          <c-checkbox
+            class="mb-1 col"
+            :label="$t('labels.canApprovePRAsDepartmentHead')"
+            v-model="form.is_can_inv_pr_approve1"
+          ></c-checkbox>
+        </div>
+        <div class="row">
+          <div class="col-3"></div>
+          <c-checkbox
+            class="mb-1 col"
+            :label="$t('labels.canApprovePRAsPurchaseControl')"
+            v-model="form.is_can_inv_pr_approve12"
+          ></c-checkbox>
+        </div>
+        <div class="row">
+          <div class="col-3"></div>
+          <c-checkbox
+            class="mb-1 col"
+            :label="$t('labels.canApprovePRAsCostControl')"
+            v-model="form.is_can_inv_pr_approve2"
+          ></c-checkbox>
+        </div>
+        <div class="row">
+          <div class="col-3"></div>
+          <c-checkbox
+            class="mb-1 col"
+            :label="$t('labels.canFinalApprovePR')"
+            v-model="form.is_can_inv_pr_approve3"
+          ></c-checkbox>
+        </div>
+        <div class="row">
+          <div class="col-3"></div>
+          <c-checkbox
+            class="mb-1 col"
+            :label="$t('labels.canAssignPRPrice')"
+            v-model="form.is_can_inv_pr_assign_price"
+          ></c-checkbox>
+        </div>
+        <div class="row">
+          <div class="col-3"></div>
+          <c-checkbox
+            class="mb-1 col"
+            :label="$t('labels.canApproveSRAsDepartmentHead')"
+            v-model="form.is_can_inv_sr_approve1"
+          ></c-checkbox>
+        </div>
+        <div class="row">
+          <div class="col-3"></div>
+          <c-checkbox
+            class="mb-1 col"
+            :label="$t('labels.canFinalApproveSR')"
+            v-model="form.is_can_inv_sr_approve2"
+          ></c-checkbox>
+        </div>
+        <!-- <c-input :label="$t('label.userID')"></c-input> -->
+      </v-form>
+    </template>
+  </c-modal>
+  <c-dialog
+    v-if="showConfirm"
+    :title="$t('messages.confirmation')"
+    @confirm="onDelete"
+    @cancel="showConfirm=false"
+  >
+    <template #body> {{$t('messages.deleteConfirm2')}} </template>
+  </c-dialog>
+</div>

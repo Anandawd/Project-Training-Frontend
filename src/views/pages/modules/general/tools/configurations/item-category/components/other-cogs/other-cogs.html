@@ -1,0 +1,32 @@
+<!-- Main content -->
+<section class="content">
+  <transition name="slide-fade-right">
+    <div v-show="showForm">
+      <div class="card h-100">
+        <div class="card-header">
+          <h3 class="card-title">{{ title }}
+            <button type="button" class="close-button btn" @click="showForm=false"><i class="fas fa-times"></i></button>
+          </h3>
+        </div>
+        <div class="card-body">
+          <Form @submit="handleSave" ref="otherCogsElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit"
+            class="input-form row" v-slot="{resetForm}">
+            <div class="row">
+              <div class="col-md-6">
+                <c-select required class="mb-1" v-model="form.sub_department_code" :options="listDropdown.SubDepartment" @load="loadDropdown"
+                  keyName="code" labelName="name" :label="$t('labels.subDepartment')" name="Sub Department"
+                  customLabelClass="col-3" customClass="col-9">
+                </c-select>
+                <c-select required class="mb-1" v-model="form.journal_account_code" @load="loadDropdown" :options="listDropdown.JournalAccountCosting"
+                  keyName="code" labelName="name" :label="$t('labels.cogsAccount')" name="COGS Account"
+                  customLabelClass="col-3" customClass="col-9">
+                </c-select>
+              </div>
+            </div>
+          </Form>
+        </div>
+          <save-close-button :isSaving="isSaving" @save="onSubmit" @close="onClose"></save-close-button>
+      </div>
+    </div>
+  </transition>
+</section>

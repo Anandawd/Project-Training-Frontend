@@ -1,0 +1,201 @@
+<!-- <Form @submit="onSave" ref="inputFormElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit" -->
+
+<div class="modal-mask custom-modal">
+  <div class="modal-wrapper">
+    <div class="modal-container">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width: 1200px !important;" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="modal-title">{{title}} Template</h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="onClose">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <Form @submit="onSave" ref="inputFormValidation" :validation-schema="schema"
+              @invalid-submit="onInvalidSubmit" class="input-form row" v-slot="{resetForm}">
+              <div id="parrentAccordion" class="accordion pr-4 mb-1">
+                <div class="accordion-item">
+                  <h6 class="accordion-header" id="itemInformationHeader">
+                    <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                      data-bs-target="#itemInformation" aria-controls="itemInformation" aria-expanded="false">
+                      {{ $t('title.templateInformation') }}
+                    </button>
+                  </h6>
+                  <div id="itemInformation" class="accordion-collapse collapse show p-3"
+                    aria-labelledby="itemInformationHeader">
+                    <div class="accordion-body">
+                      <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                          <c-input v-model="form.template_name" id="templateName" required class="mb-1" type="text"
+                            name="templateName" :label="$t('labels.templateName')" customLabelClass="col-4"
+                            customClass="col-8" />
+                          <c-input v-model="form.header_remark" id="headerRemark" class="mb-1" type="text"
+                            name="headerRemark" :label="$t('labels.headerRemark')" customLabelClass="col-4"
+                            customClass="col-8" />
+                          <div class="row justify-content-end">
+                            <div class="col-4">
+                              <checkbox v-model="form.show_footer" id="showFooter" class="mb-1" name="showFooter"
+                                :label="$t('labels.showFooter')" />
+                            </div>
+                            <div class="col-4">
+                              <checkbox v-model="form.show_page_number" id="showPageNumber" class="mb-1"
+                                name="showPageNumber" :label="$t('labels.showPageNumber')" customLabelClass="col-4"
+                                customClass="col-8" />
+                            </div>
+                          </div>
+                          <c-select required id="paperSize" :options="paperSize" class="mb-1" keyName="code"
+                            @change="handleChangePaperSize()" labelName="name" v-model="form.paper_size"
+                            :label="$t('labels.paperSize')" name="paperSize" customLabelClass="col-4 text-dark"
+                            customClass="col-8">
+                          </c-select>
+                        </div>
+
+                        <div class="col-md-4 col-sm-6">
+                          <c-input v-model="form.width" :label="$t('labels.width')" id="width" class="mb-1"
+                            type="number" formatted name="width" customLabelClass="col-4" customClass="col-8"
+                            :disabled="form.paper_size != 0" />
+                          <c-input v-model="form.height" :label="$t('labels.height')" id="height" class="mb-2"
+                            type="number" formatted name="height" customLabelClass="col-4" customClass="col-8"
+                            :disabled="form.paper_size != 0" />
+                          <div class="row justify-content-between mb-1">
+                            <div class="col-4">
+
+                            </div>
+                            <div class="col-4">
+                              <c-radio v-model="form.is_portrait" id="portrait" class="mb-1" value="1" name="portrait"
+                                :label="$t('labels.portrait')" customLabelClass="col-4" customClass="col-8" />
+                            </div>
+                            <div class="col-4">
+                              <c-radio v-model="form.is_portrait" id="landscape" class="mb-1" value="0" name="landscape"
+                                :label="$t('labels.landscape')" customLabelClass="col-4" customClass="col-8" />
+                            </div>
+                          </div>
+                          <c-input v-model="form.header_height" id="headerHeight" class="mb-1" type="number"
+                            name="headerHeight" :label="$t('labels.headerHeight')" customLabelClass="col-4"
+                            customClass="col-8" />
+                        </div>
+
+                        <div class="col-md-4 col-sm-6">
+                          <c-input v-model="form.data_height" id="dataHeight" class="mb-1" type="number"
+                            name="dataHeight" :label="$t('labels.dataHeight')" customLabelClass="col-4"
+                            customClass="col-8" />
+                          <div class="row justify-content-end">
+                            <div class="col-8">
+                              <checkbox v-model="form.horizontal_border" id="horizontalBorder" class="mb-1"
+                                name="horizontalBorder" :label="$t('labels.horizontalBorder')" />
+                            </div>
+                            <div class="col-8">
+                              <checkbox v-model="form.vertical_border" id="verticalBorder" class="mb-1"
+                                name="verticalBorder" :label="$t('labels.verticalBorder')" customLabelClass="col-4"
+                                customClass="col-8" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h6 class="accordion-header" id="itemInformationHeader">
+                    <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                      data-bs-target="#itemInformation" aria-controls="itemInformation" aria-expanded="false">
+                      {{ $t('title.signInformation') }}
+                    </button>
+                  </h6>
+                  <div id="itemInformation" class="accordion-collapse collapse show p-3"
+                    aria-labelledby="itemInformationHeader">
+                    <div class="accordion-body">
+                      <div class="row">
+                        <div class="col-md-3">
+                          <c-input v-model="form.sign_section1" id="signSection1" class="mb-1" type="text" name="signSection1"
+                            :label="$t('labels.signSection1')" customLabelClass="col-5" customClass="col-7" />
+                          <c-input v-model="form.sign_name1" id="signName1" class="mb-1" type="text" name="signName1"
+                            :label="$t('labels.signName1')" customLabelClass="col-5" customClass="col-7" />
+                          <c-input v-model="form.sign_position1" id="signPosition1" class="mb-1" type="text"
+                            name="signPosition1" :label="$t('labels.signPosition1')" customLabelClass="col-5"
+                            customClass="col-7" />
+                        </div>
+                        <div class="col-md-3">
+                          <c-input v-model="form.sign_section2" id="signSection2" class="mb-1" type="text" name="signSection2"
+                          :label="$t('labels.signSection2')" customLabelClass="col-5" customClass="col-7" />
+                          <c-input v-model="form.sign_name2" id="signName2" class="mb-1" type="text" name="signName2"
+                            :label="$t('labels.signName2')" customLabelClass="col-5" customClass="col-7" />
+                          <c-input v-model="form.sign_position2" id="signPosition2" class="mb-1" type="text"
+                            name="signPosition2" :label="$t('labels.signPosition2')" customLabelClass="col-5"
+                            customClass="col-7" />
+                        </div>
+                        <div class="col-md-3">
+                          <c-input v-model="form.sign_section3" id="signSection3" class="mb-1" type="text" name="signSection3"
+                          :label="$t('labels.signSection3')" customLabelClass="col-5" customClass="col-7" />
+                          <c-input v-model="form.sign_name3" id="signName3" class="mb-1" type="text" name="signName3"
+                            :label="$t('labels.signName3')" customLabelClass="col-5" customClass="col-7" />
+                          <c-input v-model="form.sign_position3" id="signPosition3" class="mb-1" type="text"
+                            name="signPosition3" :label="$t('labels.signPosition3')" customLabelClass="col-5"
+                            customClass="col-7" />
+                        </div>
+                        <div class="col-md-3">
+                          <c-input v-model="form.sign_section4" id="signSection4" class="mb-1" type="text" name="signSection4"
+                          :label="$t('labels.signSection4')" customLabelClass="col-5" customClass="col-7" />
+                          <c-input v-model="form.sign_name4" id="signName4" class="mb-1" type="text" name="signName4"
+                            :label="$t('labels.signName4')" customLabelClass="col-5" customClass="col-7" />
+                          <c-input v-model="form.sign_position4" id="signPosition4" class="mb-1" type="text"
+                            name="signPosition4" :label="$t('labels.signPosition4')" customLabelClass="col-5"
+                            customClass="col-7" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-md-3">
+                  <AvailableFieldList ref="availableListElement" :schema="schema" :modeData="modeData" />
+                </div>
+                <div class="col-md-2">
+                  <GroupFieldName ref="groupFieldNameElement" :schema="schema" :modeData="modeData" />
+                  <OrderFieldName ref="orderFieldNameElement" :schema="schema" :modeData="modeData" />
+                  <!-- <c-input v-model="form.grouping_level" id="groupingLevel" class="mb-1" type="number" name="groupingLevel"
+            :label="$t('labels.groupingLevel')" customLabelClass="col-7" customClass="col-5" /> -->
+                  <ReportGrouping ref="reportGroupingElement" :schema="schema" :modeData="modeData" />
+                </div>
+                <div class="col-7">
+                  <div class="card">
+                    <div class="card-header">
+                      {{ $t('title.templateFieldList') }}
+
+                      <div>
+
+                      </div>
+                    </div>
+                    <div id="tooltip" @dragover="gridDragOver" @drop="gridDrop" class="card-body">
+                      <!-- //Table -->
+                      <ag-grid-vue style="width:100%; height:904px" :class="agGridSetting.themeAgGrid"
+                        :columnDefs="columnDefs" :rowData="rowData" :paginationPageSize="paginationPageSize"
+                        :gridOptions="gridOptions" :context="context" :frameworkComponents="frameworkComponents"
+                        :enableCellChangeFlash="true" :rowSelection="rowSelection"
+                        :rowGroupPanelShow="rowGroupPanelShow" :getContextMenuItems="getContextMenu"
+                        :defaultColDef="agGridSetting.defColDef" :masterDetail="true"
+                        :detailCellRenderer="detailCellRenderer" :detailRowAutoHeight="detailRowAutoHeight"
+                        :suppressMakeColumnVisibleAfterUnGroup="true" :statusBar="statusBar"
+                        :getRowNodeId="getRowNodeId" @grid-ready="onGridReady" @cellContextMenu="handleRowRightClicked"
+                        :rowDragManaged="true" />
+                    </div>
+
+                  </div>
+                  <button type="button" class="btn btn-danger mr-1 float-right" @click="clearList">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                    Clear List
+                  </button>
+                </div>
+              </div>
+            </Form>
+
+          </div>
+          <save-close-button :isSaving="isSaving" @save="onSubmit" @close="onClose"></save-close-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

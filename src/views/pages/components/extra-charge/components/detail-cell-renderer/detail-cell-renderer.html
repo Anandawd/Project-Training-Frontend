@@ -1,0 +1,7 @@
+<section>
+  <breakdown-table ref="breakdownElement" @delete="onDeleteBreakdown" @duplicate="onDuplicateBreakdown" @edit="onEditBreakdown" id="breakdown" :rowData="breakdownRowData">
+  </breakdown-table>
+  <CDialog v-show="showDialogBreakdown" w100 dialogTitle="Confirm" @confirm="deleteDataBreakdown" @cancel="showDialogBreakdown= false" confirm>
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </CDialog>
+</section>

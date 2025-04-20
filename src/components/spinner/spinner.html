@@ -1,0 +1,8 @@
+<div>
+  <label class="col-form-label" :for="ID">
+    <input :id="ID" class="checkbox mr-1" type="radio" :name="name" 
+    :checked="isChecked"
+    @change="onValueChange($event)"
+    :value="value"  >
+    {{ label }}</label>
+</div>

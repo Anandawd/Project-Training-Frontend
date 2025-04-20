@@ -1,0 +1,43 @@
+<CDialog
+  class="reason-dialog"
+  size="md"
+  confirm
+  close
+  :title="(title ? `${title} - `:'')+$t('credential.pleaseInputReason')"
+  @close="onClose"
+>
+  <template #body>
+    <slot name="body" :reason="reason">
+      <!-- <c-input required class="row mb-1" type="text" formatted label="" name="reason" v-model="reason"
+        @keyup.enter="onSave"></c-input> -->
+    </slot>
+    <div class="row">
+      <div class="form-group">
+        <label for="reservationNumberList">{{$t('labels.reason')}}</label>
+        <textarea
+          id="inputReason"
+          v-model="reason"
+          type="text"
+          class="form-control"
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+  </template>
+  <template #footer>
+    <button type="button" class="btn btn-primary mr-1" @click="onSave">
+      <span
+        v-if="isLoading"
+        class="spinner-border spinner-border-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      <i v-else class="fas fa-save"></i>
+      {{ $t("buttons.save") }}
+    </button>
+    <button type="button" class="btn btn-secondary" @click="onClose">
+      <i class="fa fa-times" aria-hidden="true"></i>
+      {{ $t('buttons.cancel') }}
+    </button>
+  </template>
+</CDialog>

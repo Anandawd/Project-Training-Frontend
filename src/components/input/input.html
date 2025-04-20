@@ -1,0 +1,152 @@
+<div
+  class="c-input position-relative"
+  :class="{ 'has-error': !valid || !meta.valid && meta.touched, 'row': inlineLabel, 'focus':focus }"
+>
+  <label
+    v-if="label"
+    :for="ID"
+    class="col-form-label d-flex"
+    :class="[!inlineLabel ? '': (multicol ? 'col-6'
+      : (customLabelClass ? customLabelClass : 'col-3')), {'required': required} ]"
+    ><slot name="label-left"></slot>{{ label }}<slot name="label-right"></slot>
+  </label>
+  <div
+    v-if="spinner"
+    :class="[ !inlineLabel ? '' : ( multicol ? 'col-6' : half ? 'col-4' : (customClass ? customClass : 'col'))]"
+    class="input-group number-spinner align-items-center"
+  >
+    <span class="input-group-btn">
+      <button
+        type="button"
+        :disabled="disabled"
+        class="btn btn-left btn-default"
+        data-dir="dwn"
+        @click.prevent="subButton"
+      >
+        <span class="fas fa-minus"></span>
+      </button>
+    </span>
+    <input
+      :tabindex="tabindex"
+      :disabled="disabled"
+      class="form-control text-center"
+      :title="title ?? label"
+      v-model="displayValue"
+      :max="max"
+      :min="min"
+      :maxLength="50"
+      formatted
+      :autocomplete="autocomplete"
+      :id="ID"
+      @blur="isInputActive = false"
+      @focus="onFocus"
+    />
+    <span class="input-group-btn">
+      <button
+        :disabled="disabled"
+        type="button"
+        class="btn btn-right btn-default"
+        data-dir="up"
+        @click.prevent="addButton"
+      >
+        <span class="fas fa-plus"></span>
+      </button>
+    </span>
+
+    <slot name="append-end"></slot>
+  </div>
+  <div
+    v-else
+    :class="[ !inlineLabel ? '' : ( multicol ? 'col-6' : half ? 'col-4' : (customClass ? customClass : 'col'))]"
+    class="input-group align-items-center"
+  >
+    <slot name="append-start"></slot>
+
+    <!-- // Number -->
+    <input
+      v-if="type==='number' && formatted"
+      :id="ID"
+      :tabindex="tabindex"
+      v-model="displayValue"
+      class="form-control text-right"
+      type="text"
+      inputmode="numeric"
+      :maxLength="27"
+      :max="max"
+      :min="min"
+      :label="label"
+      :title="title ?? label"
+      :disabled="disabled"
+      :autocomplete="autocomplete"
+      :required="required"
+      @click="select"
+      @blur="isInputActive = false"
+      @focus="onFocus"
+    />
+    <!-- Textarea -->
+    <textarea
+      v-else-if="type=='textarea'"
+      v-model="displayValue"
+      type="text"
+      class="form-control"
+      :placeholder="placeholder"
+      :rows="rows"
+      :tabindex="tabindex"
+      :disabled="disabled"
+      :id="ID"
+      :title="title ?? label"
+      :autocomplete="autocomplete"
+    />
+    <!-- Color Input -->
+    <b-form-input
+      v-else-if="type=='color'"
+      :id="ID"
+      :tabindex="tabindex"
+      :placeholder="placeholder"
+      :type="type"
+      v-model="displayValue"
+    ></b-form-input>
+    <!-- Default Input -->
+    <input
+      v-else
+      :tabindex="tabindex"
+      :disabled="disabled"
+      :required="required"
+      :title="title ?? label"
+      :type="type"
+      :autocomplete="autocomplete"
+      :id="ID"
+      class="form-control"
+      :placeholder="placeholder"
+      @click="select"
+      @blur="$emit('blur')"
+      v-model="displayValue"
+      :minLength="min"
+      :min="min"
+      :maxLength="max"
+    />
+    <div v-if="icon" class="input-group-append">
+      <div class="input-group-text">
+        <i :class="icon" aria-hidden="true"></i>
+      </div>
+    </div>
+    <!-- <slot name="customIcon" class="input-group-append">
+      <div class="input-group-text">
+        <i :class="icon" aria-hidden="true"></i>
+      </div>
+    </slot> -->
+    <slot name="append-end"></slot>
+  </div>
+  <div v-if="showError" class="row">
+    <div
+      class="col-form-label d-flex"
+      :class="[!inlineLabel ? '': (multicol ? 'col-6'
+      : (customLabelClass ? customLabelClass : 'col-3')), {'required': required} ]"
+    ></div>
+    <span
+      class="text-danger pl-2 text-error"
+      :class="[ !inlineLabel ? '' : ( multicol ? 'col-6' : half ? 'col-4' : (customClass ? customClass : 'col'))]"
+      >{{errorText ?? errorMessage}}</span
+    >
+  </div>
+</div>

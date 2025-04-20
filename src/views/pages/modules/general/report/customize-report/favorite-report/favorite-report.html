@@ -1,0 +1,15 @@
+<div class="card">
+  <div class="card-header">
+    {{ $t('title.favoriteReport') }}
+  </div>
+  <div id="tooltip" class="card-body" @dragover="gridDragOver" @drop="gridDrop">
+    <!-- //Table -->
+    <ag-grid-vue :style="agGridSetting.styleAgGridFrame2" :class="agGridSetting.themeAgGrid" :columnDefs="columnDefs"
+      :rowData="rowData" :paginationPageSize="paginationPageSize" :gridOptions="gridOptions" :context="context"
+      :frameworkComponents="frameworkComponents" :enableCellChangeFlash="true" :rowSelection="rowSelection"
+      :rowGroupPanelShow="rowGroupPanelShow" :getContextMenuItems="getContextMenu"
+      :defaultColDef="agGridSetting.defColDef" :masterDetail="true" :detailCellRenderer="detailCellRenderer"
+      :detailRowAutoHeight="detailRowAutoHeight" :suppressMakeColumnVisibleAfterUnGroup="true" :statusBar="statusBar"
+      @grid-ready="onGridReady" @cellContextMenu="handleRowRightClicked" :rowDragManaged="true" />
+  </div>
+</div>

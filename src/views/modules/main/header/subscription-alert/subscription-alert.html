@@ -1,0 +1,23 @@
+<div v-if="expireSoon">
+  <router-link to="/subscription-status">
+    <div
+      id="subscription-status"
+      data-toggle="tooltip"
+      data-placement="top"
+      title="Tooltip on top"
+      class="nav-item align-self-center mr-1 mt-1"
+      style="font-size: 21px; color: orangered"
+    >
+      <i class="fas fa-exclamation-triangle"></i></div
+  ></router-link>
+
+  <b-popover
+    target="subscription-status"
+    triggers="hover"
+    :content="status"
+    placement="top"
+  >
+    <template #title><div>Subscription Status</div></template>
+    <div v-html="status"></div>
+  </b-popover>
+</div>

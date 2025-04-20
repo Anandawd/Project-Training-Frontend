@@ -1,0 +1,14 @@
+.search{
+  .form-control{ 
+  height: auto;
+  }
+}
+
+.configuration-item{
+    color: rgba(48, 48, 48, 0.699);
+  &:hover{
+    cursor: pointer;
+    color: black;
+    // border: 1px solid black;
+  } 
+}

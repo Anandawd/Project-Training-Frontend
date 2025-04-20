@@ -1,0 +1,181 @@
+<v-form
+  @submit="handleSave"
+  ref="folioFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form"
+>
+  <div class="row">
+    <div class="col-md-6">
+      <c-select
+        id="guestName"
+        filter
+        required
+        customLabelClass="col-3"
+        selectType="column"
+        :columnOptions="columnFolioOptions"
+        customClass="col-9"
+        class="mb-1"
+        v-model="form.folio_number"
+        keyName="folio_number"
+        :options="listDropdownFolio"
+        @load="loadAllDropdown"
+        labelName="GuestName"
+        :label="$t('labels.folioNumber')"
+        name="folio_number"
+        @change="onChangeFolioNumber"
+      >
+      </c-select>
+      <c-input
+        half
+        required
+        disabled
+        id="amount"
+        showZeroNumber
+        formatted
+        customLabelClass="col-3"
+        customClass="col-9"
+        class="mb-1"
+        v-model="form.amount"
+        :label="$t('labels.amount')"
+        type="number"
+        name="amount"
+        @input="setAmountCharge"
+      ></c-input>
+      <c-datepicker
+        half
+        customLabelClass="col-3"
+        customClass="col-9"
+        class="mb-1"
+        :label="$t('labels.auditDate')"
+        required
+        v-model="form.audit_date"
+        id="auditDate"
+        type="date"
+        valueType="YYYY-MM-DD"
+        format="DD/MM/YYYY"
+        name="audit_date"
+      ></c-datepicker>
+      <c-select
+        required
+        id="currency"
+        customLabelClass="col-3"
+        customClass="col-9"
+        class="mb-1"
+        v-model="form.currency_code"
+        :options="listDropdownCurrency"
+        @load="loadAllDropdown"
+        @change="onChangeCurrencyCode"
+        keyName="code"
+        labelName="code"
+        :label="$t('labels.currency')"
+        name="currency_code"
+      >
+      </c-select>
+    </div>
+
+    <div class="col-md-6">
+      <c-input
+        half
+        required
+        formatted
+        customLabelClass="col-3"
+        customClass="col-9"
+        class="mb-1"
+        id="exchangeRate"
+        v-model="form.exchange_rate"
+        :label="$t('labels.exchangeRate')"
+        type="number"
+        name="exchange_rate"
+        @input="setAmountCharge"
+      >
+      </c-input>
+      <c-input
+        half
+        required
+        formatted
+        showZeroNumber
+        customLabelClass="col-3"
+        customClass="col-9"
+        class="mb-1"
+        id="amountChargeF"
+        v-model="form.amountChargeF"
+        :label="setAmountChargeFLabel ? setAmountChargeFLabel : $t('labels.amountIDR')"
+        type="number"
+        name="amountChargeF"
+        @input="setAmountCharge"
+      >
+      </c-input>
+      <c-input
+        half
+        disabled
+        required
+        formatted
+        showZeroNumber
+        customLabelClass="col-3"
+        customClass="col-9"
+        class="mb-1"
+        id="amountIdr"
+        v-model="form.amount_charged"
+        :label="$t('labels.amountIDR')"
+        type="number"
+        name="amount_charged"
+      ></c-input>
+      <c-input
+        customLabelClass="col-3"
+        id="remark"
+        customClass="col-9"
+        class="mb-1"
+        v-model="form.remark"
+        :label="$t('labels.remark')"
+        type="text"
+        name="remark"
+      ></c-input>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end mb-2 mt-2">
+    <button type="button" class="btn btn-primary mr-1" @click="onSubmit">
+      <i
+        :class="isSave ? 'fas fa-save mr-1' : 'fa fa-plus mr-1'"
+        :aria-hidden="isSave ? true : false"
+      ></i>
+      <!-- <i class="" ></i> -->
+      {{isSave ? $t('buttons.save') : $t('buttons.insert') }}
+    </button>
+    <button
+      v-if="isSave"
+      type="button"
+      class="btn btn-danger"
+      @click="gridFormCancel"
+    >
+      <i class="fa fa-times" aria-hidden="true"></i> {{$t('buttons.cancel')}}
+    </button>
+  </div>
+</v-form>
+<div class="col-md-12">
+  <!-- <div v-show="isSave" class="disabled-grid"></div> -->
+  <ag-grid-vue
+    :style="agGridSetting.styleAgGridFrame2"
+    :getRowNodeId="getRowNodeId"
+    :class="agGridSetting.themeAgGrid"
+    :columnDefs="columnDefs"
+    :rowData="rowData"
+    :paginationPageSize="paginationPageSize"
+    :gridOptions="gridOptions"
+    :context="context"
+    :detailCellRenderer="detailCellRenderer"
+    :frameworkComponents="frameworkComponents"
+    :enableCellChangeFlash="true"
+    :rowSelection="rowSelection"
+    :getContextMenuItems="getContextMenu"
+    :defaultColDef="agGridSetting.defColDef"
+    :suppressDragLeaveHidesColumns="true"
+    :suppressMakeColumnVisibleAfterUnGroup="true"
+    :statusBar="statusBar"
+    @rowDataUpdated="changeGridOnUpdate"
+    @grid-ready="onGridReady"
+    @cellContextMenu="handleRowRightClicked"
+    @rowDoubleClicked="handleRowDoubleClicked"
+  />
+</div>

@@ -1,0 +1,124 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- button insert -->
+    <div class="d-flex justify-content-end mb-2">
+      <button
+        title="Insert Employee"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleShowForm('', $global.modeData.insert)"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insert') }}
+      </button>
+    </div>
+
+    <!-- insert form -->
+    <transition>
+      <div class="px-2">
+        <c-input-form
+          ref="inputFormElement"
+          v-show="showForm"
+          :schema="schema"
+          :modeData="modeData"
+          @save="handleSave"
+          @close="showForm=false"
+        />
+      </div>
+    </transition>
+
+    <!-- filter -->
+    <c-search-filter
+      :options="searchOptions"
+      :searchDefault="searchDefault"
+      @search="refreshData"
+    >
+      <template v-slot="{search}">
+        <div class="col-md-6 d-flex mb-md-4">
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="all"
+              id="all"
+              v-model="search.filter[0]"
+              value="0"
+              @change="onRefresh"
+            />
+            <label for="all">{{ $t('commons.filter.checkList.all') }}</label>
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showActive"
+              id="showActive"
+              v-model="search.filter[0]"
+              value="1"
+              @change="onRefresh"
+            />
+            <label for="showActive"
+              >{{ $t('commons.filter.checkList.showActive') }}</label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showInactive"
+              id="showInactive"
+              v-model="search.filter[0]"
+              value="2"
+              @change="onRefresh"
+            />
+            <label for="showInactive"
+              >{{ $t('commons.filter.checkList.showInactive') }}</label
+            >
+          </div>
+        </div>
+      </template>
+    </c-search-filter>
+
+    <!-- content -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{$t('title.employee')}}</h3>
+      </div>
+      <div class="card-body">
+        <ag-grid-vue
+          :style="agGridSetting.styleAgGridFrame"
+          :class="agGridSetting.themeAgGrid"
+          :columnDefs="columnDefs"
+          :rowData="rowData"
+          :paginationPageSize="paginationPageSize"
+          :gridOptions="gridOptions"
+          :context="context"
+          :frameworkComponents="frameworkComponents"
+          :enableCellChangeFlash="true"
+          :rowSelection="rowSelection"
+          :getContextMenuItems="getContextMenu"
+          :defaultColDef="agGridSetting.defColDef"
+          :rowGroupPanelShow="rowGroupPanelShow"
+          :suppressDragLeaveHidesColumns="true"
+          :suppressMakeColumnVisibleAfterUnGroup=" true"
+          :statusBar="statusBar"
+          @grid-ready="onGridReady"
+          @cellContextMenu="handleRowRightClicked"
+        ></ag-grid-vue>
+      </div>
+    </div>
+
+    <!-- dialog -->
+    <c-dialog
+      v-show="showDialog"
+      dialogTitle="Confirm"
+      size="sm"
+      @confirm="deleteData"
+      @cancel="showDialog=false"
+    >
+      <template #body> Are you sure to delete this data? </template>
+    </c-dialog>
+
+    <!-- modal -->
+  </div>
+</section>

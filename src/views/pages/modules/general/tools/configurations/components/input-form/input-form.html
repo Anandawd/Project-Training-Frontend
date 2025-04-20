@@ -1,0 +1,4813 @@
+<!-- <Form @submit="onSave" ref="inputFormElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit" -->
+<v-form
+  :form="defaultForm"
+  @submit="onSave"
+  ref="inputFormElement"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">
+      {{ title }}
+      <button type="button" class="float-end close-button btn" @click="onClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="row" v-if="formType != $global.formType.guestLoanItem">
+        <!-- input code -->
+        <div
+          v-if="
+          formType != $global.formType.creditCardCharge
+          && formType != $global.formType.currencyNominal
+          && formType != $global.formType.spaRoom
+          && formType != $global.formType.discountLimit
+          && formType != $global.formType.marketList
+          && formType != $global.formType.receipt"
+          class="col-md-4 col-sm-6"
+        >
+          <div v-if="formType == $global.formType.account">
+            <div class="row mb-1">
+              <div class="col-3"></div>
+              <checkbox
+                id="isRoomCharge"
+                class="col"
+                v-model="form.is_room_charge"
+                :label="$t('labels.isRoomCharge')"
+                name="isRoomCharge"
+              >
+              </checkbox>
+            </div>
+          </div>
+          <c-input
+            v-if="
+          formType != $global.formType.posPaymentGroup
+          && formType != $global.formType.room
+          && formType != $global.formType.table
+          && formType != $global.formType.layout"
+            :max="maxLengthCode"
+            :disabled="modeData == $global.modeData.edit || codeDisabled"
+            id="code"
+            required
+            focus
+            class="row mb-1"
+            v-model="form.code"
+            :label="$t('labels.code')"
+            customLabelClass="col-3"
+            customClass="col-9"
+            type="text"
+            name="Code"
+          >
+            <template
+              v-if="formType == $global.formType.journalAccount"
+              #append-end
+            >
+              <c-checkbox
+                v-if="formType == $global.formType.journalAccount"
+                class="mb-1"
+                :label="$t('labels.asNonOperational')"
+                v-model="form.is_tax_expense"
+                customClass="pl-0 prx-75"
+              >
+              </c-checkbox>
+            </template>
+          </c-input>
+          <!-- memberOutlerdiscount -->
+          <CSelect
+            v-if="
+          formType == $global.formType.memberOutletDiscount"
+            filter
+            required
+            id="outlet"
+            class="row mb-1"
+            v-model="form.outlet_code"
+            :options="listDropdown.outlet"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.outlet')"
+            name="Outlet"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- menu POS Payment Group -->
+          <div class="mb-1" v-if="formType == $global.formType.posPaymentGroup">
+            <!-- <div class="col-md-6"> -->
+            <CSelect
+              class="justify-content-start"
+              :disabled="modeData == $global.modeData.edit"
+              required
+              id="account"
+              v-model="form.account_code"
+              :options="listDropdown.global.Account"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="code"
+              :label="$t('labels.code')"
+              name="Account"
+              selectType="column"
+              :columnOptions="columnOptions"
+              customLabelClass="col-3"
+              customClass="col-9"
+              @change="changeAccount"
+            />
+            <!-- </div>
+            <div class="col-md-6">
+              <div class="d-flex justify-content-end">
+                {{ form.accountName }}
+              </div>
+            </div> -->
+          </div>
+          <c-input
+            focus
+            required
+            :disabled="modeData == $global.modeData.edit"
+            v-if="formType == $global.formType.room || formType == $global.formType.table"
+            :max="maxLengthNumber"
+            id="number"
+            class="row mb-1"
+            v-model="form.number"
+            :label="$t('labels.number')"
+            type="text"
+            name="Number"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <c-input
+            v-if=" formType == $global.formType.room"
+            id="lockNumber"
+            class="row mb-1"
+            v-model="form.lock_number"
+            :label="$t('labels.lockNumber')"
+            type="text"
+            name="Lock Room"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <CSelect
+            v-if="formType == $global.formType.market"
+            filter
+            id="category"
+            class="row mb-1"
+            v-model="form.category_code"
+            :options="listDropdown.category"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.category')"
+            name="Category"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <CSelect
+            filter
+            required
+            v-if="formType == $global.formType.table"
+            id="outlet"
+            class="row mb-1"
+            v-model="form.outlet_code"
+            :options="listDropdown.outlet"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.outlet')"
+            name="Outlet"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- input name -->
+          <c-input
+            v-if="
+          formType != $global.formType.roomUnavailableReason
+          && formType != $global.formType.creditCardCharge 
+          && formType != $global.formType.currencyNominal
+          && formType != $global.formType.discountLimit
+          && formType != $global.formType.marketList
+          && formType != $global.formType.receipt
+          && formType != $global.formType.table
+          && formType != $global.formType.member"
+            :max="maxLengthName"
+            :disabled="formType == $global.formType.room"
+            id="name"
+            :required="formType !== $global.formType.room"
+            class="row mb-1"
+            v-model="form.name"
+            :label="$t('labels.name')"
+            type="text"
+            name="Name"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+
+          <c-input
+            v-if="formType != $global.formType.department
+          && formType != $global.formType.roomUnavailableReason
+          && formType != $global.formType.regency
+          && formType != $global.formType.roomRateCategory
+          && formType != $global.formType.roomRateSubCategory
+          && formType != $global.formType.roomBoy
+          && formType != $global.formType.city
+          && formType != $global.formType.state
+          && formType != $global.formType.nationality
+          && formType != $global.formType.country
+          && formType != $global.formType.purposeOf
+          && formType != $global.formType.owner
+          && formType != $global.formType.language
+          && formType != $global.formType.cardBank
+          && formType != $global.formType.voucherReason
+          && formType != $global.formType.idCardType
+          && formType != $global.formType.cardType
+          && formType != $global.formType.competitorCategory
+          && formType != $global.formType.bedType
+          && formType != $global.formType.paymentType
+          && formType != $global.formType.loanItem
+          && formType != $global.formType.competitor
+          && formType != $global.formType.marketCategory
+          && formType != $global.formType.bookingSource
+          && formType != $global.formType.market
+          && formType != $global.formType.phoneBookType
+          && formType != $global.formType.salesSegment
+          && formType != $global.formType.salesSource
+          && formType != $global.formType.salesTaskAction
+          && formType != $global.formType.salesTaskRepeat
+          && formType != $global.formType.salesTaskTag
+          && formType != $global.formType.productCategory
+          && formType != $global.formType.tenan
+          && formType != $global.formType.productGroup
+          && formType != $global.formType.posMarket
+          && formType != $global.formType.posPaymentGroup
+          && formType != $global.formType.tableType
+          && formType != $global.formType.waitress
+          && formType != $global.formType.printer
+          && formType != $global.formType.shippingAddress
+          && formType != $global.formType.uom 
+          && formType != $global.formType.store
+          && formType != $global.formType.returnStockReason
+          && formType != $global.formType.faManufacture
+          && formType != $global.formType.faLocation
+          && formType != $global.formType.faItemCategory
+          && formType != $global.formType.faItem
+          && formType != $global.formType.subDepartment
+          && formType != $global.formType.taxAndService
+          && formType != $global.formType.bankAccount
+          && formType != $global.formType.accountSubGroup
+          && formType != $global.formType.roomView
+          && formType != $global.formType.guestType
+          && formType != $global.formType.memberPointType
+          && formType != $global.formType.guestTitle
+          && formType != $global.formType.pabxRate
+          && formType != $global.formType.roomAmenities
+          && formType != $global.formType.account
+          && formType != $global.formType.companyType
+          && formType != $global.formType.company
+          && formType != $global.formType.currency
+          && formType != $global.formType.room
+          && formType != $global.formType.sales
+          && formType != $global.formType.outlet
+          && formType != $global.formType.product
+          && formType != $global.formType.table
+          && formType != $global.formType.venue
+          && formType != $global.formType.venueCombine
+          && formType != $global.formType.seatingPlan
+          && formType != $global.formType.memberOutletDiscount
+          && formType != $global.formType.member
+          && formType != $global.formType.journalAccountSubGroup
+          && formType != $global.formType.journalAccountCategory
+          && formType != $global.formType.journalAccount
+          && formType != $global.formType.itemGroup
+          && formType != $global.formType.theme
+          && formType != $global.formType.layout"
+            id="idSort"
+            formatted
+            showZeroNumber
+            class="row mb-1"
+            v-model="form.id_sort"
+            :label="$t('labels.idSort')"
+            type="number"
+            name="ID Sort"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- banquet theme -->
+          <c-input
+            v-if="formType == $global.formType.theme"
+            class="mb-1"
+            type="textarea"
+            formatted
+            :label="$t('labels.description')"
+            name="Description"
+            v-model="form.description"
+            customLabelClass="col-3"
+            customClass="col-9"
+          ></c-input>
+          <!-- member outlet discount -->
+          <c-input
+            v-if="formType == $global.formType.memberOutletDiscount"
+            showZeroNumber
+            formatted
+            id="minimumSale"
+            class="row mb-1"
+            v-model="form.minimum_sale"
+            :label="$t('labels.minimumSale')"
+            type="number"
+            name="Minimum Sale"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- menu seating plan -->
+           <div v-if="formType == $global.formType.seatingPlan">
+             <CSelect
+               required
+               multiple
+               id="assignVenue"
+               class="row mb-1"
+               v-model="form.assign_venue_code"
+               :options="listDropdown.global"
+               @load="repeatLoadDropdownList"
+               keyName="code"
+               labelName="name"
+               :label="$t('labels.assignVenue')"
+               name="Assign Venue"
+               customLabelClass="col-3"
+               customClass="col-9"
+             />
+             <c-input
+             id="description"
+             class="row mb-1"
+             v-model="form.description"
+             :label="$t('labels.description')"
+             type="text"
+             name="Description"
+             customLabelClass="col-3"
+             customClass="col-9"
+           />
+           </div>
+          <!-- menu venue Combine -->
+          <c-input
+            v-if="formType == $global.formType.venueCombine"
+            showZeroNumber
+            formatted
+            id="group"
+            class="row mb-1"
+            v-model="form.group_number"
+            :label="$t('labels.group')"
+            type="number"
+            name="Group"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- menu venue -->
+          <CSelect
+            v-if="formType == $global.formType.venue"
+            required
+            id="group"
+            class="row mb-1"
+            v-model="form.venue_group_code"
+            :options="listDropdown.global.VenueGroup"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.group')"
+            name="Group"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- menu sales -->
+          <c-input
+            v-if="formType == $global.formType.sales"
+            id="email"
+            class="row mb-1"
+            v-model="form.email"
+            :label="$t('labels.email')"
+            type="text"
+            name="Email"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- room amenities -->
+          <div
+            v-if="formType == $global.formType.roomAmenities"
+            class="row mb-2"
+          >
+            <div class="col-3 pr-0">
+              <label class="col-form-label" for="description"
+                >{{$t('labels.description')}}</label
+              >
+            </div>
+            <div class="col-9">
+              <textarea
+                rows="6"
+                class="form-control float-end mb-2 w-100"
+                v-model="form.description"
+                type="text"
+                name="Description"
+              >
+              </textarea>
+            </div>
+          </div>
+          <!-- menu Room -->
+          <div
+            v-if="formType == $global.formType.room"
+            class="d-none d-md-block d-sm-none"
+          >
+            <CSelect
+              :disabled="isUsed && modeData==$global.modeData.edit"
+              filter
+              required
+              id="roomType"
+              class="row mb-1"
+              v-model="form.room_type_code"
+              :options="listDropdown.room.RoomType"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.roomType')"
+              name="Room Type"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              :disabled="isUsed && modeData==$global.modeData.edit"
+              filter
+              required
+              id="bedType"
+              class="row mb-1"
+              v-model="form.bed_type_code"
+              :options="listDropdown.room.BedType"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.bedType')"
+              name="Bed Type"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="roomView"
+              class="row mb-1"
+              v-model="form.view_code"
+              :options="listDropdown.room.RoomView"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.roomView')"
+              name="Room View"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu Room -->
+          <div
+            v-if="formType == $global.formType.room"
+            class="d-md-none d-sm-block"
+          >
+            <CSelect
+              :disabled="isUsed && modeData==$global.modeData.edit"
+              filter
+              required
+              id="roomType"
+              class="row mb-1"
+              v-model="form.room_type_code"
+              :options="listDropdown.room.RoomType"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.roomType')"
+              name="Room Type"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              :disabled="isUsed && modeData==$global.modeData.edit"
+              filter
+              required
+              id="bedType"
+              class="row mb-1"
+              v-model="form.bed_type_code"
+              :options="listDropdown.room.BedType"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.bedType')"
+              name="Bed Type"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="roomView"
+              class="row mb-1"
+              v-model="form.view_code"
+              :options="listDropdown.room.RoomView"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.roomView')"
+              name="Room View"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="building"
+              required
+              class="row mb-1"
+              v-model="form.building"
+              :label="$t('labels.building')"
+              type="text"
+              name="Building"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="floor"
+              required
+              class="mb-1"
+              v-model="form.floor"
+              :label="$t('labels.floor')"
+              type="text"
+              name="Floor"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu roomUnavailableReason -->
+          <c-input
+            v-if="formType == $global.formType.roomUnavailableReason"
+            :max="maxLengthDescription"
+            id="description"
+            required
+            class="row mb-3"
+            v-model="form.description"
+            :label="$t('labels.description')"
+            type="text"
+            name="Description"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <CSelect
+            v-if="formType == $global.formType.competitor"
+            :required="formType == $global.formType.competitor"
+            filter
+            id="category"
+            class="row mb-1"
+            v-model="form.category_code"
+            :options="listDropdown.category"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.category')"
+            name="Category"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- menu company -->
+          <div v-if="formType == $global.formType.companyType">
+            <CSelect
+              filter
+              required
+              id="apAccount"
+              class="row mb-1"
+              v-model="form.journal_account_code_ap"
+              :options="listDropdown.company.JournalAccountAP"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.apAccount')"
+              name="AP Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <div v-if="formType == $global.formType.productCategory">
+            <c-input
+              id="description"
+              class="row mb-1"
+              v-model="form.description"
+              :label="$t('labels.description')"
+              type="text"
+              name="Description"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              multiple
+              required
+              id="outlet"
+              class="row mb-1"
+              v-model="form.outlet_code"
+              :options="listDropdown.outlet"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.outlet')"
+              name="Outlet"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu Tenan -->
+          <div v-if="formType == $global.formType.tenan">
+            <CSelect
+              filter
+              id="owner"
+              class="row mb-1"
+              v-model="form.owner_code"
+              :options="listDropdown.owner"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.owner')"
+              name="Owner"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              showZeroNumber
+              formatted
+              id="commission"
+              class="row mb-1"
+              v-model="form.commission"
+              :label="$t('labels.commission')"
+              type="number"
+              name="Commission"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="street"
+              class="row mb-1"
+              v-model="form.street"
+              :label="$t('labels.street')"
+              type="text"
+              name="Street"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu PABXRate -->
+          <c-input
+            v-if="formType == $global.formType.pabxRate"
+            showZeroNumber
+            formatted
+            id="rate"
+            class="row mb-1"
+            v-model="form.rate"
+            :label="$t('labels.rate')"
+            type="number"
+            name="Rate"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- menu memberPoint -->
+          <div v-if="formType == $global.formType.memberPointType">
+            <!-- <CSelect
+              required
+              id="memberType"
+              class="row mb-1"
+              v-model="form.member_type_code"
+              :options="listDropdownMember"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.memberType')"
+              name="Member Type"
+              customLabelClass="col-3"
+              customClass="col-9"
+            /> -->
+            <div class="row">
+              <div class="col-3 mt-1">
+                <label for="type" class="col-form-label required"
+                  >{{ $t("labels.calculation") }}</label
+                >
+              </div>
+              <div class="col-9">
+                <div class="row justify-content-start">
+                  <div class="col-4">
+                    <c-radio
+                      class="mt-1 mb-2"
+                      :label="$t('commons.filter.checkList.fromRate')"
+                      v-model="form.is_from_rate"
+                      value="1" 
+                      customLabelClass="col-3"
+                      customClass="col-9"
+                      @change="onChangeCalculation"
+                    >
+                    </c-radio>
+                  </div>
+                  <div class="col-8">
+                    <c-radio
+                      class="mt-1 mb-2"
+                      :label="$t('commons.filter.checkList.perNight')"
+                      v-model="form.is_from_rate"
+                      value="0"
+                      customLabelClass="col-3"
+                      customClass="col-9"
+                      @change="onChangeCalculation"
+                    >
+                    </c-radio>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- menu journalAccountSubGroup -->
+          <div v-if="formType == $global.formType.journalAccountSubGroup">
+            <CSelect
+              filter
+              required
+              id="group"
+              class="mb-1"
+              v-model="form.group_code"
+              :options="listDropdown.journalAccountSubGroup.JournalAccountGroup"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.group')"
+              name="Group"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- Shipping Address -->
+          <div v-if="formType == $global.formType.shippingAddress">
+            <c-input
+              id="contactPerson"
+              class="row mb-1"
+              v-model="form.contact_person"
+              :label="$t('labels.contactPerson')"
+              type="text"
+              name="Contact Person"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="street"
+              class="row mb-1"
+              v-model="form.street"
+              :label="$t('labels.street')"
+              type="text"
+              name="Street"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="city"
+              class="row mb-1"
+              v-model="form.city"
+              :label="$t('labels.city')"
+              type="text"
+              name="City"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <div
+            v-if="formType == $global.formType.shippingAddress"
+            class="d-md-none d-sm-block"
+          >
+            <!-- <c-input id="contactPerson" class="row mb-1" v-model="form.contact_person"
+              :label="$t('labels.contactPerson')" type="text" name="Contact Person" customLabelClass="col-3"
+              customClass="col-9" />
+            <c-input id="street" class="row mb-1" v-model="form.street" :label="$t('labels.street')" type="text"
+              name="Street" customLabelClass="col-3" customClass="col-9" />
+            <c-input id="city" class="row mb-1" v-model="form.city" :label="$t('labels.city')" type="text" name="City"
+              customLabelClass="col-3" customClass="col-9" /> -->
+            <CSelect
+              filter
+              id="country"
+              class="row mb-1"
+              v-model="form.country_code"
+              :options="listDropdown.global.Country"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.country')"
+              name="Country"
+              @change="onChangeCountry"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="state"
+              class="row mb-1"
+              v-model="form.state_code"
+              :options="listDropdownState"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.state')"
+              name="State"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- inventory product menu -->
+          <div v-if="formType == $global.formType.product">
+            <c-input
+              id="barcode"
+              class="row mb-1"
+              v-model="form.barcode"
+              :label="$t('labels.barcode')"
+              type="text"
+              name="Barcode"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="description"
+              class="row mb-1"
+              v-model="form.description"
+              :label="$t('labels.description')"
+              type="text"
+              name="Description"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="category"
+              class="row mb-1"
+              v-model="form.category_code"
+              :options="listDropdown.global.ProductCategory"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.category')"
+              name="Category"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="group"
+              class="row mb-1"
+              v-model="form.group_code"
+              :options="listDropdown.global.ProductGroup"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.group')"
+              name="Group"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              required
+              multiple
+              id="outlet"
+              class="row mb-1"
+              v-model="form.outlet_code"
+              :options="listDropdown.global.Outlet"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.outlet')"
+              name="Outlet"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="tenan"
+              class="row mb-1"
+              v-model="form.tenan_code"
+              :options="listDropdown.global.Tenan"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.tenan')"
+              name="Tenan"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu product -->
+          <div
+            v-if="formType == $global.formType.product"
+            class="d-md-none d-sm-block"
+          >
+            <CSelect
+              filter
+              id="package"
+              class="row mb-1"
+              v-model="form.package_code"
+              :options="listDropdown.global.Package"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.package')"
+              name="Package"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="taxAndService"
+              class="row mb-1"
+              v-model="form.tax_and_service_code"
+              :options="listDropdown.global.TaxAndService"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.taxAndService')"
+              name="Tax and Service"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- Item Category and FA ItemCategory-->
+          <div v-if="formType == $global.formType.faItemCategory">
+            <CSelect
+              required
+              id="faAccount"
+              class="row mb-1"
+              v-model="form.journal_account_code"
+              :options="listDropdown.global.JournalAccount"
+              @load="repeatLoadDropdownList"
+              faItemCategory
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.faAccount')"
+              name="FA Account"
+              selectType="column"
+              :columnOptions="columnOptions"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <div
+            v-if="formType == $global.formType.faItemCategory"
+            class="d-md-none d-sm-block"
+          >
+            <div class="row justify-content-end">
+              <div class="col-5">
+                <checkbox
+                  id="linen"
+                  v-model="form.is_linen"
+                  :label="$t('labels.linen')"
+                  name="Linen"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+              <div class="col-4">
+                <checkbox
+                  id="intangible"
+                  v-model="form.is_intangible"
+                  :label="$t('labels.intangible')"
+                  name="Intangible"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+            <CSelect
+              required
+              id="accountCogs"
+              class="row mb-1"
+              v-model="form.journal_account_code_cogs"
+              :options="listDropdown.global.JournalAccountCosting"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.accountCogs')"
+              name="Account Cogs"
+              selectType="column"
+              :columnOptions="columnOptions"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!--fA item -->
+          <div v-if="formType == $global.formType.faItem">
+            <CSelect
+              filter
+              required
+              id="category"
+              class="row mb-1"
+              v-model="form.category_code"
+              :options="listDropdown.global.FAItemCategory"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.category')"
+              name="Category"
+              customLabelClass="col-3"
+              customClass="col-9"
+            >
+              <template #append-end>
+                <button
+                  type="button"
+                  class="input-group-text"
+                  @click="$router.push({ name: 'FA Item Category' })"
+                >
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+              </template>
+            </CSelect>
+          </div>
+          <div v-if="formType == $global.formType.subDepartment">
+            <CSelect
+              filter
+              required
+              id="department"
+              class="row mb-1"
+              v-model="form.department_code"
+              :options="listDropdown.department"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.department')"
+              name="Department"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <c-input
+            v-if="formType == $global.formType.taxAndService"
+            showZeroNumber
+            formatted
+            id="tax"
+            class="row mb-1"
+            v-model="form.tax"
+            :label="$t('labels.tax')"
+            type="number"
+            name="Tax"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- menu Bank Account -->
+          <div v-if="formType == $global.formType.bankAccount">
+            <CSelect
+              required
+              id="journalAccount"
+              class="row mb-1"
+              v-model="form.journal_account_code"
+              :options="listDropdown.bankAccount.JournalAccount"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.journalAccount')"
+              name="Journal Account"
+              selectType="column"
+              :columnOptions="columnOptions"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="type"
+              class="row mb-1"
+              v-model="form.type_code"
+              :options="listDropdown.bankAccount.BankAccountType"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.type')"
+              name="Type"
+              customLabelClass="col-3"
+              customClass="col-9"
+              @load="repeatLoadDropdownList"
+            />
+          </div>
+          <div v-if="formType == $global.formType.account">
+            <div class="row justify-content-end mb-1">
+              <div class="col-4">
+                <checkbox
+                  id="payment"
+                  v-model="form.is_payment"
+                  :label="$t('labels.payment')"
+                  name="Payment"
+                >
+                </checkbox>
+              </div>
+              <div class="col-5">
+                <checkbox
+                  id="refund"
+                  v-model="form.is_refund"
+                  :label="$t('labels.refund')"
+                  name="Refund"
+                />
+              </div>
+            </div>
+            <div class="row justify-content-end mb-2 mt-2">
+              <label for="type" class="col-3 col-form-label"
+                >{{ $t("transaction.type") }}</label
+              >
+              <div class="col-4">
+                <c-radio
+                  :label="$t('labels.debitOrCharge')"
+                  v-model="form.type_code"
+                  value="D"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                ></c-radio>
+              </div>
+              <div class="col-5">
+                <c-radio
+                  :label="$t('labels.creditOrPayment')"
+                  v-model="form.type_code"
+                  value="C"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                ></c-radio>
+              </div>
+            </div>
+          </div>
+          <!-- menuComapny -->
+          <div v-if="formType == $global.formType.company">
+            <CSelect
+              filter
+              required
+              id="type"
+              class="row mb-1"
+              v-model="form.type_code"
+              :options="listDropdown.company.CompanyType"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.type')"
+              name="Type"
+              customLabelClass="col-3"
+              customClass="col-9"
+              @load="repeatLoadDropdownList"
+            />
+            <CSelect
+              filter
+              id="sales"
+              class="row mb-1"
+              v-model="form.sales_code"
+              :options="listDropdown.company.Sales"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.sales')"
+              name="Sales"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="contactPerson"
+              class="row mb-1"
+              v-model="form.contact_person"
+              :label="$t('labels.contactPerson')"
+              type="text"
+              name="Contact Person"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="street"
+              class="row mb-1"
+              v-model="form.street"
+              :label="$t('labels.street')"
+              type="text"
+              name="Street"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="city"
+              class="row mb-1"
+              v-model="form.city"
+              :label="$t('labels.city')"
+              type="text"
+              name="City"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu currency -->
+          <div v-if="formType == $global.formType.currency">
+            <CSelect
+              multiple
+              required
+              id="account"
+              class="row mb-1"
+              v-model="form.account_code"
+              :options="listDropdown.account"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.account')"
+              name="Account Code"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              showZeroNumber
+              formatted
+              required
+              id="exchangeRate"
+              class="row mb-1"
+              v-model="form.exchange_rate"
+              :label="$t('labels.exchangeRate')"
+              type="number"
+              name="Exchange Rate"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- outlet menu -->
+          <div
+            v-if="formType == $global.formType.outlet"
+            class="d-md-block d-sm-none"
+          >
+            <c-input
+              required
+              :max="maxLengthPrefix"
+              id="chechPrefix"
+              class="row mb-1"
+              v-model="form.check_prefix"
+              :label="$t('labels.checkPrefix')"
+              type="text"
+              name="Check Prefix"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="subDepartment"
+              class="row mb-1"
+              v-model="form.sub_department_code"
+              :options="listDropdown.global.SubDepartment"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.subDepartment')"
+              name="Sub Department"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="store"
+              class="row mb-1"
+              v-model="form.store_code"
+              :options="listDropdown.global.Store"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.store')"
+              name="Store"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="taxAndService"
+              class="row mb-1"
+              v-model="form.tax_and_service_code"
+              :options="listDropdown.global.TaxAndService"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.taxAndService')"
+              name="Tax And Service"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="taxAndServiceSpecialItem"
+              class="row mb-1"
+              v-model="form.tax_and_service_code_special"
+              :options="listDropdown.global.TaxAndService"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.taxAndServiceSpecialItem')"
+              name="Tax And Service Special"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu outlet -->
+          <div
+            v-if="formType == $global.formType.outlet"
+            class="d-none d-md-none d-sm-block"
+          >
+            <c-input
+              required
+              :max="maxLengthPrefix"
+              id="chechPrefix"
+              class="row mb-1"
+              v-model="form.check_prefix"
+              :label="$t('labels.checkPrefix')"
+              type="text"
+              name="Check Prefix"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="subDepartment"
+              class="row mb-1"
+              v-model="form.sub_department_code"
+              :options="listDropdown.global.SubDepartment"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.subDepartment')"
+              name="Sub Department"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="store"
+              class="row mb-1"
+              v-model="form.store_code"
+              :options="listDropdown.global.Store"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.store')"
+              name="Store"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="taxAndService"
+              class="row mb-1"
+              v-model="form.tax_and_service_code"
+              :options="listDropdown.global.TaxAndService"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.taxAndService')"
+              name="Tax And Service"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="taxAndServiceSpecialItem"
+              class="row mb-1"
+              v-model="form.tax_and_service_code_special"
+              :options="listDropdown.global.TaxAndService"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.taxAndServiceSpecialItem')"
+              name="Tax And Service Special"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu account -->
+          <div
+            v-if="formType == $global.formType.account"
+            class="d-md-none d-sm-block"
+          >
+            <CSelect
+              filter
+              required
+              id="subGroup"
+              class="row mb-1"
+              v-model="form.sub_group_code"
+              :options="listDropdown.account.AccountSubGroup"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.subGroup')"
+              name="Sub Group"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              multiple
+              id="subDepartment"
+              class="row mb-1"
+              v-model="form.sub_department_code"
+              :options="listDropdown.account.SubDepartment"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.subDepartment')"
+              name="Sub Department"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu company -->
+          <div
+            v-if="formType == $global.formType.company"
+            class="d-md-none d-sm-block"
+          >
+            <CSelect
+              filter
+              id="country"
+              class="row mb-1"
+              v-model="form.country_code"
+              :options="listDropdown.company.Country"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.country')"
+              name="Country"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="state"
+              class="row mb-1"
+              v-model="form.state_code"
+              :options="listDropdown.company.State"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.state')"
+              name="State"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="postCode"
+              class="row mb-1"
+              v-model="form.postal_code"
+              :label="$t('labels.postCode')"
+              type="text"
+              name="Post Code"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu member -->
+          <div v-if="formType == $global.formType.member">
+            <c-input
+              required
+              id="symbol"
+              :max="maxLengthSymbol"
+              class="row mb-1"
+              v-model="form.currency_sign"
+              :label="$t('labels.symbol')"
+              type="text"
+              name="Symbol"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              required
+              id="nominal"
+              class="row mb-1"
+              v-model="form.nominal"
+              :label="$t('labels.nominal')"
+              type="text"
+              name="Nominal"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu journal account -->
+          <div v-if="formType == $global.formType.journalAccount">
+            <CSelect
+              filter
+              required
+              id="subGroup"
+              class="row mb-1"
+              v-model="form.sub_group_code"
+              :options="listDropdown.global.JournalAccountSubGroup"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.subGroup')"
+              name="subGroup"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              multiple
+              id="subDepartment"
+              class="row mb-1"
+              v-model="form.sub_department_code"
+              :options="listDropdown.global.SubDepartment"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.subDepartment')"
+              name="subDepartment"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu item group -->
+          <div v-if="formType == $global.formType.itemGroup">
+            <CSelect
+              filter
+              required
+              id="typeCode"
+              class="row mb-1"
+              v-model="form.item_group_type"
+              :options="listDropdown.global"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.type')"
+              name="Type"
+              customLabelClass="col-3"
+              customClass="col-9"
+              @load="repeatLoadDropdownList"
+            />
+          </div>
+          <div v-if="formType == $global.formType.layout && screenSize != 'xs' && modeData == $global.modeData.edit" class="row mb-2 mt-2">
+            <div class="col-md-3">
+              <label
+                id="layout"
+                class="col-form-label d-flex mt-1 required"
+                for="layout"
+                >{{$t('labels.layout')}}
+              </label>
+            </div>
+            <div class="col-md-9">
+                  <div @contextmenu="onContextMenu($event)" class="w-100 text-center">
+                    <div class="row justify-content-center px-2">
+                      <my-upload field="img" @crop-success="cropSuccess" @crop-upload-success="cropUploadSuccess"
+                        @crop-upload-fail="cropUploadFail" v-model="showImageUploader" :width="80" :height="80"
+                        :url="uploadURL" :params="params" :headers="headers" :maxSize="2000" langType="en"
+                        img-format="png"></my-upload>
+                      <div class="logo-wrapper-layout">
+                        <img v-if="form.image_link" class="company-logo" height="80" width="80" alt=""
+                          :src="form.image_link" />
+                        <span v-if="!form.image_link">Minimun size 128x128</span>
+                        <div class="logo-overlay" @click="handleShowImageUploader">
+                          <span v-if="form.image_link">Change Layout</span>
+                          <span v-else>Insert Layout</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+          </div>
+          <!-- tambahkan di bawah ini untuk mengisi form dibawah code name menu ke 1 -->
+        </div>
+        <!-- item group -->
+        <div v-if="formType == $global.formType.itemGroup" class="col-md-4">
+          <c-input
+            showZeroNumber
+            formatted
+            id="percentageCost"
+            class="row mb-1"
+            v-model="form.percentage_cost"
+            :label="$t('labels.percentageCost')"
+            type="number"
+            name="Percentage Cost"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <c-input
+            id="idSort"
+            formatted
+            showZeroNumber
+            class="row mb-1"
+            v-model="form.id_sort"
+            :label="$t('labels.idSort')"
+            type="number"
+            name="ID Sort"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+        </div>
+        <!-- menu credit card charge -->
+        <div
+          v-if="formType == $global.formType.creditCardCharge"
+          class="col-md-4"
+        >
+          <CSelect
+            filter
+            required
+            id="accountEdc"
+            class="row mb-1"
+            v-model="form.account_code"
+            :options="listDropdown.accountEdc"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.accountEdc')"
+            name="Account EDC"
+          />
+          <c-input
+            required
+            showZeroNumber
+            formatted
+            fid="chargePercent"
+            class="row mb-1"
+            v-model="form.charge_percent"
+            :label="$t('labels.chargePercent')"
+            type="number"
+            name="Charge Percent"
+          />
+        </div>
+        <!-- menu State -->
+        <div v-if="formType == $global.formType.state" class="col-md-4">
+          <CSelect
+            filter
+            id="country"
+            class="row mb-1"
+            v-model="form.country_code"
+            :options="listDropdown.country"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.country')"
+            name="Country"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+        </div>
+        <!-- menu Country -->
+        <div v-if="formType == $global.formType.country" class="col-md-4">
+          <CSelect
+            filter
+            required
+            id="continent"
+            class="row mb-1"
+            v-model="form.continent_code"
+            :options="listDropdown.continent"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.continent')"
+            name="Continent"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <c-input
+            id="isoCode"
+            class="row mb-3"
+            v-model="form.iso_code"
+            :label="$t('labels.isoCode')"
+            type="text"
+            name="ISO Code"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+        </div>
+        <!-- productGroup -->
+        <div v-if="formType == $global.formType.productGroup" class="col-md-4">
+          <CSelect
+            filter
+            id="itemGroup"
+            class="row mb-1"
+            v-model="form.item_group_code"
+            :options="listDropdown.global.ItemGroup"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.itemGroup')"
+            name="Item Group"
+            customLabelClass="col-3"
+            customClass="col-9"
+            @change="onChangeItemGroup"
+          />
+          <!-- <div class="row mb-1">
+            <div class="col-md-6"> -->
+          <CSelect
+            required
+            id="account"
+            class="mb-1"
+            v-model="form.account_code"
+            :options="listDropdown.global.Account"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.account')"
+            name="Account"
+            selectType="column"
+            :columnOptions="columnOptions"
+            @change="changeAccount"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- </div>
+            <div class="col-md-5">
+              <div class="d-flex justify-content-end">
+                {{ form.account }}
+              </div>
+            </div>
+          </div> -->
+        </div>
+        <!-- spa room -->
+        <div v-if="formType == $global.formType.spaRoom" class="col-md-4">
+          <c-input
+            required
+            :max="maxLengthNumber"
+            :disabled="modeData ==  $global.modeData.edit"
+            id="number"
+            class="row mb-1"
+            v-model="form.number"
+            :label="$t('labels.number')"
+            type="text"
+            name="Number"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <CSelect
+            filter
+            required
+            id="outlet"
+            class="row mb-1"
+            v-model="form.outlet_code"
+            :options="listDropdown.outlet"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.outlet')"
+            name="Outlet"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <c-input
+            id="description"
+            class="row mb-1"
+            v-model="form.description"
+            :label="$t('labels.description')"
+            type="text"
+            name="Description"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+        </div>
+        <!-- menu Printer -->
+        <div v-if="formType == $global.formType.printer" class="col-md-4">
+          <c-input
+            id="location"
+            class="row mb-1"
+            v-model="form.location"
+            :label="$t('labels.location')"
+            type="text"
+            name="Location"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+        </div>
+        <!-- menu discount Limit -->
+        <div v-if="formType == $global.formType.discountLimit" class="col-md-4">
+          <CSelect
+            filter
+            required
+            id="outlet"
+            class="row mb-1"
+            v-model="form.outlet_code"
+            :options="listDropdown.global.Outlet"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.outlet')"
+            name="Outlet"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <CSelect
+            filter
+            required
+            id="userGroup"
+            class="row mb-1"
+            v-model="form.user_group_code"
+            :options="listDropdown.global.UserGroup"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="code"
+            :label="$t('labels.userGroup')"
+            name="User Group"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+        </div>
+        <!-- FA Item -->
+        <div v-if="formType == $global.formType.faItem" class="col-md-4">
+          <CSelect
+            filter
+            required
+            id="uom"
+            class="row mb-1"
+            v-model="form.uom_code"
+            :options="listDropdown.global.UOM"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.uom')"
+            name="Uom"
+            customLabelClass="col-3"
+            customClass="col-9"
+          >
+            <template #append-end>
+              <button
+                type="button"
+                class="input-group-text"
+                @click="$router.push({ name: 'Unit of Measurement' })"
+              >
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </button>
+            </template>
+          </CSelect>
+          <c-input
+            id="remark"
+            class="row mb-1"
+            v-model="form.remark"
+            :label="$t('labels.remark')"
+            type="text"
+            name="Remark"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+        </div>
+        <!-- bank Account -->
+        <div
+          v-if="formType == $global.formType.bankAccount"
+          class="col-md-4 col-sm-6 mb-2"
+        >
+          <c-input
+            id="bankName"
+            class="row mb-1"
+            v-model="form.bank_name"
+            :label="$t('labels.bankName')"
+            type="text"
+            name="Bank Name"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <c-input
+            id="bankAccountNumber"
+            class="row mb-1"
+            v-model="form.bank_account_number"
+            :label="$t('labels.bankAccountNumber')"
+            type="text"
+            name="Bank Account Number"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <c-input
+            id="bankAddress"
+            class="row mb-1"
+            v-model="form.bank_address"
+            :label="$t('labels.bankAddress')"
+            type="text"
+            name="Bank Address"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <div class="row justify-content-end">
+            <div class="col-5">
+              <checkbox
+                id="forReceive"
+                v-model="form.for_receive"
+                :label="$t('labels.forReceive')"
+                name="For Receive"
+                customLabelClass="col-3"
+                customClass="col-9"
+              >
+              </checkbox>
+            </div>
+            <div class="col-4">
+              <checkbox
+                id="forPayment"
+                v-model="form.for_payment"
+                :label="$t('labels.forPayment')"
+                name="For Payment"
+                customLabelClass="col-3"
+                customClass="col-9"
+              >
+              </checkbox>
+            </div>
+          </div>
+        </div>
+        <!-- pabxRate -->
+        <div v-if="formType == $global.formType.pabxRate" class="col-md-4">
+          <c-input
+            showZeroNumber
+            formatted
+            id="freeSeconds"
+            class="row mb-1"
+            v-model="form.freeSeconds"
+            :label="$t('labels.freeSeconds')"
+            type="number"
+            name="Free Seconds"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <CSelect
+            required
+            id="type"
+            class="row mb-1"
+            v-model="form.type_code"
+            :options="listDropdown.company.CompanyType"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.type')"
+            name="Type"
+            customLabelClass="col-3"
+            customClass="col-9"
+            @load="repeatLoadDropdownList"
+          />
+        </div>
+        <!-- menu currencyNominal -->
+        <div
+          v-if="formType == $global.formType.currencyNominal"
+          class="col-md-4"
+        >
+          <c-input
+            required
+            id="symbol"
+            :max="maxLengthSymbol"
+            class="row mb-1"
+            v-model="form.currency_sign"
+            :label="$t('labels.symbol')"
+            type="text"
+            name="Symbol"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <c-input
+            required
+            id="nominal"
+            class="row mb-1"
+            v-model="form.nominal"
+            :label="$t('labels.nominal')"
+            type="text"
+            name="Nominal"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+        </div>
+        <!-- menu journal account subGroup -->
+        <div
+          class="col-md-4"
+          v-if="formType == $global.formType.journalAccountSubGroup"
+        >
+          <CSelect
+            filter
+            id="type"
+            class="mb-1"
+            v-model="form.type_code"
+            :options="listDropdown.journalAccountSubGroup.JournalAccountSubGroupType"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.type')"
+            name="type"
+            customLabelClass="col-3 custom"
+            customClass="col-9"
+            @load="repeatLoadDropdownList"
+          />
+          <CSelect
+            filter
+            id="parent"
+            class="mb-1"
+            v-model="form.parent_code"
+            :options="listDropdown.journalAccountSubGroup.JournalAccountSubGroup"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.parent')"
+            name="parent"
+            customLabelClass="col-3 custom"
+            customClass="col-9"
+            selectType="column"
+            :columnOptions="columnOptions"
+          />
+          <div class="row justify-content-end">
+            <div class="col-9 d-flex">
+              <checkbox
+                id="header"
+                v-model="form.is_header"
+                :label="$t('labels.header')"
+                name="Header"
+                customLabelClass="col-3"
+                customClass="col-9"
+              >
+              </checkbox>
+            </div>
+          </div>
+        </div>
+        <div
+          class="col-md-4"
+          v-if="formType == $global.formType.journalAccount"
+        >
+          <CSelect
+            filter
+            required
+            id="type"
+            class="row mb-1"
+            v-model="form.type_code"
+            :options="listDropdown.global.JournalAccountType"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.type')"
+            name="type"
+            customLabelClass="col-3"
+            customClass="col-9"
+            @load="repeatLoadDropdownList"
+          />
+          <CSelect
+            filter
+            id="itemGroup"
+            class="row mb-1"
+            v-model="form.item_group_code"
+            :options="listDropdown.global.ItemGroup"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.itemGroup')"
+            name="itemGroup"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <CSelect
+            filter
+            id="category"
+            class="row mb-1"
+            v-model="form.category_code"
+            :options="listDropdown.global.JournalAccountCategory"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.category')"
+            name="category"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <c-input
+            id="description"
+            class="row mb-1"
+            v-model="form.description"
+            :label="$t('labels.description')"
+            type="string"
+            name="description"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+        </div>
+        <!-- menu ke 2 grid ke 2 -->
+        <div class="col-md-4 col-sm-6">
+          <!-- <div v-if="formType == $global.formType.roomAmenities">
+            <c-input id="description" class="row mb-1" v-model="form.description" :label="$t('labels.description')"
+              type="text" name="Description" customLabelClass="col-3" customClass="col-9" />
+          </div> -->
+          <!-- menu paymenttype -->
+          <CSelect
+            v-if="formType == $global.formType.paymentType"
+            filter
+            required
+            id="group"
+            class="row mb-1"
+            v-model="form.group_code"
+            :options="listDropdown.group"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.group')"
+            name="Group"
+            customLabelClass="col-3"
+            customClass="col-9"
+            @load="repeatLoadDropdownList"
+          />
+          <!-- menu competitor -->
+          <c-input
+            v-if="formType == $global.formType.competitor"
+            showZeroNumber
+            formatted
+            id="totalRoom"
+            required
+            class="row mb-1"
+            v-model="form.total_room"
+            :label="$t('labels.totalRoom')"
+            type="number"
+            name="Total Room"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- waitress -->
+          <div v-if="formType == $global.formType.waitress">
+            <CSelect
+              multiple
+              id="outlet"
+              class="row mb-1"
+              v-model="form.outlet_code"
+              :options="listDropdown.global"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.outlet')"
+              name="Outlet"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <div class="row justify-content-end">
+              <div class="col-9 d-flex">
+                <checkbox
+                  id="active"
+                  v-model="form.is_active"
+                  :label="$t('labels.active')"
+                  name="Active"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+          <!-- menu POS Payment Group -->
+          <CSelect
+            v-if="formType == $global.formType.posPaymentGroup"
+            multiple
+            required
+            id="outlet"
+            class="row mb-1"
+            v-model="form.outlet_code"
+            :options="listDropdown.global.Outlet"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.outlet')"
+            name="Outlet"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- sub department -->
+          <div
+            v-if="formType == $global.formType.subDepartment"
+            class="row justify-content-end"
+          >
+            <div class="col-9">
+              <checkbox
+                id="isCompliment"
+                v-model="form.is_compliment"
+                :label="$t('labels.compliment')"
+                name="Compliment"
+                customLabelClass="col-3"
+                customClass="col-9"
+              >
+              </checkbox>
+            </div>
+          </div>
+          <!-- menu accountSubGroup -->
+          <CSelect
+            v-if="formType == $global.formType.accountSubGroup"
+            filter
+            required
+            id="accountGroupName"
+            class="mb-1"
+            v-model="form.group_code"
+            :options="listDropdown.accountGroupName"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.group')"
+            name="Account Group Name"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- menu account -->
+          <div
+            v-if="formType == $global.formType.account"
+            class="d-none d-md-block d-sm-none"
+          >
+            <CSelect
+              filter
+              required
+              id="subGroup"
+              class="row mb-1"
+              v-model="form.sub_group_code"
+              :options="listDropdown.account.AccountSubGroup"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.subGroup')"
+              name="Sub Group"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              multiple
+              id="subDepartment"
+              class="row mb-1"
+              v-model="form.sub_department_code"
+              :options="listDropdown.account.SubDepartment"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.subDepartment')"
+              name="Sub Department"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="journalAccount"
+              class="row mb-1"
+              v-model="form.journal_account_code"
+              :options="listDropdown.account.JournalAccount"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.journalAccount')"
+              name="Journal Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="taxAndService"
+              class="row mb-1"
+              v-model="form.tax_and_service_code"
+              :options="listDropdown.account.TaxAndService"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.taxAndService')"
+              name="Tax And Service"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+
+          <div
+            v-if="formType == $global.formType.account"
+            class="d-md-none col-sm-block"
+          >
+            <CSelect
+              filter
+              required
+              id="journalAccount"
+              class="row mb-1"
+              v-model="form.journal_account_code"
+              :options="listDropdown.account.JournalAccount"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.journalAccount')"
+              name="Journal Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="taxAndService"
+              class="row mb-1"
+              v-model="form.tax_and_service_code"
+              :options="listDropdown.account.TaxAndService"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.taxAndService')"
+              name="Tax And Service"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="itemGroup"
+              class="row mb-1"
+              v-model="form.item_group_code"
+              :options="listDropdown.account.ItemGroup"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.itemGroup')"
+              name="Item Group"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="subFolio"
+              class="row mb-1"
+              v-model="form.sub_folio_group_code"
+              :options="listDropdown.account.SubFolioGroup"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.subFolio')"
+              name="Sub Folio"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <div
+            v-if="formType == $global.formType.outlet"
+            class="d-md-none d-sm-block"
+          >
+            <CSelect
+              filter
+              required
+              id="printerSpecialItemFood"
+              class="row mb-1"
+              v-model="form.printer_code_special"
+              :options="listDropdown.global.Printer"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.printerSpecialItemFood')"
+              name="Printer Special Item Food"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="printerSpecialItemBeverage"
+              class="row mb-1"
+              v-model="form.printer_code_special_beverage"
+              :options="listDropdown.global.Printer"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.printerSpecialItemBeverage')"
+              name="Printer Special Item Beverage"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="printerCheck"
+              class="row mb-1"
+              v-model="form.printer_code_check"
+              :options="listDropdown.global.Printer"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.printerCheck')"
+              name="Printer Check"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="idSort"
+              formatted
+              showZeroNumber
+              class="row mb-1"
+              v-model="form.id_sort"
+              :label="$t('labels.idSort')"
+              type="number"
+              name="ID Sort"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <!-- <c-input
+              id="imageLink"
+              class="row mb-1"
+              v-model="form.image_link"
+              :label="$t('labels.imageLink')"
+              type="text"
+              name="Image Link"
+              customLabelClass="col-3"
+              customClass="col-9"
+            /> -->
+            <div class="row justify-content-end">
+              <div class="col-4 d-flex align-items-center">
+                <checkbox
+                  id="forIpTv"
+                  v-model="form.is_for_iptv"
+                  :label="$t('labels.forIpTv')"
+                  name="Ip Tv"
+                >
+                </checkbox>
+              </div>
+              <div class="col-5 d-flex align-items-center">
+                <checkbox
+                  id="active"
+                  v-model="form.is_active"
+                  :label="$t('labels.active')"
+                  name="Active"
+                >
+                </checkbox>
+              </div>
+              <div class="col-9 d-flex align-items-start">
+                <checkbox
+                  id="checkAvailableTableRoom"
+                  v-model="form.is_check_available_table"
+                  :label="$t('labels.checkAvailableTableRoom')"
+                  name="Business Source"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+          <div
+            v-if="formType == $global.formType.account"
+            class="d-md-none d-sm-block"
+          >
+            <c-input
+              id="idSort"
+              formatted
+              showZeroNumber
+              class="row mb-1"
+              v-model="form.id_sort"
+              :label="$t('labels.idSort')"
+              type="number"
+              name="ID Sort"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+
+          <!-- Menu companytype -->
+          <div v-if="formType == $global.formType.companyType">
+            <CSelect
+              filter
+              required
+              id="arAccount"
+              class="row mb-1"
+              v-model="form.journal_account_code_ar"
+              :options="listDropdown.company.JournalAccountAR"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.arAccount')"
+              name="AR Account"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- currency -->
+          <div v-if="formType == $global.formType.currency">
+            <c-input
+              required
+              id="symbol"
+              class="row mb-1"
+              v-model="form.symbol"
+              :label="$t('labels.symbol')"
+              type="text"
+              name="Symbol"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="format"
+              class="row mb-1"
+              v-model="form.format"
+              :options="formats"
+              @load="repeatLoadDropdownList"
+              keyName="name"
+              labelName="name"
+              :label="$t('labels.format')"
+              name="Format"
+              customLabelClass="col-3"
+              customClass="col-9"
+            >
+            </CSelect>
+            <div class="col-md-9 float-end">
+              <checkbox
+                id="default"
+                v-model="form.is_default"
+                :label="$t('labels.default')"
+                name="Default"
+              >
+              </checkbox>
+            </div>
+          </div>
+          <!-- deparment -->
+          <CSelect
+            v-if="formType == $global.formType.department"
+            filter
+            required
+            id="type"
+            class="mb-1"
+            v-model="form.type_code"
+            :options="listDropdown.global"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.type')"
+            name="Type"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- Menu RoomRateSubCategory -->
+          <div v-if="formType == $global.formType.roomRateSubCategory">
+            <CSelect
+              filter
+              required
+              id="category"
+              class="row mb-1"
+              v-model="form.category_code"
+              :options="listDropdown.global"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.category')"
+              name="Category"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu sales -->
+          <div v-if="formType == $global.formType.sales">
+            <c-input
+              id="phoneNumber"
+              class="row mb-1"
+              v-model="form.phone_number"
+              :label="$t('labels.phoneNumber')"
+              type="text"
+              name="Phone Number"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="waNumber"
+              class="row mb-1"
+              v-model="form.wa_number"
+              :label="$t('labels.waNumber')"
+              type="text"
+              name="Wa Number"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu venue -->
+          <CSelect
+            v-if="formType == $global.formType.venue"
+            required
+            id="location"
+            class="row mb-1"
+            v-model="form.location_code"
+            :options="listDropdown.global.VenueLocation"
+            @load="repeatLoadDropdownList"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.location')"
+            name="Location"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- Store -->
+          <div v-if="formType == $global.formType.store">
+            <div class="row justify-content-end">
+              <div class="col-9">
+                <checkbox
+                  id="room"
+                  v-model="form.is_room"
+                  :label="$t('labels.room')"
+                  name="Room"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+          <!-- Menu guestType -->
+          <div v-if="formType == $global.formType.guestType" class="row mb-1">
+            <div class="col-3 pr-0">
+              <label id="root" class="col-form-label d-flex mt-1" for="color"
+                >{{$t('labels.color')}}</label
+              >
+            </div>
+            <c-input class="col" type="color" v-model="form.color" name="color">
+            </c-input>
+            <!-- <color-picker
+                useType="both"
+                lang="en"
+                id="colorPicker"
+                ref="colorFormElement"
+                v-model="form.color"
+                class="current-color"
+                format="hex"
+              /> -->
+          </div>
+          <c-input
+            v-if=" formType != $global.formType.roomType
+          && formType != $global.formType.memberOutletDiscount
+          && formType != $global.formType.roomBoy
+          && formType != $global.formType.city
+          && formType != $global.formType.state
+          && formType != $global.formType.nationality
+          && formType != $global.formType.country
+          && formType != $global.formType.owner
+          && formType != $global.formType.language
+          && formType != $global.formType.voucherReason
+          && formType != $global.formType.idCardType
+          && formType != $global.formType.bookingSource
+          && formType != $global.formType.creditCardCharge
+          && formType != $global.formType.regency
+          && formType != $global.formType.market
+          && formType != $global.formType.salesSegment
+          && formType != $global.formType.salesSource
+          && formType != $global.formType.salesTaskAction
+          && formType != $global.formType.salesTaskRepeat
+          && formType != $global.formType.salesTaskTag
+          && formType != $global.formType.tenan
+          && formType != $global.formType.productGroup
+          && formType != $global.formType.waitress
+          && formType != $global.formType.printer
+          && formType != $global.formType.discountLimit
+          && formType != $global.formType.shippingAddress
+          && formType != $global.formType.uom
+          && formType != $global.formType.returnStockReason
+          && formType != $global.formType.marketList
+          && formType != $global.formType.faManufacture
+          && formType != $global.formType.faLocation
+          && formType != $global.formType.faItemCategory
+          && formType != $global.formType.faItem
+          && formType != $global.formType.taxAndService
+          && formType != $global.formType.bankAccount
+          && formType != $global.formType.memberPointType
+          && formType != $global.formType.guestTitle
+          && formType != $global.formType.guestTitle
+          && formType != $global.formType.pabxRate
+          && formType != $global.formType.roomAmenities
+          && formType != $global.formType.account
+          && formType != $global.formType.company
+          && formType != $global.formType.currency
+          && formType != $global.formType.room
+          && formType != $global.formType.outlet
+          && formType != $global.formType.product
+          && formType != $global.formType.venueGroup
+          && formType != $global.formType.venueCombine
+          && formType != $global.formType.seatingPlan
+          && formType != $global.formType.member
+          && formType != $global.formType.journalAccountSubGroup
+          && formType != $global.formType.journalAccount
+          && formType != $global.formType.itemGroup
+          && formType != $global.formType.theme
+          && formType != $global.formType.layout"
+            id="idSort"
+            formatted
+            showZeroNumber
+            class="row mb-1"
+            v-model="form.id_sort"
+            :label="$t('labels.idSort')"
+            type="number"
+            name="ID Sort"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+          <!-- spa Room -->
+          <div v-if="formType == $global.formType.spaRoom" class="col-6">
+            <div class="row justify-content-end">
+              <div class="col-6 d-flex">
+                <checkbox
+                  id="active"
+                  v-model="form.is_active"
+                  :label="$t('labels.active')"
+                  name="Active"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+          <div v-if="formType == $global.formType.companyType">
+            <div class="row justify-content-center">
+              <div class="col-6">
+                <checkbox
+                  id="personal"
+                  v-model="form.is_personal"
+                  :label="$t('labels.personal')"
+                  name="Personal"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+          <!-- menu seating plan -->
+          <div v-if="formType == $global.formType.seatingPlan && screenSize != 'xs' && modeData == $global.modeData.edit">
+            <div class="row">
+              <div class="col-md-3">
+                <label class="col-form-label d-flex mt-1" for="layout"
+                  >{{$t('labels.image')}}
+                </label>
+              </div>
+              <div class="col-md-9">
+                <div class="col-md-9">
+                  <div @contextmenu="onContextMenu($event)" class="w-100 text-center">
+                    <div class="row justify-content-center px-2">
+                      <my-upload field="img" @crop-success="cropSuccess" @crop-upload-success="cropUploadSuccess"
+                        @crop-upload-fail="cropUploadFail" v-model="showImageUploader" :width="80" :height="80"
+                        :url="uploadURL" :params="params" :headers="headers" :maxSize="2000" langType="en"
+                        img-format="png"></my-upload>
+                      <div class="logo-wrapper-seating-plan">
+                        <img v-if="form.image_link" class="company-logo" height="260" width="260" alt=""
+                          :src="testImageURL" />
+                        <span v-if="!form.image_link">Minimun size 200x110</span>
+                        <div class="logo-overlay" @click="handleShowImageUploader">
+                          <span v-if="form.image_link">Change Image</span>
+                          <span v-else>Insert Image</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+     
+              </div>
+            </div>
+          </div>
+          <!-- menu venueCombine -->
+          <div v-if="formType == $global.formType.venueCombine">
+            <CSelect
+              required
+              id="location"
+              class="row mb-1"
+              v-model="form.location_code"
+              :options="listDropdown.global.VenueLocation"
+              @load="repeatLoadDropdownList"
+              @change="onChangeVenueLocation"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.location')"
+              name="Location"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              multiple
+              id="venueList"
+              class="row mb-1"
+              v-model="form.venue_code"
+              :options="listDropdown.venueByLocation"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.venueList')"
+              name="Venue List"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu table -->
+          <div
+            v-if="formType == $global.formType.table"
+            class="col-md-9 d-flex float-end"
+          >
+            <checkbox
+              id="active"
+              v-model="form.is_active"
+              :label="$t('labels.active')"
+              name="Active"
+              customLabelClass="col-3"
+              customClass="col-9"
+            >
+            </checkbox>
+          </div>
+          <!-- Menu ROOM -->
+          <div
+            v-if="formType == $global.formType.room"
+            class="d-none d-md-block d-sm-none"
+          >
+            <c-input
+              id="building"
+              required
+              class="row mb-1"
+              v-model="form.building"
+              :label="$t('labels.building')"
+              type="text"
+              name="Building"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="floor"
+              required
+              class="mb-1"
+              v-model="form.floor"
+              :label="$t('labels.floor')"
+              type="text"
+              name="Floor"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              required
+              showZeroNumber
+              formatted
+              id="maxAdult"
+              class="row mb-1"
+              v-model="form.max_adult"
+              :label="$t('labels.maxAdult')"
+              type="number"
+              name="Max Adult"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="description"
+              class="row mb-1"
+              v-model="form.description"
+              :label="$t('labels.description')"
+              type="text"
+              name="Description"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="phoneNumber"
+              class="row mb-1"
+              v-model="form.phone_number"
+              :label="$t('labels.phoneNumber')"
+              type="text"
+              name="Phone Number"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              required
+              showZeroNumber
+              formatted
+              id="tvQuantity"
+              class="mb-1"
+              v-model="form.tv_quantity"
+              :label="$t('labels.tvQuantity')"
+              type="number"
+              name="TV Quantity"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- Menu ROOM -->
+          <div
+            v-if="formType == $global.formType.room"
+            class="d-md-none d-sm-block"
+          >
+            <c-input
+              required
+              showZeroNumber
+              formatted
+              id="maxAdult"
+              class="row mb-1"
+              v-model="form.max_adult"
+              :label="$t('labels.maxAdult')"
+              type="number"
+              name="Max Adult"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="description"
+              class="row mb-1"
+              v-model="form.description"
+              :label="$t('labels.description')"
+              type="text"
+              name="Description"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="phoneNumber"
+              class="row mb-1"
+              v-model="form.phone_number"
+              :label="$t('labels.phoneNumber')"
+              type="text"
+              name="Phone Number"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              required
+              showZeroNumber
+              formatted
+              id="tvQuantity"
+              class="mb-1"
+              v-model="form.tv_quantity"
+              :label="$t('labels.tvQuantity')"
+              type="number"
+              name="TV Quantity"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-datepicker
+              required
+              class="mb-1"
+              v-model="form.start_date"
+              type="date"
+              valueType="YYYY-MM-DD"
+              :label="$t('labels.startDate')"
+              format="DD/MM/YYYY"
+              name="Start Date"
+              customLabelClass="col-3"
+              customClass="col-9"
+            >
+            </c-datepicker>
+            <CSelect
+              filter
+              id="owner"
+              class="mb-1"
+              v-model="form.owner_code"
+              :options="listDropdown.room.Owner"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.owner')"
+              name="Owner"
+            />
+            <CSelect
+              filter
+              id="revenueAccount"
+              class="mb-1"
+              v-model="form.revenue_account_code"
+              :options="listDropdown.room.AccountRoomCharge"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.revenueAccount')"
+              name="revenueAccount"
+            />
+            <div class="row justify-content-end">
+              <div class="col-9 d-flex">
+                <checkbox
+                  id="smoking"
+                  class=""
+                  v-model="form.is_smoking"
+                  :label="$t('labels.smokingRoom')"
+                  name="Smoking"
+                  customLabelClass="col-9"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+            <c-input
+              id="idSort"
+              formatted
+              showZeroNumber
+              class="row mb-1"
+              v-model="form.id_sort"
+              :label="$t('labels.idSort')"
+              type="number"
+              name="ID Sort"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu roomAmenities -->
+          <div v-if="formType == $global.formType.roomAmenities">
+            <div class="row mb-2">
+              <div class="col-md-4">
+                <div @contextmenu="onContextMenu($event)" class="w-100 text-center">
+                  <div class="row justify-content-center">
+                    <my-upload field="img" @crop-success="cropSuccess" @crop-upload-success="cropUploadSuccess"
+                      @crop-upload-fail="cropUploadFail" v-model="showImageUploader" :width="64" :height="64"
+                      :url="uploadURL" :params="params" :headers="headers" :maxSize="2000" langType="en"
+                      img-format="png"></my-upload>
+                    <div class="logo-wrapper-amenities">
+                      <img v-if="form.image_link" class="company-logo" height="64" width="64" alt=""
+                        :src="form.image_link" />
+                      <span v-if="!form.image_link">Minimun size 64x64</span>
+                      <div class="logo-overlay" @click="handleShowImageUploader">
+                        <span v-if="form.image_link">Change Image</span>
+                        <span v-else>Insert Image</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button :disabled="!form.image_link" title="Reset Image" type="button" class="btn btn-primary ml-2"
+                    @click="onClickResetImage">
+                    {{ $t('buttons.resetImage') }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- menu product Category -->
+          <div v-if="formType == $global.formType.productCategory">
+            <c-input
+              id="imageLink"
+              class="row mb-1"
+              v-model="form.image_link"
+              :label="$t('labels.imageLink')"
+              type="text"
+              name="Image Link"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <div class="col-9 d-flex float-end">
+              <checkbox
+                id="for_iptv"
+                v-model="form.is_for_iptv"
+                :label="$t('labels.forIpTv')"
+                name="For Ip Tv"
+                customLabelClass="col-3"
+                customClass="col-9"
+              >
+              </checkbox>
+            </div>
+          </div>
+          <!-- roomType -->
+          <div v-if="formType == $global.formType.roomType">
+            <c-input
+              id="cmPercentAvailability"
+              showZeroNumber
+              formatted
+              class="row mb-1"
+              v-model="form.cm_percent_availability"
+              :label="$t('labels.cmPercentAvailability')"
+              type="number"
+              name="Cm Percent Availability"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="minRoomLeft"
+              showZeroNumber
+              formatted
+              class="row mb-1"
+              v-model="form.min_room_left"
+              :label="$t('labels.minRoomLeft')"
+              type="number"
+              name="Min Room Left"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <checkbox
+              id="isCmFromGlobal"
+              class="col"
+              v-model="form.is_cm_from_global"
+              :label="$t('labels.isCmFromGlobal')"
+              name="From Global"
+              customLabelClass="col-3"
+              customClass="col-9"
+            >
+            </checkbox>
+          </div>
+          <!--Shipping Address-->
+          <div
+            v-if="formType == $global.formType.shippingAddress"
+            class="d-md-block d-sm-none"
+          >
+            <CSelect
+              filter
+              id="country"
+              class="row mb-1"
+              v-model="form.country_code"
+              :options="listDropdown.global.Country"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.country')"
+              name="Country"
+              @change="onChangeCountry"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="state"
+              class="row mb-1"
+              v-model="form.state_code"
+              :options="listDropdown.state"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.state')"
+              name="State"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="postCode"
+              class="row mb-1"
+              v-model="form.postal_code"
+              :label="$t('labels.postCode')"
+              type="text"
+              name="Post Code"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="phone1"
+              class="row mb-1"
+              v-model="form.phone1"
+              :label="$t('labels.phone1')"
+              type="text"
+              name="Phone 1"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="phone2"
+              class="row mb-1"
+              v-model="form.phone2"
+              :label="$t('labels.phone2')"
+              type="text"
+              name="Phone 2"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <div
+            v-if="formType == $global.formType.shippingAddress"
+            class="d-none d-md-none d-sm-block"
+          >
+            <c-input
+              id="postCode"
+              class="row mb-1"
+              v-model="form.postal_code"
+              :label="$t('labels.postCode')"
+              type="text"
+              name="Post Code"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="phone1"
+              class="row mb-1"
+              v-model="form.phone1"
+              :label="$t('labels.phone1')"
+              type="text"
+              name="Phone 1"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="phone2"
+              class="row mb-1"
+              v-model="form.phone2"
+              :label="$t('labels.phone2')"
+              type="text"
+              name="Phone 2"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="fax"
+              class="row mb-1"
+              v-model="form.fax"
+              :label="$t('labels.fax')"
+              type="text"
+              name="Fax"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="email"
+              class="row mb-1"
+              v-model="form.email"
+              :label="$t('labels.email')"
+              type="text"
+              name="Email"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="website"
+              class="row mb-1"
+              v-model="form.website"
+              :label="$t('labels.website')"
+              type="text"
+              name="Website"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <div class="row justify-content-end">
+              <div class="col-9 mr-2">
+                <checkbox
+                  id="active"
+                  v-model="form.is_active"
+                  :label="$t('labels.active')"
+                  name="Active"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+          <!-- menu member Outlet Discount -->
+          <div v-if="formType == $global.formType.memberOutletDiscount">
+            <c-input
+              showZeroNumber
+              formatted
+              id="discountPercent"
+              class="row mb-1"
+              v-model="form.discount_percent"
+              :label="$t('labels.discountPercent')"
+              type="number"
+              name="Discount Percent"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+
+            <c-input
+              showZeroNumber
+              formatted
+              id="maximumDiscount"
+              class="row mb-1"
+              v-model="form.maximum_discount"
+              :label="$t('labels.maximumDiscount')"
+              type="number"
+              name="Maximum Discount"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <div class="row justify-content-end">
+              <div class="col-9">
+                <checkbox
+                  id="isForAllProduct"
+                  class=""
+                  v-model="form.is_for_all_product"
+                  :label="$t('labels.isForAllProduct')"
+                  name="Is For All Product"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+          <!-- memberPointType -->
+          <div v-if="formType == $global.formType.memberPointType">
+            <CSelect
+              required
+              multiple
+              id="roomType"
+              class="row mb-1"
+              v-model="form.room_type_code"
+              :options="listDropdown.global.RoomType"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.roomType')"
+              name="Room Type"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              :required="form.is_from_rate === '1' "
+              showZeroNumber
+              formatted
+              :disabled="form.is_from_rate === '0' "
+              id="rateAmount"
+              class="row mb-1"
+              v-model="form.rate_amount"
+              :label="$t('labels.rateAmount')"
+              type="number"
+              name="Rate Amount"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              required
+              showZeroNumber
+              formatted
+              id="point"
+              class="row mb-1"
+              v-model="form.point"
+              :label="$t('labels.point')"
+              type="number"
+              name="Point"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+
+          <!-- menu salesTaskRepeat -->
+          <div v-if="formType == $global.formType.salesTaskRepeat">
+            <c-input
+              formatted
+              showZeroNumber
+              id="days"
+              class="row mb-1"
+              v-model="form.days"
+              :label="$t('labels.days')"
+              type="number"
+              name="Days"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu roomBoy -->
+          <div v-if="formType == $global.formType.roomBoy">
+            <checkbox
+              id="isActive"
+              class=""
+              v-model="form.is_active"
+              :label="$t('labels.active')"
+              name="Active"
+            >
+            </checkbox>
+          </div>
+          <!-- menu City -->
+          <div v-if="formType == $global.formType.city">
+            <CSelect
+              filter
+              required
+              id="state"
+              class="row mb-1"
+              v-model="form.state_code"
+              :options="listDropdown.city.State"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.state')"
+              name="State"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="regency"
+              class="row mb-1"
+              v-model="form.regency_code"
+              :options="listDropdown.city.Regency"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.regency')"
+              name="Regency"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu tenan -->
+          <div v-if="formType == $global.formType.tenan">
+            <c-input
+              id="city"
+              class="row mb-1"
+              v-model="form.city"
+              :label="$t('labels.city')"
+              type="text"
+              name="City"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="phone1"
+              class="row mb-1"
+              v-model="form.phone1"
+              :label="$t('labels.phone1')"
+              type="text"
+              name="Phone 1"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="Phone2"
+              class="row mb-1"
+              v-model="form.phone2"
+              :label="$t('labels.phone2')"
+              type="text"
+              name="Phone 2"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="fax"
+              class="row mb-1"
+              v-model="form.fax"
+              :label="$t('labels.fax')"
+              type="text"
+              name="Fax"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="email"
+              class="row mb-1"
+              v-model="form.email"
+              :label="$t('labels.email')"
+              type="text"
+              name="Email"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu discount limit -->
+          <div>
+            <c-input
+              v-if="formType == $global.formType.discountLimit"
+              required
+              showZeroNumber
+              formatted
+              id="maxDiscount"
+              class="row mb-1"
+              v-model="form.max_discount"
+              :label="$t('labels.maxDiscount')"
+              type="number"
+              name="Max Discount"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+
+          <div
+            v-if="formType == $global.formType.faItemCategory"
+            class="d-none d-md-block d-sm-none"
+          >
+            <div class="row justify-content-end">
+              <div class="col-5">
+                <checkbox
+                  id="linen"
+                  v-model="form.is_linen"
+                  :label="$t('labels.linen')"
+                  name="Linen"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+              <div class="col-4">
+                <checkbox
+                  id="intangible"
+                  v-model="form.is_intangible"
+                  :label="$t('labels.intangible')"
+                  name="Intangible"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+            <CSelect
+              required
+              id="accountCogs"
+              class="row mb-1"
+              v-model="form.journal_account_code_cogs"
+              :options="listDropdown.global.JournalAccountCosting"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.accountCogs')"
+              name="Account Cogs"
+              selectType="column"
+              :columnOptions="columnOptions"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              required
+              id="accountExpense"
+              class="row mb-1"
+              v-model="form.journal_account_code_expense"
+              :options="listDropdown.global.JournalAccountExpense"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.accountExpense')"
+              name="Account Expense"
+              selectType="column"
+              :columnOptions="columnOptions"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <div
+            v-if="formType == $global.formType.faItemCategory"
+            class="d-md-none d-sm-block"
+          >
+            <CSelect
+              required
+              id="accountExpense"
+              class="row mb-1"
+              v-model="form.journal_account_code_expense"
+              :options="listDropdown.global.JournalAccountExpense"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.accountExpense')"
+              name="Account Expense"
+              selectType="column"
+              :columnOptions="columnOptions"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              required
+              id="accountSell"
+              class="row mb-1"
+              v-model="form.journal_account_code_sell"
+              :options="listDropdown.global.JournalAccountIncome"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.accountSell')"
+              name="Account Sell"
+              selectType="column"
+              :columnOptions="columnOptions"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              required
+              id="depreciationAccount"
+              class="row mb-1"
+              v-model="form.journal_account_code_depreciation"
+              :options="listDropdown.global.JournalAccount"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.depreciationAccount')"
+              name="Depreciation Account"
+              selectType="column"
+              :columnOptions="columnOptions"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              required
+              id="accountSpoil"
+              class="row mb-1"
+              v-model="form.journal_account_code_spoil"
+              :options="listDropdown.global.JournalAccountExpense"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.accountSpoil')"
+              name="Account Spoil"
+              selectType="column"
+              :columnOptions="columnOptions"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu Product -->
+          <div
+            v-if="formType == $global.formType.product"
+            class="d-none d-md-block d-sm-none"
+          >
+            <CSelect
+              filter
+              id="package"
+              class="row mb-1"
+              v-model="form.package_code"
+              :options="listDropdown.global.Package"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.package')"
+              name="Package"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="taxAndService"
+              class="row mb-1"
+              v-model="form.tax_and_service_code"
+              :options="listDropdown.global.TaxAndService"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.taxAndService')"
+              name="Tax and Service"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="printer"
+              class="row mb-1"
+              v-model="form.printer_code"
+              :options="listDropdown.global.Printer"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.printer')"
+              name="Printer"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="printer2"
+              class="row mb-1"
+              v-model="form.printer_code2"
+              :options="listDropdown.global.Printer"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.printer2')"
+              name="Printer 2"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              showZeroNumber
+              formatted
+              id="price"
+              class="row mb-1"
+              v-model="form.price"
+              :label="$t('labels.price')"
+              type="number"
+              name="Price"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <div class="row justify-content-end">
+              <div class="col-md-9 d-flex float-end">
+                <checkbox
+                  id="disableDiscount"
+                  class=""
+                  v-model="form.disable_discount"
+                  :label="$t('labels.disableDiscount')"
+                  name="Disable Discount"
+                  customLabelClass="col-9"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+            <c-input
+              :disabled="this.form.disable_discount == 1"
+              showZeroNumber
+              formatted
+              id="discount"
+              class="row mb-1"
+              v-model="form.discount"
+              :label="$t('labels.discount')"
+              type="number"
+              name="Discount"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              showZeroNumber
+              formatted
+              id="estimationCost"
+              class="row mb-1"
+              v-model="form.estimation_cost"
+              :label="$t('labels.estimationCost')"
+              type="number"
+              name="Estimation Cost"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu Product -->
+          <div
+            v-if="formType == $global.formType.product"
+            class="d-md-none d-sm-block"
+          >
+            <CSelect
+              filter
+              id="printer"
+              class="row mb-1"
+              v-model="form.printer_code"
+              :options="listDropdown.global.Printer"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.printer')"
+              name="Printer"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="printer2"
+              class="row mb-1"
+              v-model="form.printer_code2"
+              :options="listDropdown.global.Printer"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.printer2')"
+              name="Printer 2"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              showZeroNumber
+              formatted
+              id="price"
+              class="row mb-1"
+              v-model="form.price"
+              :label="$t('labels.price')"
+              type="number"
+              name="Price"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <div class="row justify-content-end">
+              <div class="col-9 d-flex float-end">
+                <checkbox
+                  id="disableDiscount"
+                  class=""
+                  v-model="form.disable_discount"
+                  :label="$t('labels.disableDiscount')"
+                  name="Disable Discount"
+                  customLabelClass="col-9"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+            <c-input
+              :disabled="this.form.disable_discount == 1"
+              showZeroNumber
+              formatted
+              id="discount"
+              class="row mb-1"
+              v-model="form.discount"
+              :label="$t('labels.discount')"
+              type="number"
+              name="Discount"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              showZeroNumber
+              formatted
+              id="estimationCost"
+              class="row mb-1"
+              v-model="form.estimation_cost"
+              :label="$t('labels.estimationCost')"
+              type="number"
+              name="Estimation Cost"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              showZeroNumber
+              formatted
+              id="buy"
+              class="row mb-1"
+              v-model="form.buy"
+              :label="$t('labels.buy')"
+              type="number"
+              name="Buy"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              showZeroNumber
+              formatted
+              id="free"
+              class="row mb-1"
+              v-model="form.free"
+              :label="$t('labels.free')"
+              type="number"
+              name="Free"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="imageLink"
+              class="row mb-1"
+              v-model="form.image_link"
+              :label="$t('labels.imageLink')"
+              type="text"
+              name="Image Link"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <div class="row justify-content-end">
+              <div class="col-2">
+                <checkbox
+                  id="ipTv"
+                  v-model="form.is_for_iptv"
+                  :label="$t('labels.ipTv')"
+                  name="IPTV"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+              <div class="col-2">
+                <checkbox
+                  id="active"
+                  v-model="form.is_active"
+                  :label="$t('labels.active')"
+                  name="Active"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+              <div class="col-5">
+                <checkbox
+                  id="usingSpaRoom"
+                  v-model="form.is_using_spa_room"
+                  :label="$t('labels.usingSpaRoom')"
+                  name="Using SPA Room"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+          <!--fA location -->
+          <div v-if="formType == $global.formType.faLocation">
+            <CSelect
+              filter
+              required
+              id="type"
+              class="row mb-1"
+              v-model="form.location_type_code"
+              :options="listDropdown.global"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.type')"
+              name="Type"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <div v-if="formType == $global.formType.taxAndService">
+            <c-input
+              showZeroNumber
+              formatted
+              id="service"
+              class="row mb-1"
+              v-model="form.service"
+              :label="$t('labels.service')"
+              type="number"
+              name="Service"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              showZeroNumber
+              formatted
+              id="serviceTax"
+              class="row mb-1"
+              v-model="form.service_tax"
+              :label="$t('labels.serviceTax')"
+              type="number"
+              name="Service Tax"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <div class="row justify-content-end">
+              <div class="col-md-4 d-flex align-items-center">
+                <checkbox
+                  id="isTaxInclude"
+                  v-model="form.is_tax_include"
+                  :label="$t('labels.isTaxInclude')"
+                  name="Tax Include"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+              <div class="col-md-5 d-flex align-items-center">
+                <checkbox
+                  id="isServiceInclude"
+                  v-model="form.is_service_include"
+                  :label="$t('labels.isServiceInclude')"
+                  name="Service Include"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+
+          <!-- <div>
+            <CSelect multiple id="subDepartment" class="row mb-1" v-model="form.sub_department_code"
+              :options="listDropdown.account.SubDepartment" @load="repeatLoadDropdownList" keyName="code" labelName="name"
+              :label="$t('labels.subDepartment')" name="Sub Department" />
+            <CSelect required id="journalAccount" class="row mb-1" v-model="form.journal_account_code"
+              :options="listDropdown.account.JournalAccount" @load="repeatLoadDropdownList" keyName="code" labelName="name"
+              :label="$t('labels.journalAccount')" name="Journal Account" />
+          </div> -->
+          <!-- Menu company -->
+          <div
+            v-if="formType == $global.formType.company"
+            class="d-none d-md-block d-sm-none"
+          >
+            <CSelect
+              filter
+              id="country"
+              class="row mb-1"
+              v-model="form.country_code"
+              :options="listDropdown.company.Country"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.country')"
+              name="Country"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="state"
+              class="row mb-1"
+              v-model="form.state_code"
+              :options="listDropdown.company.State"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.state')"
+              name="State"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="postCode"
+              class="row mb-1"
+              v-model="form.postal_code"
+              :label="$t('labels.postCode')"
+              type="text"
+              name="Post Code"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="phone1"
+              class="row mb-1"
+              v-model="form.phone1"
+              :label="$t('labels.phone1')"
+              type="text"
+              name="Phone 1"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="phone2"
+              class="row mb-1"
+              v-model="form.phone2"
+              :label="$t('labels.phone2')"
+              type="text"
+              name="Phone 2"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="fax"
+              class="row mb-1"
+              v-model="form.fax"
+              :label="$t('labels.fax')"
+              type="text"
+              name="Fax"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="email"
+              class="row mb-1"
+              v-model="form.email"
+              :label="$t('labels.email')"
+              type="text"
+              name="Email"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <!-- menu company -->
+          <div
+            v-if="formType == $global.formType.company"
+            class="d-md-none d-sm-block"
+          >
+            <c-input
+              id="phone1"
+              class="row mb-1"
+              v-model="form.phone1"
+              :label="$t('labels.phone1')"
+              type="text"
+              name="Phone 1"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="phone2"
+              class="row mb-1"
+              v-model="form.phone2"
+              :label="$t('labels.phone2')"
+              type="text"
+              name="Phone 2"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="fax"
+              class="row mb-1"
+              v-model="form.fax"
+              :label="$t('labels.fax')"
+              type="text"
+              name="Fax"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="email"
+              class="row mb-1"
+              v-model="form.email"
+              :label="$t('labels.email')"
+              type="text"
+              name="Email"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="website"
+              class="row mb-1"
+              v-model="form.website"
+              :label="$t('labels.website')"
+              type="text"
+              name="Website"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-datepicker
+              class="row mb-1"
+              v-model="form.birthday"
+              type="date"
+              valueType="YYYY-MM-DD"
+              :label="$t('labels.birthday')"
+              format="DD/MM/YYYY"
+              name="Birthday"
+              customLabelClass="col-3"
+              customClass="col-9"
+            >
+            </c-datepicker>
+            <c-input
+              formatted
+              showZeroNumber
+              id="apLimit"
+              class="row mb-1"
+              v-model="form.ap_limit"
+              :label="$t('labels.apLimit')"
+              type="number"
+              name="AP Limit"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              formatted
+              showZeroNumber
+              id="arLimit"
+              class="row mb-1"
+              v-model="form.ar_limit"
+              :label="$t('labels.arLimit')"
+              type="number"
+              name="AR Limit"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              formatted
+              showZeroNumber
+              id="invoiceDue"
+              class="row mb-1"
+              v-model="form.invoice_due"
+              :label="$t('labels.invoiceDue')"
+              type="number"
+              name="Invoice Due"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <div class="row justify-content-end">
+              <div class="col-4 d-flex align-items-center">
+                <checkbox
+                  id="directBill"
+                  v-model="form.is_direct_bill"
+                  :label="$t('labels.directBill')"
+                  name="Use for Direct Bill"
+                >
+                </checkbox>
+              </div>
+              <div class="col-5 d-flex align-items-center">
+                <checkbox
+                  id="active"
+                  v-model="form.is_business_source"
+                  :label="$t('labels.businessSource')"
+                  name="Business Source"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+
+          <div
+            v-if="formType == $global.formType.outlet"
+            class="d-none d-md-block d-sm-none"
+          >
+            <CSelect
+              filter
+              required
+              id="taxAndService"
+              class="row mb-1"
+              v-model="form.tax_and_service_code"
+              :options="listDropdown.global.TaxAndService"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.taxAndService')"
+              name="Tax And Service"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="taxAndServiceSpecialItem"
+              class="row mb-1"
+              v-model="form.tax_and_service_code_special"
+              :options="listDropdown.global.TaxAndService"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.taxAndServiceSpecialItem')"
+              name="Tax And Service Special"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="printerSpecialItemFood"
+              class="row mb-1"
+              v-model="form.printer_code_special"
+              :options="listDropdown.global.Printer"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.printerSpecialItemFood')"
+              name="Printer Special Item Food"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="printerSpecialItemBeverage"
+              class="row mb-1"
+              v-model="form.printer_code_special_beverage"
+              :options="listDropdown.global.Printer"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.printerSpecialItemBeverage')"
+              name="Printer Special Item Beverage"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              id="printerCheck"
+              class="row mb-1"
+              v-model="form.printer_code_check"
+              :options="listDropdown.global.Printer"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.printerCheck')"
+              name="Printer Check"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+        </div>
+        <!-- grid ke 3 -->
+        <div class="col-md-4 col-sm-6">
+          <div
+            v-if="formType == $global.formType.room"
+            class="d-none d-md-block d-sm-none"
+          >
+            <c-datepicker
+              required
+              class="mb-1"
+              v-model="form.start_date"
+              type="date"
+              valueType="YYYY-MM-DD"
+              :label="$t('labels.startDate')"
+              format="DD/MM/YYYY"
+              name="Start Date"
+              customLabelClass="col-3"
+              customClass="col-9"
+            >
+            </c-datepicker>
+            <CSelect
+              filter
+              id="owner"
+              class="mb-1"
+              v-model="form.owner_code"
+              :options="listDropdown.room.Owner"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.owner')"
+              name="Owner"
+            />
+            <CSelect
+              filter
+              id="revenueAccount"
+              class="mb-1"
+              v-model="form.revenue_account_code"
+              :options="listDropdown.room.AccountRoomCharge"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.revenueAccount')"
+              name="revenueAccount"
+            />
+            <div class="row justify-content-end">
+              <div class="col-9 d-flex">
+                <checkbox
+                  id="smoking"
+                  class=""
+                  v-model="form.is_smoking"
+                  :label="$t('labels.smokingRoom')"
+                  name="Smoking"
+                  customLabelClass="col-9"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+          <div
+            v-if="formType == $global.formType.account"
+            class="d-none d-md-block d-sm-none"
+          >
+            <CSelect
+              filter
+              id="itemGroup"
+              class="row mb-1"
+              v-model="form.item_group_code"
+              :options="listDropdown.account.ItemGroup"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.itemGroup')"
+              name="Item Group"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              filter
+              required
+              id="subFolio"
+              class="row mb-1"
+              v-model="form.sub_folio_group_code"
+              :options="listDropdown.account.SubFolioGroup"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.subFolio')"
+              name="Sub Folio"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <div
+            v-if="formType == $global.formType.account || formType == $global.formType.outlet || formType == $global.formType.room "
+            class="d-none d-md-block d-sm-none"
+          >
+            <c-input
+              id="idSort"
+              formatted
+              showZeroNumber
+              class="row mb-1"
+              v-model="form.id_sort"
+              :label="$t('labels.idSort')"
+              type="number"
+              name="ID Sort"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <div
+            v-if="formType == $global.formType.shippingAddress"
+            class="d-md-block d-sm-none"
+          >
+            <c-input
+              id="fax"
+              class="row mb-1"
+              v-model="form.fax"
+              :label="$t('labels.fax')"
+              type="text"
+              name="Fax"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="email"
+              class="row mb-1"
+              v-model="form.email"
+              :label="$t('labels.email')"
+              type="text"
+              name="Email"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              id="website"
+              class="row mb-1"
+              v-model="form.website"
+              :label="$t('labels.website')"
+              type="text"
+              name="Website"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <div class="row justify-content-end">
+              <div class="col-9 d-flex mr-2">
+                <checkbox
+                  id="active"
+                  v-model="form.is_active"
+                  :label="$t('labels.active')"
+                  name="Active"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+          <div
+            v-if="formType == $global.formType.faItemCategory"
+            class="d-none d-md-block d-sm-none"
+          >
+            <CSelect
+              required
+              id="accountSell"
+              class="row mb-1"
+              v-model="form.journal_account_code_sell"
+              :options="listDropdown.global.JournalAccountIncome"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.accountSell')"
+              name="Account Sell"
+              selectType="column"
+              :columnOptions="columnOptions"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              required
+              id="depreciationAccount"
+              class="row mb-1"
+              v-model="form.journal_account_code_depreciation"
+              :options="listDropdown.global.JournalAccount"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.depreciationAccount')"
+              name="Depreciation Account"
+              selectType="column"
+              :columnOptions="columnOptions"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <CSelect
+              required
+              id="accountSpoil"
+              class="row mb-1"
+              v-model="form.journal_account_code_spoil"
+              :options="listDropdown.global.JournalAccountExpense"
+              @load="repeatLoadDropdownList"
+              keyName="code"
+              labelName="name"
+              :label="$t('labels.accountSpoil')"
+              name="Account Spoil"
+              selectType="column"
+              :columnOptions="columnOptions"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+          </div>
+          <div
+            v-if="formType == $global.formType.product"
+            class="d-none d-md-block d-sm-none"
+          >
+            <div class="row mb-1">
+              <div class="col-3">
+                <label>{{$t('labels.buy')}}</label>
+              </div>
+              <div class="col">
+                <div class="row">
+                  <c-input
+                    showZeroNumber
+                    formatted
+                    spinner
+                    min="1"
+                    id="buy"
+                    v-model="form.buy"
+                    type="number"
+                    class="col"
+                    name="Buy"
+                    customClass="col-9"
+                  />
+                  <c-input
+                    showZeroNumber
+                    formatted
+                    spinner
+                    id="free"
+                    v-model="form.free"
+                    :label="$t('labels.free')"
+                    type="number"
+                    name="Free"
+                    class="col"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <c-input
+              id="imageLink"
+              class="row mb-1"
+              v-model="form.image_link"
+              :label="$t('labels.imageLink')"
+              type="text"
+              name="Image Link"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <div class="row justify-content-end">
+              <div class="col-md-2">
+                <checkbox
+                  id="ipTv"
+                  v-model="form.is_for_iptv"
+                  :label="$t('labels.ipTv')"
+                  name="IPTV"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+              <div class="col-md-2">
+                <checkbox
+                  id="active"
+                  v-model="form.is_active"
+                  :label="$t('labels.active')"
+                  name="Active"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+              <div class="col-md-5">
+                <checkbox
+                  id="usingSpaRoom"
+                  v-model="form.is_using_spa_room"
+                  :label="$t('labels.usingSpaRoom')"
+                  name="Using SPA Room"
+                  customLabelClass="col-3"
+                  customClass="col-9"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+          <!-- menu company -->
+          <div
+            v-if="formType == $global.formType.company"
+            class="d-none d-md-block d-sm-none"
+          >
+            <c-input
+              id="website"
+              class="row mb-1"
+              v-model="form.website"
+              :label="$t('labels.website')"
+              type="text"
+              name="Website"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-datepicker
+              class="row mb-1"
+              v-model="form.birthday"
+              type="date"
+              valueType="YYYY-MM-DD"
+              :label="$t('labels.birthday')"
+              format="DD/MM/YYYY"
+              name="Birthday"
+              customLabelClass="col-3"
+              customClass="col-9"
+            >
+            </c-datepicker>
+            <c-input
+              formatted
+              showZeroNumber
+              id="apLimit"
+              class="row mb-1"
+              v-model="form.ap_limit"
+              :label="$t('labels.apLimit')"
+              type="number"
+              name="AP Limit"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              formatted
+              showZeroNumber
+              id="arLimit"
+              class="row mb-1"
+              v-model="form.ar_limit"
+              :label="$t('labels.arLimit')"
+              type="number"
+              name="AR Limit"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <c-input
+              formatted
+              showZeroNumber
+              id="invoiceDue"
+              class="row mb-1"
+              v-model="form.invoice_due"
+              :label="$t('labels.invoiceDue')"
+              type="number"
+              name="Invoice Due"
+              customLabelClass="col-3"
+              customClass="col-9"
+            />
+            <div class="row justify-content-end">
+              <div class="col-4 d-flex align-items-center">
+                <checkbox
+                  id="directBill"
+                  v-model="form.is_direct_bill"
+                  :label="$t('labels.directBill')"
+                  name="Use for Direct Bill"
+                >
+                </checkbox>
+              </div>
+              <div class="col-5 d-flex align-items-center">
+                <checkbox
+                  id="active"
+                  v-model="form.is_business_source"
+                  :label="$t('labels.businessSource')"
+                  name="Business Source"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+          <!-- menu outlet -->
+          <div
+            v-if="formType == $global.formType.outlet"
+            class="d-none d-md-block d-sm-none"
+          >
+            <!-- <c-input
+              id="imageLink"
+              class="row mb-1"
+              v-model="form.image_link"
+              :label="$t('labels.imageLink')"
+              type="text"
+              name="Image Link"
+              customLabelClass="col-3"
+              customClass="col-9"
+            /> -->
+            <div class="row justify-content-end">
+              <div class="col-md-4 d-flex align-items-center">
+                <checkbox
+                  id="forIpTv"
+                  v-model="form.is_for_iptv"
+                  :label="$t('labels.forIpTv')"
+                  name="Ip Tv"
+                >
+                </checkbox>
+              </div>
+              <div class="col-md-5 d-flex align-items-center">
+                <checkbox
+                  id="active"
+                  v-model="form.is_active"
+                  :label="$t('labels.active')"
+                  name="Active"
+                >
+                </checkbox>
+              </div>
+              <div class="col-md-9 d-flex align-items-start">
+                <checkbox
+                  id="checkAvailableTableRoom"
+                  v-model="form.is_check_available_table"
+                  :label="$t('labels.checkAvailableTableRoom')"
+                  name="Business Source"
+                >
+                </checkbox>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end -->
+      <!-- menu outlet -->
+      <div class="col">
+        <div class="row mt-4 justify-content-center" v-if="formType == $global.formType.outlet">
+          <div :class="modeData !== $global.modeData.edit ? 'card col': 'card col-md-5 mr-2 ml-2'">
+            <div class="card-header mb-2">
+              <span>{{$t('labels.commissionGlobalOutlet')}}</span>
+            </div>
+            <div class="row mb-3">
+              <CSelect
+                id="account"
+                class="mb-1"
+                v-model="form.account_code"
+                :options="listDropdown.accountCharge"
+                @load="repeatLoadDropdownList"
+                keyName="code"
+                labelName="name"
+                :label="$t('labels.account')"
+                name="Account"
+                selectType="column"
+                :columnOptions="columnOptions"
+                @change="changeAccount"
+                customLabelClass="col-3"
+                customClass="col-9"
+              />
+              <CSelect
+                :disabled="isDisable"
+                filter
+                id="businessSource"
+                class="row mb-1"
+                v-model="form.company_code"
+                :options="listDropdown.global.BusinessSource"
+                @load="repeatLoadDropdownList"
+                keyName="code"
+                labelName="name"
+                :label="$t('labels.businessSource')"
+                name="Business Source"
+                customLabelClass="col-3"
+                customClass="col-9"
+              />
+              <CSelect
+                filter
+                id="commissionType"
+                class="row mb-1"
+                v-model="form.commission_type_code"
+                :options="listDropdown.global.CommissionType"
+                keyName="code"
+                labelName="name"
+                :label="$t('labels.commissionType')"
+                name="Commission Type"
+                customLabelClass="col-3"
+                customClass="col-9"
+                @load="repeatLoadDropdownList"
+              />
+              <c-input
+                showZeroNumber
+                formatted
+                id="commissionPercent"
+                class="row mb-1"
+                v-model="form.commission_percent"
+                :label="$t('labels.commissionPercent')"
+                type="number"
+                name="Commission Percent"
+                customLabelClass="col-3"
+                customClass="col-9"
+              />
+            </div>
+          </div>
+          <div v-if="modeData === $global.modeData.edit" class="col-md-5">
+            <!-- <div class="card-header mb-2">
+              <span>{{$t('labels.logo')}}</span>
+            </div>
+            <div class="row mb-3"></div> -->
+            <div class="w-100 text-center">
+              <div class="row justify-content-left">
+                <my-upload field="images" @crop-success="cropSuccess" @crop-upload-success="cropUploadSuccess"
+                  @crop-upload-fail="cropUploadFail" lang-type="en" v-model="showImageUploader" :width="256"
+                  :height="256" :url="uploadURL" :params="params" :headers="headers" img-format="png"></my-upload>
+                <div class="logo-wrapper">
+                  <img v-if="form.image_link" class="company-logo" height="256" width="256" alt=""
+                    :src="form.image_link" />
+                  <span v-if="!form.image_link">Minimun size 12x128</span>
+                  <div class="logo-overlay" @click="handleShowImageUploader">
+                    <span v-if="form.image_link">Change Image</span>
+                    <span v-else>Insert Image</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- market list menu -->
+      <div v-if="formType == $global.formType.marketList" class="row">
+        <div class="col-md-4">
+          <CSelect
+            filter
+            required
+            id="company"
+            class="row mb-1"
+            v-model="form.company_code"
+            :options="listDropdown.global.Company"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.supplier')"
+            name="Supplier Name"
+            customLabelClass="col-3"
+            customClass="col-9"
+            @load="repeatLoadDropdownList"
+          />
+          <CSelect
+            filter
+            required
+            id="item"
+            class="row mb-1"
+            v-model="form.item_code"
+            :options="listDropdown.global.Item"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.item')"
+            name="Item Name"
+            customLabelClass="col-3"
+            customClass="col-9"
+            @load="repeatLoadDropdownList"
+          />
+        </div>
+        <div class="col-md-4">
+          <CSelect
+            filter
+            required
+            id="uom"
+            class="row mb-1"
+            v-model="form.uom_code"
+            :options="listDropdown.global.UOM"
+            keyName="code"
+            labelName="name"
+            :label="$t('labels.uom')"
+            name="Uom"
+            customLabelClass="col-3"
+            customClass="col-9"
+            @load="repeatLoadDropdownList"
+          />
+          <c-input
+            showZeroNumber
+            formatted
+            required
+            id="price"
+            class="row mb-1"
+            v-model="form.price"
+            :label="$t('labels.price')"
+            type="number"
+            name="Price"
+            customLabelClass="col-3"
+            customClass="col-9"
+          />
+        </div>
+      </div>
+      <!-- menu Reeceipt -->
+      <div v-if="formType == $global.formType.receipt" class="row mb-2">
+        <div class="col-md-4">
+          <c-input
+            required
+            id="number"
+            class="row mb-1"
+            v-model="form.max_adult"
+            :label="$t('labels.number')"
+            type="text"
+            name="Number"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            id="receiveFrom"
+            class="row mb-1"
+            v-model="form.max_adult"
+            :label="$t('labels.receiveFrom')"
+            type="text"
+            name="Receive From"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            id="amount"
+            class="row mb-1"
+            v-model="form.max_adult"
+            :label="$t('labels.amount')"
+            type="text"
+            name="Amount"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            id="issuedDate"
+            class="row mb-1"
+            v-model="form.issued_date"
+            :label="$t('labels.issuedDate')"
+            type="date"
+            name="Issued Date"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            id="forPayment"
+            class="row mb-1"
+            v-model="form.max_adult"
+            :label="$t('labels.forPayment')"
+            type="text"
+            name="For Payment"
+          />
+        </div>
+      </div>
+      <save-close-button
+        :isSaving="isSaving"
+        @save="onSubmit"
+        @close="onClose"
+      ></save-close-button>
+    </div>
+  </div>
+</v-form>

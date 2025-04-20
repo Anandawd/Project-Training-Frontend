@@ -1,0 +1,284 @@
+<div
+  v-click-outside="clickOutside"
+  class="c-select"
+  :class="{ 'has-error': !meta.valid && meta.touched, 'row': inlineLabel, 'focus':focus   }"
+>
+  <label
+    v-if="label"
+    :for="ID"
+    class="col-form-label d-flex"
+    :class="[!inlineLabel ? '': (multicol ? 'col-md-6'
+      : (customLabelClass ? customLabelClass : 'col-3')), {'required': required}]"
+    >{{ label }}<slot name="label"> </slot>
+  </label>
+  <!-- // multiselect -->
+
+  <div
+    v-if="multiple || selectType == 'multiple'"
+    key="select-multiple"
+    class="c-multiselect align-items-center"
+    :class="[ !inlineLabel ? '' : ( multicol ? 'col-md-6' : half ? 'col-4' : (customClass ? customClass : 'col'))]"
+  >
+    <div class="input-group selectBox" @click="showCheckboxes()">
+      <!-- {{displayValue}} -->
+      <slot name="append-start"></slot>
+      <select
+        ref="multiselectElement"
+        :title="title ?? label"
+        :class="{'form-control': type === 'default', 'custom-select': type === 'custom'}"
+        class="form-select"
+        :id="ID"
+        @click="$emit('load')"
+        :placeholder="placeholder"
+        :disabled="disabled"
+        v-model="displayValue"
+      >
+        <option :value="displayValue" :selected="true">{{displayValue}}</option>
+      </select>
+      <div class="overSelect"></div>
+    </div>
+    <div v-show="expanded" id="option">
+      <div v-if="!isEmpty && filter" class="input-group col pl-1 pb-1">
+        <input
+          :id="filterID"
+          v-model="searchInput"
+          type="search"
+          class="form-control"
+          placeholder="Search..."
+          aria-label="searchData"
+          @keyup.enter="onEnterFilter"
+        />
+      </div>
+      <label class="select-label" :id="ID">
+        <input
+          type="checkbox"
+          :indeterminate.prop="selectSeveral"
+          v-model="selectAll"
+        />
+        Select All
+      </label>
+      <hr class="solid" />
+      <div class="checkbox">
+        <div v-for="(option, index) in filteredOptions" :key="option.code">
+          <label class="select-label" :id="index">
+            <input
+              :id="index"
+              type="checkbox"
+              v-model="data"
+              :value="getKey(option)"
+            />
+            {{getLabel(option,true)}}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- //single select -->
+  <div
+    v-else-if="selectType=='single' && !filter"
+    key="select-single"
+    :class="[ !inlineLabel ? '' : ( multicol ? 'col-md-6' : half ? 'col-4' : (customClass ? customClass : 'col'))]"
+    class="input-group align-items-center"
+  >
+    <slot name="append-start"></slot>
+    <select
+      data-live-search="true"
+      :title="title ?? label"
+      :class="{'form-control': type === 'default', 'custom-select': type === 'custom'}"
+      class="form-select"
+      :id="ID"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      @click="$emit('load')"
+      v-model="displayValue"
+    >
+      <option
+        v-if="!required && clearable"
+        :selected="isNoneSelected"
+        value=""
+      ></option>
+      <option disabled v-if="isEmpty">Empty</option>
+      <option
+        v-for="option in options"
+        :value="getKey(option)"
+        :selected="modelValue === getKey(option)"
+      >
+        {{getLabel(option,true)}}
+      </option>
+    </select>
+    <slot name="append-end"></slot>
+  </div>
+  <!-- single select filter-->
+  <div
+    v-else-if="selectType=='single' && filter"
+    key="select-single-filter"
+    :class="[ !inlineLabel ? '' : ( multicol ? 'col-md-6' : half ? 'col-4' : (customClass ? customClass : 'col'))]"
+    class="input-group align-items-center single-select"
+    disabled
+    @click="$emit('load')"
+    @keyup.up="onKeyup(true)"
+    @keyup.down="onKeyup(false)"
+  >
+    <slot name="append-start"></slot>
+    <!-- <div class="dropdown"> -->
+    <button
+      :class="{'form-control': type === 'default', 'custom-select': type === 'custom'}"
+      class="form-select selected-option"
+      :disabled="disabled"
+      type="button"
+      :id="ID"
+      data-bs-reference="parent"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+      @click="onClickSelect"
+    >
+      {{getLabel(displayValue)}}
+    </button>
+    <!-- <Teleport to="body"> -->
+    <ul id="dropdownMenu" class="dropdown-menu">
+      <div v-if="!isEmpty && filter" class="input-group col pl-1 pb-1">
+        <input
+          :id="filterID"
+          v-model="searchInput"
+          type="search"
+          class="form-control search-filter"
+          placeholder="Search..."
+          aria-label="searchData"
+          @keyup.enter="onEnterFilter"
+        />
+      </div>
+      <div
+        v-if="getLabel(optionValue) && !required && clearable"
+        class="w-100 clear-btn"
+        @click="onClickOption($event,null)"
+      >
+        <i class="fa fa-times pr-1" aria-hidden="true"></i>Clear
+      </div>
+      <li class="empty-data text-center" disabled v-if="isEmpty">
+        &lt;Empty&gt;
+      </li>
+      <div class="dropdown-menu-option">
+        <li
+          class="option"
+          v-for="option in filteredOptions"
+          :value="getKey(option)"
+          :class="{ 'selected': modelValue === getKey(option) }"
+          @click="onClickOption($event,option)"
+        >
+          {{getLabel(option,true)}}
+        </li>
+      </div>
+    </ul>
+    <!-- </Teleport> -->
+    <slot name="append-end"></slot>
+  </div>
+  <!-- end column single -->
+
+  <!-- //column  select -->
+  <div
+    v-else-if="selectType=='column'"
+    key="select-column"
+    :class="[ !inlineLabel ? '' : ( multicol ? 'col-md-6' : half ? 'col-4' : (customClass ? customClass : 'col'))]"
+    class="select-column input-group align-items-center"
+    @click="$emit('load')"
+  >
+    <slot name="append-start"></slot>
+    {{optionValue}}
+    <button
+      :disabled="disabled"
+      :class="{'form-control': type === 'default', 'custom-select': type === 'custom'}"
+      class="form-select"
+      type="button"
+      :id="ID"
+      data-bs-reference="parent"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+      @click="onClickSelect"
+    >
+      {{getLabel(displayValue)}}
+    </button>
+    <ul id="dropdownMenu" class="dropdown-menu p-0">
+      <div v-if="!isEmpty && filter" class="input-group col pl-1 pb-1"></div>
+      <div
+        v-if="getLabel(optionValue) && !required && clearable"
+        class="w-100 clear-btn"
+        @click="onClickOption($event,null)"
+      >
+        <i class="fa fa-times pr-1" aria-hidden="true"></i>Clear
+      </div>
+      <div class=" ">
+        <table class="table card p-0">
+          <thead class="thead-light column-header">
+            <tr>
+              <th
+                v-for="(columnOption,i) in columnOptions"
+                :key="i"
+                :style="{ width: columnOption['width']+'px', textAlign:
+                columnOption['align'] }"
+              >
+                {{$t('labels.'+columnOption['label'])}}
+              </th>
+            </tr>
+            <tr>
+              <th
+                scope="col"
+                v-for="(columnOption,i) in columnOptions"
+                :key="i"
+              >
+                <input
+                  v-if="columnOption['filter']"
+                  :id="filterID+i.toString()"
+                  v-model="searchInputColumn[columnOption['field']]"
+                  type="search"
+                  class="form-control"
+                  placeholder="Search..."
+                  aria-label="searchData"
+                  @keyup.enter="onEnterFilter"
+                />
+                <span v-else></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody
+            class="dropdown-menu-option"
+            v-if="options && options.length > 0"
+          >
+            <tr
+              class="option selectOption"
+              v-for="option in filteredColumnOptions"
+              @click="onClickOption($event,option)"
+            >
+              <td
+                v-for="columnOption in columnOptions"
+                :style="{ width: columnOption['width']+'px', textAlign:
+                  columnOption['align'] }"
+              >
+                {{getFormatted(option[columnOption['field']],
+                columnOption['format'])}}
+              </td>
+              <!-- </th> -->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <li class="empty-data text-center pb-1" disabled v-if="isEmpty">
+        &lt;Empty&gt;
+      </li>
+    </ul>
+    <slot name="append-end"></slot>
+  </div>
+
+  <div v-if="showError" class="row">
+    <div
+      class="col-form-label d-flex"
+      :class="[!inlineLabel ? '': (multicol ? 'col-6'
+      : (customLabelClass ? customLabelClass : 'col-3')), {'required': required} ]"
+    ></div>
+    <span
+      class="text-danger pl-2 text-error"
+      :class="[ !inlineLabel ? '' : ( multicol ? 'col-6' : half ? 'col-4' : (customClass ? customClass : 'col'))]"
+      >{{errorText ?? errorMessage}}</span
+    >
+  </div>
+</div>

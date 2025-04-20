@@ -1,0 +1,42 @@
+.labDatepicker {
+  padding: 0px;
+}
+
+.Datepicks {
+  padding-right: 0px !important;
+  padding-left: 4px !important;
+}
+
+.disabled-grid {
+  position: absolute;
+  z-index: 999;
+  width: inherit;
+  height: 550px;
+  //  background: rgba(0, 0, 0, 0.023);
+  cursor: not-allowed;
+}
+// .p-0{
+//     padding: 0px !important;
+// }
+// .pl-4{
+//     padding-left: 4px !important;
+// }
+// .m-0{
+//     margin: 0px !important;
+// }
+// .required{
+//     color: red;
+//     padding: 0px !important;
+// }
+// .datePickerCst{
+//     padding-right: 0px !important; padding-left: 4px !important;
+// }
+
+// .disabled-grid {
+//     position: absolute;
+//     z-index: 999;
+//     width: inherit;
+//     height: 550px;
+//     //  background: rgba(0, 0, 0, 0.023);
+//     cursor: not-allowed;
+//   }

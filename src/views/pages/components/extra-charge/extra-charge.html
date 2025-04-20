@@ -1,0 +1,296 @@
+<div class="deposit">
+  <div v-if="!hidePackage" class="row mb-2">
+    <div class="col-md-8">
+      <v-form
+        @submit="handleSavePackage"
+        ref="packageValidation"
+        @invalid-submit="onInvalidSubmitPackage"
+        class="row"
+        :validation-schema="schemaPackage"
+      >
+        <div class="col-md ml-2">
+          <c-select
+            @load="loadDropdown"
+            required
+            class="mb-1 mt-1"
+            :label="$t('labels.subFolio')"
+            labelName="name"
+            keyName="code"
+            name="Sub Folio"
+            v-model="packageForm.sub_folio_group_code"
+            :options="options.SubFolioGroup"
+          ></c-select>
+        </div>
+        <div class="col-md">
+          <c-select
+            @load="loadDropdown"
+            class="mb-1 mt-1"
+            :label="$t('labels.package')"
+            labelName="name"
+            keyName="code"
+            name="Package"
+            v-model="packageForm.package_code"
+            :options="options.Package"
+          ></c-select>
+        </div>
+      </v-form>
+    </div>
+    <div class="col-md-4 d-flex justify-content-end">
+      <button
+        :disabled="packageForm.package_code == ''"
+        title="Insert Package"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handelInsertPackage"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insertPackage') }}
+      </button>
+      <button
+        title="Insert Extra Charge"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleInsert"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insert') }}
+      </button>
+    </div>
+  </div>
+  <transition name="slide-fade">
+    <div v-if="showForm" class="card">
+      <div class="card-header">
+        {{ title }}
+        <button type="button" class="close-button btn" @click="onClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="tab-content card-body" id="nav-tabContent">
+        <!-- Extra Charge -->
+        <div
+          class="tab-pane active"
+          id="extra-charge-form2"
+          role="tabpanel"
+          aria-labelledby="extra-charge-form-tab2"
+        >
+          <v-form
+            @submit="handleSave"
+            ref="extraChargeValidation"
+            @invalid-submit="onInvalidSubmit"
+            class="accordion-body row"
+            :validation-schema="schema"
+          >
+            <div class="row">
+              <div class="col-md">
+                <c-select
+                  @load="loadDropdown"
+                  @change="onChangeOutlet"
+                  class="row mb-1"
+                  :label="$t('labels.outlet')"
+                  labelName="name"
+                  keyName="code"
+                  name="Outlet"
+                  v-model="form.outlet_code"
+                  :options="options.Outlet"
+                ></c-select>
+                <c-select
+                  @load="loadDropdownProductByOutlet(form.outlet_code)"
+                  @change="onChangeProduct"
+                  class="row mb-1"
+                  :label="$t('labels.product')"
+                  labelName="name"
+                  keyName="code"
+                  name="Product"
+                  v-model="form.product_code"
+                  :options="options.Product"
+                ></c-select>
+                <c-select
+                  @load="loadDropdown"
+                  required
+                  class="row mb-1"
+                  :label="$t('labels.subFolio')"
+                  labelName="code"
+                  keyName="code"
+                  name="Sub Folio"
+                  v-model="form.group_code"
+                  :options="options.SubFolioGroup"
+                ></c-select>
+                <c-select
+                  @load="loadDropdown"
+                  required
+                  class="row mb-1"
+                  :label="$t('labels.subDepartment')"
+                  labelName="name"
+                  keyName="code"
+                  name="Sub Department"
+                  v-model="form.sub_department_code"
+                  :options="options.SubDepartment"
+                ></c-select>
+              </div>
+              <div class="col-md">
+                <!-- <div class="row"> -->
+                <c-select
+                  @load="loadDropdown"
+                  required
+                  @change="onChangeAccount"
+                  class="row mb-1"
+                  :label="$t('labels.account')"
+                  labelName="name"
+                  keyName="code"
+                  name="Account"
+                  v-model="form.account_code"
+                  :columnOptions="columnOptionsAccount"
+                  :options="options.Account"
+                ></c-select>
+                <!-- <div class="col-6">
+                      {{selectedAcc}}
+                    </div> -->
+                <!-- </div> -->
+                <c-input
+                  required
+                  :disabled="isDisabledQuantity"
+                  spinner
+                  half
+                  class="row mb-1"
+                  v-model="form.quantity"
+                  :label="$t('labels.quantity')"
+                  type="number"
+                  name="Quantity"
+                />
+                <c-input
+                  required
+                  formatted
+                  showZeroNumber
+                  class="row mb-1"
+                  v-model="form.amount"
+                  :label="$t('labels.amount')"
+                  type="number"
+                  name="Amount"
+                />
+                <c-select
+                  @load="loadDropdown"
+                  class="row mb-1"
+                  :label="$t('labels.taxService')"
+                  labelName="name"
+                  keyName="code"
+                  name="Tax and Service"
+                  v-model="form.tax_and_service_code"
+                  :options="options.TaxAndService"
+                ></c-select>
+              </div>
+              <div class="col-md">
+                <c-select
+                  @load="loadDropdown"
+                  required
+                  class="row mb-1"
+                  :label="$t('labels.chargeFreq')"
+                  labelName="name"
+                  keyName="code"
+                  name="Charge Frequency"
+                  v-model="form.charge_frequency_code"
+                  :options="options.ChargeFrequency"
+                ></c-select>
+                <div class="row justify-content-end">
+                  <div class="col-4">
+                    <c-checkbox
+                      :label="$t('labels.perPax')"
+                      v-model="form.per_pax"
+                      @change="onChangePerPax"
+                      customLabelClass="col-3"
+                      customClass="col-9"
+                    ></c-checkbox>
+                  </div>
+                  <div class="col-5">
+                    <c-checkbox
+                      :disabled="isDisabledPerPax"
+                      :label="$t('labels.includeChild')"
+                      v-model="form.include_child"
+                      customLabelClass="col-3"
+                      customClass="col-9"
+                    ></c-checkbox>
+                  </div>
+                </div>
+                <c-input
+                  spinner
+                  half
+                  class="mb-1"
+                  :label="$t('labels.maxPax')"
+                  type="number"
+                  name="Max Pax"
+                  v-model="form.max_pax"
+                />
+                <c-input
+                  formatted
+                  showZeroNumber
+                  class="mb-1"
+                  :label="$t('labels.extraPax')"
+                  v-model="form.extra_pax"
+                  type="number"
+                  name="Extra Pax"
+                />
+              </div>
+            </div>
+          </v-form>
+          <save-close-button
+            :isSaving="isSaving"
+            @save="onSubmit"
+            @close="onClose"
+          ></save-close-button>
+        </div>
+      </div>
+    </div>
+  </transition>
+  <transition name="slide-fade">
+    <breakdown-form
+      @onClose="onCloseFormBreakdown"
+      @save="refreshAfterSave"
+      @repeatLoadDropdown="loadDropdown"
+      @repeatLoadDropdownProduct="loadDropdownProductByOutlet"
+      :isReservation="isReservation"
+      ref="breakdownFormElement"
+    >
+    </breakdown-form>
+  </transition>
+  <div class="row">
+    <div>
+      <ag-grid-vue
+        :style="agGridSetting.styleAgGridFrame"
+        :class="agGridSetting.themeAgGrid"
+        :columnDefs="columnDefs"
+        :rowData="rowData"
+        :paginationPageSize="paginationPageSize"
+        :gridOptions="gridOptions"
+        :context="context"
+        :frameworkComponents="frameworkComponents"
+        :enableCellChangeFlash="true"
+        :rowSelection="rowSelection"
+        :getContextMenuItems="getContextMenu"
+        :defaultColDef="agGridSetting.defColDef"
+        :masterDetail="true"
+        :detailCellRenderer="detailCellRenderer"
+        :detailRowAutoHeight="detailRowAutoHeight"
+        :suppressDragLeaveHidesColumns="true"
+        :suppressMakeColumnVisibleAfterUnGroup="true"
+        :statusBar="statusBar"
+        @grid-ready="onGridReady"
+        @cellContextMenu="handleRowRightClicked"
+        :rowGroupPanelShow="rowGroupPanelShow"
+      />
+    </div>
+  </div>
+  <CDialog
+    v-show="showDialog"
+    w100
+    dialogTitle="Confirm"
+    @confirm="deleteData"
+    @cancel="showDialog=false"
+    confirm
+    @close="showDialog=false"
+  >
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </CDialog>
+  <Credential
+    ref="credentialElement"
+    :module="$global.accessModule.hotel"
+  ></Credential>
+</div>

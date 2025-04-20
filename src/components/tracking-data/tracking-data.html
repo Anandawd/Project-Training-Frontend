@@ -1,0 +1,22 @@
+<div>
+  <c-modal
+    v-if="visible"
+    :title="title"
+    size="lg"
+    confirm
+    close
+    @close="handleClose()"
+  >
+    <template #body>
+      <ag-grid-vue
+        :style="$global.agGrid.styleAgGridFrame2"
+        :class="$global.agGrid.themeAgGrid"
+        :columnDefs="columnDefs"
+        :rowData="logData"
+        :gridOptions="gridOptions"
+        :rowSelection="rowSelection"
+        :defaultColDef="$global.agGrid.defColDef"
+        @grid-ready="onGridReady"
+    /></template>
+  </c-modal>
+</div>

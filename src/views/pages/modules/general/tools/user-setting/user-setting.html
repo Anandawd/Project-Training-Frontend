@@ -1,0 +1,224 @@
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div
+      v-if="!showUserGroupForm && !showUserForm"
+      class="d-flex justify-content-end"
+    >
+      <button
+        class="btn btn-primary mb-1"
+        type="button"
+        @click="handleInsert()"
+      >
+        <i class="fa fa-plus mr-1"></i>
+        {{$t('buttons.insert')}}
+      </button>
+    </div>
+
+    <input-form
+      ref="inputFormElement"
+      v-if="showUserGroupForm"
+      :modeData="modeData"
+      :editData="userGroupAccessDataEdit"
+      @saved="refreshData"
+      @close="showUserGroupForm=false"
+    >
+    </input-form>
+    <div v-if="showUserForm" class="card">
+      <div class="card-header">
+        <h3 class="card-title">User Management</h3>
+        <div class="card-tools">
+          <button
+            type="button"
+            class="btn btn-tool"
+            data-widget="remove"
+            data-toggle="tooltip"
+            title="Remove"
+            @click="showUserForm=false"
+          >
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <div class="card-body row">
+        <v-form
+          @submit="onSave"
+          ref="userFormElement"
+          :validation-schema="schema"
+          @invalid-submit="onInvalidSubmit"
+          class="input-form row"
+        >
+          <div class="col-md-4">
+            <div class="accordion" id="accordionPanelsStayOpenExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                  <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne"
+                    aria-expanded="true"
+                    aria-controls="panelsStayOpen-collapseOne"
+                  >
+                    {{title}}
+                  </button>
+                </h2>
+                <div
+                  id="panelsStayOpen-collapseOne"
+                  class="accordion-collapse collapse show"
+                  aria-labelledby="panelsStayOpen-headingOne"
+                >
+                  <div class="accordion-body">
+                    <c-input
+                      :disabled="modeData===$global.modeData.edit"
+                      class="mb-1"
+                      half
+                      :label="$t('labels.userId')"
+                      v-model="form.code"
+                      name="User ID"
+                      showError
+                      @input="uppercase"
+                    ></c-input>
+                    <c-input
+                      class="mb-1"
+                      :label="$t('labels.fullName')"
+                      v-model="form.name"
+                      name="Full Name"
+                    ></c-input>
+                    <c-input
+                      class="mb-1"
+                      :label="$t('labels.password')"
+                      type="password"
+                      v-model="form.password"
+                      showError
+                      name="Password"
+                    ></c-input>
+                    <c-input
+                      class="mb-1"
+                      :label="$t('labels.confirmPassword')"
+                      type="password"
+                      v-model="form.confirm_password"
+                      showError
+                      name="Confirm Password"
+                    ></c-input>
+                    <c-select
+                      required
+                      class="mb-1"
+                      :label="$t('labels.group')"
+                      :options="userGroupAccessData"
+                      keyName="code"
+                      labelName="code"
+                      v-model="form.user_group_access_code"
+                      name="Group"
+                    ></c-select>
+                    <c-select
+                      required
+                      selectType="multiple"
+                      class="mb-1"
+                      v-model="form.property_code"
+                      :label="$t('labels.property')"
+                      name="Property"
+                      labelName="name"
+                      keyName="code"
+                      :options="propertyList"
+                    ></c-select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-if="modeData==$global.modeData.edit" class="col">
+            <user-inventory-sub-department :user-code="form.code" />
+          </div>
+          <div class="card-footer">
+            <save-close-button
+              class="col-md-4"
+              @save="handleSave"
+              @close="showUserForm=false"
+              :isSaving="isSaving"
+            ></save-close-button>
+          </div>
+        </v-form>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div no-body>
+          <b-tabs card v-model="activeTab">
+            <b-tab :title="$t('labels.user')" active>
+              <div class="card-body">
+                <div class="d-flex mb-1">
+                  <c-radio
+                    class="ml-2"
+                    :label="$t('labels.all')"
+                    v-model="isActive"
+                    value="-1"
+                    @change="refreshData"
+                  ></c-radio>
+                  <c-radio
+                    class="ml-1"
+                    :label="$t('labels.active')"
+                    v-model="isActive"
+                    value="1"
+                    @change="refreshData"
+                  ></c-radio>
+                  <c-radio
+                    class="ml-1"
+                    :label="$t('labels.notActive')"
+                    v-model="isActive"
+                    value="0"
+                    @change="refreshData"
+                  ></c-radio>
+                </div>
+                <ag-grid-vue
+                  disabled
+                  :style="agGridSetting.styleAgGridFrame"
+                  :class="agGridSetting.themeAgGrid"
+                  :columnDefs="columnDefs"
+                  :rowData="rowData"
+                  :paginationPageSize="paginationPageSize"
+                  :gridOptions="gridOptions"
+                  :context="context"
+                  :frameworkComponents="frameworkComponents"
+                  :enableCellChangeFlash="true"
+                  :rowSelection="rowSelection"
+                  :rowGroupPanelShow="rowGroupPanelShow"
+                  :getContextMenuItems="getContextMenu"
+                  :defaultColDef="agGridSetting.defColDef"
+                  :masterDetail="true"
+                  :detailCellRenderer="detailCellRenderer"
+                  :suppressDragLeaveHidesColumns="true"
+                  :detailRowAutoHeight="detailRowAutoHeight"
+                  :suppressMakeColumnVisibleAfterUnGroup="true"
+                  :statusBar="statusBar"
+                  @grid-ready="onGridReady"
+                  @cellContextMenu="handleRowRightClicked"
+                  @selection-changed="onSelectionChanged"
+                />
+              </div>
+            </b-tab>
+            <b-tab :title="$t('labels.userGroup')">
+              <user-group-grid
+                :rowData="userGroupAccessData"
+                @insert="handleInsert"
+                @edit="handleEditUserGroupAccess"
+                @refreshData="refreshData"
+                ref="userGroupElement"
+              ></user-group-grid>
+            </b-tab>
+          </b-tabs>
+        </div>
+      </div>
+    </div>
+    <CDialog
+      v-show="showDialog"
+      w100
+      dialogTitle="Confirm"
+      @confirm="confirmDialog"
+      @cancel="showDialog= false"
+      confirm
+    >
+      <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+    </CDialog>
+  </div>
+</section>

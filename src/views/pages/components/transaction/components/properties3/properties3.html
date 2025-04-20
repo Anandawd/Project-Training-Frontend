@@ -1,0 +1,214 @@
+<section>
+  <div class="row">
+    <div class="accordion mt-2" id="accordionParentProperties1">
+      <div id="fg-other" class="accordion-item">
+        <h3 class="accordion-header">
+          <button
+            type="button"
+            class="accordion-button"
+            aria-expanded="true"
+            aria-controls="accordionFormat"
+            data-bs-target="#accordionFormat"
+            data-bs-toggle="collapse"
+          >
+            {{ $t('title.detailTransaction') }}
+          </button>
+        </h3>
+        <div id="accordionFormat" class="accordion-collapse collapse show">
+          <div v-if="form.id" class="accordion-body row">
+            <c-input
+              disabled
+              class="mb-1"
+              customClass="prx-75 col"
+              v-model="form.id"
+              :label="$t('labels.transactionId')"
+              ><template #append-end>
+                <div class="col-6 input-group-append pr-0">
+                  <c-input
+                    disabled
+                    v-model="form.created_by"
+                    :label="$t('labels.userId')"
+                  ></c-input>
+                </div> </template
+            ></c-input>
+            <c-input
+              disabled
+              v-model="form.Company"
+              :label="$t('labels.directBillTo')"
+            ></c-input>
+          </div>
+          <div v-else class="accordion-body row">
+            <Skeleton height="24px" :count="2"></Skeleton>
+          </div>
+        </div>
+      </div>
+      <div id="fg-other" class="accordion-item">
+        <h3 class="accordion-header">
+          <button
+            type="button"
+            class="accordion-button"
+            aria-expanded="true"
+            aria-controls="accordionFormat"
+            data-bs-target="#accordionFormat"
+            data-bs-toggle="collapse"
+          >
+            {{ $t('title.folioInformation') }}
+          </button>
+        </h3>
+        <div id="accordionFormat" class="accordion-collapse collapse show">
+          <div v-if="form.id" class="accordion-body row">
+            <c-input
+              disabled
+              class="mb-1"
+              customClass="prx-6 col"
+              v-model="form.folio_number"
+              :label="$t('labels.folioNumber')"
+              ><template #append-end>
+                <div class="col-8 input-group-append pl-0 pr-0">
+                  <c-input disabled v-model="form.group_code"
+                    ><template #append-end>
+                      <div class="col-9 input-group-append pr-0">
+                        <c-input
+                          disabled
+                          v-model="form.room_number"
+                          :label="$t('labels.roomNumber')"
+                        ></c-input>
+                      </div> </template
+                  ></c-input>
+                </div>
+              </template>
+            </c-input>
+            <c-input
+              disabled
+              v-model="form.full_name"
+              :label="$t('labels.guestName')"
+            ></c-input>
+          </div>
+          <div v-else class="accordion-body row">
+            <Skeleton height="24px" :count="2"></Skeleton>
+          </div>
+        </div>
+      </div>
+      <div id="fg-other" class="accordion-item">
+        <h3 class="accordion-header">
+          <button
+            type="button"
+            class="accordion-button"
+            aria-expanded="true"
+            aria-controls="accordionFormat"
+            data-bs-target="#accordionFormat"
+            data-bs-toggle="collapse"
+          >
+            {{ $t('title.belongsToOriginalPosting') }}
+          </button>
+        </h3>
+        <div id="accordionFormat" class="accordion-collapse collapse show">
+          <div v-if="form.id" class="accordion-body row">
+            <c-input
+              disabled
+              class="mb-1"
+              customClass="prx-75 col"
+              v-model="form.belongs_to"
+              :label="$t('labels.folioNumber')"
+              ><template #append-end>
+                <div class="col-6 input-group-append pr-0">
+                  <c-input
+                    disabled
+                    v-model="form.room_number1"
+                    :label="$t('labels.roomNumber')"
+                  ></c-input>
+                </div>
+              </template>
+            </c-input>
+            <c-input
+              disabled
+              v-model="form.full_name1"
+              :label="$t('labels.guestName')"
+            ></c-input>
+          </div>
+          <div v-else class="accordion-body row">
+            <Skeleton height="24px" :count="2"></Skeleton>
+          </div>
+        </div>
+      </div>
+      <div id="fg-other" class="accordion-item">
+        <h3 class="accordion-header">
+          <button
+            type="button"
+            class="accordion-button"
+            aria-expanded="true"
+            aria-controls="accordionFormat"
+            data-bs-target="#accordionFormat"
+            data-bs-toggle="collapse"
+          >
+            {{ $t('title.information') }}
+          </button>
+        </h3>
+        <div id="accordionFormat" class="accordion-collapse collapse show">
+          <div v-if="form.id" class="accordion-body row">
+            <c-input
+              disabled
+              class="mb-1"
+              v-model="form.Account"
+              :label="$t('labels.account')"
+            ></c-input>
+            <c-input
+              disabled
+              class="mb-1"
+              v-model="form.SubDepartment"
+              :label="$t('labels.subDepartment')"
+            ></c-input>
+            <c-input
+              disabled
+              type="number"
+              formatted
+              customClass="prx-75 col"
+              class="mb-1"
+              v-model="form.TotalAmountForeign"
+              :label="$t('labels.amount') +' '+form.currency_code"
+            >
+              <template #append-end>
+                <div class="col-6 input-group-append pr-0">
+                  <c-input
+                    disabled
+                    type="number"
+                    formatted
+                    v-model="form.exchange_rate"
+                    :label="$t('labels.excRate')"
+                  ></c-input>
+                </div> </template
+            ></c-input>
+            <c-input
+              disabled
+              type="number"
+              formatted
+              customClass="prx-75 col"
+              class="mb-1"
+              v-model="form.TotalAmount"
+              :label="$t('labels.amount') +' '+form.default_currency_code"
+            >
+              <template #append-end>
+                <div class="col-6 input-group-append pr-0">
+                  <c-input
+                    disabled
+                    type="date"
+                    v-model="form.audit_date"
+                    :label="$t('labels.auditDate')"
+                  ></c-input>
+                </div> </template
+            ></c-input>
+            <c-input
+              disabled
+              class="mb-1"
+              v-model="form.remark"
+              :label="$t('labels.remark')"
+            ></c-input>
+          </div>
+          <div v-else class="accordion-body row">
+            <Skeleton height="24px" :count="5"></Skeleton>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

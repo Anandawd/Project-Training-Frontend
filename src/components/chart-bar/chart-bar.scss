@@ -1,0 +1,15 @@
+.custom-modal {
+  @media (min-width: 1024px) {
+    .w100 {
+      width: 1024px;
+      // margin: 1.75rem
+    }
+  }
+  .modal-content.no-background {
+    background: transparent;
+  }
+
+  .modal-content {
+    max-height: 90vh;
+  }
+}

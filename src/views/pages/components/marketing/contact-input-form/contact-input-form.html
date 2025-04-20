@@ -1,0 +1,127 @@
+<Form @submit="onSave" ref="contactInputFormValidation" :validation-schema="schema" @invalid-submit="onInvalidSubmit"
+  class="input-form" v-slot="{resetForm}">
+  <div class="row mb-1">
+    <div class="col-md-6">
+      <CSelect filter required id="item" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.type_code"
+        keyName="code" :options="dropDownlist.PhoneBookType" labelName="name" :label="$t('labels.type')" name="type" />
+      <CSelect filter id="title" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.title_code"
+        :options="dropDownlist.GuestTitle" keyName="code" labelName="name" :label="$t('labels.title')" name="title" />
+    </div>
+    <div class="col-md-6">
+      <c-input required id="fullName" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.full_name"
+        :label="$t('labels.fullName')" type="text" name="fullName" />
+    </div>
+  </div>
+  <div class="mt-1">
+    <div id="parentAccordion" class="accordion">
+      <div class="accordion-item">
+        <h6 class="accordion-header" id="itemInformationHeader">
+          <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+            aria-controls="itemInformation" aria-expanded="false">
+            {{$t('title.contactInformation')}}
+          </button>
+        </h6>
+        <div id="itemInformation" class="accordion-collapse collapse show" aria-labelledby="itemInformationHeader">
+          <div class="accordion-body row">
+            <div class="col-md-6">
+              <c-input required id="mobilePhone" customLabelClass="col-3" customClass="col-9" class="mb-1"
+                v-model="form.phone1" :label="$t('labels.mobilePhone')" type="text" name="mobilePhone" />
+              <c-input id="workPhone" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.phone2"
+                :label="$t('labels.workPhone')" type="text" name="workPhone" />
+              <c-input id="facebook" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.facebook"
+                :label="$t('labels.facebook')" type="text" name="faceBook" />
+              <c-input id="twitter" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.twitter"
+                :label="$t('labels.twitter')" type="text" name="twitter" />
+            </div>
+            <div class="col-md-6">
+              <c-input id="yahooMessenger" customLabelClass="col-3" customClass="col-9" class="mb-1"
+                v-model="form.yahoo_messenger" :label="$t('labels.yahooMessenger')" type="text" name="yahooMessenger" />
+              <c-input id="pinBb" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.pin_bb"
+                :label="$t('labels.pinBb')" type="text" name="pinBb" />
+              <c-input id="email" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.email"
+                :label="$t('labels.email')" type="text" name="email" />
+              <c-input id="website" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.website"
+                :label="$t('labels.website')" type="text" name="website" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h6 class="accordion-header" id="itemInformationHeader">
+          <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+            aria-controls="itemInformation" aria-expanded="false">
+            {{$t('title.addressInformation')}}
+          </button>
+        </h6>
+        <div id="itemInformation" class="accordion-collapse collapse show" aria-labelledby="itemInformationHeader">
+          <div class="accordion-body row">
+            <div class="col-md-6">
+              <c-input id="street" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.street"
+                :label="$t('labels.street')" type="text" name="street" />
+              <c-input id="city" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.city"
+                :label="$t('labels.city')" type="text" name="city" />
+              <CSelect filter id="country" customLabelClass="col-3" customClass="col-9" class="mb-1"
+                v-model="form.country_code" :options="dropDownlist.Country" keyName="code" labelName="name"
+                :label="$t('labels.country')" name="country" @change="onChangeCountry" />
+            </div>
+            <div class="col-md-6">
+              <CSelect filter id="state" customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.state_code"
+                :options="dropDownlist.State" keyName="code" labelName="name" :label="$t('labels.state')"
+                name="state" />
+              <c-input id="postalCode" customLabelClass="col-3" customClass="col-9" class="mb-1"
+                v-model="form.postal_code" :label="$t('labels.postalCode')" type="text" name="postalCode" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row ">
+    <div class="col-md-6 mt-1">
+      <div id="parentAccordion" class="accordion h-100">
+        <div class="accordion-item h-100">
+          <h6 class="accordion-header" id="itemInformationHeader">
+            <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+              aria-controls="itemInformation" aria-expanded="false">
+              {{$t('title.companyInformation')}}
+            </button>
+          </h6>
+          <div id="itemInformation" class="accordion-collapse collapse show" aria-labelledby="itemInformationHeader">
+            <div class="accordion-body row">
+              <div class="col">
+                <c-input id="jobTitle" customLabelClass="col-3" customClass="col-9" class="mb-1"
+                  v-model="form.job_title" :label="$t('labels.jobTitle')" type="text" name="jobTitle" />
+                <CSelect filter id="company" customLabelClass="col-3" customClass="col-9" class="mb-1"
+                  v-model="form.company_code" :options="dropDownlist.Company" keyName="code" labelName="name"
+                  :label="$t('labels.company')" name="company" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mt-1">
+      <div id="parentAccordion col-md-6" class="accordion">
+        <div class="accordion-item h-35">
+          <h2 class="accordion-header" id="panelsStayOpen-costing">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+              data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+              aria-controls="panelsStayOpen-collapseOne">
+              {{ $t('labels.remark') }}
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show"
+            aria-labelledby="panelsStayOpen-costing">
+            <div class="accordion-body">
+              <div class="justify-content-around mb-2">
+                <c-input required id="notes" class="mb-1" v-model="form.notes"
+                  type="textarea" name="notes" customLabelClass="col-3"
+                  customClass="col-12" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Form>

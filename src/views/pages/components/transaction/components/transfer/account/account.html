@@ -1,0 +1,141 @@
+<div class="transfer-account-form">
+  <v-form
+    @submit="onSubmit"
+    ref="formElement"
+    :validation-schema="schema"
+    @invalid-submit="onInvalidSubmit"
+    class="input-form row"
+  >
+    <div class="row mb-1">
+      <c-radio
+        class="col-md-3"
+        v-model="transferType"
+        name="transferType"
+        :label="$t('transaction.combineAllSubFolio')"
+        value="1"
+        @change="onChangeTransferType"
+      ></c-radio>
+      <c-radio
+        class="col-md-2"
+        v-model="transferType"
+        name="transferType"
+        value="2"
+        :label="$t('transaction.transferAccount')"
+        @change="onChangeTransferType"
+      >
+      </c-radio>
+      <c-radio
+        class="col-md-2"
+        v-model="transferType"
+        name="transferType"
+        value="3"
+        :label="$t('transaction.transferBalance')"
+        @change="onChangeTransferType"
+      >
+      </c-radio>
+    </div>
+    <div class="row mb-1">
+      <div class="col">
+        <c-select
+          :required="transferType != 1"
+          :disabled="transferType == 1"
+          class="row mb-1"
+          :label="$t('transaction.folioType')"
+          labelName="name"
+          keyName="code"
+          name="folioType"
+          v-model="form.folioType"
+          :options="$global.options.folioTypes"
+          @change="onChangeFolioType"
+        ></c-select>
+      </div>
+      <div class="col">
+        <c-select
+          :required="transferType != 1"
+          :disabled="transferType == 1"
+          selectType="column"
+          :columnOptions="columnOptions"
+          class="row mb-1"
+          :label="$t('transaction.folio')"
+          labelName="number"
+          keyName="number"
+          name="folioNumber"
+          v-model="form.folioNumber"
+          :options="options.folios"
+        ></c-select>
+      </div>
+      <div class="col">
+        <c-select
+          required
+          half
+          class="row mb-1"
+          :label="$t('transaction.subFolio')"
+          name="subFolioGroup"
+          v-model="form.subFolioGroupCode"
+          :options="$global.subFolioGroup"
+        ></c-select>
+      </div>
+    </div>
+    <!-- <hr class="divider mt-3" /> -->
+    <div v-if="transferType == 2">
+      <div class="row">
+        <div>
+          <ag-grid-vue
+            :style="$global.agGrid.styleAgGridFrame1"
+            :class="$global.agGrid.themeAgGrid"
+            :gridOptions="gridOptions"
+            @grid-ready="onGridReady"
+            :columnDefs="columnDefs"
+            :rowData="rowData"
+            :suppressRowClickSelection="true"
+            :rowSelection="rowSelection"
+            :defaultColDef="$global.agGrid.colDef1"
+          >
+          </ag-grid-vue>
+        </div>
+      </div>
+    </div>
+    <div class="row" v-else-if="transferType == 3">
+      <div class="col-4">
+        <div class="row mb-1">
+          <div class="col-3"></div>
+          <div class="col d-flex">
+            <c-radio
+              class="mr-5"
+              v-model="form.balanceType"
+              name="transferMode"
+              value="1"
+              :label="$t('transaction.charge')"
+            >
+            </c-radio>
+            <c-radio
+              v-model="form.balanceType"
+              :label="$t('transaction.deposit')"
+              name="transferMode"
+              value="2"
+            >
+            </c-radio>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <c-input
+          :disabled="balanceDisabled"
+          showZeroNumber
+          required
+          class="mb-1"
+          type="number"
+          formatted
+          :label="$t('transaction.amount')"
+          name="amount"
+          v-model="form.amount"
+        ></c-input>
+      </div>
+    </div>
+    <save-close-button
+      :isSaving="isSaving"
+      @save="onSave"
+      @close="$emit('close')"
+    ></save-close-button>
+  </v-form>
+</div>

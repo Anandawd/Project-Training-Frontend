@@ -1,0 +1,66 @@
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="d-flex justify-content-end mb-2">
+      <button v-if="!showForm && !showFormMultiUom" title="Insert Inventory Item" type="button"
+        class="btn btn-primary mr-1" @click="handleShowForm('', $global.modeData.insert)"><i class="fa fa-plus mr-1"
+          aria-hidden="true"></i>{{
+        $t('buttons.insert') }}</button>
+      <button v-if="!showForm && !showFormMultiUom" title="Update activity" type="button" class="btn btn-primary mr-1"
+        @click="handleActivity()">{{ activity ?
+        $t('buttons.Activate') : $t('buttons.Deactivate') }}</button>
+    </div>
+    <transition name="slide-fade">
+      <multi-form ref="multiFormElement" v-show="showForm" :defaultForm="form" :schema="schema"
+        :formType="$global.formType.inventoryItem" :modeData="modeData" @save="handleSave" @close="showForm=false"
+        @repeatLoadDropdown="loadDropdown">
+      </multi-form>
+    </transition>
+    <transition name="slide-fade">
+      <multi-uom :isSaving="isSaving" @save="onSaveData" @closingform="showFormMultiUom=false"
+        ref="multiUomElement" @repeatLoadDropdown=" loadDropdown"></multi-uom>
+    </transition>
+    <search-filter 
+    :options="searchOptions" 
+    :searchDefault="searchDefault"
+     @search="refreshData">
+     <template v-slot="{search, onRefresh}">
+      <div class="col-md-6 d-flex mb-md-4">
+        <div class="checklist">
+          <c-radio class="" :label="$t('commons.filter.checkList.all')" v-model="search.filter[0]" value="0"
+            @change="onRefresh">
+          </c-radio>
+        </div>
+        <div class="checklist">
+          <c-radio class="mr-1" :label="$t('commons.filter.checkList.active')" v-model="search.filter[0]" value="1"
+            @change="onRefresh">
+          </c-radio>
+        </div>
+        <div class="checklist">
+          <c-radio class="mr-1" :label="$t('commons.filter.checkList.inactive')" v-model="search.filter[0]" value="2"
+            @change="onRefresh">
+          </c-radio>
+        </div>
+      </div>
+    </template>
+    </search-filter>
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{ $t('title.inventoryItem') }}</h3>
+      </div>
+      <div id="tooltip" class="card-body">
+        <!-- //Table -->
+        <ag-grid-vue :style="agGridSetting.styleAgGridFrame" :class="agGridSetting.themeAgGrid" :columnDefs="columnDefs"
+          :rowData="rowData" :paginationPageSize="paginationPageSize" :gridOptions="gridOptions" :context="context"
+          :frameworkComponents="frameworkComponents" :enableCellChangeFlash="true" :rowSelection="rowSelection"
+          :getContextMenuItems="getContextMenu" :defaultColDef="agGridSetting.defColDef" :masterDetail="true"
+          :detailCellRenderer="detailCellRenderer" :detailRowAutoHeight="detailRowAutoHeight"
+          :suppressDragLeaveHidesColumns="true" :suppressMakeColumnVisibleAfterUnGroup="true" :statusBar="statusBar"
+          @grid-ready="onGridReady" @cellContextMenu="handleRowRightClicked" :rowGroupPanelShow="rowGroupPanelShow" @rowDoubleClicked="rowDoubleClicked" />
+      </div>
+    </div>
+    <CDialog v-show="showDialog" w100 dialogTitle="Confirm" @confirm="deleteData" @cancel="showDialog= false" confirm>
+      <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+    </CDialog>
+  </div>
+</section>

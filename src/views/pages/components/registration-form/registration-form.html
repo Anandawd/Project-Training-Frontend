@@ -1,0 +1,3475 @@
+<v-form
+  class="main-registration-form"
+  ref="validate"
+  @submit="onSubmit(null,false)"
+  :class="{'card' : showForm}"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+>
+  <div
+    ref="registrationFormElement"
+    id="accordionRegistrationForm"
+    class="accordion"
+  >
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="accordion-bookingInformationHeader">
+        <button
+          type="button"
+          class="accordion-button collapsed"
+          aria-expanded="false"
+          aria-controls="accordion-bookingInformation"
+          data-bs-target="#accordion-bookingInformation"
+          data-bs-toggle="collapse"
+        >
+          {{ $t('title.bookingInformation') }}
+        </button>
+      </h3>
+      <div
+        id="accordion-bookingInformation"
+        class="accordion-collapse collapse show"
+        aria-labelledby="accordion-bookingInformationHeader"
+      >
+        <form class="accordion-body row" :validation-schema="schema">
+          <div class="col-md-4">
+            <c-datepicker
+              class="mb-1"
+              required
+              confirm
+              :label="$t('labels.arrival')"
+              v-model="detail.arrival"
+              type="datetime"
+              valueType="YYYY-MM-DDTHH:mm:ssZZ"
+              format="DD/MM/YYYY HH:mm:ss"
+              :clearable="false"
+              :disabled-date="dateDisabledArrival"
+              :disabled="formType===$global.formType.guestInHouse || modeData === $global.modeData.checkIn || disabledEditData"
+              name="Arrival date"
+              resetButton
+              @input="onChangeArrival"
+              @reset="onResetDate"
+            ></c-datepicker>
+            <c-input
+              :disabled="disabledEditData"
+              spinner
+              required
+              customClass="col-3 plx-9"
+              @change="onChangeNight"
+              :min="1"
+              class="row mb-1"
+              v-model="detail.night"
+              :max="10000"
+              :label="$t('labels.night')"
+              type="number"
+              name="Night"
+            />
+            <c-datepicker
+              class="mb-1"
+              required
+              confirm
+              :label="$t('labels.departure')"
+              v-model="detail.departure"
+              type="datetime"
+              valueType="YYYY-MM-DDTHH:mm:ssZZ"
+              format="DD/MM/YYYY HH:mm:ss"
+              :clearable="false"
+              :disabled="disabledEditData"
+              :disabled-date="dateDisabledDeparture"
+              name="Departure date"
+              resetButton
+              @input="onChangeDeparture"
+              @reset="onResetDate"
+            ></c-datepicker>
+            <div class="row">
+              <div class="col-md-6 mb-1">
+                <c-input
+                  :disabled="disabledEditData"
+                  spinner
+                  required
+                  customLabelClass="col-md-6 col-3"
+                  customClass="plx-9 col-md-6 col-5"
+                  min="1"
+                  :max="10000000"
+                  v-model="detail.adult"
+                  :label="$t('labels.adult')"
+                  type="number"
+                  name="Adult"
+                  @change="onChangeAdult"
+                />
+              </div>
+              <div class="col-md-6 mb-1">
+                <c-input
+                  :disabled="disabledEditData"
+                  customLabelClass="col-lg-6 col-3"
+                  customClass="plx-9 col-lg-6 col-5"
+                  spinner
+                  class="row"
+                  :max="1000000"
+                  v-model="detail.child"
+                  :label="$t('labels.child')"
+                  type="number"
+                  name="Child"
+                />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-1">
+                <c-select
+                  :disabled="(formType === $global.formType.guestInHouse && modeData == $global.modeData.edit) || (modeData == $global.modeData.checkIn) ||disabledEditData"
+                  customLabelClass="col-lg-6 col-3"
+                  customClass="plx-9 col-lg-6 col"
+                  @change="onChangeBuildingFloor"
+                  @load="getComboList('Building')"
+                  :label="$t('labels.building')"
+                  v-model="detail.building"
+                  :options="optionsList.Building"
+                  labelName="name"
+                  keyName="code"
+                  id="Building"
+                  name="Building"
+                />
+              </div>
+              <div class="col-md-6 mb-1">
+                <c-select
+                  :disabled="(formType === $global.formType.guestInHouse && modeData == $global.modeData.edit) || (modeData == $global.modeData.checkIn) ||disabledEditData"
+                  customLabelClass="col-lg-6 col-3"
+                  customClass="plx-9 col-lg-6 col"
+                  @change="onChangeBuildingFloor"
+                  @load="getComboList('Floor')"
+                  :label="$t('labels.floor')"
+                  v-model="detail.floor"
+                  :options="optionsList.Floor"
+                  labelName="name"
+                  keyName="code"
+                  id="Floor"
+                  name="Floor"
+                />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-1">
+                <c-select
+                  required
+                  :disabled="(formType === $global.formType.guestInHouse && modeData == $global.modeData.edit) || (modeData == $global.modeData.checkIn) ||disabledEditData"
+                  customLabelClass="col-lg-6 col-3"
+                  customClass="plx-9 col-lg-6 col"
+                  @change="onChangeRoomType"
+                  @load="getRoomType"
+                  :label="$t('labels.roomType')"
+                  v-model="detail.room_type_code"
+                  :options="optionsList.RoomType"
+                  labelName="name"
+                  keyName="code"
+                  id="room-type"
+                  name="Room Type"
+                />
+              </div>
+              <div class="col-md-6 mb-1">
+                <c-select
+                  required
+                  :disabled="(formType === $global.formType.guestInHouse && modeData == $global.modeData.edit) || (modeData == $global.modeData.checkIn) ||disabledEditData"
+                  customLabelClass="col-lg-6 col-3"
+                  customClass="plx-9 col-lg-6 col"
+                  @change="onChangeBedType"
+                  @load="getBedTypeList"
+                  :label="$t('labels.bedType')"
+                  v-model="detail.bed_type_code"
+                  :options="bedTypeList"
+                  labelName="name"
+                  keyName="code"
+                  id="bed-type"
+                  name="Bed Type"
+                />
+              </div>
+            </div>
+            <c-input
+              half
+              :disabled="disabledEditData"
+              v-if="formType === $global.formType.guestGroup"
+              required
+              min="0"
+              type="number"
+              class="row mb-1"
+              :label="$t('labels.rooms')"
+              v-model="detail.rooms"
+              id="room-count"
+              name="Room Count"
+            >
+              <template #append-end>
+                <span class="input-group-text"
+                  >{{ `AV: ${availableRoomCount}` }}</span
+                >
+              </template>
+            </c-input>
+            <c-select
+              v-else
+              :disabled="(formType === $global.formType.guestInHouse && modeData == $global.modeData.edit) || (modeData == $global.modeData.checkIn) || form.is_lock || disabledEditData"
+              :required="isRoomNumberRequired || formType === $global.formType.guestInHouse"
+              class="row mb-1"
+              :label="$t('labels.roomNumber')"
+              v-model="detail.room_number"
+              :options="roomNumberList"
+              labelName="RoomNumber"
+              keyName="RoomNumber"
+              id="room-number"
+              name="Room Number"
+              @change="onChangeRoomNumber"
+              @load="getRoomNumberList"
+            >
+              <template
+                v-if="formType!==$global.formType.guestInHouse"
+                #append-start
+              >
+                <div class="input-group-text align-items-center">
+                  <div v-if="formType === $global.formType.guestGroup ">
+                    <c-checkbox
+                      :disabled="disabledEditData"
+                      boolean-value
+                      :label="$t('labels.ready')"
+                      v-model="isReadyRoom"
+                      @change="onChangeReadyRoom"
+                    >
+                    </c-checkbox>
+                  </div>
+                  <div v-else>
+                    <c-checkbox
+                      :disabled="modeData === $global.modeData.checkIn || disabledEditData"
+                      boolean-value
+                      :label="$t('labels.ready')"
+                      v-model="isReadyRoom"
+                      @change="onChangeReadyRoom"
+                    >
+                    </c-checkbox>
+                  </div>
+                </div>
+              </template>
+              <template #append-end>
+                <span class="input-group-text"
+                  >{{ `AV: ${availableRoomCount}` }}</span
+                >
+              </template>
+            </c-select>
+          </div>
+          <div class="col-md-4">
+            <c-select
+              :disabled="disabledEditData"
+              :required="isBusinessSourceRequired"
+              class="row mb-1"
+              filter
+              @change="onChangeBusinessSource"
+              @load="getComboList('BusinessSource')"
+              :label="$t('labels.businessSource')"
+              v-model="detail.business_source_code"
+              :options="optionsList.BusinessSource"
+              labelName="name"
+              keyName="code"
+              name="Business Source"
+            >
+              <template #append-start>
+                <div class="input-group-text align-items-center">
+                  <c-checkbox
+                    :disabled="disabledEditData"
+                    :label="$t('labels.override')"
+                    v-model="detail.is_override_commission"
+                    @change="onChangeOverrideCommission"
+                  ></c-checkbox>
+                </div>
+              </template>
+            </c-select>
+            <c-select
+              :disabled="!detail.is_override_commission || !detail.business_source_code || disabledEditData "
+              class="row mb-1"
+              :label="$t('labels.commissionType')"
+              v-model="detail.commission_type_code"
+              :options="optionsList.CommissionType"
+              labelName="name"
+              keyName="code"
+              name="Commission Type"
+              @change="onChangeCommissionType"
+              @load="getComboList('CommissionType')"
+            />
+            <c-input
+              :disabled="!detail.is_override_commission || !detail.business_source_code  || disabledEditData"
+              formatted
+              class="row mb-1"
+              :max="detail.commission_type_code == '5' || detail.commission_type_code == '6' ? $global.maxNumber : 100"
+              v-model="detail.commission_value"
+              :label="$t('labels.commissionValue')"
+              type="number"
+              name="commissionValue"
+            >
+              <template #append-end>
+                <span class="input-group-text"
+                  >{{ detail.commission_type_code == "5" ||
+                  detail.commission_type_code == "6" ? '.00' : '%' }}</span
+                >
+              </template></c-input
+            >
+            <c-select
+              :disabled="disabledEditData"
+              :required="isMarketRequired"
+              class="row mb-1"
+              @change="onChangeMarket"
+              :label="$t('labels.market')"
+              v-model="detail.market_code"
+              :options="optionsList.Market"
+              labelName="name"
+              keyName="code"
+              name="Market"
+              @load="getComboList('Market')"
+            />
+            <c-select
+              :disabled="disabledEditData"
+              class="row mb-1"
+              :label="$t('labels.bookingSource')"
+              v-model="detail.booking_source_code"
+              :options="optionsList.BookingSource"
+              labelName="name"
+              keyName="code"
+              name="Booking Source"
+              @load="getComboList('BookingSource')"
+            ></c-select>
+            <!-- <c-select required class="row mb-1" :label="$t('labels.roomRate')" v-model="detail.RoomRateCode" :options="optionsList.RoomRate" labelName="name" keyName="code" name="Room Rate" @change="onChangeRoomRate"/>  -->
+            <c-select
+              :disabled="disabledEditData"
+              :clearable="false"
+              required
+              selectType="column"
+              :columnOptions="columnRateOptions"
+              class="row mb-1"
+              :label="$t('labels.roomRate')"
+              v-model="detail.room_rate_code"
+              :options="roomRateList"
+              labelName="name"
+              keyName="code"
+              id="room_rate"
+              name="Room Rate"
+              @change="onChangeRoomRate"
+              @load="getRoomRate"
+            >
+              <template #append-start>
+                <div class="input-group-text align-items-center">
+                  <c-checkbox
+                    :disabled="disabledEditData"
+                    :label="$t('labels.override')"
+                    v-model="detail.is_override_rate"
+                    @change="onChangeOverrideRate"
+                  ></c-checkbox>
+                </div>
+              </template>
+            </c-select>
+            <c-input
+              :disabled="!detail.is_override_rate ||disabledEditData"
+              class="row mb-1"
+              :max="$global.maxNumber"
+              v-model="detail.discount"
+              formatted
+              :label="$t('labels.discount')"
+              type="number"
+              name="discount"
+              @input="onChangeDiscountRate"
+            >
+              <template #append-start>
+                <div class="input-group-text align-items-center">
+                  <c-checkbox
+                    :disabled="disabledEditData"
+                    class="pl-0"
+                    customClass="ml-0 pl-0"
+                    :label="$t('labels.percent')"
+                    v-model="detail.discount_percent"
+                    @change="onChangeDiscountRate"
+                  ></c-checkbox>
+                </div>
+              </template>
+              <template #append-end>
+                <span class="input-group-text"
+                  >{{ detail.discount_percent ? '%' : '.00' }}</span
+                >
+              </template>
+            </c-input>
+          </div>
+          <div class="col-md-4">
+            <c-input
+              :disabled="!detail.is_override_rate || disabledEditData"
+              class="row mb-1"
+              :max="$global.maxNumber"
+              v-model="detail.weekday_rate"
+              formatted
+              showZeroNumber
+              :label="$t('labels.weekday')"
+              type="number"
+              name="Weekday Rate"
+              @input="onChangeWeekdayRate"
+            />
+            <c-input
+              disabled
+              class="row mb-1"
+              :max="$global.maxNumber"
+              v-model="detail.weekday_rate_total"
+              formatted
+              showZeroNumber
+              label=" "
+              type="number"
+              name="weekdayRateTotal"
+            />
+            <c-input
+              :disabled="!detail.is_override_rate ||disabledEditData"
+              class="row mb-1"
+              :max="$global.maxNumber"
+              v-model="detail.weekend_rate"
+              formatted
+              showZeroNumber
+              :label="$t('labels.weekend')"
+              type="number"
+              name="Weekend Rate"
+              @input="onChangeWeekendRate"
+            />
+            <c-input
+              disabled
+              class="row mb-1"
+              :max="$global.maxNumber"
+              v-model="detail.weekend_rate_total"
+              formatted
+              showZeroNumber
+              label=" "
+              type="number"
+              name="weekendRateTotal"
+            />
+            <c-select
+              required
+              :disabled="disabledEditData"
+              class="row mb-1"
+              :initialValue="detail.payment_type_code"
+              :label="$t('labels.paymentType')"
+              v-model="detail.payment_type_code"
+              :options="optionsList.PaymentType"
+              labelName="name"
+              keyName="code"
+              name="Payment Type"
+              @load="getComboList('PaymentType')"
+            />
+            <div class="row mb-1">
+              <label for="bill-instruction" class="col-md-3 col-form-label"
+                >{{ $t("labels.billInstruction") }}</label
+              >
+              <div class="col-md-9">
+                <c-input
+                  :disabled="disabledEditData"
+                  v-model="detail.bill_instruction"
+                  type="textarea"
+                  rows="3"
+                  id="bill-instruction"
+                  name="Bill Instruction"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="accordion-personalInformationHeader">
+        <button
+          type="button"
+          class="accordion-button collapsed"
+          aria-expanded="false"
+          aria-controls="accordion-personalInformation"
+          data-bs-target="#accordion-personalInformation"
+          data-bs-toggle="collapse"
+        >
+          {{ $t('title.personalInformation') }}
+        </button>
+      </h3>
+      <div
+        id="accordion-personalInformation"
+        class="accordion-collapse collapse"
+        :class="{ 'show' : formType !== $global.formType.guestGroup}"
+        aria-labelledby="accordion-personalInformationHeader"
+      >
+        <b-tabs content-class="mt-3" v-model="tabIndex">
+          <b-tab
+            :title="'Profile1 '+(form.guest_profile_id1 > 0 ? ': '+form.guest_profile_id1 : '')"
+            active
+          >
+            <form class="accordion-body row">
+              <div class="col-md-4">
+                <c-select
+                  id="title"
+                  :disabled="disabledEditData"
+                  :required="isTitleRequired"
+                  class="row mb-1"
+                  customClass="col-4 plx-9"
+                  :label="$t('labels.title')"
+                  v-model="profile1.title_code"
+                  :options="optionsList.GuestTitle"
+                  labelName="code"
+                  keyName="code"
+                  name="Title"
+                  @load="getComboList('GuestTitle')"
+                >
+                </c-select>
+                <c-input
+                  id="full_name"
+                  required
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile1.full_name"
+                  :label="$t('labels.fullname')"
+                  type="text"
+                  name="Full Name"
+                >
+                  <template #append-end>
+                    <button
+                      :disabled="disabledEditData"
+                      type="button"
+                      :title="$t('messages.loadGuestProfile')"
+                      class="btn btn-primary btn-load"
+                      @click="handleLoadGuestProfile(1)"
+                    >
+                      load
+                    </button>
+                  </template>
+                  <template #append-start>
+                    <button
+                      :disabled="disabledEditData"
+                      type="button"
+                      :title="$t('messages.saveAsNewGuestProfile')"
+                      class="btn input-group-text"
+                      @click="handleSaveGuestProfile"
+                    >
+                      <i class="fa fa-save"></i>
+                    </button>
+                  </template>
+                </c-input>
+                <c-input
+                  v-if="formType !== $global.formType.guestInHouse"
+                  required
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="form.reservation_by"
+                  :label="$t('labels.reservationBy')"
+                  type="text"
+                  name="Reservation By"
+                  @clickCustom="onDoubleClickResvBy"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.member')"
+                  v-model="profile1.member_code"
+                  :options="optionsList.RoomMember"
+                  labelName="name"
+                  keyName="code"
+                  name="Member"
+                  @change="onChangeMember"
+                  @load="getComboList('RoomMember')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile1.street"
+                  :label="$t('labels.street')"
+                  type="text"
+                  name="Street"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  @change="onChangeCountry($event,1)"
+                  :label="$t('labels.country')"
+                  v-model="profile1.country_code"
+                  :options="optionsList.Country"
+                  labelName="name"
+                  keyName="code"
+                  name="Country"
+                  @load="getComboList('Country')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  :required="isStateRequired"
+                  class="row mb-1"
+                  @change="onChangeState($event,1)"
+                  :label="$t('labels.state')"
+                  v-model="profile1.state_code"
+                  :options="stateList[1]"
+                  labelName="name"
+                  keyName="code"
+                  name="State"
+                  @load="getStateList('1',profile1.country_code)"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  :required="isCityRequired"
+                  class="row mb-1"
+                  @change="onChangeCity(profile1)"
+                  :label="$t('labels.city')"
+                  v-model="profile1.city_code"
+                  :options="cityList[1]"
+                  labelName="name"
+                  keyName="code"
+                  name="City"
+                  @load="getCityList('1',profile1.state_code)"
+                />
+                <c-input
+                  v-if="formType !== $global.formType.reservation && formType !== $global.formType.guestGroup"
+                  :disabled="profile1.city_code !== 'OTH' || disabledEditData"
+                  class="row mb-1"
+                  v-model="profile1.city"
+                  :label="$t('labels.otherCity')"
+                  type="text"
+                  name="Other City"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  v-if="formType === $global.formType.reservation || formType === $global.formType.guestGroup"
+                  :disabled="profile1.city_code !== 'OTH' || disabledEditData"
+                  class="row mb-1"
+                  v-model="profile1.city"
+                  :label="$t('labels.otherCity')"
+                  type="text"
+                  name="Other City"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  :required="isNationalityRequired"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.nationality')"
+                  v-model="profile1.nationality_code"
+                  :options="optionsList.Nationality"
+                  labelName="name"
+                  keyName="code"
+                  name="Nationality"
+                  @load="getComboList('Nationality')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile1.postal_code"
+                  :label="$t('labels.postalCode')"
+                  type="text"
+                  :max="10"
+                  name="Postal Code"
+                />
+                <c-select
+                  required
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile1.is_male"
+                  :label="$t('labels.gender')"
+                  :options="genders"
+                  labelName="name"
+                  keyName="code"
+                  name="Gender"
+                />
+                <c-input
+                  :required="isPhone1Required"
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  max="14"
+                  v-model="profile1.phone1"
+                  :label="`${$t('labels.phone')}1`"
+                  type="text"
+                  name="Phone 1"
+                  @change="handleClickSearchGuestProfileByField('phone1',profile1.phone1)"
+                >
+                  <template #append-end>
+                    <div class="input-group-append">
+                      <button
+                        :title="$t('messages.searchDataWithPhoneNumber')"
+                        type="button"
+                        class="input-group-text"
+                        @click="handleClickSearchPhone1"
+                      >
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </template>
+                </c-input>
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile1.phone2"
+                  :label="`${$t('labels.phone')}2`"
+                  type="text"
+                  name="phone2"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile1.fax"
+                  :label="$t('labels.fax')"
+                  type="text"
+                  name="fax"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  :required="isEmailRequired"
+                  class="row mb-1"
+                  v-model="profile1.email"
+                  :label="$t('labels.email')"
+                  type="text"
+                  name="Email"
+                  @change="handleClickSearchGuestProfileByField('email',profile1.email)"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile1.website"
+                  :label="$t('labels.website')"
+                  type="text"
+                  name="website"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  :required="isCompanyRequired"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.company')"
+                  v-model="profile1.company_code"
+                  :options="optionsList.Company"
+                  labelName="name"
+                  keyName="code"
+                  name="Company"
+                  @load="getComboList('Company')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.guestType')"
+                  v-model="profile1.guest_type_code"
+                  :options="optionsList.GuestType"
+                  labelName="name"
+                  keyName="code"
+                  name="Guest Type"
+                  @load="getComboList('GuestType')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.idCardType')"
+                  v-model="profile1.id_card_code"
+                  :options="optionsList.IDCardType"
+                  labelName="name"
+                  keyName="code"
+                  name="Card Type"
+                  @load="getComboList('IDCardType')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile1.id_card_number"
+                  :label="$t('labels.idCardNumber')"
+                  type="text"
+                  name="ID Card Number"
+                  @change="handleClickSearchGuestProfileByField('idCardNumber',profile1.id_card_number)"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile1.birth_place"
+                  :label="$t('labels.birthPlace')"
+                  type="text"
+                  name="Birth Place"
+                />
+                <c-datepicker
+                  :disabled="disabledEditData"
+                  v-model="profile1.birth_date"
+                  :label="$t('labels.birthDate')"
+                  class="mb-1"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="Birth Date"
+                ></c-datepicker>
+              </div>
+            </form>
+            <div
+              v-if="profile2.full_name || profile3.full_name || profile4.full_name || profile5.full_name"
+              class="row w-100 justify-content-center"
+            >
+              <button
+                :disabled="disabledEditData"
+                type="button"
+                @click.prevent="onClearProfile(profile1, 1)"
+                class="w-50 btn btn-danger mb-2"
+              >
+                Clear Profile
+              </button>
+            </div>
+          </b-tab>
+          <b-tab
+            v-if="formType !== $global.formType.guestGroup && numberOfGuestProfile > 1"
+            :title="'Profile2 '+(form.guest_profile_id2 > 0 ? ': '+form.guest_profile_id2 : '')"
+          >
+            <form class="accordion-body row">
+              <div class="col-md-4">
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  customClass="col-4 plx-9"
+                  :label="$t('labels.title')"
+                  v-model="profile2.title_code"
+                  :options="optionsList.GuestTitle"
+                  labelName="code"
+                  keyName="code"
+                  name="Title2"
+                  @load="getComboList('GuestTitle')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile2.full_name"
+                  :label="$t('labels.fullname')"
+                  type="text"
+                  name="Full Name2"
+                >
+                  <template #append-end>
+                    <button
+                      :disabled="disabledEditData"
+                      type="button"
+                      class="btn btn-primary btn-load"
+                      @click="handleLoadGuestProfile(2)"
+                    >
+                      load
+                    </button>
+                  </template></c-input
+                >
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.member')"
+                  v-model="profile2.member_code"
+                  :options="optionsList.Member"
+                  labelName="name"
+                  keyName="code"
+                  name="Member2"
+                  @load="getComboList('Member')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile2.street"
+                  :label="$t('labels.street')"
+                  type="text"
+                  name="Street2"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  @change="onChangeCountry($event,2)"
+                  :label="$t('labels.country')"
+                  v-model="profile2.country_code"
+                  :options="optionsList.Country"
+                  labelName="name"
+                  keyName="code"
+                  name="Country2"
+                  @load="getComboList('Country')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeState($event,2)"
+                  :label="$t('labels.state')"
+                  v-model="profile2.state_code"
+                  :options="stateList[2]"
+                  labelName="name"
+                  keyName="code"
+                  name="State2"
+                  @load="getStateList('2',profile2.country_code)"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeCity(profile2)"
+                  :label="$t('labels.city')"
+                  v-model="profile2.city_code"
+                  :options="cityList[2]"
+                  labelName="name"
+                  keyName="code"
+                  name="City2"
+                  @load="getCityList('2',profile2.state_code)"
+                />
+                <c-input
+                  :disabled="profile3.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile2.city"
+                  :label="$t('labels.otherCity')"
+                  type="text"
+                  name="Other City2"
+                />
+              </div>
+              <div class="col-md-4">
+                <!-- <c-input
+                  v-if="formType === $global.formType.reservation"
+                  :disabled="profile2.city_code !== 'OTH' || disabledEditData"
+                  class="row mb-1"
+                  v-model="profile2.city"
+                  :label="$t('labels.otherCity')"
+                  type="text"
+                  name="Other City2"
+                /> -->
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.nationality')"
+                  v-model="profile2.nationality_code"
+                  :options="optionsList.Nationality"
+                  labelName="name"
+                  keyName="code"
+                  name="Nationality2"
+                  @load="getComboList('Nationality')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile2.postal_code"
+                  :label="$t('labels.postalCode')"
+                  type="text"
+                  name="Postal Code2"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile2.is_male"
+                  :label="$t('labels.gender')"
+                  :options="genders"
+                  labelName="name"
+                  keyName="code"
+                  name="Gender2"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile2.phone1"
+                  :label="`${$t('labels.phone')}1`"
+                  type="text"
+                  name="phone12"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile2.phone2"
+                  :label="`${$t('labels.phone')}2`"
+                  type="text"
+                  name="phone22"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile2.fax"
+                  :label="$t('labels.fax')"
+                  type="text"
+                  name="fax2"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile2.email"
+                  :label="$t('labels.email')"
+                  type="text"
+                  name="email2"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile2.website"
+                  :label="$t('labels.website')"
+                  type="text"
+                  name="website2"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.company')"
+                  v-model="profile2.company_code"
+                  :options="optionsList.Company"
+                  labelName="name"
+                  keyName="code"
+                  name="Company2"
+                  @load="getComboList('Company')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.guestType')"
+                  v-model="profile2.guest_type_code"
+                  :options="optionsList.GuestType"
+                  labelName="name"
+                  keyName="code"
+                  name="Guest Type2"
+                  @load="getComboList('GuestType')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.idCardType')"
+                  v-model="profile2.id_card_code"
+                  :options="optionsList.IDCardType"
+                  labelName="name"
+                  keyName="code"
+                  name="Card Type2"
+                  @load="getComboList('IDCardType')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile2.id_card_number"
+                  :label="$t('labels.idCardNumber')"
+                  type="text"
+                  name="ID Card Number2"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile2.birth_place"
+                  :label="$t('labels.birthPlace')"
+                  type="text"
+                  name="Birth Place2"
+                />
+                <c-datepicker
+                  :disabled="disabledEditData"
+                  v-model="profile2.birth_date"
+                  :label="$t('labels.birthDate')"
+                  class="mb-1"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="Birth Date2"
+                ></c-datepicker>
+              </div>
+            </form>
+            <div class="row w-100 justify-content-center">
+              <button
+                :disabled="disabledEditData"
+                type="button"
+                @click.prevent="onClearProfile(profile2, 2)"
+                class="w-50 btn btn-danger mb-2"
+              >
+                Clear Profile
+              </button>
+            </div>
+          </b-tab>
+          <b-tab
+            v-if="formType !== $global.formType.guestGroup && numberOfGuestProfile > 2"
+            :title="'Profile3 '+(form.guest_profile_id3 > 0 ? ': '+form.guest_profile_id3 : '')"
+          >
+            <form class="accordion-body row">
+              <div class="col-md-4">
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  customClass="col-4 plx-9"
+                  :label="$t('labels.title')"
+                  v-model="profile3.title_code"
+                  :options="optionsList.GuestTitle"
+                  labelName="code"
+                  keyName="code"
+                  name="Title3"
+                  @load="getComboList('GuestTitle')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile3.full_name"
+                  :label="$t('labels.fullname')"
+                  type="text"
+                  name="Full Name3"
+                >
+                  <template #append-end>
+                    <button
+                      :disabled="disabledEditData"
+                      type="button"
+                      class="btn btn-primary btn-load"
+                      @click="handleLoadGuestProfile(3)"
+                    >
+                      load
+                    </button>
+                  </template></c-input
+                >
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.member')"
+                  v-model="profile3.member_code"
+                  :options="optionsList.Member"
+                  labelName="name"
+                  keyName="code"
+                  name="Member3"
+                  @load="getComboList('Member')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile3.street"
+                  :label="$t('labels.street')"
+                  type="text"
+                  name="Street3"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  @change="onChangeCountry($event,3)"
+                  :label="$t('labels.country')"
+                  v-model="profile3.country_code"
+                  :options="optionsList.Country"
+                  labelName="name"
+                  keyName="code"
+                  name="Country3"
+                  @load="getComboList('Country')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeState($event,3)"
+                  :label="$t('labels.state')"
+                  v-model="profile3.state_code"
+                  :options="stateList[3]"
+                  labelName="name"
+                  keyName="code"
+                  name="State3"
+                  @load="getStateList('3',profile3.country_code)"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeCity(profile3)"
+                  :label="$t('labels.city')"
+                  v-model="profile3.city_code"
+                  :options="cityList[3]"
+                  labelName="name"
+                  keyName="code"
+                  name="City3"
+                  @load="getCityList('3',profile3.state_code)"
+                />
+                <c-input
+                  :disabled="profile3.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile3.city"
+                  :label="$t('labels.otherCity')"
+                  type="text"
+                  name="Other City3"
+                />
+              </div>
+              <div class="col-md-4">
+                <!-- <c-input
+                  v-if="formType === $global.formType.reservation"
+                  :disabled="profile3.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile3.city"
+                  :label="$t('labels.city')"
+                  type="text"
+                  name="Other City3"
+                /> -->
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.nationality')"
+                  v-model="profile3.nationality_code"
+                  :options="optionsList.Nationality"
+                  labelName="name"
+                  keyName="code"
+                  name="Nationality3"
+                  @load="getComboList('Nationality')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile3.postal_code"
+                  :label="$t('labels.postalCode')"
+                  type="text"
+                  name="Postal Code3"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile3.is_male"
+                  :label="$t('labels.gender')"
+                  :options="genders"
+                  labelName="name"
+                  keyName="code"
+                  name="Gender3"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile3.phone1"
+                  :label="`${$t('labels.phone')}1`"
+                  type="text"
+                  name="phone13"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile3.phone2"
+                  :label="`${$t('labels.phone')}2`"
+                  type="text"
+                  name="phone23"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile3.fax"
+                  :label="$t('labels.fax')"
+                  type="text"
+                  name="fax3"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile3.email"
+                  :label="$t('labels.email')"
+                  type="text"
+                  name="email3"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile3.website"
+                  :label="$t('labels.website')"
+                  type="text"
+                  name="website3"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.company')"
+                  v-model="profile3.company_code"
+                  :options="optionsList.Company"
+                  labelName="name"
+                  keyName="code"
+                  name="Company3"
+                  @load="getComboList('Company')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.guestType')"
+                  v-model="profile3.guest_type_code"
+                  :options="optionsList.GuestType"
+                  labelName="name"
+                  keyName="code"
+                  name="Guest Type3"
+                  @load="getComboList('GuestType')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.idCardType')"
+                  v-model="profile3.id_card_code"
+                  :options="optionsList.IDCardType"
+                  labelName="name"
+                  keyName="code"
+                  name="Card Type3"
+                  @load="getComboList('IDCardType')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile3.id_card_number"
+                  :label="$t('labels.idCardNumber')"
+                  type="text"
+                  name="ID Card Number3"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile3.birth_place"
+                  :label="$t('labels.birthPlace')"
+                  type="text"
+                  name="Birth Place3"
+                />
+                <c-datepicker
+                  :disabled="disabledEditData"
+                  v-model="profile3.birth_date"
+                  :label="$t('labels.birthDate')"
+                  class="mb-1"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="Birth Date3"
+                ></c-datepicker>
+              </div>
+            </form>
+            <div class="row w-100 justify-content-center">
+              <button
+                :disabled="disabledEditData"
+                type="button"
+                @click.prevent="onClearProfile(profile3,3)"
+                class="w-50 btn btn-danger mb-2"
+              >
+                Clear Profile
+              </button>
+            </div>
+          </b-tab>
+          <b-tab
+            v-if="formType !== $global.formType.guestGroup && numberOfGuestProfile > 3"
+            :title="'Profile4 '+(form.guest_profile_id4 > 0 ? ': '+form.guest_profile_id4 : '')"
+          >
+            <form class="accordion-body row">
+              <div class="col-md-4">
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  customClass="col-4 plx-9"
+                  :label="$t('labels.title')"
+                  v-model="profile4.title_code"
+                  :options="optionsList.GuestTitle"
+                  labelName="code"
+                  keyName="code"
+                  name="Title4"
+                  @load="getComboList('GuestTitle')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile4.full_name"
+                  :label="$t('labels.fullname')"
+                  type="text"
+                  name="Full Name4"
+                >
+                  <template #append-end>
+                    <button
+                      :disabled="disabledEditData"
+                      type="button"
+                      class="btn btn-primary btn-load"
+                      @click="handleLoadGuestProfile(4)"
+                    >
+                      load
+                    </button>
+                  </template></c-input
+                >
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.member')"
+                  v-model="profile4.member_code"
+                  :options="optionsList.Member"
+                  labelName="name"
+                  keyName="code"
+                  name="Member4"
+                  @load="getComboList('Member')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile4.street"
+                  :label="$t('labels.street')"
+                  type="text"
+                  name="Street4"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  @change="onChangeCountry($event,4)"
+                  :label="$t('labels.country')"
+                  v-model="profile4.country_code"
+                  :options="optionsList.Country"
+                  labelName="name"
+                  keyName="code"
+                  name="Country4"
+                  @load="getComboList('Country')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeState($event,4)"
+                  :label="$t('labels.state')"
+                  v-model="profile4.state_code"
+                  :options="stateList[4]"
+                  labelName="name"
+                  keyName="code"
+                  name="State4"
+                  @load="getStateList('4',profile4.country_code)"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeCity(profile4)"
+                  :label="$t('labels.city')"
+                  v-model="profile4.city_code"
+                  :options="cityList[4]"
+                  labelName="name"
+                  keyName="code"
+                  name="City4"
+                  @load="getCityList('4',profile4.state_code)"
+                />
+                <c-input
+                  v-if="formType !== $global.formType.reservation"
+                  :disabled="profile4.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile4.city"
+                  :label="$t('labels.otherCity')"
+                  type="text"
+                  name="Other City4"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  v-if="formType === $global.formType.reservation"
+                  :disabled="profile4.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile4.city"
+                  :label="$t('labels.city')"
+                  type="text"
+                  name="Other City4"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.nationality')"
+                  v-model="profile4.nationality_code"
+                  :options="optionsList.Nationality"
+                  labelName="name"
+                  keyName="code"
+                  name="Nationality4"
+                  @load="getComboList('Nationality')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile4.postal_code"
+                  :label="$t('labels.postalCode')"
+                  type="text"
+                  name="Postal Code4"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile4.is_male"
+                  :label="$t('labels.gender')"
+                  :options="genders"
+                  labelName="name"
+                  keyName="code"
+                  name="Gender4"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile4.phone1"
+                  :label="`${$t('labels.phone')}1`"
+                  type="text"
+                  name="phone1_4"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile4.phone2"
+                  :label="`${$t('labels.phone')}2`"
+                  type="text"
+                  name="phone2_4"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile4.fax"
+                  :label="$t('labels.fax')"
+                  type="text"
+                  name="fax4"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile4.email"
+                  :label="$t('labels.email')"
+                  type="text"
+                  name="email4"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile4.website"
+                  :label="$t('labels.website')"
+                  type="text"
+                  name="Website4"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.company')"
+                  v-model="profile4.company_code"
+                  :options="optionsList.Company"
+                  labelName="name"
+                  keyName="code"
+                  name="Company4"
+                  @load="getComboList('Company')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.guestType')"
+                  v-model="profile4.guest_type_code"
+                  :options="optionsList.GuestType"
+                  labelName="name"
+                  keyName="code"
+                  name="Guest Type4"
+                  @load="getComboList('GuestType')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.idCardType')"
+                  v-model="profile4.id_card_code"
+                  :options="optionsList.IDCardType"
+                  labelName="name"
+                  keyName="code"
+                  name="Card Type4"
+                  @load="getComboList('IDCardType')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile4.id_card_number"
+                  :label="$t('labels.idCardNumber')"
+                  type="text"
+                  name="ID Card Number4"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile4.birth_place"
+                  :label="$t('labels.birthPlace')"
+                  type="text"
+                  name="Birth Place4"
+                />
+                <c-datepicker
+                  :disabled="disabledEditData"
+                  v-model="profile4.birth_date"
+                  class="mb-1"
+                  :label="$t('labels.birthDate')"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="Birth Date4"
+                ></c-datepicker>
+              </div>
+            </form>
+            <div class="row w-100 justify-content-center">
+              <button
+                :disabled="disabledEditData"
+                type="button"
+                @click.prevent="onClearProfile(profile4,4)"
+                class="w-50 btn btn-danger mb-2"
+              >
+                Clear Profile
+              </button>
+            </div>
+          </b-tab>
+          <b-tab
+            v-if="formType !== $global.formType.guestGroup && numberOfGuestProfile > 4"
+            :title="'Profile5 '+(form.guest_profile_id5 > 0 ? ': '+form.guest_profile_id5 : '')"
+          >
+            <form class="accordion-body row">
+              <div class="col-md-4">
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  customClass="col-4 plx-9"
+                  :label="$t('labels.title')"
+                  v-model="profile5.title_code"
+                  :options="optionsList.GuestTitle"
+                  labelName="code"
+                  keyName="code"
+                  name="Title5"
+                  @load="getComboList('GuestTitle')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile5.full_name"
+                  :label="$t('labels.fullname')"
+                  type="text"
+                  name="Full Name5"
+                >
+                  <template #append-end>
+                    <button
+                      :disabled="disabledEditData"
+                      type="button"
+                      class="btn btn-primary btn-load"
+                      @click="handleLoadGuestProfile(5)"
+                    >
+                      load
+                    </button>
+                  </template></c-input
+                >
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.member')"
+                  v-model="profile5.member_code"
+                  :options="optionsList.Member"
+                  labelName="name"
+                  keyName="code"
+                  name="Member5"
+                  @load="getComboList('Member')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile5.street"
+                  :label="$t('labels.street')"
+                  type="text"
+                  name="Street5"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  @change="onChangeCountry($event,5)"
+                  :label="$t('labels.country')"
+                  v-model="profile5.country_code"
+                  :options="optionsList.Country"
+                  labelName="name"
+                  keyName="code"
+                  name="Country5"
+                  @load="getComboList('Country')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeState($event,5)"
+                  :label="$t('labels.state')"
+                  v-model="profile5.state_code"
+                  :options="stateList[5]"
+                  labelName="name"
+                  keyName="code"
+                  name="State5"
+                  @load="getStateList('5',profile5.country_code)"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeCity(profile5)"
+                  :label="$t('labels.city')"
+                  v-model="profile5.city_code"
+                  :options="cityList[5]"
+                  labelName="name"
+                  keyName="code"
+                  name="City5"
+                  @load="getCityList('5',profile5.state_code)"
+                />
+                <c-input
+                  v-if="formType !== $global.formType.reservation"
+                  :disabled="profile5.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile5.city"
+                  :label="$t('labels.otherCity')"
+                  type="text"
+                  name="Other City5"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  v-if="formType === $global.formType.reservation"
+                  :disabled="profile5.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile5.city"
+                  :label="$t('labels.city')"
+                  type="text"
+                  name="Other City5"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.nationality')"
+                  v-model="profile5.nationality_code"
+                  :options="optionsList.Nationality"
+                  labelName="name"
+                  keyName="code"
+                  name="Nationality5"
+                  @load="getComboList('Nationality')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile5.postal_code"
+                  :label="$t('labels.postalCode')"
+                  type="text"
+                  name="Postal Code5"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile5.is_male"
+                  :label="$t('labels.gender')"
+                  :options="genders"
+                  labelName="name"
+                  keyName="code"
+                  name="Gender5"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile5.phone1"
+                  :label="`${$t('labels.phone')}1`"
+                  type="text"
+                  name="phone1_5"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile5.phone2"
+                  :label="`${$t('labels.phone')}2`"
+                  type="text"
+                  name="phone2_5"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile5.fax"
+                  :label="$t('labels.fax')"
+                  type="text"
+                  name="fax5"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile5.email"
+                  :label="$t('labels.email')"
+                  type="text"
+                  name="email5"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile5.website"
+                  :label="$t('labels.website')"
+                  type="text"
+                  name="Website5"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.company')"
+                  v-model="profile5.company_code"
+                  :options="optionsList.Company"
+                  labelName="name"
+                  keyName="code"
+                  name="Company5"
+                  @load="getComboList('Company')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.guestType')"
+                  v-model="profile5.guest_type_code"
+                  :options="optionsList.GuestType"
+                  labelName="name"
+                  keyName="code"
+                  name="Guest Type5"
+                  @load="getComboList('GuestType')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.idCardType')"
+                  v-model="profile5.id_card_code"
+                  :options="optionsList.IDCardType"
+                  labelName="name"
+                  keyName="code"
+                  name="Card Type5"
+                  @load="getComboList('IDCardType')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile5.id_card_number"
+                  :label="$t('labels.idCardNumber')"
+                  type="text"
+                  name="ID Card Number5"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile5.birth_place"
+                  :label="$t('labels.birthPlace')"
+                  type="text"
+                  name="Birth Place5"
+                />
+                <c-datepicker
+                  :disabled="disabledEditData"
+                  v-model="profile5.birth_date"
+                  class="mb-1"
+                  :label="$t('labels.birthDate')"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="Birth Date5"
+                ></c-datepicker>
+              </div>
+            </form>
+            <div class="row w-100 justify-content-center">
+              <button
+                :disabled="disabledEditData"
+                type="button"
+                @click.prevent="onClearProfile(profile5,5)"
+                class="w-50 btn btn-danger mb-2"
+              >
+                Clear Profile
+              </button>
+            </div>
+          </b-tab>
+          <b-tab
+            v-if="formType !== $global.formType.guestGroup && numberOfGuestProfile > 5"
+            :title="'Profile6 '+(form.guest_profile_id6 > 0 ? ': '+form.guest_profile_id6 : '')"
+          >
+            <form class="accordion-body row">
+              <div class="col-md-4">
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  customClass="col-4 plx-9"
+                  :label="$t('labels.title')"
+                  v-model="profile6.title_code"
+                  :options="optionsList.GuestTitle"
+                  labelName="code"
+                  keyName="code"
+                  name="Title6"
+                  @load="getComboList('GuestTitle')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile6.full_name"
+                  :label="$t('labels.fullname')"
+                  type="text"
+                  name="Full Name6"
+                >
+                  <template #append-end>
+                    <button
+                      :disabled="disabledEditData"
+                      type="button"
+                      class="btn btn-primary btn-load"
+                      @click="handleLoadGuestProfile(6)"
+                    >
+                      load
+                    </button>
+                  </template></c-input
+                >
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.member')"
+                  v-model="profile6.member_code"
+                  :options="optionsList.Member"
+                  labelName="name"
+                  keyName="code"
+                  name="Member6"
+                  @load="getComboList('Member')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile6.street"
+                  :label="$t('labels.street')"
+                  type="text"
+                  name="Street6"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  @change="onChangeCountry($event,6)"
+                  :label="$t('labels.country')"
+                  v-model="profile6.country_code"
+                  :options="optionsList.Country"
+                  labelName="name"
+                  keyName="code"
+                  name="Country6"
+                  @load="getComboList('Country')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeState($event,6)"
+                  :label="$t('labels.state')"
+                  v-model="profile6.state_code"
+                  :options="stateList[6]"
+                  labelName="name"
+                  keyName="code"
+                  name="State6"
+                  @load="getStateList('6',profile6.country_code)"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeCity(profile6)"
+                  :label="$t('labels.city')"
+                  v-model="profile6.city_code"
+                  :options="cityList[6]"
+                  labelName="name"
+                  keyName="code"
+                  name="City6"
+                  @load="getCityList('6',profile6.state_code)"
+                />
+                <c-input
+                  v-if="formType !== $global.formType.reservation"
+                  :disabled="profile6.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile6.city"
+                  :label="$t('labels.otherCity')"
+                  type="text"
+                  name="Other City6"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  v-if="formType === $global.formType.reservation"
+                  :disabled="profile6.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile6.city"
+                  :label="$t('labels.city')"
+                  type="text"
+                  name="Other City6"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.nationality')"
+                  v-model="profile6.nationality_code"
+                  :options="optionsList.Nationality"
+                  labelName="name"
+                  keyName="code"
+                  name="Nationality6"
+                  @load="getComboList('Nationality')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile6.postal_code"
+                  :label="$t('labels.postalCode')"
+                  type="text"
+                  name="Postal Code6"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile6.is_male"
+                  :label="$t('labels.gender')"
+                  :options="genders"
+                  labelName="name"
+                  keyName="code"
+                  name="Gender6"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile6.phone1"
+                  :label="`${$t('labels.phone')}1`"
+                  type="text"
+                  name="phone1_6"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile6.phone2"
+                  :label="`${$t('labels.phone')}2`"
+                  type="text"
+                  name="phone2_6"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile6.fax"
+                  :label="$t('labels.fax')"
+                  type="text"
+                  name="fax6"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile6.email"
+                  :label="$t('labels.email')"
+                  type="text"
+                  name="email6"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile6.website"
+                  :label="$t('labels.website')"
+                  type="text"
+                  name="Website6"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.company')"
+                  v-model="profile6.company_code"
+                  :options="optionsList.Company"
+                  labelName="name"
+                  keyName="code"
+                  name="Company6"
+                  @load="getComboList('Company')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.guestType')"
+                  v-model="profile6.guest_type_code"
+                  :options="optionsList.GuestType"
+                  labelName="name"
+                  keyName="code"
+                  name="Guest Type6"
+                  @load="getComboList('GuestType')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.idCardType')"
+                  v-model="profile6.id_card_code"
+                  :options="optionsList.IDCardType"
+                  labelName="name"
+                  keyName="code"
+                  name="Card Type6"
+                  @load="getComboList('IDCardType')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile6.id_card_number"
+                  :label="$t('labels.idCardNumber')"
+                  type="text"
+                  name="ID Card Number6"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile6.birth_place"
+                  :label="$t('labels.birthPlace')"
+                  type="text"
+                  name="Birth Place6"
+                />
+                <c-datepicker
+                  :disabled="disabledEditData"
+                  v-model="profile6.birth_date"
+                  class="mb-1"
+                  :label="$t('labels.birthDate')"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="Birth Date6"
+                ></c-datepicker>
+              </div>
+            </form>
+            <div class="row w-100 justify-content-center">
+              <button
+                :disabled="disabledEditData"
+                type="button"
+                @click.prevent="onClearProfile(profile6,6)"
+                class="w-50 btn btn-danger mb-2"
+              >
+                Clear Profile
+              </button>
+            </div>
+          </b-tab>
+          <b-tab
+            v-if="formType !== $global.formType.guestGroup && numberOfGuestProfile > 6"
+            :title="'Profile7 '+(form.guest_profile_id7 > 0 ? ': '+form.guest_profile_id7 : '')"
+          >
+            <form class="accordion-body row">
+              <div class="col-md-4">
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  customClass="col-4 plx-9"
+                  :label="$t('labels.title')"
+                  v-model="profile7.title_code"
+                  :options="optionsList.GuestTitle"
+                  labelName="code"
+                  keyName="code"
+                  name="Title7"
+                  @load="getComboList('GuestTitle')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile7.full_name"
+                  :label="$t('labels.fullname')"
+                  type="text"
+                  name="Full Name7"
+                >
+                  <template #append-end>
+                    <button
+                      :disabled="disabledEditData"
+                      type="button"
+                      class="btn btn-primary btn-load"
+                      @click="handleLoadGuestProfile(7)"
+                    >
+                      load
+                    </button>
+                  </template></c-input
+                >
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.member')"
+                  v-model="profile7.member_code"
+                  :options="optionsList.Member"
+                  labelName="name"
+                  keyName="code"
+                  name="Member7"
+                  @load="getComboList('Member')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile7.street"
+                  :label="$t('labels.street')"
+                  type="text"
+                  name="Street7"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  @change="onChangeCountry($event,7)"
+                  :label="$t('labels.country')"
+                  v-model="profile7.country_code"
+                  :options="optionsList.Country"
+                  labelName="name"
+                  keyName="code"
+                  name="Country7"
+                  @load="getComboList('Country')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeState($event,7)"
+                  :label="$t('labels.state')"
+                  v-model="profile7.state_code"
+                  :options="stateList[7]"
+                  labelName="name"
+                  keyName="code"
+                  name="State7"
+                  @load="getStateList('7',profile7.country_code)"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeCity(profile7)"
+                  :label="$t('labels.city')"
+                  v-model="profile7.city_code"
+                  :options="cityList[7]"
+                  labelName="name"
+                  keyName="code"
+                  name="City7"
+                  @load="getCityList('7',profile7.state_code)"
+                />
+                <c-input
+                  v-if="formType !== $global.formType.reservation"
+                  :disabled="profile7.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile7.city"
+                  :label="$t('labels.otherCity')"
+                  type="text"
+                  name="Other City7"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  v-if="formType === $global.formType.reservation"
+                  :disabled="profile7.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile7.city"
+                  :label="$t('labels.city')"
+                  type="text"
+                  name="Other City7"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.nationality')"
+                  v-model="profile7.nationality_code"
+                  :options="optionsList.Nationality"
+                  labelName="name"
+                  keyName="code"
+                  name="Nationality7"
+                  @load="getComboList('Nationality')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile7.postal_code"
+                  :label="$t('labels.postalCode')"
+                  type="text"
+                  name="Postal Code7"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile7.is_male"
+                  :label="$t('labels.gender')"
+                  :options="genders"
+                  labelName="name"
+                  keyName="code"
+                  name="Gender7"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile7.phone1"
+                  :label="`${$t('labels.phone')}1`"
+                  type="text"
+                  name="phone1_7"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile7.phone2"
+                  :label="`${$t('labels.phone')}2`"
+                  type="text"
+                  name="phone2_7"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile7.fax"
+                  :label="$t('labels.fax')"
+                  type="text"
+                  name="fax7"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile7.email"
+                  :label="$t('labels.email')"
+                  type="text"
+                  name="email7"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile7.website"
+                  :label="$t('labels.website')"
+                  type="text"
+                  name="Website7"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.company')"
+                  v-model="profile7.company_code"
+                  :options="optionsList.Company"
+                  labelName="name"
+                  keyName="code"
+                  name="Company7"
+                  @load="getComboList('Company')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.guestType')"
+                  v-model="profile7.guest_type_code"
+                  :options="optionsList.GuestType"
+                  labelName="name"
+                  keyName="code"
+                  name="Guest Type7"
+                  @load="getComboList('GuestType')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.idCardType')"
+                  v-model="profile7.id_card_code"
+                  :options="optionsList.IDCardType"
+                  labelName="name"
+                  keyName="code"
+                  name="Card Type7"
+                  @load="getComboList('IDCardType')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile7.id_card_number"
+                  :label="$t('labels.idCardNumber')"
+                  type="text"
+                  name="ID Card Number7"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile7.birth_place"
+                  :label="$t('labels.birthPlace')"
+                  type="text"
+                  name="Birth Place7"
+                />
+                <c-datepicker
+                  :disabled="disabledEditData"
+                  v-model="profile7.birth_date"
+                  class="mb-1"
+                  :label="$t('labels.birthDate')"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="Birth Date7"
+                ></c-datepicker>
+              </div>
+            </form>
+            <div class="row w-100 justify-content-center">
+              <button
+                :disabled="disabledEditData"
+                type="button"
+                @click.prevent="onClearProfile(profile7,7)"
+                class="w-50 btn btn-danger mb-2"
+              >
+                Clear Profile
+              </button>
+            </div>
+          </b-tab>
+          <b-tab
+            v-if="formType !== $global.formType.guestGroup && numberOfGuestProfile > 7"
+            :title="'Profile8 '+(form.guest_profile_id8 > 0 ? ': '+form.guest_profile_id8 : '')"
+          >
+            <form class="accordion-body row">
+              <div class="col-md-4">
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  customClass="col-4 plx-9"
+                  :label="$t('labels.title')"
+                  v-model="profile8.title_code"
+                  :options="optionsList.GuestTitle"
+                  labelName="code"
+                  keyName="code"
+                  name="Title8"
+                  @load="getComboList('GuestTitle')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile8.full_name"
+                  :label="$t('labels.fullname')"
+                  type="text"
+                  name="Full Name8"
+                >
+                  <template #append-end>
+                    <button
+                      :disabled="disabledEditData"
+                      type="button"
+                      class="btn btn-primary btn-load"
+                      @click="handleLoadGuestProfile(8)"
+                    >
+                      load
+                    </button>
+                  </template></c-input
+                >
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.member')"
+                  v-model="profile8.member_code"
+                  :options="optionsList.Member"
+                  labelName="name"
+                  keyName="code"
+                  name="Member8"
+                  @load="getComboList('Member')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile8.street"
+                  :label="$t('labels.street')"
+                  type="text"
+                  name="Street8"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  @change="onChangeCountry($event,8)"
+                  :label="$t('labels.country')"
+                  v-model="profile8.country_code"
+                  :options="optionsList.Country"
+                  labelName="name"
+                  keyName="code"
+                  name="Country8"
+                  @load="getComboList('Country')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeState($event,8)"
+                  :label="$t('labels.state')"
+                  v-model="profile8.state_code"
+                  :options="stateList[8]"
+                  labelName="name"
+                  keyName="code"
+                  name="State8"
+                  @load="getStateList('5',profile8.country_code)"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeCity(profile8)"
+                  :label="$t('labels.city')"
+                  v-model="profile8.city_code"
+                  :options="cityList[8]"
+                  labelName="name"
+                  keyName="code"
+                  name="City8"
+                  @load="getCityList('8',profile8.state_code)"
+                />
+                <c-input
+                  v-if="formType !== $global.formType.reservation"
+                  :disabled="profile8.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile8.city"
+                  :label="$t('labels.otherCity')"
+                  type="text"
+                  name="Other City8"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  v-if="formType === $global.formType.reservation"
+                  :disabled="profile8.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile8.city"
+                  :label="$t('labels.city')"
+                  type="text"
+                  name="Other City8"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.nationality')"
+                  v-model="profile8.nationality_code"
+                  :options="optionsList.Nationality"
+                  labelName="name"
+                  keyName="code"
+                  name="Nationality8"
+                  @load="getComboList('Nationality')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile8.postal_code"
+                  :label="$t('labels.postalCode')"
+                  type="text"
+                  name="Postal Code8"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile8.is_male"
+                  :label="$t('labels.gender')"
+                  :options="genders"
+                  labelName="name"
+                  keyName="code"
+                  name="Gender8"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile8.phone1"
+                  :label="`${$t('labels.phone')}1`"
+                  type="text"
+                  name="phone1_8"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile8.phone2"
+                  :label="`${$t('labels.phone')}2`"
+                  type="text"
+                  name="phone2_8"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile8.fax"
+                  :label="$t('labels.fax')"
+                  type="text"
+                  name="fax8"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile8.email"
+                  :label="$t('labels.email')"
+                  type="text"
+                  name="email8"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile8.website"
+                  :label="$t('labels.website')"
+                  type="text"
+                  name="Website8"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.company')"
+                  v-model="profile8.company_code"
+                  :options="optionsList.Company"
+                  labelName="name"
+                  keyName="code"
+                  name="Company8"
+                  @load="getComboList('Company')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.guestType')"
+                  v-model="profile8.guest_type_code"
+                  :options="optionsList.GuestType"
+                  labelName="name"
+                  keyName="code"
+                  name="Guest Type8"
+                  @load="getComboList('GuestType')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.idCardType')"
+                  v-model="profile8.id_card_code"
+                  :options="optionsList.IDCardType"
+                  labelName="name"
+                  keyName="code"
+                  name="Card Type8"
+                  @load="getComboList('IDCardType')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile8.id_card_number"
+                  :label="$t('labels.idCardNumber')"
+                  type="text"
+                  name="ID Card Number8"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile8.birth_place"
+                  :label="$t('labels.birthPlace')"
+                  type="text"
+                  name="Birth Place8"
+                />
+                <c-datepicker
+                  :disabled="disabledEditData"
+                  v-model="profile8.birth_date"
+                  class="mb-1"
+                  :label="$t('labels.birthDate')"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="Birth Date8"
+                ></c-datepicker>
+              </div>
+            </form>
+            <div class="row w-100 justify-content-center">
+              <button
+                :disabled="disabledEditData"
+                type="button"
+                @click.prevent="onClearProfile(profile8,8)"
+                class="w-50 btn btn-danger mb-2"
+              >
+                Clear Profile
+              </button>
+            </div>
+          </b-tab>
+          <b-tab
+            v-if="formType !== $global.formType.guestGroup && numberOfGuestProfile > 8"
+            :title="'Profile9 '+(form.guest_profile_id9 > 0 ? ': '+form.guest_profile_id9 : '')"
+          >
+            <form class="accordion-body row">
+              <div class="col-md-4">
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  customClass="col-4 plx-9"
+                  :label="$t('labels.title')"
+                  v-model="profile9.title_code"
+                  :options="optionsList.GuestTitle"
+                  labelName="code"
+                  keyName="code"
+                  name="Title9"
+                  @load="getComboList('GuestTitle')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile9.full_name"
+                  :label="$t('labels.fullname')"
+                  type="text"
+                  name="Full Name9"
+                >
+                  <template #append-end>
+                    <button
+                      :disabled="disabledEditData"
+                      type="button"
+                      class="btn btn-primary btn-load"
+                      @click="handleLoadGuestProfile(9)"
+                    >
+                      load
+                    </button>
+                  </template></c-input
+                >
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.member')"
+                  v-model="profile9.member_code"
+                  :options="optionsList.Member"
+                  labelName="name"
+                  keyName="code"
+                  name="Member9"
+                  @load="getComboList('Member')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile9.street"
+                  :label="$t('labels.street')"
+                  type="text"
+                  name="Street9"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  @change="onChangeCountry($event,9)"
+                  :label="$t('labels.country')"
+                  v-model="profile9.country_code"
+                  :options="optionsList.Country"
+                  labelName="name"
+                  keyName="code"
+                  name="Country9"
+                  @load="getComboList('Country')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeState($event,9)"
+                  :label="$t('labels.state')"
+                  v-model="profile9.state_code"
+                  :options="stateList[9]"
+                  labelName="name"
+                  keyName="code"
+                  name="State9"
+                  @load="getStateList('9',profile9.country_code)"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeCity(profile9)"
+                  :label="$t('labels.city')"
+                  v-model="profile9.city_code"
+                  :options="cityList[9]"
+                  labelName="name"
+                  keyName="code"
+                  name="City9"
+                  @load="getCityList('9',profile9.state_code)"
+                />
+                <c-input
+                  v-if="formType !== $global.formType.reservation"
+                  :disabled="profile9.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile9.city"
+                  :label="$t('labels.otherCity')"
+                  type="text"
+                  name="Other City9"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  v-if="formType === $global.formType.reservation"
+                  :disabled="profile9.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile9.city"
+                  :label="$t('labels.city')"
+                  type="text"
+                  name="Other City9"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.nationality')"
+                  v-model="profile9.nationality_code"
+                  :options="optionsList.Nationality"
+                  labelName="name"
+                  keyName="code"
+                  name="Nationality9"
+                  @load="getComboList('Nationality')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile9.postal_code"
+                  :label="$t('labels.postalCode')"
+                  type="text"
+                  name="Postal Code9"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile9.is_male"
+                  :label="$t('labels.gender')"
+                  :options="genders"
+                  labelName="name"
+                  keyName="code"
+                  name="Gender9"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile9.phone1"
+                  :label="`${$t('labels.phone')}1`"
+                  type="text"
+                  name="phone1_9"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile9.phone2"
+                  :label="`${$t('labels.phone')}2`"
+                  type="text"
+                  name="phone2_9"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile9.fax"
+                  :label="$t('labels.fax')"
+                  type="text"
+                  name="fax9"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile9.email"
+                  :label="$t('labels.email')"
+                  type="text"
+                  name="email9"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile9.website"
+                  :label="$t('labels.website')"
+                  type="text"
+                  name="Website9"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.company')"
+                  v-model="profile9.company_code"
+                  :options="optionsList.Company"
+                  labelName="name"
+                  keyName="code"
+                  name="Company9"
+                  @load="getComboList('Company')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.guestType')"
+                  v-model="profile9.guest_type_code"
+                  :options="optionsList.GuestType"
+                  labelName="name"
+                  keyName="code"
+                  name="Guest Type9"
+                  @load="getComboList('GuestType')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.idCardType')"
+                  v-model="profile9.id_card_code"
+                  :options="optionsList.IDCardType"
+                  labelName="name"
+                  keyName="code"
+                  name="Card Type9"
+                  @load="getComboList('IDCardType')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile9.id_card_number"
+                  :label="$t('labels.idCardNumber')"
+                  type="text"
+                  name="ID Card Number9"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile9.birth_place"
+                  :label="$t('labels.birthPlace')"
+                  type="text"
+                  name="Birth Place9"
+                />
+                <c-datepicker
+                  :disabled="disabledEditData"
+                  v-model="profile9.birth_date"
+                  class="mb-1"
+                  :label="$t('labels.birthDate')"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="Birth Date9"
+                ></c-datepicker>
+              </div>
+            </form>
+            <div class="row w-100 justify-content-center">
+              <button
+                :disabled="disabledEditData"
+                type="button"
+                @click.prevent="onClearProfile(profile9,9)"
+                class="w-50 btn btn-danger mb-2"
+              >
+                Clear Profile
+              </button>
+            </div>
+          </b-tab>
+          <b-tab
+            v-if="formType !== $global.formType.guestGroup && numberOfGuestProfile > 9"
+            :title="'Profile10 '+(form.guest_profile_id10 > 0 ? ': '+form.guest_profile_id10 : '')"
+          >
+            <form class="accordion-body row">
+              <div class="col-md-4">
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  customClass="col-4 plx-9"
+                  :label="$t('labels.title')"
+                  v-model="profile10.title_code"
+                  :options="optionsList.GuestTitle"
+                  labelName="code"
+                  keyName="code"
+                  name="Title10"
+                  @load="getComboList('GuestTitle')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile10.full_name"
+                  :label="$t('labels.fullname')"
+                  type="text"
+                  name="Full Name10"
+                >
+                  <template #append-end>
+                    <button
+                      :disabled="disabledEditData"
+                      type="button"
+                      class="btn btn-primary btn-load"
+                      @click="handleLoadGuestProfile(10)"
+                    >
+                      load
+                    </button>
+                  </template></c-input
+                >
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.member')"
+                  v-model="profile10.member_code"
+                  :options="optionsList.Member"
+                  labelName="name"
+                  keyName="code"
+                  name="Member10"
+                  @load="getComboList('Member')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile10.street"
+                  :label="$t('labels.street')"
+                  type="text"
+                  name="Street10"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  @change="onChangeCountry($event,4)"
+                  :label="$t('labels.country')"
+                  v-model="profile10.country_code"
+                  :options="optionsList.Country"
+                  labelName="name"
+                  keyName="code"
+                  name="Country10"
+                  @load="getComboList('Country')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeState($event,10)"
+                  :label="$t('labels.state')"
+                  v-model="profile10.state_code"
+                  :options="stateList[10]"
+                  labelName="name"
+                  keyName="code"
+                  name="State10"
+                  @load="getStateList('10',profile10.country_code)"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  @change="onChangeCity(profile10)"
+                  :label="$t('labels.city')"
+                  v-model="profile10.city_code"
+                  :options="cityList[10]"
+                  labelName="name"
+                  keyName="code"
+                  name="City10"
+                  @load="getCityList('10',profile10.state_code)"
+                />
+                <c-input
+                  v-if="formType !== $global.formType.reservation"
+                  :disabled="profile10.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile10.city"
+                  :label="$t('labels.otherCity')"
+                  type="text"
+                  name="Other City10"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  v-if="formType === $global.formType.reservation"
+                  :disabled="profile10.city_code !== 'OTH' ||disabledEditData"
+                  class="row mb-1"
+                  v-model="profile10.city"
+                  :label="$t('labels.city')"
+                  type="text"
+                  name="Other City10"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.nationality')"
+                  v-model="profile10.nationality_code"
+                  :options="optionsList.Nationality"
+                  labelName="name"
+                  keyName="code"
+                  name="Nationality10"
+                  @load="getComboList('Nationality')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile10.postal_code"
+                  :label="$t('labels.postalCode')"
+                  type="text"
+                  name="Postal Code10"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile10.is_male"
+                  :label="$t('labels.gender')"
+                  :options="genders"
+                  labelName="name"
+                  keyName="code"
+                  name="Gender10"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile10.phone1"
+                  :label="`${$t('labels.phone')}1`"
+                  type="text"
+                  name="phone1_10"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile10.phone2"
+                  :label="`${$t('labels.phone')}2`"
+                  type="text"
+                  name="phone2_10"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile10.fax"
+                  :label="$t('labels.fax')"
+                  type="text"
+                  name="fax10"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile10.email"
+                  :label="$t('labels.email')"
+                  type="text"
+                  name="email10"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile10.website"
+                  :label="$t('labels.website')"
+                  type="text"
+                  name="Website10"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  filter
+                  :label="$t('labels.company')"
+                  v-model="profile10.company_code"
+                  :options="optionsList.Company"
+                  labelName="name"
+                  keyName="code"
+                  name="Company10"
+                  @load="getComboList('Company')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.guestType')"
+                  v-model="profile10.guest_type_code"
+                  :options="optionsList.GuestType"
+                  labelName="name"
+                  keyName="code"
+                  name="Guest Type10"
+                  @load="getComboList('GuestType')"
+                />
+                <c-select
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  :label="$t('labels.idCardType')"
+                  v-model="profile10.id_card_code"
+                  :options="optionsList.IDCardType"
+                  labelName="name"
+                  keyName="code"
+                  name="Card Type10"
+                  @load="getComboList('IDCardType')"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile10.id_card_number"
+                  :label="$t('labels.idCardNumber')"
+                  type="text"
+                  name="ID Card Number10"
+                />
+                <c-input
+                  :disabled="disabledEditData"
+                  class="row mb-1"
+                  v-model="profile10.birth_place"
+                  :label="$t('labels.birthPlace')"
+                  type="text"
+                  name="Birth Place10"
+                />
+                <c-datepicker
+                  :disabled="disabledEditData"
+                  v-model="profile10.birth_date"
+                  class="mb-1"
+                  :label="$t('labels.birthDate')"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="Birth Date10"
+                ></c-datepicker>
+              </div>
+            </form>
+            <div class="row w-100 justify-content-center">
+              <button
+                :disabled="disabledEditData"
+                type="button"
+                @click.prevent="onClearProfile(profile10,10)"
+                class="w-50 btn btn-danger mb-2"
+              >
+                Clear Profile
+              </button>
+            </div>
+          </b-tab>
+        </b-tabs>
+      </div>
+    </div>
+    <div v-if="formType !== $global.formType.guestGroup" class="accordion-item">
+      <h3 class="accordion-header" id="accordion-currencyHeader">
+        <button
+          type="button"
+          class="accordion-button collapsed"
+          aria-controls="accordion-currencyAccordion"
+          data-bs-target="#accordion-currencyAccordion"
+          data-bs-toggle="collapse"
+          aria-expanded="true"
+        >
+          {{ $t('title.currency') }}
+        </button>
+      </h3>
+      <div
+        id="accordion-currencyAccordion"
+        class="accordion-collapse collapse"
+        aria-labelledby="accordion-currencyHeader"
+      >
+        <div class="accordion-body row">
+          <div class="col-md-4">
+            <c-select
+              :disabled="disabledEditData"
+              required
+              class="mb-1"
+              :label="$t('labels.currency')"
+              v-model="detail.currency_code"
+              :options="optionsList.Currency"
+              labelName="code"
+              keyName="code"
+              name="currency"
+              @change="onChangeCurrency"
+              @load="getComboList('Currency')"
+            >
+              <template #append-end>
+                <c-input
+                  disabled
+                  required
+                  formatted
+                  v-model="detail.exchange_rate"
+                  type="number"
+                  name="exchangeRate"
+              /></template>
+            </c-select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="formType !== $global.formType.guestGroup" class="accordion-item">
+      <h3 class="accordion-header" id="accordion-generalInformationHeader">
+        <button
+          type="button"
+          class="accordion-button collapsed"
+          aria-expanded="true"
+          aria-controls="accordion-generalInformation"
+          data-bs-target="#accordion-generalInformation"
+          data-bs-toggle="collapse"
+        >
+          {{ $t('title.generalInformation') }}
+        </button>
+      </h3>
+      <div
+        id="accordion-generalInformation"
+        class="accordion-collapse collapse"
+        aria-labelledby="accordion-generalInformationHeader"
+      >
+        <div class="accordion-body row">
+          <div class="col-md-4">
+            <c-select
+              :disabled="disabledEditData"
+              class="row mb-1"
+              :label="$t('labels.group')"
+              v-model="form.group_code"
+              :options="optionsList.GuestGroup"
+              labelName="name"
+              keyName="code"
+              name="groupCode"
+              @load="getComboList('GuestGroup')"
+            />
+            <c-select
+              :disabled="disabledEditData"
+              class="row mb-1"
+              :label="$t('labels.sales')"
+              v-model="guestGeneralData.sales_code"
+              :options="optionsList.Sales"
+              labelName="name"
+              keyName="code"
+              name="salesCode"
+              @load="getComboList('Sales')"
+            />
+            <c-input
+              :disabled="disabledEditData"
+              class="row mb-1"
+              v-model="guestGeneralData.document_number"
+              :label="$t('labels.documentNumber')"
+              type="text"
+              name="documentNumber"
+            />
+            <c-input
+              :disabled="disabledEditData"
+              :required="isTAVoucherRequired"
+              class="row mb-1"
+              v-model="guestGeneralData.voucher_number_ta"
+              :label="$t('labels.tAVoucherNumber')"
+              type="text"
+              name="TA Voucher"
+            />
+          </div>
+          <div class="col-md-4">
+            <c-input
+              :disabled="disabledEditData"
+              class="row mb-1"
+              v-model="guestGeneralData.flight_number"
+              :label="$t('labels.flightNumber')"
+              type="text"
+              name="flightNumber"
+            />
+            <c-datepicker
+              :disabled="disabledEditData"
+              confirm
+              v-model="guestGeneralData.flight_arrival"
+              type="datetime"
+              :label="$t('labels.flightArrival')"
+              class="mb-1"
+              valueType="YYYY-MM-DDTHH:mm:ssZZ"
+              format="DD/MM/YYYY HH:mm:ss"
+              id="flight-arrival"
+              name="flightArrival"
+            ></c-datepicker>
+            <c-datepicker
+              :disabled="disabledEditData"
+              confirm
+              v-model="guestGeneralData.flight_departure"
+              type="datetime"
+              :label="$t('labels.flightDeparture')"
+              class="mb-1"
+              valueType="YYYY-MM-DDTHH:mm:ssZZ"
+              format="DD/MM/YYYY HH:mm:ss"
+              id="flight-departure"
+              name="flightDeparture"
+            ></c-datepicker>
+            <div class="row mb-1">
+              <label for="notes" class="col-md-3 col-form-label"
+                >{{ $t('labels.notes') }}</label
+              >
+              <div class="col-md-9">
+                <c-input
+                  :disabled="disabledEditData"
+                  v-model="guestGeneralData.notes"
+                  type="textarea"
+                  rows="3"
+                  id="notes"
+                  name="notes"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <c-input
+              :required="isHKNoteRequired"
+              :disabled="disabledEditData"
+              type="textarea"
+              class="row mb-1"
+              rows="3"
+              v-model="guestGeneralData.hk_note"
+              :label="$t('labels.hKNotes')"
+              id="hk-notes"
+              name="HK Note"
+            />
+            <c-input
+              disabled
+              formatted
+              class="row mb-1"
+              v-model="reservationNumber"
+              :label="$t('labels.reservationNumber')"
+              type="number"
+              name="reservationNumber"
+            />
+            <c-input
+              disabled
+              formatted
+              class="row mb-1"
+              v-model="folioNumber"
+              :label="$t('labels.folioNumber')"
+              type="number"
+              name="folioNumber"
+            />
+            <c-input
+              disabled
+              formatted
+              class="row mb-1"
+              v-model="balance"
+              :label="$t('labels.balance')"
+              type="number"
+              name="balance"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <credential
+    ref="credentialElement"
+    :module="$global.accessModule.hotel"
+  ></credential>
+  <c-modal
+    v-if="showGuestProfile"
+    :title="$t('title.guestProfile')"
+    confirm
+    @close="showGuestProfile=false"
+  >
+    <template #body>
+      <guest-profile
+        load-data-registration
+        @selected="handleSelectDataGuestProfile"
+      ></guest-profile>
+    </template>
+  </c-modal>
+  <c-modal
+    v-if="showGuestProfileDetail"
+    size="md"
+    :title="$t('title.guestProfileDetail')+' ID: '+guestProfileDetail.id"
+    confirm
+    @close="showGuestProfileDetail=false"
+  >
+    <template #body>
+      <div v-if="countGuestProfile > 0" class="row justify-content-between">
+        <span class="col">Match Found {{countGuestProfile}}</span>
+        <div class="col previous-next-btn text-end">
+          <a class="previous round" @click="handlePrevGuestProfile">&laquo; </a>
+          <span class="text-bold mr-2 ml-2">{{guestProfileIndex + 1}}</span>
+          <a class="next round" @click="handleNextGuestProfile"> &raquo;</a>
+          <!-- <button type="button" class="btn btn-primary">
+            &laquo; Previous
+          </button>
+          <span>8</span>
+          <button type="button" class="btn rounded btn-primary">
+            Next&raquo;
+          </button> -->
+        </div>
+      </div>
+      <div class=" ">
+        <div v-if="guestProfileDetail.image_url" class="text-center mb-2">
+          <img :src="guestProfileDetail.image_url" height="200" width="200" />
+        </div>
+
+        <div class="text-divider position-relative">
+          <span
+            class="label-badge-left badge bg-secondary text-dark position-absolute"
+            >{{$t('labels.memberInfo')}}</span
+          >
+        </div>
+        <div class="container">
+          <div class="row mb-1">
+            <div class="col">
+              <label class="mb-0">No.</label>
+              <li>
+                {{guestProfileDetail.tp_member_code != "" ?
+                guestProfileDetail.tp_member_code : '-'}}
+              </li>
+            </div>
+            <div class="col">
+              <label class="mb-0">{{$t('labels.balance')}}</label>
+              <li>{{formatNumberValue(guestProfileDetail.balance ?? 0)}}</li>
+            </div>
+          </div>
+          <div class="mb-1 row">
+            <div class="col-md mb-1">
+              <label class="mb-0">{{$t('labels.memberType')}}</label>
+              <li>{{guestProfileDetail.tp_type_code ?? 'None'}}</li>
+            </div>
+            <div class="col-md mb-1">
+              <label class="mb-0">{{$t('labels.status')}}</label>
+              <li>
+                <span
+                  class="badge badge-pill badge-success"
+                  style="padding: 0.6em"
+                  >{{guestProfileDetail.status}}</span
+                >
+              </li>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-divider position-relative">
+          <span
+            class="label-badge-left badge bg-secondary text-dark position-absolute"
+            >{{$t('labels.contactInfo')}}</span
+          >
+        </div>
+        <div class="container">
+          <div class="row mb-1">
+            <label class="mb-0">{{$t('labels.fullName')}}</label>
+            <li>{{guestProfileDetail.full_name}}</li>
+          </div>
+          <div class="row mb-1">
+            <div class="col-md mb-1">
+              <label class="mb-0">{{$t('labels.birthday')}}</label>
+              <li>{{formatDate3(guestProfileDetail.birth_day)}}</li>
+            </div>
+            <div class="col-md mb-1">
+              <label class="mb-0">{{$t('labels.gender')}}</label>
+              <li>
+                <i v-if="guestProfileDetail.sex=='male'" class="fa fa-mars"></i>
+                <i v-else class="fa fa-venus"></i>
+                {{guestProfileDetail.sex}}
+              </li>
+            </div>
+          </div>
+          <div class="row mb-1">
+            <div class="col-md">
+              <label class="mb-0">{{$t('labels.phoneNumber')}}</label>
+              <li>{{guestProfileDetail.phone1}}</li>
+            </div>
+            <div class="col-md">
+              <label class="mb-0">{{$t('labels.email')}}</label>
+              <li>{{guestProfileDetail.email}}</li>
+            </div>
+          </div>
+          <div class="mb-1">
+            <label class="mb-0">{{$t('labels.address')}}</label>
+            <li>
+              {{guestProfileDetail.street != '' ? guestProfileDetail.street :
+              '-'}}
+            </li>
+          </div>
+          <div class="mb-1">
+            <label class="mb-0">{{$t('labels.city')}}</label>
+            <li>{{guestProfileDetail.city}}</li>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <save-close-button saveText="load" @close="showGuestProfileDetail=false">
+        <template #btn-save>
+          <button
+            class="btn btn-primary mr-1"
+            type="button"
+            @click="handleLoadGuestDetail"
+          >
+            <i class="fa fa-download mr-2"></i>
+            {{$t('buttons.load')}}
+          </button>
+        </template>
+      </save-close-button>
+    </template>
+  </c-modal>
+  <c-confirmation ref="confirmationEl"></c-confirmation>
+</v-form>

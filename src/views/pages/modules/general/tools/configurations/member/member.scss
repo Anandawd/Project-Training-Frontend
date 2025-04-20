@@ -1,0 +1,8 @@
+.disabled-grid {
+    position: absolute;
+    z-index: 999;
+    width: inherit;
+    height: 550px;
+    //  background: rgba(0, 0, 0, 0.023);
+    cursor: not-allowed;
+}

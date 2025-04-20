@@ -1,0 +1,34 @@
+
+        <div id="parrentAccordion" class="accordion mb-2">
+            <div class="accordion-item">
+                <h6 class="accordion-header" id="itemInformationHeader">
+                    <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+                    aria-controls="itemInformation" aria-expanded="false">
+                    Header Information
+                    </button>
+                </h6>
+                <div id="itemInformation1" class="accordion-collapse p-3" aria-labelledby="itemInformationHeader1">
+                <div class="accordion-body card-block">
+                        <div class="row mb-3 ">
+                        <!-- input code -->
+                        <div class="col-md-6 mb-1">
+                                <c-datepicker id="date" required :label="$t('labels.date')" customLabelClass="col-3" customClass="col-9" class="mb-1" keyName="code" type="date"
+                                v-model="form.date" valueType="YYYY-MM-DD" format="DD/MM/YYYY" name="date" @input="onDateChange">
+                                </c-datepicker>
+                                <c-select required id="company" customLabelClass="col-3" customClass="col-9" keyName="code" labelName="name"
+                                v-model="form.company_code" :options="listDropdown.Company" :label="$t('labels.company')" name="Company">
+                                <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                            </c-select>
+                        </div>
+                        <div class="col-md-6 mb-1">
+                            <checkbox customLabelClass="col-3" booleanValue customClass="col-9" class="mb-1" id="adjustment" :label="$t('labels.adjustment')" v-model="form.adjustment"
+                            name="adjustment">
+                            </checkbox>
+                        <c-input v-model="form.memo" id="memo" :label="$t('labels.memo')" customLabelClass="col-3" customClass="col-9" type="text"
+                        name="Memo" />
+                        </div> 
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>

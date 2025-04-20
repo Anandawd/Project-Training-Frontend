@@ -1,0 +1,168 @@
+<!-- <Form @submit="onSave" ref="inputFormElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit" -->
+<div id="parrentAccordion" class="accordion">
+  <v-form
+    @submit="onSaveGrid()"
+    ref="formElement"
+    @invalid-submit="onInvalidSubmit"
+    :validation-schema="schemaCredit"
+    class="input-form"
+    v-slot="{resetForm}"
+  >
+    <div class="accordion-item">
+      <h6 class="accordion-header" id="itemInformationHeader">
+        <button
+          type="button"
+          class="accordion-button"
+          data-bs-toggle="collapse"
+          data-bs-target="#itemInformation"
+          aria-controls="itemInformation"
+          aria-expanded="false"
+        >
+          Detail Information
+        </button>
+      </h6>
+      <div
+        id="itemInformation1"
+        class="accordion-collapse p-3"
+        aria-labelledby="itemInformationHeader1"
+      >
+        <div class="accordion-body card-block">
+          <div class="row mb-3">
+            <div class="col-md-6 mb-1">
+              <c-select
+                required
+                id="item"
+                customLabelClass="col-3"
+                customClass="col-9"
+                class="mb-1"
+                :options="listDropdown.Item"
+                labelName="name"
+                v-model="formDetail.item"
+                :label="$t('labels.item')"
+                name="item"
+                @change="onChangeItem"
+                ><template #append-end>
+                  <span class="input-group-text"
+                    ><i class="fa fa-search" aria-hidden="true"></i
+                  ></span>
+                </template>
+              </c-select>
+              <c-input
+                v-model="formDetail.stock"
+                disabled="true"
+                :label="$t('labels.stock')"
+                @change="onChangestock"
+                id="stock"
+                customLabelClass="col-3"
+                customClass="col-9"
+                class="mb-1"
+                type="number"
+                formatted
+                name="stock"
+              />
+              <c-input
+                v-model="formDetail.quantity"
+                required
+                :label="$t('labels.quantity')"
+                id="quantity"
+                showZeroNumber
+                @change="onChangequantity"
+                customLabelClass="col-3"
+                customClass="col-9"
+                type="number"
+                formatted
+                name="quantity"
+              />
+            </div>
+            <div class="col-md-6 mb-1">
+              <c-select
+                required
+                id="uom"
+                customLabelClass="col-3"
+                customClass="col-9"
+                class="mb-1"
+                selectType="column"
+                keyName="uom_code"
+                :columnOptions="columnOptions"
+                :options="listDropdownUom"
+                labelName="name"
+                v-model="formDetail.uom"
+                :label="$t('labels.uom')"
+                @change="getUomCode"
+                name="uom"
+              >
+              </c-select>
+              <c-select
+                required
+                id="reason"
+                customLabelClass="col-3"
+                customClass="col-9"
+                class="mb-1"
+                keyName="uom_code"
+                :options="listDropdownUom"
+                labelName="name"
+                v-model="formDetail.reason"
+                :label="$t('labels.reason')"
+                @change="getUomCode"
+                name="reason"
+                ><template #append-end>
+                  <span class="input-group-text"
+                    ><i class="fa fa-search" aria-hidden="true"></i
+                  ></span>
+                </template>
+              </c-select>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end mb-2 mt-3">
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary mr-1"
+                @click="handleSaveGrid"
+              >
+                <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{isSave ?
+                $t('buttons.save') : $t('buttons.insert') }}
+              </button>
+              <button
+                v-if="isSave"
+                type="button"
+                class="btn btn-danger mr-1"
+                @click="gridFormCancel"
+              >
+                <i class="fa fa-times" aria-hidden="true"></i>
+                {{$t('buttons.cancel')}}
+              </button>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div v-show="isSave" class="disabled-grid"></div>
+            <ag-grid-vue
+              disabled
+              :style="agGridSetting.styleAgGridFrame1"
+              :class="agGridSetting.themeAgGrid"
+              :columnDefs="columnDefs"
+              :rowData="rowData"
+              :paginationPageSize="paginationPageSize"
+              :gridOptions="gridOptions"
+              :context="context"
+              :frameworkComponents="frameworkComponents"
+              :enableCellChangeFlash="true"
+              :rowSelection="rowSelection"
+              :getContextMenuItems="getContextMenu"
+              :defaultColDef="agGridSetting.defColDef"
+              :suppressDragLeaveHidesColumns="true"
+              :suppressMakeColumnVisibleAfterUnGroup="true"
+              :statusBar="statusBar"
+              @grid-ready="onGridReady"
+              @cellContextMenu="handleRowRightClicked"
+              @rowDataUpdated="getRowData"
+              :getRowNodeId="getRowNodeId"
+              @cellValueChanged="cellValueChanged"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </v-form>
+</div>

@@ -1,0 +1,101 @@
+<v-form @submit="onSave" ref="multiFormValidation" :validation-schema="schema" @invalid-submit="onInvalidSubmit"
+  class="input-form row" v-slot="{resetForm}">
+  <div class="card">
+    <div class="card-header">
+      {{ title }}
+      <button type="button" class="close-button btn" @click="onClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="card-body">
+      <div id="parentAccordion" class="accordion">
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemInformationHeader">
+            <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+              aria-controls="itemInformation" aria-expanded="false">
+              {{$t('title.invoice')}}
+            </button>
+          </h6>
+          <div id="itemInformation" class="accordion-collapse collapse show p-3"
+            aria-labelledby="itemInformationHeader">
+            <div class="accordion-body row">
+              <div class="col-md-4 col-sm-6">
+                <c-datepicker focus half required :label="$t('labels.issuedDate')" v-model="form.issued_date" id="issuedDate"
+                  customLabelClass="col-3" customClass="col-9" class="mb-1" type="date" valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY" name="IssuedDate" @change="onChangeStartDate"></c-datepicker>
+                <c-datepicker half required :label="$t('labels.dueDate')" v-model="form.due_date" id="dueDate"
+                  customLabelClass="col-3" customClass="col-9" class="mb-1" type="date" valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY" name="dueDate"></c-datepicker>
+                <c-select required customLabelClass="col-3" customClass="col-9" class="mb-1"
+                  v-model="form.company_code" :options="listDropdownCompany" keyName="code" id="company"
+                  labelName="name" :label="$t('labels.company')" name="Company" @change="onChangeCompanyCode"
+                  @load="repeatLoadDropdownList">
+                </c-select>
+                <c-input required customLabelClass="col-3" customClass="col-9" class="mb-1"
+                  v-model="form.contact_person" :label="$t('labels.contactPerson')" type="text" name="contact_person">
+                </c-input>
+                <c-input customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.street"
+                  :label="$t('labels.street')" type="text" name="Name">
+                </c-input>
+              </div>
+
+              <div class="col-md-4 col-sm-6">
+                <c-select customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.country_code"
+                  :options="listDropdown.Country" keyName="code" labelName="name" id="country"
+                  :label="$t('labels.country')" name="Country" @change="onChangeCountryCode"
+                  @load="repeatLoadDropdownList">
+                </c-select>
+                <c-select id="state" customLabelClass="col-3" customClass="col-9" class="mb-1"
+                  v-model="form.state_code" :options="stateList" keyName="code" labelName="name"
+                  :label="$t('labels.state')" name="State" @change="onChangeStateCode" @load="repeatLoadDropdownList">
+                </c-select>
+                <c-select customLabelClass="col-3" customClass="col-9" class="mb-1" id="city"
+                  v-model="form.city_code" :options="cityList" keyName="code" labelName="name"
+                  :label="$t('labels.city')" name="City" @change="onChangeCity" @load="repeatLoadDropdownList">
+                </c-select>
+                <c-input :disabled="disabledCity" id="city" customLabelClass="col-3" customClass="col-9" class="mb-1"
+                  :label="$t('labels.otherCity')" type="text" name="otherCity" v-model="form.city"
+                  @change="onChangeCityInput">
+                </c-input>
+                <c-input customLabelClass="col-3" customClass="col-9" class="mb-1" id="postCode"
+                  v-model="form.postal_code" :label="$t('labels.postCode')" type="text" name="Post Code">
+                </c-input>
+              </div>
+
+              <div class="col-md-4 col-sm-6">
+                <c-input customLabelClass="col-3" customClass="col-9" class="mb-1" id="phone" v-model="form.phone"
+                  :label="$t('labels.phone')" type="text" name="Phone">
+                </c-input>
+                <c-input customLabelClass="col-3" customClass="col-9" class="mb-1" id="fax" v-model="form.fax"
+                  :label="$t('labels.fax')" type="text" name="Fax">
+                </c-input>
+                <c-input customLabelClass="col-3" customClass="col-9" class="mb-1" id="remark" v-model="form.remark"
+                  :label="$t('labels.remark')" type="text" name="Remark">
+                </c-input>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="parentAccordion" class="accordion mt-3">
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemInformationHeader1">
+            <button type="button" class="accordion-button" aria-expanded="true" aria-controls="itemInformation1"
+              data-bs-target="#itemInformation1" data-bs-toggle="collapse">
+              {{$t('title.folioList')}}
+            </button>
+          </h6>
+          <div id="itemInformation1" class="accordion-collapse p-3" aria-labelledby="itemInformationHeader1">
+            <div class="accordion-body card-block mb-1">
+              <!-- page folio List -->
+              <folio ref="folioElement"></folio>
+              <hr />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <save-close-button :isSaving="isSaving" @save="onSubmit" @close="onClose"></save-close-button>
+  </div>
+</v-form>

@@ -1,0 +1,61 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row justify-content-end">
+      <div class="col-md-7">
+        <h3 class="card-title">
+          {{ $t('title.userSetting') }}
+        </h3>
+      </div>
+      <div class="col-md-3">
+        <search-filter :formType="$global.formType.userSetting" :searchDefault="searchDefault" @search="refreshData">
+          <template v-slot="{search, onRefresh}">
+            <div class="d-flex justify-content-center">
+              <div class="row mr-1">
+                <c-radio class="" :label="$t('commons.filter.checkList.all')" v-model="search.filter[0]" value="0"
+                  @change="onRefresh">
+                </c-radio>
+              </div>
+              <div class="row">
+                <c-radio class="mr-1" :label="$t('commons.filter.checkList.active')" v-model="search.filter[0]" value="1"
+                  @change="onRefresh">
+                </c-radio>
+              </div>
+              <div class="row">
+                <c-radio class="mr-1" :label="$t('commons.filter.checkList.notActive')" v-model="search.filter[0]" value="2"
+                  @change="onRefresh">
+                </c-radio>
+              </div>
+            </div>
+          </template>
+        </search-filter>
+      </div>
+      <div class="card col-2 d-flex justify-content-center align-item-center">
+        <div class="d-flex justify-content-center">
+          <checkbox id="showAllUser" class="" :label="$t('labels.showAllUser')" name="Show All User">
+          </checkbox>
+        </div>
+      </div>
+    </div>
+  </div>
+  <b-card no-body>
+    <b-tabs card>
+      <b-tab :title="$t('title.user')" active>
+        <div class="card-body">
+          <!-- //Table -->
+          <ag-grid-vue disabled :style="agGridSetting.styleAgGridFrame" :class="agGridSetting.themeAgGrid"
+          :columnDefs="columnDefs" :rowData="rowData" :paginationPageSize="paginationPageSize"
+          :gridOptions="gridOptions" :context="context" :frameworkComponents="frameworkComponents"
+          :enableCellChangeFlash="true" :rowSelection="rowSelection" :rowGroupPanelShow="rowGroupPanelShow"
+          :getContextMenuItems="getContextMenu" :defaultColDef="agGridSetting.defColDef" :masterDetail="true"
+          :detailCellRenderer="detailCellRenderer" :suppressDragLeaveHidesColumns="true"
+          :detailRowAutoHeight="detailRowAutoHeight" :suppressMakeColumnVisibleAfterUnGroup="true"
+          :statusBar="statusBar" @grid-ready="onGridReady" @cellContextMenu="handleRowRightClicked"
+          @selection-changed="onSelectionChanged" />
+        </div>
+      </b-tab>
+      <b-tab :title="$t('title.userGroup')">
+        <user-group-grid @isActive="onSelectedRowGroup" ref="userGroupElement"></user-group-grid>
+      </b-tab>
+    </b-tabs>
+  </b-card>
+</div>

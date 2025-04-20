@@ -1,0 +1,78 @@
+<modal
+  confirm
+  size="xl"
+  @close="$emit('close')"
+  @print="formType === $global.formType.storeStock ? handlePrintStoreStock() : handlePrintAllStoreStock()"
+  :title="formType == $global.formType.storeStock ? titleStoreStockCard : titleAllStoreStockCard"
+  class="h-100"
+  stockCard
+>
+  <template #body>
+    <search-filter
+      dateRange
+      :options="searchOptions"
+      :searchDefault="searchDefault"
+      :defaultSearchBy="1"
+      :formType="$global.formType.storeStock"
+      @search="refreshData"
+    >
+      <template v-slot="{search, onRefresh}">
+        <div class="col-md-6">
+          <div class="row">
+            <c-select
+              filter
+              v-if="formType === $global.formType.storeStock"
+              v-model="search.filter[0]"
+              class="col mb-1"
+              customLabelClass="col-4"
+              :label="$t('commons.filter.select.store')"
+              labelName="name"
+              keyName="code"
+              name="searchStore"
+              :options="filterComboList.Store"
+              @change="onRefresh"
+            />
+            <c-select
+              filter
+              class="col"
+              :label="$t('commons.filter.select.item')"
+              labelName="name"
+              keyName="code"
+              customLabelClass="col-4"
+              name="searchItem"
+              v-model="search.filter[1]"
+              :options="filterComboList.Item"
+              @change="onRefresh"
+            />
+          </div>
+        </div>
+      </template>
+    </search-filter>
+    <!-- //Table -->
+    <ag-grid-vue
+      :style="agGridSetting.styleAgGridFrame"
+      :class="agGridSetting.themeAgGrid"
+      :columnDefs="columnDefs"
+      :rowData="rowData"
+      @selection-changed="onSelectionChanged"
+      :paginationPageSize="paginationPageSize"
+      :gridOptions="gridOptions"
+      :context="context"
+      :frameworkComponents="frameworkComponents"
+      :enableCellChangeFlash="true"
+      :rowSelection="rowSelection"
+      :getContextMenuItems="getContextMenu"
+      :defaultColDef="agGridSetting.defColDef"
+      :masterDetail="true"
+      :detailCellRenderer="detailCellRenderer"
+      :detailRowAutoHeight="detailRowAutoHeight"
+      :suppressDragLeaveHidesColumns="true"
+      :suppressMakeColumnVisibleAfterUnGroup="true"
+      :statusBar="statusBar"
+      @grid-ready="onGridReady"
+      @cellContextMenu="handleRowRightClicked"
+      :rowGroupPanelShow="rowGroupPanelShow"
+    />
+  </template>
+  <template #footer> </template>
+</modal>

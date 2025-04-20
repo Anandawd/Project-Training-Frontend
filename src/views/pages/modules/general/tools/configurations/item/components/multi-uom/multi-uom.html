@@ -1,0 +1,44 @@
+<!-- Main content -->
+<section class="content">
+  <transition name="slide-fade-right">
+    <div v-show="showForm" class="col-lg">
+      <div class="card h-100">
+        <div class="card-header">
+          <h3 class="card-title">{{ title }}</h3>
+        </div>
+        <div class="card-body">
+          <Form @submit="handleSave" ref="formElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit"
+            class="input-form row" v-slot="{resetForm}">
+            <div class="row">
+              <div class="col-md-6">
+                {{ this.form.Name }}
+                <c-select :focus="focus" filter required class="mb-1" v-model="form.uom_code" :options="listDropdown"
+                  @load="repeatLoadDropdownList" keyName="code" labelName="name" :label="$t('labels.uom')" name="UOM"
+                  customLabelClass="col-3" customClass="col-9">
+                </c-select>
+                <c-input required showZeroNumber formatted class="mb-1" v-model="form.quantity"
+                  :label="$t('labels.quantity')" type="number" name="Quantity" customLabelClass="col-3"
+                  customClass="col-9"></c-input>
+                <c-input showZeroNumber formatted class="mb-1" v-model="form.purchase_price"
+                  :label="$t('labels.purchasePrice')" type="number" name="Purchase Price" customLabelClass="col-3"
+                  customClass="col-9"></c-input>
+              </div>
+              <div class="col-md-6">
+                <c-input showZeroNumber formatted class="mb-1" v-model="form.sell_price" :label="$t('labels.sellPrice')"
+                  type="number" name="Sell Price" customLabelClass="col-3" customClass="col-9"></c-input>
+                <c-input class="mb-1" v-model="form.barcode" :label="$t('labels.barcode')" type="text" name="Barcode"
+                  customLabelClass="col-3" customClass="col-9"></c-input>
+              </div>
+            </div>
+          </Form>
+        </div>
+        <save-close-button :isSaving="isSaving" @save="onSubmit" @close="handleCloseForm"></save-close-button>
+      </div>
+    </div>
+  </transition>
+  <div class="container-fluid">
+    <CDialog v-show="showDialog" w100 dialogTitle="Confirm" @confirm="deleteData" @cancel="showDialog= false" confirm>
+      <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+    </CDialog>
+  </div>
+</section>

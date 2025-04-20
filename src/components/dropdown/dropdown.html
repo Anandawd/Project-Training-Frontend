@@ -1,0 +1,30 @@
+<li v-if="isNav" class="dropdown" :class="{'nav-item' : isNav}" ref="dropdown">
+  <button
+    :disabled="disabled"
+    :class="{'nav-link' : isNav}"
+    @click="toggleDropdown"
+  >
+    <slot name="dropdown-button"></slot>
+  </button>
+
+  <app-dropdown-menu v-if="isOpen" :size="size">
+    <slot name="dropdown-menu"></slot>
+  </app-dropdown-menu>
+</li>
+<div
+  v-else
+  class="dropdown c-dropdown"
+  :class="{'nav-item' : isNav}"
+  ref="dropdown"
+>
+  <button
+    :disabled="disabled"
+    :class="[{'btn-action-grid': isActionGrid} ,{'nav-link' : isNav}]"
+    @click="toggleDropdown"
+  >
+    <slot name="dropdown-button"></slot>
+  </button>
+  <component :is="component" v-if="isOpen" :size="size">
+    <slot name="dropdown-menu"></slot>
+  </component>
+</div>

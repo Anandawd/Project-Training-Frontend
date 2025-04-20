@@ -1,0 +1,31 @@
+
+        <div id="parrentAccordion" class="accordion mb-2">
+            <div class="accordion-item">
+                <h6 class="accordion-header" id="itemInformationHeader">
+                    <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+                    aria-controls="itemInformation" aria-expanded="false">
+                    General Information
+                    </button>
+                </h6>
+                <div id="itemInformation1" class="accordion-collapse p-3" aria-labelledby="itemInformationHeader1">
+                <div class="accordion-body card-block">
+                        <div class="row">
+                        <!-- input code -->
+                        <div class="col-md-6 mb-1">
+                                <c-datepicker id="date" :label="$t('labels.date')" customLabelClass="col-3" customClass="col-9" class="mb-1" keyName="code" type="date"
+                                v-model="form.date" valueType="YYYY-MM-DD" format="DD/MM/YYYY" name="date">
+                                </c-datepicker>
+                                <c-input id="request_by" customLabelClass="col-3" customClass="col-9"
+                                v-model="form.request_by" :label="$t('labels.requestBy')" name="request_by">
+                                <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                            </c-input>
+                        </div>
+                        <div class="col-md-6">
+                                <c-input v-model="form.remark" :label="$t('labels.remark')" id="remark" customLabelClass="col-3" customClass="col-9" class="mb-1" type="text"
+                                name="remark" />
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>

@@ -1,0 +1,117 @@
+<section class="content">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Access Group</h3>
+
+      <div class="card-tools">
+        <button
+          type="button"
+          class="btn btn-tool"
+          data-widget="remove"
+          data-toggle="tooltip"
+          title="Remove"
+          @click="$emit('close')"
+        >
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <div class="card-body">
+      <v-form
+        @submit="onSave"
+        ref="inputFormElement"
+        :validation-schema="schema"
+        @invalid-submit="onInvalidSubmit"
+        class="input-form row"
+      >
+        <c-input
+          required
+          :disabled="editData"
+          class="col-md-3 mb-1"
+          v-model="code"
+          :label="$t('labels.code')"
+          name="Code"
+          @input="uppercase"
+        ></c-input>
+        <c-select
+          required
+          :disabled="editData"
+          class="col-md-3 mb-1"
+          v-model="accessLevelCode"
+          :label="$t('labels.accessLevel')"
+          name="AccessLevel"
+          labelName="name"
+          keyName="code"
+          :options="accessLevel"
+        ></c-select>
+      </v-form>
+      <b-tabs card>
+        <b-tab :title="$t('title.generalTab')" active>
+          <access-group-general
+            :editData="accessForm.general"
+            ref="accessGroupGeneralForm"
+          ></access-group-general>
+        </b-tab>
+        <b-tab :title="$t('title.hotelTab')">
+          <access-group-hotel
+            :editData="accessForm.hotel"
+            ref="accessGroupHotelForm"
+          ></access-group-hotel>
+        </b-tab>
+        <b-tab :title="$t('title.crmTab')">
+          <access-group-crm
+            :editData="accessForm.crm"
+            ref="accessGroupCRMForm"
+          ></access-group-crm>
+        </b-tab>
+        <b-tab :title="$t('title.pointOfSalesTab')">
+          <access-group-pos
+            :editData="accessForm.pointOfSales"
+            ref="accessGroupPointOfSalesForm"
+          ></access-group-pos>
+        </b-tab>
+        <b-tab :title="$t('title.banquetTab')">
+          <access-group-banquet
+            :editData="accessForm.banquet"
+            ref="accessGroupBanquetForm"
+          ></access-group-banquet>
+        </b-tab>
+        <b-tab :title="$t('title.accountingTab')">
+          <access-group-accounting
+            :editData="accessForm.accounting"
+            ref="accessGroupAccountingForm"
+          ></access-group-accounting>
+          <!-- <access-group-hotel></access-group-hotel> -->
+        </b-tab>
+        <b-tab :title="$t('title.assetsTab')">
+          <access-group-assets
+            :editData="accessForm.assets"
+            ref="accessGroupAssetsForm"
+          ></access-group-assets>
+          <!-- <access-group-hotel></access-group-hotel> -->
+        </b-tab>
+        <b-tab :title="$t('title.reportTab')">
+          <access-group-report
+            :editData="accessForm.report"
+            ref="accessGroupReportForm"
+          ></access-group-report>
+          <!-- <access-group-hotel></access-group-hotel> -->
+        </b-tab>
+        <b-tab :title="$t('title.toolsTab')">
+          <access-group-tools
+            :editData="accessForm.tools"
+            ref="accessGroupToolsForm"
+          ></access-group-tools>
+          <!-- <access-group-hotel></access-group-hotel> -->
+        </b-tab>
+      </b-tabs>
+    </div>
+    <!-- /.card-body -->
+    <save-close-button
+      :isSaving="isSaving"
+      @save="handleSave"
+      @close="$emit('close')"
+    ></save-close-button>
+    <!-- /.card-footer-->
+  </div>
+</section>

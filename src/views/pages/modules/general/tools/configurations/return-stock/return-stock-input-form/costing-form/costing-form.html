@@ -1,0 +1,39 @@
+
+        <div id="parrentAccordion" class="accordion mb-2">
+            <div class="accordion-item">
+                <h6 class="accordion-header" id="itemInformationHeader">
+                    <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+                    aria-controls="itemInformation" aria-expanded="false">
+                    Costing Information
+                    </button>
+                </h6>
+                <div id="itemInformation1" class="accordion-collapse p-3" aria-labelledby="itemInformationHeader1">
+                <div class="accordion-body card-block">
+                        <div class="row">
+                        <!-- input code -->
+                        <div class="col-md-6 mb-1">
+                            <c-datepicker id="date" required :label="$t('labels.date')" customLabelClass="col-3" customClass="col-9" class="mb-1" keyName="code" type="date"
+                            v-model="form.date" valueType="YYYY-MM-DD" format="DD/MM/YYYY" name="date">
+                            </c-datepicker>
+                            <c-select id="request_by" required customLabelClass="col-3" customClass="col-9" class="mb-1"
+                            v-model="form.request_by" :label="$t('labels.supplier')" name="request_by"><template #append-end>
+                            <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span></template> 
+                            </c-select>
+                            <c-input v-model="form.document" required :label="$t('labels.document')" id="document" customLabelClass="col-3" customClass="col-9" class="mb-1" type="text"
+                            name="document" />
+                        </div>
+                        <div class="col-md-6">
+                            <c-select id="sub_department" required customLabelClass="col-3" customClass="col-9" class="mb-1"
+                            v-model="form.sub_department" :label="$t('labels.subDepartment')" name="sub_department"><template #append-end>
+                            <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span></template>
+                            </c-select>
+                            <c-input v-model="form.request_by" :label="$t('labels.requestBy')" required id="request_by" customLabelClass="col-3" customClass="col-9" class="mb-1" type="text"
+                            name="request_by" />
+                            <c-input v-model="form.remark" :label="$t('labels.remark')" id="remark" customLabelClass="col-3" customClass="col-9" class="mb-1" type="text"
+                            name="remark" />
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>

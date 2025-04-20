@@ -1,0 +1,26 @@
+
+        <div id="parrentAccordion" class="accordion mb-2">
+            <div class="accordion-item">
+                <h6 class="accordion-header" id="itemInformationHeader">
+                    <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+                    aria-controls="itemInformation" aria-expanded="false">
+                    Expedition Information
+                    </button>
+                </h6>
+                <div id="itemInformation1" class="accordion-collapse p-3" aria-labelledby="itemInformationHeader1">
+                <div class="accordion-body card-block">
+                        <div class="row">
+                        <!-- input code -->
+                        <div class="col-md-6 mb-1">
+                            <c-select required id="expedition_code" :label="$t('labels.expedition')" customLabelClass="col-3" customClass="col-9" class="mb-1" keyName="code" labelName="name"
+                            v-model="form.expedition_code" :options="listDropdown.Expedition" name="expedition_code">
+                            <template #append-end>
+                                <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                            </template>
+                        </c-select>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>

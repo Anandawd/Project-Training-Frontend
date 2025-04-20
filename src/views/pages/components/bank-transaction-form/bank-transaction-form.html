@@ -1,0 +1,339 @@
+<!-- <Form @submit="onSave" ref="inputFormElement" :validation-schema="schema" @invalid-submit="onInvalidSubmit" -->
+<v-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">
+      {{ title }}
+      <button type="button" class="close-button btn" @click="onClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="card-body">
+      <div id="parrentAccordion" class="accordion">
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemInformationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#itemInformation"
+              aria-controls="itemInformation"
+              aria-expanded="true"
+            >
+              {{ $t('commons.bankInformation')}}
+            </button>
+          </h6>
+          <div
+            id="itemInformation"
+            class="accordion-collapse collapse show"
+            aria-labelledby="itemInformationHeader"
+          >
+            <div class="accordion-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <c-datepicker
+                    focus
+                    half
+                    :label="$t('labels.date')"
+                    v-model="form.date"
+                    id="date"
+                    class="mb-1"
+                    type="date"
+                    valueType="YYYY-MM-DD"
+                    format="DD/MM/YYYY"
+                    name="date"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  ></c-datepicker>
+                  <c-input
+                    half
+                    required
+                    @clickCustom="handleDoubleClick"
+                    v-model="form.amount"
+                    id="amountRecieved"
+                    class="mb-1"
+                    :label="$t('labels.amountReceived')"
+                    type="number"
+                    formatted
+                    showZeroNumber
+                    name="amountRecieved"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <c-select
+                    filter
+                    required
+                    selectType="column"
+                    id="bankAccount"
+                    :columnOptions="columnOptionsBankAccount"
+                    :options="listDropdown.bankAccount"
+                    @load="repeatLoadDropdownList"
+                    class="mb-1"
+                    keyName="journal_account_code"
+                    labelName="name"
+                    v-model="form.bank_account_code"
+                    :label="$t('labels.bankAccount')"
+                    name="bankAccount"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  >
+                  </c-select>
+                  <c-input
+                    v-model="form.remark"
+                    id="remarkinfo"
+                    class="mb-1"
+                    type="text"
+                    name="remarkinfo"
+                    :label="$t('labels.remark')"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemInformationHeader1">
+            <button
+              type="button"
+              class="accordion-button collapsed"
+              aria-expanded="true"
+              aria-controls="itemInformation1"
+              data-bs-target="#itemInformation1"
+              data-bs-toggle="collapse"
+            >
+              {{ $t('commons.transactionInformation')}}
+            </button>
+          </h6>
+          <div
+            id="itemInformation1"
+            class="accordion-collapse"
+            aria-labelledby="itemInformationHeader1"
+          >
+            <div class="accordion-body card-block">
+              <div class="row">
+                <div class="col-md-4 col-sm-6">
+                  <c-select
+                    filter
+                    selectType="column"
+                    :columnOptions="columnOptionsAccount"
+                    @change="populateTransaction"
+                    id="account"
+                    :options="listDropdown.account"
+                    @load="repeatLoadDropdownList"
+                    class="mb-1"
+                    keyName="code"
+                    labelName="name"
+                    v-model="form.account_code"
+                    :label="$t('labels.account')"
+                    name="account"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  >
+                  </c-select>
+                  <c-select
+                    filter
+                    @change="populateInputForm(form.transaction_id)"
+                    required
+                    :options="listDropdown.transaction_id"
+                    @load="repeatLoadDropdownList"
+                    id="transactionID"
+                    class="mb-1"
+                    keyName="TransactionID"
+                    labelName="TransactionID"
+                    v-model="form.transaction_id"
+                    :label="$t('labels.transactionID')"
+                    name="transactionID"
+                    selectType="column"
+                    :columnOptions="columnOptionsTransactionID"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  >
+                  </c-select>
+                  <c-input
+                    disabled
+                    v-model="form.Number"
+                    id="folioNumber"
+                    class="mb-1"
+                    :label="$t('labels.folioNumber')"
+                    type="text"
+                    name="folioNumber"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  />
+                  <c-input
+                    disabled
+                    v-model="form.room_number"
+                    id="roomNumber"
+                    class="mb-1"
+                    :label="$t('labels.roomNumber')"
+                    type="text"
+                    name="roomNumber"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  />
+                </div>
+                <div class="col-md-4 col-sm-6">
+                  <c-input
+                    disabled
+                    v-model="form.GuestName"
+                    id="guestName"
+                    class="mb-1"
+                    type="text"
+                    name="guestName"
+                    :label="$t('labels.guestName')"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  />
+                  <c-input
+                    disabled
+                    v-model="form.card_holder"
+                    id="cardHolder"
+                    class="mb-1"
+                    type="text"
+                    name="cardHolder"
+                    :label="$t('labels.cardHolder')"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  />
+                  <c-input
+                    disabled
+                    v-model="form.document_number"
+                    id="documentNumber"
+                    class="mb-1"
+                    :label="$t('labels.documentNumber')"
+                    type="text"
+                    name="documentNumber"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  />
+                  <c-input
+                    disabled
+                    v-model="form.card_number"
+                    id="ccNumber"
+                    class="mb-1"
+                    :label="$t('labels.ccNumber')"
+                    type="text"
+                    name="ccNumber"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  />
+                </div>
+                <div class="col-md-4 col-sm-6">
+                  <c-input
+                    half
+                    formatted
+                    showZeroNumber
+                    disabled
+                    v-model="form.Amount"
+                    id="amount"
+                    class="mb-1"
+                    :label="$t('labels.amount')"
+                    type="number"
+                    name="amount"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  />
+                  <c-datepicker
+                    half
+                    disabled
+                    v-model="form.audit_date"
+                    id="auditDate"
+                    class="mb-1"
+                    type="date"
+                    valueType="YYYY-MM-DD"
+                    format="DD/MM/YYYY"
+                    name="auditDate"
+                    :label="$t('labels.auditDate')"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  ></c-datepicker>
+                  <c-input
+                    v-model="form.remark1"
+                    id="remarks"
+                    class="mb-1"
+                    type="text"
+                    name="remarks"
+                    :label="$t('labels.remark')"
+                    customLabelClass="col-3"
+                    customClass="col-9"
+                  />
+                </div>
+              </div>
+              <div class="d-flex justify-content-end mb-2">
+                <button
+                  type="button"
+                  class="btn btn-primary mr-1"
+                  @click="handleSaveGrid"
+                >
+                  <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{isSave ?
+                  $t('buttons.save') : $t('buttons.insert') }}
+                </button>
+                <button
+                  v-if="isSave"
+                  type="button"
+                  class="btn btn-danger mr-1"
+                  @click="gridFormCancel"
+                >
+                  <i class="fa fa-times" aria-hidden="true"></i>
+                  {{$t('buttons.cancel')}}
+                </button>
+              </div>
+              <div>
+                <ag-grid-vue
+                  disabled
+                  :style="agGridSetting.styleAgGridFrame1"
+                  :class="agGridSetting.themeAgGrid"
+                  :columnDefs="columnDefs"
+                  :rowData="rowData"
+                  :paginationPageSize="paginationPageSize"
+                  :gridOptions="gridOptions"
+                  :context="context"
+                  :frameworkComponents="frameworkComponents"
+                  :enableCellChangeFlash="true"
+                  :rowSelection="rowSelection"
+                  :getContextMenuItems="getContextMenu"
+                  :defaultColDef="agGridSetting.defColDef"
+                  :rowGroupPanelShow="rowGroupPanelShow"
+                  :suppressDragLeaveHidesColumns="true"
+                  :suppressMakeColumnVisibleAfterUnGroup="true"
+                  :statusBar="statusBar"
+                  @grid-ready="onGridReady"
+                  @cellContextMenu="handleRowRightClicked"
+                  :getRowNodeId="getRowNodeId"
+                  @rowDoubleClicked="handleRowDoubleClicked"
+                  @rowDataUpdated="getRowData"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="d-flex justify-content-end mt-2">
+        <button type="button" class="btn btn-danger mr-1" @click="onClose">
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.close')}}
+        </button>
+        <button :disabled="isSave" type="button" class="btn btn-primary" @click="onSubmit">
+          <i class="fas fa-save"></i>
+          {{ $t('buttons.save') }}
+        </button>
+      </div> -->
+
+      <save-close-button
+        :isSaving="isSaving"
+        @save="onSubmit"
+        @close="onClose"
+      ></save-close-button>
+    </div>
+  </div>
+</v-form>

@@ -1,0 +1,51 @@
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg">
+        <!-- <search-filter :options="searchOptions" :searchDefault="searchDefault" @search="refreshData"></search-filter> -->
+        <div id="parrentAccordion" class="accordion">
+          <div class="accordion-item">
+            <h6 class="accordion-header" id="itemInformationHeader">
+              <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+                aria-controls="itemInformation" aria-expanded="true">
+                {{ $t('commons.product')}}
+              </button>
+            </h6>
+            <div class="p-1 m-2">
+              <div class="row">
+                <div class="col-md-4">
+                  <c-select filter required disabled class="mt-1" v-model="form.outlet_code" :options="listDropdown.Outlet"
+                    keyName="code" labelName="name" :label="$t('labels.outlet')" name="Outlet" customLabelClass="col-3"
+                    customClass="col-9"></c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select filter class="mt-1" v-model="form.category_code" :options="listDropdown.ProductCategory"
+                    @load="repeatLoadDropdownList" @change="onChangeCategory" keyName="code" labelName="name"
+                    :label="$t('labels.category')" name="Category" customLabelClass="col-3"
+                    customClass="col-9"></c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-input class="mt-1" v-model="form.product" @change="onChangeProduct" :label="$t('labels.product')"
+                    type="text" name="Product" customLabelClass="col-3" customClass="col-9"></c-input>
+                </div>
+              </div>
+            </div>
+            <div id="itemInformation" class="accordion-collapse collapse show" aria-labelledby="itemInformationHeader">
+              <div class="accordion-body">
+                <!-- //Table -->
+                <ag-grid-vue :style="agGridSetting.styleAgGridFrame2" :class="agGridSetting.themeAgGrid"
+                  :columnDefs="columnDefs" :rowData="rowData" :paginationPageSize="paginationPageSize"
+                  :gridOptions="gridOptions" :context="context" :frameworkComponents="frameworkComponents"
+                  :enableCellChangeFlash="true" :rowSelection="rowSelection" :getContextMenuItems="getContextMenu"
+                  :defaultColDef="agGridSetting.defColDef" :suppressDragLeaveHidesColumns="true"
+                  :suppressMakeColumnVisibleAfterUnGroup="true" :statusBar="statusBar" @grid-ready="onGridReady"
+                  @cellContextMenu="handleRowRightClicked" :rowGroupPanelShow="rowGroupPanelShow" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

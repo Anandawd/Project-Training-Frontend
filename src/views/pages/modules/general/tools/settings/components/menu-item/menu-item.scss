@@ -1,0 +1,11 @@
+.nav-item {
+  cursor: pointer;
+}
+
+.nav-treeview .active {
+  background: var(--primary);
+  border-radius: 5px;
+  a > p {
+    color: white !important;
+  }
+}

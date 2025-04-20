@@ -1,0 +1,242 @@
+
+    <div class="card">
+        <div class="card-header">
+            {{ title }}
+        <button type="button" class="close-button btn" style="float: right;" @click="onClose"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="card-body">
+        
+        <div id="parrentAccordion" class="accordion mb-2">
+            <div class="accordion-item">
+                <div class="accordion-header" id="itemInformationHeader">
+                    <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+                    aria-controls="itemInformation" aria-expanded="false">
+                    Account Payable Multi Payment Information 
+                </button>
+                </div>
+                <div id="itemInformation1" class="accordion-collapse p-3" aria-labelledby="itemInformationHeader1">
+                <div class="accordion-body card-block">
+                        <div class="row mb-1 ">
+                        <!-- input code -->
+                        <div class="col-md-6 mb-1">
+                        <c-select required id="company" class="mb-1" keyName="code" labelName="name"
+                        v-model="form.company_code" customLabelClass="col-3" customClass="col-9" :label="$t('labels.company')" name="Company">
+                        <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        </c-select>
+                        <c-select required id="number" customLabelClass="col-3" customClass="col-9" class="mb-1" keyName="code" labelName="name"
+                        v-model="form.number"  :label="$t('labels.number')" name="number">
+                        <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        </c-select>
+                        <c-input v-model="form.amount" :label="$t('labels.amount')" showZeroNumber id="amount" customLabelClass="col-3" customClass="col-9" class="mb-1" type="number" formatted
+                        name="amount" />
+                        <c-input v-model="form.outstanding" :label="$t('labels.outstanding')" :disabled="true" showZeroNumber id="outstanding" customLabelClass="col-3" customClass="col-9" class="mb-1" type="number" formatted
+                        name="outstanding" />
+                        </div>
+
+                        <div class="col-md-6 mb-1">
+                        <c-datepicker id="date" :disabled="true" :label="$t('labels.date')" customLabelClass="col-3" customClass="col-9" class="mb-1" keyName="code" type="date"
+                        v-model="form.date" valueType="YYYY-MM-DD" format="DD/MM/YYYY" name="date" @input="onDateChange">
+                        </c-datepicker>
+                        <c-input v-model="form.documentNumber" :disabled="true" id="documentNumber" :label="$t('labels.documentNumber')" customLabelClass="col-3" customClass="col-9" class="mb-1" type="text"
+                        name="documentNumber" />
+                        <c-input v-model="form.remark" id="remark" :label="$t('labels.remark')" customLabelClass="col-3" customClass="col-9" type="text"
+                        name="remark" />
+                        </div>  
+                    </div>
+
+                    <div class="d-flex justify-content-end mb-2 mt-3">
+                        <div>
+                        <button type="button" class="btn btn-primary mr-1" @click="handleSaveGrid"><i
+                            class="fa fa-plus mr-1" aria-hidden="true"></i>{{isSave ? $t('buttons.save') :
+                            $t('buttons.insert') }}</button>
+                        <button v-if="isSave" type="button" class="btn btn-danger mr-1" @click="gridFormCancel"><i
+                            class="fa fa-times" aria-hidden="true"></i>
+                            {{$t('buttons.cancel')}}</button>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div v-show="isSave" class="disabled-grid"></div>
+                        <ag-grid-vue disabled :style="agGridSetting.styleAgGridFrame1" :class="agGridSetting.themeAgGrid"
+                        :columnDefs="columnDefs" :rowData="rowData" :paginationPageSize="paginationPageSize"
+                        :gridOptions="gridOptions" :context="context" :frameworkComponents="frameworkComponents"
+                        :enableCellChangeFlash="true" :rowSelection="rowSelection" :getContextMenuItems="getContextMenu"
+                        :defaultColDef="agGridSetting.defColDef" :suppressDragLeaveHidesColumns="true"
+                        :suppressMakeColumnVisibleAfterUnGroup="true" :statusBar="statusBar" @grid-ready="onGridReady"
+                        @cellContextMenu="handleRowRightClicked" @rowDataUpdated="onChangeFormList" :getRowNodeId="getRowNodeId"
+                        @cellValueChanged="cellValueChanged" />
+                    </div>
+                </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h6 class="accordion-header" id="itemInformationHeader">
+                        <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+                        aria-controls="itemInformation" aria-expanded="false">
+                        Payment Information
+                        </button>
+                    </h6>
+            <div id="itemInformation1" class="accordion-collapse p-3" aria-labelledby="itemInformationHeader1">
+                <div class="accordion-body card-block">
+                <div class="row mb-1">
+                    <div class="col-md-3 mb-2 d-flex">
+                        <label for="date" style="width: 19%; color: red;" class="col-form-label">{{ $t('labels.date') }}</label>
+                            <c-datepicker id="date" style="width: 70%;" class="ml-4" keyName="code" type="date"
+                            v-model="formPayment.date" valueType="YYYY-MM-DD" format="DD/MM/YYYY" name="date" @input="onDateChange">
+                            </c-datepicker>
+                    </div>
+                    <div class="col-md-4 mb-1 d-flex">
+                        <label for="sub_total" class="mr-4 pt-1" style="font-size: 11.5px; width: 19%; color: red;">{{
+                            $t('labels.subTotal')
+                            }}</label>
+                        <c-input v-model="formPayment.sub_total" :disabled="true" showZeroNumber id="sub_total" class="mb-1" type="number" formatted style="width: 70%;"
+                        name="sub_total" />
+                    </div> 
+                </div>
+                <div class="row mb-1">
+                    <div class="col-md-3 d-flex pb-2">
+                        <checkbox class="ml-5 pl-4" id="create_ap" v-model="form.create_ap" type="checkbox"
+                        name="create_ap" @change="changeAdjustment">
+                    </checkbox>
+                    <label for="create_ap" style=" width: 19%; font-size: 12px;" class="col pt-2 ml-2">{{ $t('labels.createAp') }}</label>
+                    </div>
+                    <div class="col-md-9 d-flex">
+                        <c-select id="ap_account" style="width: 91%;" :label="$t('labels.apAccount')" class="row mb-3" keyName="code" labelName="name"
+                        v-model="formPayment.ap_account" name="ap_account">
+                        <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                    </c-select>
+                </div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-md-3 mb-2 d-flex">
+                        <label for="ap" style="width: 19%;" class="col-form-label">{{ $t('labels.ap') }}</label>
+                            <c-input id="ap" style="width: 90%;" class="ml-4" type="number" showZeroNumber formatted
+                            v-model="formPayment.ap" name="date">
+                            </c-input>
+                    </div>
+                    <div class="col-md-4 d-flex">
+                        <label for="ap_account" class="mr-4 pt-1" style="font-size: 11px; width: 19%;">{{
+                            $t('labels.apCompany')
+                            }}</label>
+                        <c-select required id="ap_account" style="width: 70%;" class="row mb-1" keyName="code" labelName="name"
+                        v-model="formPayment.ap_account" name="ap_account">
+                        <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                    </c-select>
+                </div>
+                <div class="col-4 d-flex">
+                    <label for="due_date" style="font-size: 12px;" class="mr-1 col-3" >{{ $t('labels.dueDate')}}</label>
+                    <c-datepicker v-model="formPayment.due_date" style="width: 100%;" id="due_date" class="mb-2 Datepicks" type="date"
+                    valueType="YYYY-MM-DD" format="DD/MM/YYYY" name="due_date"></c-datepicker>
+                </div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-md-3 mb-2 d-flex">
+                        <label for="discount" style="width: 16%;" class="col-form-label pb-2">{{ $t('labels.discount') }}</label>
+                            <c-input id="discount" style="width: 90%;" class="ml-4" type="number" showZeroNumber formatted
+                            v-model="formPayment.discount" name="discount">
+                            </c-input>
+                    </div>
+                    <div class="col-md-9 d-flex">
+                        <c-select id="discount_account" style="width: 91%;" :label="$t('labels.discountAccount')" class="row mb-1" keyName="code" labelName="name"
+                        v-model="formPayment.discount_account" name="discount_account">
+                        <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                    </c-select>
+                </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 d-flex">
+                        <label for="bank_adm" style="width: 19%; font-size: 12px;" class="pb-2">{{ $t('labels.bankAd') }}</label>
+                            <c-input id="bank_adm" style="width: 90%;" class="ml-4" type="number" showZeroNumber formatted
+                            v-model="formPayment.bank_adm" name="bank_adm">
+                            </c-input>
+                    </div>
+                    <div class="col-md-9 d-flex">
+                        <c-select id="discount_account" :label="$t('labels.bankAdm')" style="width: 91%;" class="row pb-2 mb-4" keyName="code" labelName="name"
+                        v-model="formPayment.discount_account" name="discount_account">
+                        <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                    </c-select>
+                </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 d-flex">
+                        <label for="bank_adm" style="width: 16%; font-size: 10px;">{{ $t('labels.otherExpense') }}</label>                            <c-input id="bank_adm" style="width: 90%;" class="ml-4" type="number" showZeroNumber formatted
+                            v-model="formPayment.bank_adm" name="bank_adm">
+                            </c-input>
+                    </div>
+                    <div class="col-md-9 d-flex">
+                        <c-select id="discount_account" :label="$t('labels.otherExpenseAccount')" style="width: 91%;" class="row pb-3" keyName="code" labelName="name"
+                        v-model="formPayment.discount_account" name="discount_account">
+                        <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                    </c-select>
+                </div>
+                </div>
+                <div class="row mb-1">
+                    <div class="col-md-3 d-flex pb-2">
+                        <checkbox class="ml-5 pl-4" id="ar_payment" v-model="form.ar_payment" type="checkbox"
+                        name="ar_payment" @change="changeAdjustment">
+                    </checkbox>
+                    <label for="ar_payment" style=" width: 19%; font-size: 12px;" class="col pt-2 ml-2">{{ $t('labels.arPayment') }}</label>
+                    </div>
+                    <div class="col-md-3 d-flex pb-2">
+                        <checkbox class="ml-5 pl-4" id="other_company" v-model="form.other_company" type="checkbox"
+                        name="other_company" @change="changeAdjustment">
+                    </checkbox>
+                    <label for="other_company" style=" width: 19%; font-size: 12px;" class="col pt-2 ml-2">{{ $t('labels.otherCompany') }}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 d-flex">
+                        <label for="company_ar" style="width: 16%; font-size: 12px;">{{ $t('labels.companyAr') }}</label>                            
+                        <c-select id="company_ar" disabled="true" style="width: 90%;" class="ml-4"
+                            v-model="formPayment.company_ar" name="company_ar">
+                            </c-select>
+                    </div>
+                    <div class="col-md-6 d-flex">
+                        <c-select id="ar_list" disabled="true" :label="$t('labels.arList')" style="width: 87%;" class="row pb-3" keyName="code" labelName="name"
+                        v-model="formPayment.ar_list" name="ar_list">
+                        <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                    </c-select>
+                </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 d-flex">
+                        <label for="total" style="width: 16%; font-size: 12px;">{{ $t('labels.total') }}</label>                            
+                        <c-input id="total" disabled="true" style="width: 90%;" class="ml-4" type="number" showZeroNumber formatted
+                            v-model="formPayment.total" name="total">
+                            </c-input>
+                    </div>
+                    <div class="col-md-6 d-flex">
+                        <c-select id="bank_account" :label="$t('labels.bankAccount')" style="width: 87%;" class="row pb-3" keyName="code" labelName="name"
+                        v-model="formPayment.bank_account" name="bank_account">
+                        <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                    </c-select>
+                </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12 d-flex mb-1">
+                        <label for="remark" class="labDatepicker" style="font-size: 12px; width: 9.5%; ">{{
+                        $t('labels.remark')
+                        }}</label>
+                        <c-input v-model="formPayment.remark" id="remark" class="mb-1 pl-2" type="text" style="width: 84%;"
+                        name="remark" />
+                    </div>  
+                </div>
+                </div>
+            </div>
+
+                </div>
+                <div class="d-flex justify-content-end mt-2 p-2">
+                    <button type="button" class="btn btn-danger mr-1" @click="onClose">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        {{$t('buttons.close')}}
+                    </button>
+                    <button type="button" class="btn btn-primary" @click="onSubmit">
+                        <i class="fas fa-save"></i>
+                        {{ $t('buttons.save') }}
+                    </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+        

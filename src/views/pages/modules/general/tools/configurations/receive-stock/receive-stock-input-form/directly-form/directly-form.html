@@ -1,0 +1,32 @@
+
+        <div id="parrentAccordion" class="accordion mb-2">
+            <div class="accordion-item">
+                <h6 class="accordion-header" id="itemInformationHeader">
+                    <button type="button" class="accordion-button d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#itemInformation"
+                    aria-controls="itemInformation" aria-expanded="false">
+                    Directly Out, Discount and Tax
+                    <div class="col d-flex justify-content-end">
+                        <checkbox class="ml-4" style="float: right;" id="directly" v-model="form.directly" type="checkbox"
+                        name="directly" @change="changeDirectly">
+                        </checkbox>
+                        <label for="directly" class="col-form-label ml-2">Directly Out</label>
+                    </div>
+                    </button>
+                </h6>
+                <div id="itemInformation1" class="accordion-collapse p-3" aria-labelledby="itemInformationHeader1">
+                <div class="accordion-body card-block">
+                        <div class="row">
+                        <!-- input code -->
+                        <div class="col-md-12 mb-1">
+                            <c-select id="sub_department" customLabelClass="col-3" customClass="col-9" :options="listDropdown.SubDepartment" :label="$t('labels.subDepartment')" :disabled="!form.directly" class="mb-1" :required="form.directly" keyName="code" labelName="name"
+                            v-model="form.sub_department" name="sub_department">
+                            <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+                        </c-select>
+                        <c-input v-model="form.document" customLabelClass="col-3" customClass="col-9" :label="$t('labels.document')" id="document" type="text"
+                        name="document" />
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>

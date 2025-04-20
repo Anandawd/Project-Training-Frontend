@@ -1,0 +1,213 @@
+<v-form
+  @submit="onSubmit"
+  ref="bankCardForm"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="bank-card-form row"
+>
+  <div class="col-md-6 col-lg">
+    <c-select
+      required
+      class="row mb-1"
+      :label="$t('transaction.currency')"
+      labelName="code"
+      keyName="code"
+      name="Currency"
+      v-model="form.currency_code"
+      :options="options.currencies"
+      @change="onChangeCurrencyCode"
+    >
+    </c-select>
+    <c-input
+      required
+      disabled
+      class="row mb-1"
+      type="number"
+      :label="$t('transaction.excRate')"
+      name="Exchange Rate"
+      v-model="form.exchange_rate"
+    ></c-input>
+    <c-select
+      required
+      class="row mb-1"
+      :label="$t('transaction.subDept')"
+      labelName="name"
+      keyName="code"
+      name="Sub Department"
+      v-model="form.sub_department_code"
+      :options="options.subDepartments"
+    ></c-select>
+    <c-select
+      required
+      class="row mb-1"
+      :label="$t('transaction.account')"
+      labelName="name"
+      keyName="code"
+      name="Account"
+      v-model="form.account_code"
+      :options="options.accounts"
+    ></c-select>
+    <c-input
+      required
+      focus
+      class="row mb-1"
+      type="number"
+      formatted
+      :label="$t('transaction.amount') + ' ' +form.currency_code"
+      name="Foreign Amount"
+      v-model="form.amount_foreign"
+      @input="onChangeAmount"
+    ></c-input>
+    <c-input
+      required
+      disabled
+      class="row mb-1"
+      type="number"
+      formatted
+      :label="$t('transaction.amount') +' '+defaultCurrency"
+      name="Amount"
+      v-model="form.amount"
+    ></c-input>
+  </div>
+  <div class="col-md-6 col-lg">
+    <div class="row mb-1">
+      <label required for="bankCard" class="required col-3 col-form-label"
+        >{{ $t("transaction.cardType") }}</label
+      >
+      <div class="row col">
+        <c-select
+          required
+          id="bankCard"
+          class="col pr-0"
+          labelName="name"
+          keyName="code"
+          name="Bank Card"
+          v-model="form.card_bank_code"
+          :options="options.cardBanks"
+        ></c-select>
+        <c-select
+          required
+          class="col pl-0"
+          labelName="name"
+          keyName="code"
+          name="Card Type"
+          v-model="form.card_type_code"
+          :options="options.cardTypes"
+        ></c-select>
+      </div>
+    </div>
+    <c-input
+      class="row mb-1"
+      type="text"
+      :label="$t('transaction.cardNumber')"
+      name="Card Number"
+      v-model="cardDetail.card_number"
+    ></c-input>
+    <c-input
+      class="row mb-1"
+      type="text"
+      :label="$t('transaction.cardHolder')"
+      name="Card Holder"
+      v-model="cardDetail.card_holder"
+    ></c-input>
+    <div class="row mb-1">
+      <label required for="expMonth" class="col-3 col-form-label"
+        >{{ $t("transaction.expirationDate") }}</label
+      >
+      <div class="row col">
+        <c-select
+          required
+          id="expMonth"
+          class="col pr-0"
+          name="Expire Month"
+          v-model="cardDetail.valid_month"
+          :options="$global.mt"
+        >
+          <template #append-end>
+            <span class="input-group-text">{{ $t('transaction.month') }}</span>
+          </template>
+        </c-select>
+        <c-select
+          required
+          class="col pl-0"
+          name="Expire Year"
+          v-model="cardDetail.valid_year"
+          :options="$global.yr"
+        >
+          <template #append-end>
+            <span class="input-group-text">{{ $t('transaction.year') }}</span>
+          </template>
+        </c-select>
+      </div>
+    </div>
+    <div class="row mb-1">
+      <label for="chargePercent" class="col-3 col-form-label"
+        >{{ $t("transaction.charge") }}</label
+      >
+      <div class="row col">
+        <c-input
+          required
+          id="chargePercent"
+          class="col pr-0"
+          type="number"
+          formatted
+          name="Charge"
+          v-model="cardDetail.charge_percent"
+          @input="onChangeChargePercent"
+        >
+          <template #append-end>
+            <span class="input-group-text">%</span>
+          </template>
+        </c-input>
+        <c-input
+          disabled
+          required
+          class="col pl-0"
+          type="number"
+          formatted
+          name="Charge Amount"
+          v-model="cardDetail.charge_amount"
+        ></c-input>
+      </div>
+    </div>
+    <c-input
+      required
+      disabled
+      class="row mb-1"
+      type="number"
+      formatted
+      :label="$t('transaction.totalAmount')"
+      name="Total Amount"
+      v-model="form.total_amount"
+    ></c-input>
+  </div>
+  <div class="col-md-6 col-lg">
+    <div class="row mb-1">
+      <label for="remarkBankCard" class="col-3 col-form-label"
+        >{{ $t("transaction.remark") }}</label
+      >
+      <div class="col-9">
+        <textarea
+          type="text"
+          class="form-control"
+          rows="2"
+          id="remarkBankCard"
+          name="Remark"
+          v-model="form.remark"
+        />
+      </div>
+    </div>
+    <c-input
+      required
+      class="row mb-1"
+      :label="$t('transaction.docNumber')"
+      name="Document Number"
+      v-model="form.document_number"
+    ></c-input>
+  </div>
+  <save-close-button
+    :isSaving="isSaving"
+    @save="onSave"
+    @close="onClose"
+  ></save-close-button>
+</v-form>

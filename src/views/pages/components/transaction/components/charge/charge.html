@@ -1,0 +1,154 @@
+<div class="charge-form">
+  <v-form @submit="onSave" ref="formElement"
+    :validation-schema="formType == $global.formType.banquetInProgress ? banquetSchema : schema"
+    @invalid-submit="onInvalidSubmit" class="input-form row" v-slot="{resetForm}">
+    <div v-if="formType != $global.formType.banquetInProgress" class="row">
+      <div class="col-4">
+        <c-select half required class="row mb-1" :label="$t('labels.subFolio')" name="subFolioGroup"
+          v-model="form.subFolioGroupCode" :options="$global.subFolioGroup"></c-select>
+      </div>
+      <div v-show="folioTransfer" class="col-md-4">
+        <c-checkbox class="row mb-1" :label="$t('labels.automaticTransfer')" name="automaticTransfer"
+          v-model="form.automaticTransfer">
+        </c-checkbox>
+      </div>
+      <div v-show="form.accountCode == accountRoomCharge" class="col-md-4">
+        <c-checkbox class="mb-1" :label="$t('labels.postingBreakdown')" name="postingBreakdown"
+          v-model="form.postingBreakdown">
+        </c-checkbox>
+      </div>
+    </div>
+    <div v-if="formType != $global.formType.banquetInProgress" class="row">
+      <div class="col-md">
+        <c-select required half class="row mb-1" :label="$t('labels.currency')" labelName="code" keyName="code"
+          name="currency" v-model="form.currencyCode" :options="options.currencies"
+          @change="onChangeCurrency"></c-select>
+        <c-input required half disabled class="row mb-1" formatted type="number" :label="$t('labels.excRate')"
+          name="excRate" v-model="form.exchangeRate"></c-input>
+        <c-select required class="row mb-1" :label="$t('labels.subDept')" labelName="name" keyName="code"
+          name="subDepartment" v-model="form.subDepartmentCode" :options="options.subDepartments"
+          @change="onChangeSubDepartment"></c-select>
+      </div>
+      <div class="col-md">
+        <c-select required class="row mb-1" :label="$t('labels.account')" labelName="name" keyName="code" name="account"
+          v-model="form.accountCode" :options="options.accounts" @change="onChangeAccount"></c-select>
+        <c-input focus required showZeroNumber class="row mb-1" type="number" formatted
+          :label="$t('labels.amount') + ' ' +form.currencyCode" name="amountForeign" v-model="form.amountForeign"
+          @input="onChangeAmount"></c-input>
+        <c-input required showZeroNumber disabled class="row mb-1" type="number" formatted
+          :label="$t('labels.amount')+' '+defaultCurrency" name="amount" v-model="form.amount"></c-input>
+      </div>
+      <div class="col-md">
+        <c-select v-if="transactionType === $global.modeTransaction.apTransaction" required class="row mb-1"
+          :label="$t('labels.company')" labelName="name" keyName="code" name="company" v-model="form.companyCode"
+          :options="options.companies"></c-select>
+        <c-input v-else class="row mb-1" :label="$t('labels.doc#')" name="documentNumber"
+          v-model="form.documentNumber"></c-input>
+        <c-input class="mb-1" type="textarea" rows="3" :label="$t('labels.remark')" name="remark"
+          v-model="form.remark"></c-input>
+      </div>
+    </div>
+    <div v-else class="row">
+      <div class="col-md-4">
+        <div class="row justify-content-center">
+          <div class="col-6">
+            <c-checkbox disabled :label="$t('labels.postingAtCheckIn')" v-model="form.is_posting"
+              customLabelClass="col-3" customClass="col-9">
+            </c-checkbox>
+          </div>
+        </div>
+        <c-select required class="mb-1" v-model="form.reservation_number" @load="loadProductComboList"
+          @change="onChangeReservation" :options="comboList.Reservation" keyName="Number" labelName="Number"
+          :label="$t('labels.reservationNumber')" name="Reservation Number" customLabelClass="col-3" customClass="col-9"
+          selectType="column" :columnOptions="ColumnResOptions" />
+        <c-select required class="mb-1" v-model="form.venue_code" :options="comboList.Venue"
+          @load="loadProductComboList" keyName="venue_code" labelName="name" :label="$t('labels.venue')" name="venue"
+          customLabelClass="col-3" customClass="col-9" />
+        <c-select class="mb-1" v-model="form.seating_plan_code" :options="comboList.SeatingPlan"
+          @load="loadProductComboList" keyName="code" labelName="name" :label="$t('labels.seatingPlan')"
+          name="Seating Plan" customLabelClass="col-3" customClass="col-9">
+        </c-select>
+        <c-datepicker class="mb-1" confirm :label="$t('labels.servedDate')" v-model="form.served_date" type="date"
+          valueType="YYYY-MM-DD" format="DD/MM/YYYY" :clearable="false" name="Served Date" resetButton
+          customLabelClass="col-3" customClass="col-9" @reset="onResetDate"></c-datepicker>
+        <div class="row">
+          <div class="col-md-6">
+            <c-datepicker @change="onChangeStartTime" class="mb-1" customLabelClass="col-6" customClass="col-6" confirm
+              :label="$t('labels.start')" v-model="form.start_time" type="time" valueType="HH:mm:ssZZ" format="HH:mm:ss"
+              :clearable="false" name="Start" resetButton @reset="onResetDate"></c-datepicker>
+          </div>
+          <div class="col-md-6">
+            <c-datepicker @change="onChangeEndTime" class="mb-1" customLabelClass="col-6" customClass="col-6" confirm
+              :label="$t('labels.end')" v-model="form.end_time" type="time" valueType="HH:mm:ssZZ" format="HH:mm:ss"
+              :clearable="false" name="end" resetButton @reset="onResetDate"></c-datepicker>
+          </div>
+        </div>
+        <!-- TODO: category kagak ada di field input di postman -->
+        <c-select class="mb-1" v-model="form.category_code" :options="comboList.Category" @load=" loadProductComboList"
+          keyName="code" labelName="name" :label="$t('labels.category')" name="Category" customLabelClass="col-3"
+          customClass="col-9"></c-select>
+      </div>
+      <div class="col-md-4">
+        <c-select required class="mb-1" v-model="form.product_code" @load="loadProductList" :options="productList"
+          keyName="code" labelName="name" :label="$t('labels.product')" name="Product" customLabelClass="col-3"
+          customClass="col-9" selectType="column" :columnOptions="ColumnProductOptions" @change="onChangeAccount">
+        </c-select>
+        <c-input required @change="onChangePrice" class="mb-1" spinner customLabelClass="col-3" customClass="col-9"
+          v-model="form.quantity" :label="$t('labels.quantity')" type="number" name="Quantity" />
+        <c-input required @change="onChangePrice" class="mb-1" formatted showZeroNumber customLabelClass="col-3"
+          customClass="col-9" v-model="form.price" :label="$t('labels.price')" type="number" name="Price" />
+        <!-- TODO: subTotal kagak ada di field input di postman -->
+        <c-input disabled required class="mb-1" formatted showZeroNumber customLabelClass="col-3" customClass="col-9"
+          v-model="form.sub_total" :label="$t('labels.subTotal')" type="number" name="Sub Total" />
+        <c-input @change="onChangeDiscount" showZeroNumber class="row mb-1" v-model="form.discount" formatted
+          :label="$t('labels.discount')" type="number" name="discount">
+          <!-- TODO: nanti cek apakah perlu kirim ini ke backend, jika iya apa nama fieldnya -->
+          <template #append-start>
+            <div class="input-group-text align-items-center">
+              <c-checkbox class="pl-0" customClass="ml-0 pl-0" booleanValue :label="$t('labels.percent')"
+                v-model="form.discount_percent" @change="onChangeDiscountPercent"></c-checkbox>
+            </div>
+          </template>
+          <template #append-end>
+            <span class="input-group-text">{{ form.discount_percent ? '%' : '.00' }}</span>
+          </template>
+        </c-input>
+        <!-- TODO: amount kagak ada di field input di postman -->
+        <c-input required class="mb-1" formatted showZeroNumber customLabelClass="col-3" customClass="col-9"
+          v-model="form.amount" :label="$t('labels.amount')" type="number" name="amount" />
+        <c-input customLabelClass="col-3" customClass="col-9" class="mb-1" v-model="form.remark"
+          :label="$t('labels.remark')" type="textarea" name="remark" />
+      </div>
+      <div class="col-md-4">
+        <c-select class="mb-1" v-model="form.layout_id" :options="comboList.Product" @load=" loadProductComboList"
+          keyName="code" labelName="name" :label="$t('labels.layout')" name="Layout" customLabelClass="col-3"
+          customClass="col-9">
+        </c-select>
+        <div class="row mb-2 mt-2">
+          <div class="col-md-3"></div>
+          <div class="col-md-9">
+            <div class="card card-outline position-relative" style="height: 100px">
+              <div class="card-body box-profile" @contextmenu="onContextMenu($event)">
+                <div class="d-flex h-100 justify-content-center align-items-center">
+                  <div v-if="imgDataUrl != ''">
+                    <img :src="imgDataUrl" class="justify-content-center" />
+                  </div>
+                  <div v-else-if="imgDataUrl == ''">
+                    <a style="cursor: pointer">Image</a>
+                  </div>
+                  <div else>
+                    <my-upload field="img" @crop-success="cropSuccess" @crop-upload-success="cropUploadSuccess"
+                      @crop-upload-fail="cropUploadFail" v-model="show" :width="250" :height="250"
+                      url="https://httpbin.org/post" :params="params" :headers="headers" :maxSize="2000" langType="en"
+                      img-format="png"></my-upload>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <save-close-button :is-saving="isSaving" @save="onSubmit()" @close="$emit('close')"></save-close-button>
+  </v-form>
+</div>

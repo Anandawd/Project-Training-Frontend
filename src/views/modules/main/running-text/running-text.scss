@@ -1,0 +1,34 @@
+.running-text {
+  margin-bottom: 100px;
+  height: 50px;
+  position: relative;
+  .scroll-left {
+    overflow: hidden;
+    background: rgb(235, 186, 11);
+    // color: orange;
+    position: absolute;
+    // border: 1px solid orange;
+    z-index: 1055;
+    width: 100%;
+    height: 100%;
+  }
+  .scroll-left p {
+    font-size: larger;
+    line-height: 35px;
+    text-align: center;
+    color: black;
+    /* Starting position */
+    transform: translateX(100%);
+    /* Apply animation to this element */
+    animation: scroll-left 25s linear infinite;
+  }
+  /* Move it (define the animation) */
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+}

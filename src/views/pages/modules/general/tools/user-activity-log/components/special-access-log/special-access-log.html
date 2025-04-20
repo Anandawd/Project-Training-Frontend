@@ -1,0 +1,89 @@
+<div class="card-body">
+  <div class="mb-1">
+    <div class="row">
+      <div class="col-md-4 row mb-1">
+        <label class="pr-0 col-form-label col-3"> {{$t('labels.date')}}</label>
+        <div class="col row">
+          <c-datepicker
+            class="col-lg-6 col-md-6 col-6 pr-0"
+            customClass="plx-9"
+            @input="refreshData"
+            v-model="search.start_date"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            name="start_date"
+          >
+          </c-datepicker>
+          <c-datepicker
+            class="col-lg-6 col-md-6 col-6 pl-0"
+            customClass="plx-7-5"
+            @input="refreshData"
+            v-model="search.end_date"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            name="end_date"
+          ></c-datepicker>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <c-select
+          customLabelClass="col-3"
+          customClass="col-9"
+          class="mb-1"
+          :options="filterComboList.access_name"
+          keyName="access_name"
+          labelName="access_name"
+          v-model="search.access"
+          :label="$t('labels.access')"
+          @change="refreshData"
+        >
+        </c-select>
+      </div>
+      <div class="col-md-3">
+        <c-select
+          customLabelClass="col-3"
+          customClass="col-9"
+          class="mb-1"
+          :options="filterComboList.user"
+          keyName="code"
+          labelName="code"
+          v-model="search.user_id"
+          :label="$t('labels.userId')"
+          @change="refreshData"
+        >
+          <template #append-end>
+            <button type="button" @click="refreshData" class="input-group-text">
+              <i class="fa fa-search" aria-hidden="true"></i>
+            </button>
+          </template>
+        </c-select>
+      </div>
+    </div>
+  </div>
+  <!-- //Table -->
+  <ag-grid-vue
+    :style="agGridSetting.styleAgGridFrame"
+    :class="agGridSetting.themeAgGrid"
+    :columnDefs="columnDefs"
+    :rowData="rowData"
+    :paginationPageSize="paginationPageSize"
+    :gridOptions="gridOptions"
+    :context="context"
+    :frameworkComponents="frameworkComponents"
+    :enableCellChangeFlash="true"
+    :rowSelection="rowSelection"
+    :rowGroupPanelShow="rowGroupPanelShow"
+    :getContextMenuItems="getContextMenu"
+    :defaultColDef="agGridSetting.defColDef"
+    :masterDetail="true"
+    :suppressDragLeaveHidesColumns="true"
+    :detailRowAutoHeight="detailRowAutoHeight"
+    :suppressMakeColumnVisibleAfterUnGroup="true"
+    :statusBar="statusBar"
+    @grid-ready="onGridReady"
+    @cellContextMenu="handleRowRightClicked"
+    @selection-changed="onSelectionChanged"
+  />
+</div>

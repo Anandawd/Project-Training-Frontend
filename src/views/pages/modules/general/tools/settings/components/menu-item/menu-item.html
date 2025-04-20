@@ -1,0 +1,37 @@
+<li
+  v-if="!menuItem.hidden"
+  class="nav-item"
+  :class="{'menu-open': isMenuExtended}"
+>
+  <a
+    class="nav-link"
+    :href="'#'+menuItem.id"
+    :class="{'active': isMainActive || isOneOfChildrenActive}"
+    @click="handleMainMenuAction"
+  >
+    <!-- <i v-else class="nav-icon fa fa-circle"></i> -->
+    <p>{{ $t('settings.'+menuItem.label) }}</p>
+    <i v-if="isExpandable" class="right fas fa-angle-left"></i>
+  </a>
+  <ul class="nav nav-treeview" v-for="item in menuItem.children">
+    <li
+      v-if="!item.hidden"
+      :class="{'active':item.id == hashId}"
+      class="ml-4 pl-2 nav-item"
+      @click="handleMenuChildren"
+    >
+      <!-- <img
+        v-if="item.cIcon"
+        class="mr-1 mb-1"
+        :src="generateIcon(item.cIcon)"
+        height="16"
+        width="16"
+        alt=""
+      />
+      <i v-else class="far fa-circle nav-icon"></i> -->
+      <a :href="'#'+item.id">
+        <p>{{ $t('settings.'+item.label)}}</p>
+      </a>
+    </li>
+  </ul>
+</li>

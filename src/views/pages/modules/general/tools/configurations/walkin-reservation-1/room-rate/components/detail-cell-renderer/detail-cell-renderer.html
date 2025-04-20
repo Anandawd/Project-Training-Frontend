@@ -1,0 +1,23 @@
+<section>
+  <breakdown @insert="onInsertBreakdown" @delete="onDeleteBreakdown" @duplicate="onDuplicateBreakdown" @edit="onEditBreakdown" @trackingData="handleTrackingData" id="breakdown" :rowData="breakdownRowData" ref="breakdownElement"></breakdown>
+  <business-source @insert="onInsertBusinessSource" @delete="onDeleteBusiness" @duplicate="onDuplicateBusiness" @edit="onEditBusiness" @trackingData="handleTrackingData" id="business_source" :rowData="businessSourceRowData" ref="businessSourceElement"></business-source>
+  <base-occupancy v-if="showTableOcc" @insert="onInsertBaseOccupancy" @delete="onDeleteBaseOccupancy" @duplicate="onDuplicateBaseOccupancy" @edit="onEditBaseOccupancy" @trackingData="handleTrackingData" id="business_base_occupancy" :rowData="baseOccupancyRowData" ref="baseOccupancyElement"></base-occupancy>
+  <base-session v-if="showTableSess" @insert="onInsertBaseSession" @delete="onDeleteBaseSession" @duplicate="onDuplicateBaseSession" @edit="onEditBaseSession" @trackingData="handleTrackingData" id="business_source" :rowData="baseSessionRowData" ref="baseSessionElement"></base-session>
+  <currency @insert="onInsertCurrency" @delete="onDeleteCurrency" @duplicate="onDuplicateCurrency" @edit="onEditCurrency" @trackingData="handleTrackingData" id="currency" :rowData="currencyRowData" ref="currencyElement"></currency>
+
+  <CDialog v-show="showDialogBreakdown" w100 dialogTitle="Confirm" @confirm="deleteDataBreakdown" @cancel="showDialogBreakdown= false" confirm>
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </CDialog>
+  <CDialog v-show="showDialogBusiness" w100 dialogTitle="Confirm" @confirm="deleteDataBusiness" @cancel="showDialogBusiness= false" confirm>
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </CDialog>
+  <CDialog v-show="showDialogCurrency" w100 dialogTitle="Confirm" @confirm="deleteDataCurrency" @cancel="showDialogCurrency= false" confirm>
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </CDialog>
+  <CDialog v-show="showDialogBaseOccupancy" w100 dialogTitle="Confirm" @confirm="deleteDataBaseOccupancy" @cancel="showDialogBaseOccupancy= false" confirm>
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </CDialog>
+  <CDialog v-show="showDialogBaseSession" w100 dialogTitle="Confirm" @confirm="deleteDataBaseSession" @cancel="showDialogBaseSession= false" confirm>
+    <template #body> {{ $t('messages.deleteConfirm2')}} </template>
+  </CDialog>
+</section>
