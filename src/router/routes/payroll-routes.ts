@@ -111,6 +111,25 @@ export default [
     },
   },
   {
+    path: "payroll-period/detail/:id?",
+    name: "PeriodDetail",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-period/payroll-period-detail/payroll-period-detail.vue"
+      ),
+    meta: {
+      pageTitle: "title.payrollPeriodDetail",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.payroll", url: "/payroll/payroll-period" },
+        { title: "title.payrollPeriod", url: "/payroll/payroll-period" },
+        { title: "title.payrollPeriodDetail", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
     path: "payroll-component",
     name: "Payroll Component",
     component: () =>

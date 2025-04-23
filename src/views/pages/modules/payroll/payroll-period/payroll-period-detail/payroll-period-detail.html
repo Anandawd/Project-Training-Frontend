@@ -3,7 +3,25 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
-        title="Generate Payroll"
+        title="Save Draft"
+        type="button"
+        class="btn btn-secondary mr-1"
+        @click="handleSave('', $global.modePayroll.save)"
+      >
+        <i class="fa fa-save mr-1" aria-hidden="true"></i>{{ $t('buttons.save')
+        }}
+      </button>
+      <button
+        title="Submit for Approval"
+        type="button"
+        class="btn btn-success mr-1"
+        @click="handleSubmit('', $global.modeData.submit)"
+      >
+        <i class="fa fa-paper-plane mr-1" aria-hidden="true"></i>{{
+        $t('buttons.submit') }}
+      </button>
+      <button
+        title="Insert Payroll"
         type="button"
         class="btn btn-primary mr-1"
         @click="handleShowForm('', $global.modeData.insert)"
@@ -13,10 +31,246 @@
       </button>
     </div>
 
-    <!-- content -->
+    <transition v-show="showInsertModal">
+      <!-- insert payroll -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">{{$t('title.insert')}}</h3>
+        </div>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label
+                  >{{$t('commons.table.payroll.payroll.selectEmployees')}}</label
+                >
+                <select
+                  class="form-control"
+                  v-model="generateOptions.selectionMode"
+                >
+                  <option value="all">
+                    {{$t('commons.table.payroll.payroll.allEmployees')}}
+                  </option>
+                  <option value="department">
+                    {{$t('commons.table.payroll.employee.department')}}
+                  </option>
+                  <option value="position">
+                    {{$t('commons.table.payroll.employee.position')}}
+                  </option>
+                  <option value="selected">
+                    {{$t('commons.table.payroll.payroll.selectedEmployees')}}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <c-select
+                required
+                offset="right"
+                class="row mb-1"
+                selectType="column"
+                name="selectionMode"
+                labelName="name"
+                keyName="code"
+                v-model="generateOptions.selectionMode"
+                :label="$t('labels.payroll.payroll.selectEmployees')"
+                :columnOptions="columnOptions"
+                :options="departmentsOptions"
+              >
+              </c-select>
+            </div>
+            <div
+              class="col-md-6"
+              v-if="generateOptions.selectionMode === 'department'"
+            >
+              <c-select
+                required
+                offset="right"
+                class="row mb-1"
+                selectType="column"
+                name="departments"
+                labelName="name"
+                keyName="code"
+                v-model="form.departments"
+                :label="$t('labels.payroll.payroll.selectDepartment')"
+                :columnOptions="columnOptions"
+                :options="departmentsOptions"
+              >
+              </c-select>
+            </div>
+            <div
+              class="col-md-6"
+              v-if="generateOptions.selectionMode === 'position'"
+            >
+              <c-select
+                required
+                multiple
+                offset="right"
+                class="row mb-1"
+                selectType="column"
+                name="positions"
+                labelName="name"
+                keyName="code"
+                v-model="form.positions"
+                :label="$t('labels.payroll.payroll.selectPosition')"
+                :columnOptions="columnOptions"
+                :options="positionsOptions"
+              >
+              </c-select>
+            </div>
+          </div>
+
+          <!-- button -->
+          <div class="d-flex justify-content-end mt-2">
+            <button
+              type="button"
+              class="btn btn-danger mr-1 px-3"
+              @click="handleShowForm = false"
+            >
+              <i class="fa fa-times" aria-hidden="true"></i>
+              {{$t('buttons.close')}}
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary px-3"
+              @click="handleSubmit"
+            >
+              <i class="fa fa-play"></i>
+              {{$t('buttons.generate')}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- period detail -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">{{$t('title.payrollPeriod')}}</h3>
+        <h3 class="card-title">{{$t('title.periodDetail')}}</h3>
+        <div class="float-right">
+          <span class="badge text-bg-secondary px-3 py-2">Draft</span>
+          <!-- <span
+            class="badge text-bg-secondary px-3 py-2"
+            :class="getStatusBadgeClass(periodData.status)"
+            >{{periodData.status}}</span
+          > -->
+        </div>
+      </div>
+      <div class="card-body">
+        <p>Period Name</p>
+        <hr />
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-3">
+                <p class="text-bold">Placement</p>
+              </div>
+              <div class="col-9">: Amora Ubud</div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <p class="text-bold">Period Type</p>
+              </div>
+              <div class="col-9">: Monthly</div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <p class="text-bold">Period Date</p>
+              </div>
+              <div class="col-9">: 01/04/2025 - 31/04/2025</div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <p class="text-bold">Payment Date</p>
+              </div>
+              <div class="col-9">: 01/05/2025</div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-3">
+                <p class="text-bold">{{$t('commons.table.status')}}</p>
+              </div>
+              <div class="col-9">: Draft</div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <p class="text-bold">
+                  {{$t('commons.table.payroll.payroll.createdBy')}}
+                </p>
+              </div>
+              <div class="col-9">: Budi Admin</div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <p class="text-bold">
+                  {{$t('commons.table.payroll.payroll.createdAt')}}
+                </p>
+              </div>
+              <div class="col-9">: 20/04/2025</div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <p class="text-bold">
+                  {{$t('commons.table.payroll.payroll.updateAt')}}
+                </p>
+              </div>
+              <div class="col-9">: 20/04/2025</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- period summary -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{$t('title.periodSummary')}}</h3>
+      </div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-3">
+                <p class="text-bold">
+                  {{$t('commons.table.payroll.employee.totalEmployee')}}
+                </p>
+              </div>
+              <div class="col-9">: 0 of 50</div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <p class="text-bold">
+                  {{$t('commons.table.payroll.payroll.totalGrossSalary')}}
+                </p>
+              </div>
+              <div class="col-9">: Rp100,000,000</div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <p class="text-bold">
+                  {{$t('commons.table.payroll.payroll.totalDeductions')}}
+                </p>
+              </div>
+              <div class="col-9">: Rp20,000,000</div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <p class="text-bold">
+                  {{$t('commons.table.payroll.payroll.totalPayment')}}
+                </p>
+              </div>
+              <div class="col-9">: Rp80,000,000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- employee payroll list -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{$t('title.employeePayrollList')}}</h3>
       </div>
       <div class="card-body">
         <ag-grid-vue
@@ -42,6 +296,94 @@
       </div>
     </div>
 
+    <!-- dialog -->
+    <c-dialog
+      v-show="showDialog"
+      dialogTitle="Confirm"
+      size="sm"
+      @confirm="confirmAction"
+      @cancel="showDialog=false"
+    >
+      <template #body> {{dialogMessage}} </template>
+    </c-dialog>
+
     <!-- modal -->
+    <!-- <c-modal
+      v-show="showInsertModal"
+      :title="$t('buttons.generateForm')"
+      size="lg"
+      @close="showInsertModal = false"
+      @save="handleSaveForm"
+    >
+      <p>Select employees to generate payroll</p>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label
+              >{{$t('commons.table.payroll.payroll.selectEmployees')}}</label
+            >
+            <select
+              class="form-control"
+              v-model="generateOptions.selectionMode"
+            >
+              <option value="all">
+                {{$t('commons.table.payroll.payroll.allEmployees')}}
+              </option>
+              <option value="department">
+                {{$t('commons.table.payroll.employee.department')}}
+              </option>
+              <option value="position">
+                {{$t('commons.table.payroll.employee.position')}}
+              </option>
+              <option value="selected">
+                {{$t('commons.table.payroll.payroll.selectedEmployees')}}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div
+          class="col-md-6"
+          v-if="generateOptions.selectionMode === 'department'"
+        >
+          <div class="form-group">
+            <label
+              >{{$t('commons.table.payroll.payroll.selectDepartment')}}</label
+            >
+            <select
+              class="form-control"
+              v-model="generateOptions.departmentId"
+              multiple
+            >
+              <option
+                v-for="dept in departments"
+                :key="dept.id"
+                :value="dept.id"
+              ></option>
+            </select>
+          </div>
+        </div>
+        <div
+          class="col-md-6"
+          v-if="generateOptions.selectionMode === 'position'"
+        >
+          <div class="form-group">
+            <label
+              >{{$t('commons.table.payroll.payroll.selectPosition')}}</label
+            >
+            <select
+              class="form-control"
+              v-model="generateOptions.positionId"
+              multiple
+            >
+              <option
+                v-for="pos in positions"
+                :key="pos.id"
+                :value="pos.id"
+              ></option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </c-modal> -->
   </div>
 </section>

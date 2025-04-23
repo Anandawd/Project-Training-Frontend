@@ -7,12 +7,15 @@ import store from "./store";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faFacebook, faGooglePlus } from "@fortawesome/free-brands-svg-icons";
 import {
+  faArrowCircleRight,
   faEnvelope,
   faFileInvoiceDollar,
   faHardHat,
   faLock,
   faMedkit,
   faNotesMedical,
+  faPlay,
+  faSave,
   faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 // import { Gatekeeper } from "gatekeeper-client-sdk";
@@ -86,7 +89,10 @@ library.add(
   faNotesMedical,
   faUserShield,
   faMedkit,
-  faHardHat
+  faHardHat,
+  faSave,
+  faArrowCircleRight,
+  faPlay
 );
 
 // Gatekeeper.initialize("de378d9c-38c8-42c1-b961-9e4fa92d6a5e");

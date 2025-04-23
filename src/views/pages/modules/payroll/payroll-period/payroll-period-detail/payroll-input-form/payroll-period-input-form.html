@@ -1,0 +1,117 @@
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">{{title}}</div>
+    <div class="card-body">
+      <!-- form -->
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            selectType="column"
+            name="placement"
+            labelName="name"
+            keyName="code"
+            v-model="form.placement"
+            :label="$t('labels.payroll.employee.placement')"
+            :columnOptions="columnOptions"
+            :options="placementOptions"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            id="periodName"
+            class="row mb-1"
+            type="text"
+            name="periodName"
+            v-model="form.periodName"
+            :label="$t('labels.payroll.payroll.periodName')"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            name="periodType"
+            labelName="name"
+            keyName="code"
+            v-model="form.periodType"
+            :label="$t('labels.payroll.payroll.periodType')"
+            :options="periodTypeOptions"
+          />
+        </div>
+        <div class="col-md-4 mb-1">
+          <c-datepicker
+            required
+            id="startDate"
+            customLabelClass="col-3"
+            label="Start Date"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            name="startDate"
+            v-model="form.startDate"
+          />
+        </div>
+        <div class="col-md-4 mb-1">
+          <c-datepicker
+            required
+            id="endDate"
+            customLabelClass="col-3"
+            label="End Date"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            name="endDate"
+            v-model="form.endDate"
+          />
+        </div>
+        <div class="col-md-4 mb-1">
+          <c-datepicker
+            required
+            id="Payment Date"
+            customLabelClass="col-3"
+            label="Payment Date"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            name="paymentDate"
+            v-model="form.paymentDate"
+          />
+        </div>
+        <div class="col-md-4 mb-1">
+          <c-input
+            id="remark"
+            class="row mb-1"
+            type="textarea"
+            name="remark"
+            v-model="form.remark"
+            :label="$t('labels.remark')"
+          />
+        </div>
+      </div>
+
+      <!-- buttons -->
+      <div class="d-flex justify-content-end mt-2">
+        <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.close')}}
+        </button>
+        <button type="button" class="btn btn-primary px-3" @click="onSubmit">
+          <i class="fa fa-save"></i>
+          {{$t('buttons.save')}}
+        </button>
+      </div>
+    </div>
+  </div>
+</c-form>

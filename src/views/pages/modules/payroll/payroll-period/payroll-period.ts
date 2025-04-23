@@ -67,7 +67,9 @@ export default class Employee extends Vue {
 
   // form
   public showForm: boolean = false;
+  public showDetail: boolean = false;
   public modeData: any;
+  public modePayroll: any;
   public form: any = {};
   public inputFormElement: any = ref();
   public formType: any;
@@ -112,13 +114,6 @@ export default class Employee extends Vue {
     await this.loadEditData(params.id);
   }
 
-  handleViewDetail(paramsData: any) {
-    this.$router.push({
-      name: "PeriodDetail",
-      params: { id: paramsData.id },
-    });
-  }
-
   refreshData(search: any) {
     this.loadDataGrid(search);
   }
@@ -148,7 +143,7 @@ export default class Employee extends Vue {
         name: this.$t("commons.contextMenu.detail"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("detail_icon24"),
-        action: () => this.handleViewDetail(this.paramsData),
+        action: () => this.handleShowDetail("", 0),
       },
     ];
     return result;
@@ -168,10 +163,29 @@ export default class Employee extends Vue {
   }
 
   handleShowForm(params: any, mode: any) {
-    this.inputFormElement.initialize();
-    this.modeData = mode;
-    this.showForm = true;
+    if (mode === $global.modePayroll.detail) {
+      this.$router.push({
+        name: "PeriodDetail",
+        params: { id: params.id || "new" },
+      });
+    } else {
+      this.inputFormElement.initialize();
+      this.modeData = mode;
+      this.showForm = true;
+    }
   }
+
+  handleShowDetail(params: any, mode: any) {
+    this.modePayroll = mode;
+    this.showDetail = true;
+  }
+
+  // handleShowDetail(paramsData: any) {
+  //   this.$router.push({
+  //     name: "PeriodDetail",
+  //     params: { id: paramsData.id },
+  //   });
+  // }
 
   // API FUNCTION
   async loadDataGrid(search: any = this.searchDefault) {
@@ -322,5 +336,9 @@ export default class Employee extends Vue {
   // GETTER AND SETTER
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
+  }
+
+  get isRunPayrollDisabled(): boolean {
+    return !this.rowData.some((item: any) => item.status === "Draft");
   }
 }

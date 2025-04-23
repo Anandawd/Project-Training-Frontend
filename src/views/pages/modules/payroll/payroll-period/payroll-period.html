@@ -3,6 +3,15 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
+        title="Generate Payroll"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleShowForm('', $global.modePayroll.detail)"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.generate') }}
+      </button>
+      <button
         title="Insert Payroll"
         type="button"
         class="btn btn-primary mr-1"

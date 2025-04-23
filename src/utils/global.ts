@@ -207,9 +207,11 @@ export default {
     change: 9,
   },
   modePayroll: {
-    detail: "P1",
-    detailPayroll: "P2",
-    generate: "P3",
+    detail: 0,
+    save: 1,
+    submit: 2,
+    generate: 3,
+    disbursement: 4,
   },
   modeBreakdown: {
     insert: "00",
