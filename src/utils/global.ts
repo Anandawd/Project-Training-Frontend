@@ -207,11 +207,11 @@ export default {
     change: 9,
   },
   modePayroll: {
-    detail: 0,
-    save: 1,
-    submit: 2,
-    generate: 3,
-    disbursement: 4,
+    detail: 11,
+    save: 12,
+    submit: 13,
+    generate: 14,
+    disbursement: 15,
   },
   modeBreakdown: {
     insert: "00",

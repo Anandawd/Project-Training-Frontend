@@ -28,6 +28,7 @@ export default class Employee extends Vue {
   //table
   public rowData: any = [
     {
+      id: 1,
       period_name: "January 2025",
       period_date: "01/01/2025 - 31/01/2025",
       payment_date: "01/02/2025",
@@ -35,6 +36,7 @@ export default class Employee extends Vue {
       status: "Completed",
     },
     {
+      id: 2,
       period_name: "February 2025",
       period_date: "01/02/2025 - 30/02/2025",
       payment_date: "01/03/2025",
@@ -42,6 +44,7 @@ export default class Employee extends Vue {
       status: "Completed",
     },
     {
+      id: 3,
       period_name: "March 2025",
       period_date: "01/03/2025 - 31/03/2025",
       payment_date: "01/04/2025",
@@ -49,6 +52,7 @@ export default class Employee extends Vue {
       status: "Completed",
     },
     {
+      id: 4,
       period_name: "April 2025",
       period_date: "01/04/2025 - 30/04/2025",
       payment_date: "01/05/2025",
@@ -76,6 +80,7 @@ export default class Employee extends Vue {
 
   // dialog
   public showDialog: boolean = false;
+  public deleteParam: any;
 
   // AG GRID VARIABLE
   gridOptions: any = {};
@@ -131,19 +136,20 @@ export default class Employee extends Vue {
       {
         name: this.$t("commons.contextMenu.insert"),
         icon: generateIconContextMenuAgGrid("add_icon24"),
-        action: () => this.handleShowForm("", 0),
+        action: () => this.handleShowForm("", $global.modeData.insert),
       },
       {
         name: this.$t("commons.contextMenu.update"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () => this.handleShowForm(this.paramsData, 1),
+        action: () =>
+          this.handleShowForm(this.paramsData, $global.modeData.edit),
       },
       {
         name: this.$t("commons.contextMenu.detail"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("detail_icon24"),
-        action: () => this.handleShowDetail("", 0),
+        action: () => this.handleShowDetail("", $global.modePayroll.detail),
       },
     ];
     return result;
@@ -162,6 +168,12 @@ export default class Employee extends Vue {
     }
   }
 
+  // handleShowForm(params: any, mode: any) {
+  //   this.inputFormElement.initialize();
+  //   this.modeData = mode;
+  //   this.showForm = true;
+  // }
+
   handleShowForm(params: any, mode: any) {
     if (mode === $global.modePayroll.detail) {
       this.$router.push({
@@ -176,16 +188,16 @@ export default class Employee extends Vue {
   }
 
   handleShowDetail(params: any, mode: any) {
-    this.modePayroll = mode;
-    this.showDetail = true;
+    this.$router.push({
+      name: "PeriodDetail",
+      params: { id: params.id },
+    });
   }
 
-  // handleShowDetail(paramsData: any) {
-  //   this.$router.push({
-  //     name: "PeriodDetail",
-  //     params: { id: paramsData.id },
-  //   });
-  // }
+  handleDelete(params: any) {
+    this.showDialog = true;
+    this.deleteParam = params.id;
+  }
 
   // API FUNCTION
   async loadDataGrid(search: any = this.searchDefault) {
@@ -240,10 +252,9 @@ export default class Employee extends Vue {
 
   beforeMount(): void {
     this.searchOptions = [
-      { text: this.$t("commons.filter.payroll.employee.department"), value: 0 },
-      { text: this.$t("commons.filter.payroll.employee.position"), value: 1 },
+      { text: this.$t("commons.filter.payroll.payroll.periodName"), value: 0 },
+      { text: this.$t("commons.filter.payroll.payroll.status"), value: 1 },
       { text: this.$t("commons.filter.payroll.employee.placement"), value: 2 },
-      { text: this.$t("commons.filter.payroll.employee.supervisor"), value: 3 },
     ];
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {

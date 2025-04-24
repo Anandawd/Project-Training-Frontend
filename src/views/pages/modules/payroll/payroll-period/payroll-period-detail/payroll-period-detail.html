@@ -31,118 +31,6 @@
       </button>
     </div>
 
-    <transition v-show="showInsertModal">
-      <!-- insert payroll -->
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">{{$t('title.insert')}}</h3>
-        </div>
-        <div class="card-body">
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label
-                  >{{$t('commons.table.payroll.payroll.selectEmployees')}}</label
-                >
-                <select
-                  class="form-control"
-                  v-model="generateOptions.selectionMode"
-                >
-                  <option value="all">
-                    {{$t('commons.table.payroll.payroll.allEmployees')}}
-                  </option>
-                  <option value="department">
-                    {{$t('commons.table.payroll.employee.department')}}
-                  </option>
-                  <option value="position">
-                    {{$t('commons.table.payroll.employee.position')}}
-                  </option>
-                  <option value="selected">
-                    {{$t('commons.table.payroll.payroll.selectedEmployees')}}
-                  </option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <c-select
-                required
-                offset="right"
-                class="row mb-1"
-                selectType="column"
-                name="selectionMode"
-                labelName="name"
-                keyName="code"
-                v-model="generateOptions.selectionMode"
-                :label="$t('labels.payroll.payroll.selectEmployees')"
-                :columnOptions="columnOptions"
-                :options="departmentsOptions"
-              >
-              </c-select>
-            </div>
-            <div
-              class="col-md-6"
-              v-if="generateOptions.selectionMode === 'department'"
-            >
-              <c-select
-                required
-                offset="right"
-                class="row mb-1"
-                selectType="column"
-                name="departments"
-                labelName="name"
-                keyName="code"
-                v-model="form.departments"
-                :label="$t('labels.payroll.payroll.selectDepartment')"
-                :columnOptions="columnOptions"
-                :options="departmentsOptions"
-              >
-              </c-select>
-            </div>
-            <div
-              class="col-md-6"
-              v-if="generateOptions.selectionMode === 'position'"
-            >
-              <c-select
-                required
-                multiple
-                offset="right"
-                class="row mb-1"
-                selectType="column"
-                name="positions"
-                labelName="name"
-                keyName="code"
-                v-model="form.positions"
-                :label="$t('labels.payroll.payroll.selectPosition')"
-                :columnOptions="columnOptions"
-                :options="positionsOptions"
-              >
-              </c-select>
-            </div>
-          </div>
-
-          <!-- button -->
-          <div class="d-flex justify-content-end mt-2">
-            <button
-              type="button"
-              class="btn btn-danger mr-1 px-3"
-              @click="handleShowForm = false"
-            >
-              <i class="fa fa-times" aria-hidden="true"></i>
-              {{$t('buttons.close')}}
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary px-3"
-              @click="handleSubmit"
-            >
-              <i class="fa fa-play"></i>
-              {{$t('buttons.generate')}}
-            </button>
-          </div>
-        </div>
-      </div>
-    </transition>
-
     <!-- period detail -->
     <div class="card">
       <div class="card-header">
@@ -308,7 +196,7 @@
     </c-dialog>
 
     <!-- modal -->
-    <!-- <c-modal
+    <c-modal
       v-show="showInsertModal"
       :title="$t('buttons.generateForm')"
       size="lg"
@@ -384,6 +272,6 @@
           </div>
         </div>
       </div>
-    </c-modal> -->
+    </c-modal>
   </div>
 </section>

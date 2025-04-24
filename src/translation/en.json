@@ -3759,6 +3759,33 @@
       "website": "Website"
     },
     "filter": {
+      "payroll": {
+        "employee": {
+          "department": " Department",
+          "position": "Position",
+          "placement": "Placement",
+          "supervisor": "Supervisor"
+        },
+        "payroll": {
+          "monthly": "Monthly",
+          "weekly": "Weekly",
+          "daily": "Daily",
+          "january": "January",
+          "february": "February",
+          "march": "March",
+          "april": "April",
+          "may": "May",
+          "june": "June",
+          "july": "July",
+          "august": "August",
+          "september": "September",
+          "october": "October",
+          "november": "November",
+          "december": "December",
+          "periodName": "Period Name",
+          "status": "Status"
+        }
+      },
       "portalCode": "Portal Code",
       "cancelledBy": "Cancelled By",
       "competitor": "Competitor",
@@ -4130,32 +4157,7 @@
       "folio#": "Folio #",
       "booking#": "Booking #",
       "bookingNumber": "Booking Number",
-      "parent": "Parent",
-      "payroll": {
-        "employee": {
-          "department": " Department",
-          "position": "Position",
-          "placement": "Placement",
-          "supervisor": "Supervisor"
-        },
-        "payroll": {
-          "monthly": "Monthly",
-          "weekly": "Weekly",
-          "daily": "Daily",
-          "january": "January",
-          "february": "February",
-          "march": "March",
-          "april": "April",
-          "may": "May",
-          "june": "June",
-          "july": "July",
-          "august": "August",
-          "september": "September",
-          "october": "October",
-          "november": "November",
-          "december": "December"
-        }
-      }
+      "parent": "Parent"
     },
 
     "invite": "Invite",

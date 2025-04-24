@@ -5,7 +5,7 @@ import CSelect from "@/components/select/select.vue";
 import $global from "@/utils/global";
 import { focusOnInvalid } from "@/utils/validation";
 import { Form as CForm } from "vee-validate";
-import { nextTick, reactive, ref, watch } from "vue";
+import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import * as Yup from "yup";
 
@@ -98,11 +98,12 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      placement: "P001",
-      periodName: "April 2025",
-      periodType: "PT004",
+      placement: "",
+      periodName: "",
+      periodType: "",
       startDate: "",
       endDate: "",
+      paymentDate: "",
       remark: "",
     };
   }
@@ -131,16 +132,16 @@ export default class InputForm extends Vue {
     focusOnInvalid();
   }
 
-  private setEndDateForActiveStatus() {
-    if (this.form.employeeStatus === 1 || this.form.employeeStatus === "1") {
-      const today = new Date().toISOString().split("T")[0];
-      this.form.endDate = today;
-    }
-  }
-
   // validation
   get schema() {
-    return Yup.object().shape({});
+    return Yup.object().shape({
+      placement: Yup.string().required("Placement is required"),
+      periodName: Yup.string().required("Period name is required"),
+      periodType: Yup.string().required("Period type is required"),
+      startDate: Yup.string().required("Start date is required"),
+      endDate: Yup.string().required("End date is required"),
+      paymentDate: Yup.string().required("Payment date is required"),
+    });
   }
 
   get title() {
@@ -157,32 +158,5 @@ export default class InputForm extends Vue {
         `${this.$route.meta.pageTitle}`
       )}`;
     }
-  }
-
-  get isEndDateDisabled() {
-    return this.form.employeeStatus === 1 || this.form.employeeStatus === "1";
-  }
-
-  created(): void {
-    watch(
-      () => this.form.employeeStatus,
-      async (newStatus) => {
-        const status =
-          typeof newStatus === "string" ? parseInt(newStatus) : newStatus;
-
-        await nextTick();
-
-        if (status === 1) {
-          this.setEndDateForActiveStatus();
-        } else {
-          this.form.endDate = "";
-        }
-      },
-      { immediate: true }
-    );
-  }
-
-  mounted(): void {
-    this.setEndDateForActiveStatus();
   }
 }
