@@ -8,15 +8,17 @@ import { Form as CForm } from "vee-validate";
 import { nextTick, reactive, ref, watch } from "vue";
 import { Options, Vue } from "vue-class-component";
 import * as Yup from "yup";
+import CInputForm from "./component-input-form/component-input-form.vue";
 
 @Options({
-  name: "InputForm",
+  name: "EmployeePayrollDetail",
   components: {
     CForm,
     CInput,
     CSelect,
     CDatepicker,
     CRadio,
+    CInputForm,
   },
   props: {
     modeData: {
@@ -26,13 +28,19 @@ import * as Yup from "yup";
   },
   emits: ["save", "close"],
 })
-export default class InputForm extends Vue {
+export default class EmployeePayrollDetail extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
   public isSave: boolean = false;
+  public showDialog: boolean = false;
+  public showForm: boolean = false;
+  public dialogMessage: string = "";
+  public dialogAction: string = "";
+  public inputFormElement: any = ref();
 
-  public defaultForm: any = {};
+  // Employee Data
   public employee: any = ref({
+    id: 1,
     employee_id: "EMP001",
     employee_name: "John Doe",
     placement: "Amora Ubud",
@@ -46,16 +54,60 @@ export default class InputForm extends Vue {
     bank_account_holder: "JOHN DOE",
     bank_account_number: "101010101",
   });
-  public form: any = reactive({});
-  public formDetail: any = reactive({});
 
-  // form settings
-  public formats: Array<any> = [
-    { code: 1, name: ",0.;-,0." },
-    { code: 2, name: ",0.0;-,0.0" },
-    { code: 3, name: ",0.00;-,0.00" },
-    { code: 4, name: ",0.000;-,0.000" },
-  ];
+  // Period data
+  public periodData: any = reactive({
+    id: 1,
+    period_name: "April 2025",
+    placement: "Amora Ubud",
+    period_type: "Monthly",
+    start_date: "01/04/2025",
+    end_date: "30/04/2025",
+    payment_date: "01/05/2025",
+    remark: "",
+    status: "Draft",
+    created_by: "Budi Admin",
+    created_at: "25/04/2025",
+    updated_at: "25/04/2025",
+  });
+
+  // Payroll Data
+  public form: any = reactive({
+    employee_id: "",
+    period_id: "",
+
+    base_salary: 10000000,
+    allowance: 1000000,
+    incentive: 0,
+    thr: 0,
+    jkm: 33000,
+    jkk: 97900,
+    bpjs_health: 440000,
+    overtime: 0,
+    reimburse: 1000000,
+
+    jp: 110000,
+    jht: 220000,
+    position_deduction: 500000,
+    loan_installment: 0,
+    unpaid_leave: 0,
+    late_arrival: 0,
+
+    total_gross_salary_taxable: 11473000,
+    tax_rate: 4,
+    tax_amount: 458920,
+    tax_amount_floor_up: 459000,
+
+    total_gross_salary: 12473000,
+    total_deduction_salary: 830000,
+    take_home_pay: 11184000,
+
+    ter_category: "A",
+    is_taxable: true,
+    is_included_in_bpjs_health: true,
+    is_included_in_bpjs_employee: true,
+    status: "Draft",
+  });
 
   placementOptions: any = [
     {
@@ -67,28 +119,6 @@ export default class InputForm extends Vue {
       SubGroupName: "Placement",
       code: "P001",
       name: "Amora Canggu",
-    },
-  ];
-  periodTypeOptions: any = [
-    {
-      SubGroupName: "Period Type",
-      code: "PT001",
-      name: "Daily",
-    },
-    {
-      SubGroupName: "Period Type",
-      code: "PT002",
-      name: "Weekly",
-    },
-    {
-      SubGroupName: "Period Type",
-      code: "PT003",
-      name: "Bi-Weekly",
-    },
-    {
-      SubGroupName: "Period Type",
-      code: "PT004",
-      name: "Monthly",
     },
   ];
 
@@ -143,6 +173,12 @@ export default class InputForm extends Vue {
 
   onInvalidSubmit() {
     focusOnInvalid();
+  }
+
+  handleShowForm(params: any, mode: any) {
+    this.inputFormElement.initialize();
+    this.modeData = mode;
+    this.showForm = true;
   }
 
   private setEndDateForActiveStatus() {

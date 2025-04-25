@@ -22,10 +22,19 @@
         <i class="fa fa-paper-plane mr-1" aria-hidden="true"></i>{{
         $t('buttons.submit') }}
       </button>
+      <button
+        title="Insert Component"
+        type="button"
+        class="btn btn-warning mr-1"
+        @click="handleShowForm('', $global.modeData.insert)"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insert') }}
+      </button>
     </div>
 
     <!-- insert form -->
-    <!-- <transition>
+    <transition>
       <div class="px-2">
         <c-input-form
           ref="inputFormElement"
@@ -36,7 +45,7 @@
           @close="showForm=false"
         />
       </div>
-    </transition> -->
+    </transition>
 
     <!-- Employee Information -->
     <div class="card">
@@ -202,21 +211,21 @@
           <div class="col-md-4">
             <div class="d-flex justify-content-end mb-1">
               <font-awesome-icon
-                v-if="form.is_taxable"
+                v-show="form.is_taxable"
                 :icon="['fas', 'file-invoice-dollar']"
                 class="me-1 text-info"
                 data-bs-toggle="tooltip"
                 title="Included in Tax Income (PPH 21)"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_health"
+                v-show="form.is_included_in_bpjs_health"
                 :icon="['fas', 'medkit']"
                 class="me-1 text-success"
                 data-bs-toggle="tooltip"
                 title="Included in BPJS Kesehatan"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_employee"
+                v-show="form.is_included_in_bpjs_employee"
                 :icon="['fas', 'hard-hat']"
                 class="me-1 text-warning"
                 data-bs-toggle="tooltip"
@@ -232,7 +241,7 @@
               :max="9999999999"
               :min="0"
               :label="$t('labels.payroll.employee.baseSalary')"
-              v-model="form.baseSalary"
+              v-model="form.base_salary"
               formatted
               showZeroNumber
             />
@@ -240,21 +249,21 @@
           <div class="col-md-4">
             <div class="d-flex justify-content-end mb-1">
               <font-awesome-icon
-                v-if="form.is_taxable"
+                v-show="form.is_taxable"
                 :icon="['fas', 'file-invoice-dollar']"
                 class="me-1 text-info"
                 data-bs-toggle="tooltip"
                 title="Included in Tax Income (PPH 21)"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_health"
+                v-show="form.is_included_in_bpjs_health"
                 :icon="['fas', 'medkit']"
                 class="me-1 text-success"
                 data-bs-toggle="tooltip"
                 title="Included in BPJS Kesehatan"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_employee"
+                v-show="form.is_included_in_bpjs_employee"
                 :icon="['fas', 'hard-hat']"
                 class="me-1 text-warning"
                 data-bs-toggle="tooltip"
@@ -278,21 +287,21 @@
           <div class="col-md-4">
             <div class="d-flex justify-content-end mb-1">
               <font-awesome-icon
-                v-if="form.is_taxable"
+                v-show="form.is_taxable"
                 :icon="['fas', 'file-invoice-dollar']"
                 class="me-1 text-info"
                 data-bs-toggle="tooltip"
                 title="Included in Tax Income (PPH 21)"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_health"
+                v-show="form.is_included_in_bpjs_health"
                 :icon="['fas', 'medkit']"
                 class="me-1 text-success"
                 data-bs-toggle="tooltip"
                 title="Included in BPJS Kesehatan"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_employee"
+                v-show="form.is_included_in_bpjs_employee"
                 :icon="['fas', 'hard-hat']"
                 class="me-1 text-warning"
                 data-bs-toggle="tooltip"
@@ -316,21 +325,21 @@
           <div class="col-md-4">
             <div class="d-flex justify-content-end mb-1">
               <font-awesome-icon
-                v-if="form.is_taxable"
+                v-show="form.is_taxable"
                 :icon="['fas', 'file-invoice-dollar']"
                 class="me-1 text-info"
                 data-bs-toggle="tooltip"
                 title="Included in Tax Income (PPH 21)"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_health"
+                v-show="form.is_included_in_bpjs_health"
                 :icon="['fas', 'medkit']"
                 class="me-1 text-success"
                 data-bs-toggle="tooltip"
                 title="Included in BPJS Kesehatan"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_employee"
+                v-show="form.is_included_in_bpjs_employee"
                 :icon="['fas', 'hard-hat']"
                 class="me-1 text-warning"
                 data-bs-toggle="tooltip"
@@ -354,21 +363,21 @@
           <div class="col-md-4">
             <div class="d-flex justify-content-end mb-1">
               <font-awesome-icon
-                v-if="form.is_taxable"
+                v-show="form.is_taxable"
                 :icon="['fas', 'file-invoice-dollar']"
                 class="me-1 text-info"
                 data-bs-toggle="tooltip"
                 title="Included in Tax Income (PPH 21)"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_health"
+                v-show="form.is_included_in_bpjs_health"
                 :icon="['fas', 'medkit']"
                 class="me-1 text-success"
                 data-bs-toggle="tooltip"
                 title="Included in BPJS Kesehatan"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_employee"
+                v-show="form.is_included_in_bpjs_employee"
                 :icon="['fas', 'hard-hat']"
                 class="me-1 text-warning"
                 data-bs-toggle="tooltip"
@@ -392,21 +401,21 @@
           <div class="col-md-4">
             <div class="d-flex justify-content-end mb-1">
               <font-awesome-icon
-                v-if="form.is_taxable"
+                v-show="form.is_taxable"
                 :icon="['fas', 'file-invoice-dollar']"
                 class="me-1 text-info"
                 data-bs-toggle="tooltip"
                 title="Included in Tax Income (PPH 21)"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_health"
+                v-show="form.is_included_in_bpjs_health"
                 :icon="['fas', 'medkit']"
                 class="me-1 text-success"
                 data-bs-toggle="tooltip"
                 title="Included in BPJS Kesehatan"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_employee"
+                v-show="form.is_included_in_bpjs_employee"
                 :icon="['fas', 'hard-hat']"
                 class="me-1 text-warning"
                 data-bs-toggle="tooltip"
@@ -416,8 +425,8 @@
             <c-input
               disabled
               type="number"
-              name="Jkk"
-              id="Jkk"
+              name="JKK"
+              id="JKK"
               class="row mb-1"
               :max="9999999999"
               :min="0"
@@ -430,21 +439,21 @@
           <div class="col-md-4">
             <div class="d-flex justify-content-end mb-1">
               <font-awesome-icon
-                v-if="form.is_taxable"
+                v-show="form.is_taxable"
                 :icon="['fas', 'file-invoice-dollar']"
                 class="me-1 text-info"
                 data-bs-toggle="tooltip"
                 title="Included in Tax Income (PPH 21)"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_health"
+                v-show="form.is_included_in_bpjs_health"
                 :icon="['fas', 'medkit']"
                 class="me-1 text-success"
                 data-bs-toggle="tooltip"
                 title="Included in BPJS Kesehatan"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_employee"
+                v-show="form.is_included_in_bpjs_employee"
                 :icon="['fas', 'hard-hat']"
                 class="me-1 text-warning"
                 data-bs-toggle="tooltip"
@@ -468,21 +477,21 @@
           <div class="col-md-4">
             <div class="d-flex justify-content-end mb-1">
               <font-awesome-icon
-                v-if="form.is_taxable"
+                v-show="form.is_taxable"
                 :icon="['fas', 'file-invoice-dollar']"
                 class="me-1 text-info"
                 data-bs-toggle="tooltip"
                 title="Included in Tax Income (PPH 21)"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_health"
+                v-show="form.is_included_in_bpjs_health"
                 :icon="['fas', 'medkit']"
                 class="me-1 text-success"
                 data-bs-toggle="tooltip"
                 title="Included in BPJS Kesehatan"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_employee"
+                v-show="form.is_included_in_bpjs_employee"
                 :icon="['fas', 'hard-hat']"
                 class="me-1 text-warning"
                 data-bs-toggle="tooltip"
@@ -497,7 +506,7 @@
               class="row mb-1"
               :max="9999999999"
               :min="0"
-              :label="$t('labels.payroll.employee.overtime')"
+              :label="$t('labels.payroll.payroll.overtime')"
               v-model="form.overtime"
               formatted
               showZeroNumber
@@ -506,21 +515,21 @@
           <div class="col-md-4">
             <div class="d-flex justify-content-end mb-1">
               <font-awesome-icon
-                v-if="form.is_taxable"
+                v-show="form.is_taxable"
                 :icon="['fas', 'file-invoice-dollar']"
                 class="me-1 text-info"
                 data-bs-toggle="tooltip"
                 title="Included in Tax Income (PPH 21)"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_health"
+                v-show="form.is_included_in_bpjs_health"
                 :icon="['fas', 'medkit']"
                 class="me-1 text-success"
                 data-bs-toggle="tooltip"
                 title="Included in BPJS Kesehatan"
               />
               <font-awesome-icon
-                v-if="form.is_included_in_bpjs_employee"
+                v-show="form.is_included_in_bpjs_employee"
                 :icon="['fas', 'hard-hat']"
                 class="me-1 text-warning"
                 data-bs-toggle="tooltip"
@@ -543,6 +552,18 @@
           </div>
         </div>
       </div>
+      <div class="card-footer">
+        <div class="row">
+          <div class="col-6">
+            <strong class="text-muted"
+              >{{$t('labels.payroll.payroll.totalGrossSalary')}}</strong
+            >
+          </div>
+          <div class="col-6 d-flex justify-content-end">
+            Rp{{form.total_gross_salary}}
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Deductions -->
@@ -551,7 +572,248 @@
         <h3 class="card-title">{{$t('title.deductions')}}</h3>
       </div>
       <div class="card-body">
-        <div class="row"></div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="d-flex justify-content-end mb-1">
+              <font-awesome-icon
+                v-show="form.is_taxable"
+                :icon="['fas', 'file-invoice-dollar']"
+                class="me-1 text-info"
+                data-bs-toggle="tooltip"
+                title="Included in Tax Income (PPH 21)"
+              />
+              <font-awesome-icon
+                v-show="form.is_included_in_bpjs_health"
+                :icon="['fas', 'medkit']"
+                class="me-1 text-success"
+                data-bs-toggle="tooltip"
+                title="Included in BPJS Kesehatan"
+              />
+              <font-awesome-icon
+                v-show="form.is_included_in_bpjs_employee"
+                :icon="['fas', 'hard-hat']"
+                class="me-1 text-warning"
+                data-bs-toggle="tooltip"
+                title="Included in BPJS Ketenagakerjaan"
+              />
+            </div>
+            <c-input
+              disabled
+              type="number"
+              name="JP"
+              id="JP"
+              class="row mb-1"
+              :max="9999999999"
+              :min="0"
+              :label="$t('labels.payroll.payroll.jp')"
+              v-model="form.jp"
+              formatted
+              showZeroNumber
+            />
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex justify-content-end mb-1">
+              <font-awesome-icon
+                v-show="form.is_taxable"
+                :icon="['fas', 'file-invoice-dollar']"
+                class="me-1 text-info"
+                data-bs-toggle="tooltip"
+                title="Included in Tax Income (PPH 21)"
+              />
+              <font-awesome-icon
+                v-show="form.is_included_in_bpjs_health"
+                :icon="['fas', 'medkit']"
+                class="me-1 text-success"
+                data-bs-toggle="tooltip"
+                title="Included in BPJS Kesehatan"
+              />
+              <font-awesome-icon
+                v-show="form.is_included_in_bpjs_employee"
+                :icon="['fas', 'hard-hat']"
+                class="me-1 text-warning"
+                data-bs-toggle="tooltip"
+                title="Included in BPJS Ketenagakerjaan"
+              />
+            </div>
+            <c-input
+              disabled
+              type="number"
+              name="JHT"
+              id="JHT"
+              class="row mb-1"
+              :max="9999999999"
+              :min="0"
+              :label="$t('labels.payroll.payroll.jht')"
+              v-model="form.jht"
+              formatted
+              showZeroNumber
+            />
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex justify-content-end mb-1">
+              <font-awesome-icon
+                v-show="form.is_taxable"
+                :icon="['fas', 'file-invoice-dollar']"
+                class="me-1 text-info"
+                data-bs-toggle="tooltip"
+                title="Included in Tax Income (PPH 21)"
+              />
+              <font-awesome-icon
+                v-show="form.is_included_in_bpjs_health"
+                :icon="['fas', 'medkit']"
+                class="me-1 text-success"
+                data-bs-toggle="tooltip"
+                title="Included in BPJS Kesehatan"
+              />
+              <font-awesome-icon
+                v-show="form.is_included_in_bpjs_employee"
+                :icon="['fas', 'hard-hat']"
+                class="me-1 text-warning"
+                data-bs-toggle="tooltip"
+                title="Included in BPJS Ketenagakerjaan"
+              />
+            </div>
+            <c-input
+              disabled
+              type="number"
+              name="PositionDeduction"
+              id="PositionDeduction"
+              class="row mb-1"
+              :max="9999999999"
+              :min="0"
+              :label="$t('labels.payroll.payroll.positionDeduction')"
+              v-model="form.position_deduction"
+              formatted
+              showZeroNumber
+            />
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex justify-content-end mb-1">
+              <font-awesome-icon
+                v-show="form.is_taxable"
+                :icon="['fas', 'file-invoice-dollar']"
+                class="me-1 text-info"
+                data-bs-toggle="tooltip"
+                title="Included in Tax Income (PPH 21)"
+              />
+              <font-awesome-icon
+                v-show="form.is_included_in_bpjs_health"
+                :icon="['fas', 'medkit']"
+                class="me-1 text-success"
+                data-bs-toggle="tooltip"
+                title="Included in BPJS Kesehatan"
+              />
+              <font-awesome-icon
+                v-show="form.is_included_in_bpjs_employee"
+                :icon="['fas', 'hard-hat']"
+                class="me-1 text-warning"
+                data-bs-toggle="tooltip"
+                title="Included in BPJS Ketenagakerjaan"
+              />
+            </div>
+            <c-input
+              disabled
+              type="number"
+              name="UnpaidLeave"
+              id="UnpaidLeave"
+              class="row mb-1"
+              :max="9999999999"
+              :min="0"
+              :label="$t('labels.payroll.payroll.unpaidLeave')"
+              v-model="form.unpaid_leave"
+              formatted
+              showZeroNumber
+            />
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex justify-content-end mb-1">
+              <font-awesome-icon
+                v-show="form.is_taxable"
+                :icon="['fas', 'file-invoice-dollar']"
+                class="me-1 text-info"
+                data-bs-toggle="tooltip"
+                title="Included in Tax Income (PPH 21)"
+              />
+              <font-awesome-icon
+                v-show="form.is_included_in_bpjs_health"
+                :icon="['fas', 'medkit']"
+                class="me-1 text-success"
+                data-bs-toggle="tooltip"
+                title="Included in BPJS Kesehatan"
+              />
+              <font-awesome-icon
+                v-show="form.is_included_in_bpjs_employee"
+                :icon="['fas', 'hard-hat']"
+                class="me-1 text-warning"
+                data-bs-toggle="tooltip"
+                title="Included in BPJS Ketenagakerjaan"
+              />
+            </div>
+            <c-input
+              disabled
+              type="number"
+              name="LoanInstallment"
+              id="LoanInstallment"
+              class="row mb-1"
+              :max="9999999999"
+              :min="0"
+              :label="$t('labels.payroll.payroll.loanInstallment')"
+              v-model="form.loan_installment"
+              formatted
+              showZeroNumber
+            />
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex justify-content-end mb-1">
+              <font-awesome-icon
+                v-show="form.is_taxable"
+                :icon="['fas', 'file-invoice-dollar']"
+                class="me-1 text-info"
+                data-bs-toggle="tooltip"
+                title="Included in Tax Income (PPH 21)"
+              />
+              <font-awesome-icon
+                v-show="form.is_included_in_bpjs_health"
+                :icon="['fas', 'medkit']"
+                class="me-1 text-success"
+                data-bs-toggle="tooltip"
+                title="Included in BPJS Kesehatan"
+              />
+              <font-awesome-icon
+                v-show="form.is_included_in_bpjs_employee"
+                :icon="['fas', 'hard-hat']"
+                class="me-1 text-warning"
+                data-bs-toggle="tooltip"
+                title="Included in BPJS Ketenagakerjaan"
+              />
+            </div>
+            <c-input
+              disabled
+              type="number"
+              name="LateArrival"
+              id="LateArrival"
+              class="row mb-1"
+              :max="9999999999"
+              :min="0"
+              :label="$t('labels.payroll.payroll.lateArrival')"
+              v-model="form.late_arrival"
+              formatted
+              showZeroNumber
+            />
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="row">
+          <div class="col-6">
+            <strong class="text-muted"
+              >{{$t('labels.payroll.payroll.totalDeductionSalary')}}</strong
+            >
+          </div>
+          <div class="col-6 d-flex justify-content-end">
+            Rp{{form.total_deduction_salary}}
+          </div>
+        </div>
       </div>
     </div>
 
@@ -561,7 +823,38 @@
         <h3 class="card-title">{{$t('title.pph21')}}</h3>
       </div>
       <div class="card-body">
-        <div class="row"></div>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-h6">
+              {{$t('labels.payroll.payroll.totalGrossSalaryTaxable')}}
+            </p>
+          </div>
+          <div class="col-6 d-flex justify-content-end">
+            Rp {{form.total_gross_salary_taxable}}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-h6">
+              {{$t('labels.payroll.payroll.taxRate')}}
+              ({{$t('labels.payroll.payroll.terCategory')}}
+              {{form.ter_category}})
+            </p>
+          </div>
+          <div class="col-6 d-flex justify-content-end">{{form.tax_rate}}%</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="row">
+          <div class="col-6">
+            <strong class="text-muted"
+              >{{$t('labels.payroll.payroll.taxAmount')}}
+            </strong>
+          </div>
+          <div class="col-6 d-flex justify-content-end">
+            Rp{{form.tax_amount}} ~ Rp{{form.tax_amount_floor_up}}
+          </div>
+        </div>
       </div>
     </div>
 
@@ -571,7 +864,46 @@
         <h3 class="card-title">{{$t('title.totalPayment')}}</h3>
       </div>
       <div class="card-body">
-        <div class="row"></div>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-h6">
+              {{$t('labels.payroll.payroll.totalGrossSalary')}}
+            </p>
+          </div>
+          <div class="col-6 d-flex justify-content-end">
+            Rp{{form.total_gross_salary}}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-h6">
+              {{$t('labels.payroll.payroll.totalDeductionSalary')}}
+            </p>
+          </div>
+          <div class="col-6 d-flex justify-content-end">
+            Rp{{form.total_deduction_salary}}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-h6">{{$t('labels.payroll.payroll.pph21')}}</p>
+          </div>
+          <div class="col-6 d-flex justify-content-end">
+            Rp{{form.tax_amount_floor_up}}
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="row">
+          <div class="col-6">
+            <strong class="text-muted"
+              >{{$t('labels.payroll.payroll.takeHomePay')}}</strong
+            >
+          </div>
+          <div class="col-6 d-flex justify-content-end">
+            Rp{{form.take_home_pay}}
+          </div>
+        </div>
       </div>
     </div>
 
