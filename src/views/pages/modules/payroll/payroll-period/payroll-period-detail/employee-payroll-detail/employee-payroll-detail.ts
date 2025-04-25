@@ -2,10 +2,11 @@ import CDatepicker from "@/components/datepicker/datepicker.vue";
 import CInput from "@/components/input/input.vue";
 import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
+import { getError } from "@/utils/general";
 import $global from "@/utils/global";
-import { focusOnInvalid } from "@/utils/validation";
+import { getToastSuccess } from "@/utils/toast";
 import { Form as CForm } from "vee-validate";
-import { nextTick, reactive, ref, watch } from "vue";
+import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import * as Yup from "yup";
 import CInputForm from "./component-input-form/component-input-form.vue";
@@ -20,17 +21,10 @@ import CInputForm from "./component-input-form/component-input-form.vue";
     CRadio,
     CInputForm,
   },
-  props: {
-    modeData: {
-      type: Number,
-      require: true,
-    },
-  },
-  emits: ["save", "close"],
 })
 export default class EmployeePayrollDetail extends Vue {
   inputFormValidation: any = ref();
-  modeData: any;
+  modeData: any = $global.modeData.edit;
   public isSave: boolean = false;
   public showDialog: boolean = false;
   public showForm: boolean = false;
@@ -39,7 +33,7 @@ export default class EmployeePayrollDetail extends Vue {
   public inputFormElement: any = ref();
 
   // Employee Data
-  public employee: any = ref({
+  public employee: any = reactive({
     id: 1,
     employee_id: "EMP001",
     employee_name: "John Doe",
@@ -94,6 +88,7 @@ export default class EmployeePayrollDetail extends Vue {
     late_arrival: 0,
 
     total_gross_salary_taxable: 11473000,
+    pkp: 4000000,
     tax_rate: 4,
     tax_amount: 458920,
     tax_amount_floor_up: 459000,
@@ -109,88 +104,144 @@ export default class EmployeePayrollDetail extends Vue {
     status: "Draft",
   });
 
-  placementOptions: any = [
-    {
-      SubGroupName: "Placement",
-      code: "P001",
-      name: "Amora Ubud",
-    },
-    {
-      SubGroupName: "Placement",
-      code: "P001",
-      name: "Amora Canggu",
-    },
-  ];
-
-  columnOptions = [
-    {
-      label: "name",
-      field: "name",
-      align: "left",
-      width: "200",
-    },
-    {
-      field: "code",
-      label: "code",
-      align: "right",
-      width: "100",
-    },
-  ];
-
-  // actions
-  async resetForm() {
-    this.inputFormValidation.resetForm();
-    await this.$nextTick();
-    this.form = {
-      placement: "P001",
-      periodName: "April 2025",
-      periodType: "PT004",
-      startDate: "",
-      endDate: "",
-      remark: "",
-    };
-  }
-
-  initialize() {
-    this.resetForm();
-  }
-
-  onSubmit() {
-    this.inputFormValidation.$el.requestSubmit();
-  }
-
-  onSave() {
-    this.$emit("save", this.form);
-  }
-
-  checkForm() {
-    console.log(this.form);
-  }
-
-  onClose() {
-    this.$emit("close");
-  }
-
-  onInvalidSubmit() {
-    focusOnInvalid();
-  }
-
-  handleShowForm(params: any, mode: any) {
-    this.inputFormElement.initialize();
-    this.modeData = mode;
-    this.showForm = true;
-  }
-
-  private setEndDateForActiveStatus() {
-    if (this.form.employeeStatus === 1 || this.form.employeeStatus === "1") {
-      const today = new Date().toISOString().split("T")[0];
-      this.form.endDate = today;
-    }
-  }
-
   // validation
   get schema() {
     return Yup.object().shape({});
+  }
+
+  // Actions
+  async loadData() {
+    try {
+      const periodId = this.$route.params.periodId;
+      const employeeId = this.$route.params.employeeId;
+
+      // In a real implementation, you would make API calls here
+      // const { data } = await payrollAPI.GetEmployeePayrollDetail(periodId, employeeId);
+      // this.employee = data.employee;
+      // this.form = data.payroll;
+      // this.periodData = data.period;
+
+      this.form.employee_id = this.employee.employee_id;
+      this.form.period_id = this.periodData.id;
+
+      this.calculateTotals();
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  calculateTotals() {
+    // Calculate gross salary (base salary + all earnings)
+    this.form.gross_salary =
+      this.form.base_salary +
+      this.form.allowance +
+      this.form.incentive +
+      this.form.thr +
+      this.form.jkm +
+      this.form.jkk +
+      this.form.bpjs_health +
+      this.form.overtime +
+      this.form.reimburse;
+
+    // Calculate total deductions
+    this.form.total_deductions =
+      this.form.bpjs_health_employee +
+      this.form.bpjs_employment_employee +
+      this.form.tax_amount +
+      this.form.loan_installment +
+      this.form.absent_deduction +
+      this.form.late_arrival_deduction +
+      this.form.other_deduction;
+
+    // Calculate net salary
+    this.form.net_salary = this.form.gross_salary - this.form.total_deductions;
+  }
+
+  handleSave() {
+    this.isSave = true;
+    setTimeout(() => {
+      // In a real implementation, you would make an API call here
+      // const { status2 } = await payrollAPI.SaveEmployeePayroll(this.form);
+
+      this.form.status = "Draft";
+      getToastSuccess("Employee payroll saved successfully");
+      this.isSave = false;
+    }, 1000);
+  }
+
+  confirmAction() {
+    if (this.dialogAction === "submit") {
+      this.submitPayroll();
+    }
+    this.showDialog = false;
+  }
+
+  submitPayroll() {
+    this.isSave = true;
+    setTimeout(() => {
+      // In a real implementation, you would make an API call here
+      // const { status2 } = await payrollAPI.SubmitEmployeePayroll(this.form);
+
+      this.form.status = "Pending";
+      getToastSuccess("Employee payroll submitted for approval");
+      this.isSave = false;
+    }, 1000);
+  }
+
+  handleSubmitForApproval() {
+    this.dialogMessage =
+      "Are you sure you want to submit this employee payroll for approval?";
+    this.dialogAction = "submit";
+    this.showDialog = true;
+  }
+
+  goBack() {
+    this.$router.push({
+      name: "PeriodDetail",
+      params: { id: this.periodData.id },
+    });
+  }
+
+  created(): void {
+    this.loadData();
+  }
+
+  get canSubmit() {
+    return this.periodData.status === "Draft" && this.form.status === "Draft";
+  }
+
+  get totalEarnings() {
+    return (
+      this.form.base_salary +
+      this.form.allowance +
+      this.form.incentive +
+      this.form.thr +
+      this.form.jkm +
+      this.form.jkk +
+      this.form.bpjs_health +
+      this.form.overtime +
+      this.form.reimburse
+    );
+  }
+
+  get totalDeductions() {
+    return (
+      this.form.bpjs_health_employee +
+      this.form.bpjs_employment_employee +
+      this.form.tax_amount +
+      this.form.loan_installment +
+      this.form.absent_deduction +
+      this.form.late_arrival_deduction +
+      this.form.other_deduction
+    );
+  }
+
+  get netSalary() {
+    return this.totalEarnings - this.totalDeductions;
+  }
+
+  get formattedBaseSalary() {
+    return this.form.base_salary.toLocaleString();
   }
 
   get title() {
@@ -211,28 +262,5 @@ export default class EmployeePayrollDetail extends Vue {
 
   get isEndDateDisabled() {
     return this.form.employeeStatus === 1 || this.form.employeeStatus === "1";
-  }
-
-  created(): void {
-    watch(
-      () => this.form.employeeStatus,
-      async (newStatus) => {
-        const status =
-          typeof newStatus === "string" ? parseInt(newStatus) : newStatus;
-
-        await nextTick();
-
-        if (status === 1) {
-          this.setEndDateForActiveStatus();
-        } else {
-          this.form.endDate = "";
-        }
-      },
-      { immediate: true }
-    );
-  }
-
-  mounted(): void {
-    this.setEndDateForActiveStatus();
   }
 }
