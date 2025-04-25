@@ -7,11 +7,11 @@
   v-slot="{resetForm}"
 >
   <div class="card">
-    <div class="card-header">{{title}}</div>
+    <div class="card-header">{{$t('title.insertComponent')}}</div>
     <div class="card-body">
       <!-- form -->
       <div class="row mb-3">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <c-select
             required
             offset="right"
@@ -24,7 +24,7 @@
             :options="typeOptions"
           />
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <c-select
             required
             offset="right"
@@ -37,6 +37,39 @@
             :label="$t('labels.payroll.payroll.selectComponent')"
             :options="componentOptions"
             :columnOptions="columnOptions"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            type="number"
+            name="amount"
+            id="amount"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.amount')"
+            v-model="form.amount"
+            showZeroNumber
+            formatted
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            type="number"
+            name="quantity"
+            id="quantity"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.quantity')"
+            v-model="form.quantity"
+            showZeroNumber
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            type="text"
+            name="unit"
+            id="unit"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.unit')"
+            v-model="form.unit"
           />
         </div>
       </div>

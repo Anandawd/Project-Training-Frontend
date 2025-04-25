@@ -132,7 +132,8 @@
         "pph21": "PPh 21",
         "takeHomePay": "Take Home Pay",
         "selectType": "Select Type",
-        "selectComponent": "Select Component"
+        "selectComponent": "Select Component",
+        "amount": "Amount"
       },
       "reimbursement": {
         "reimbursement": "Reimbursement",
@@ -1577,6 +1578,7 @@
     "employeePayrollDetail": "Employee Payroll Detail",
     "employeeInformation": "Employee Information",
     "pph21": "PPh 21",
+    "insertComponent": "Insert Component",
     "totalPayment": "Total Payment",
     "payrollComponent": "Payroll Component",
     "earnings": "Earnings",

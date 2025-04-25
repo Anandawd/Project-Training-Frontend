@@ -2,7 +2,6 @@ import CDatepicker from "@/components/datepicker/datepicker.vue";
 import CInput from "@/components/input/input.vue";
 import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
-import $global from "@/utils/global";
 import { focusOnInvalid } from "@/utils/validation";
 import { Form as CForm } from "vee-validate";
 import { reactive, ref } from "vue";
@@ -10,7 +9,7 @@ import { Options, Vue } from "vue-class-component";
 import * as Yup from "yup";
 
 @Options({
-  name: "InputForm",
+  name: "ComponentInputForm ",
   components: {
     CForm,
     CInput,
@@ -26,14 +25,19 @@ import * as Yup from "yup";
   },
   emits: ["save", "close"],
 })
-export default class InputForm extends Vue {
+export default class ComponentInputForm extends Vue {
   inputFormValidation: any = ref();
-  modeData: any;
+  modeData!: any;
   public isSave: boolean = false;
 
   public defaultForm: any = {};
-  public form: any = reactive({});
-  public formDetail: any = reactive({});
+  public form: any = reactive({
+    type: "",
+    component: "",
+    amount: 0,
+    quantity: 1,
+    unit: "",
+  });
 
   // form settings
   public formats: Array<any> = [
@@ -100,16 +104,16 @@ export default class InputForm extends Vue {
 
   // actions
   async resetForm() {
-    this.inputFormValidation.resetForm();
+    if (this.inputFormValidation) {
+      this.inputFormValidation.resetForm();
+    }
     await this.$nextTick();
     this.form = {
-      placement: "",
-      periodName: "",
-      periodType: "",
-      startDate: "",
-      endDate: "",
-      paymentDate: "",
-      remark: "",
+      type: "",
+      component: "",
+      amount: 0,
+      quantity: 1,
+      unit: "",
     };
   }
 
@@ -118,15 +122,15 @@ export default class InputForm extends Vue {
   }
 
   onSubmit() {
-    this.inputFormValidation.$el.requestSubmit();
+    if (this.inputFormValidation && this.inputFormValidation.$el) {
+      this.inputFormValidation.$el.requestSubmit();
+    } else {
+      this.onSave();
+    }
   }
 
   onSave() {
     this.$emit("save", this.form);
-  }
-
-  checkForm() {
-    console.log(this.form);
   }
 
   onClose() {
@@ -140,28 +144,8 @@ export default class InputForm extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      placement: Yup.string().required("Placement is required"),
-      periodName: Yup.string().required("Period name is required"),
-      periodType: Yup.string().required("Period type is required"),
-      startDate: Yup.string().required("Start date is required"),
-      endDate: Yup.string().required("End date is required"),
-      paymentDate: Yup.string().required("Payment date is required"),
+      type: Yup.string().required("Component type is required"),
+      component: Yup.string().required("Component is required"),
     });
-  }
-
-  get title() {
-    if (this.modeData === $global.modeData.insert) {
-      return `${this.$t("commons.insert")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
-      )}`;
-    } else if (this.modeData === $global.modeData.edit) {
-      return `${this.$t("commons.update")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
-      )}`;
-    } else if (this.modeData === $global.modeData.duplicate) {
-      return `${this.$t("commons.duplicate")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
-      )}`;
-    }
   }
 }
