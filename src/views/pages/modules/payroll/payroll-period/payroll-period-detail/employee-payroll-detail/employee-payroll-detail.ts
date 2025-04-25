@@ -32,6 +32,20 @@ export default class InputForm extends Vue {
   public isSave: boolean = false;
 
   public defaultForm: any = {};
+  public employee: any = ref({
+    employee_id: "EMP001",
+    employee_name: "John Doe",
+    placement: "Amora Ubud",
+    department: "IT",
+    position: "Staff",
+    gender: "Male",
+    tax_number: "10101010",
+    maritial_status: "TK0",
+    employee_type: "Fixed Employee",
+    bank_name: "BRI",
+    bank_account_holder: "JOHN DOE",
+    bank_account_number: "101010101",
+  });
   public form: any = reactive({});
   public formDetail: any = reactive({});
 

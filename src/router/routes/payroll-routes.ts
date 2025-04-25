@@ -130,6 +130,30 @@ export default [
     },
   },
   {
+    path: "payroll-period/employee/:periodId/:employeeId",
+    name: "EmployeePayrollDetail",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-period/payroll-period-detail/employee-payroll-detail/employee-payroll-detail.vue"
+      ),
+    meta: {
+      pageTitle: "title.employeePayrollDetail",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.payroll", url: "/payroll/payroll-period" },
+        { title: "title.payrollPeriod", url: "/payroll/payroll-period" },
+        {
+          title: "title.payrollPeriodDetail",
+          url: (route: any) =>
+            `/payroll/payroll-period/detail/${route.params.periodId}`,
+        },
+        { title: "title.employeePayrollDetail", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
     path: "payroll-component",
     name: "Payroll Component",
     component: () =>

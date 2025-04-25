@@ -107,7 +107,17 @@
         "periodType": "Period Type",
         "selectDepartment": "Select Department",
         "selectPosition": "Select Position",
-        "selectedEmployee": "Selected Employee"
+        "selectedEmployee": "Selected Employee",
+        "paymentDate": "Payment Date",
+        "status": "Status",
+        "createdBy": "Created By",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At",
+        "totalEmployee": "Total Employee",
+        "totalGrossSalary": "Total Gross Salary",
+        "totalDeductions": "Total Deductions",
+        "totalPayment": "Total Payment",
+        "totalNetSalary": "Total Net Salary"
       },
       "reimbursement": {
         "reimbursement": "Reimbursement",
@@ -1549,6 +1559,10 @@
     "periodSummary": "Period Summary",
     "employeePayrollList": "Employee Payroll List",
     "payrollPeriodDetail": "Payroll Period Detail",
+    "employeePayrollDetail": "Employee Payroll Detail",
+    "employeeInformation": "Employee Information",
+    "pph21": "PPh 21",
+    "totalPayment": "Total Payment",
     "payrollComponent": "Payroll Component",
     "earnings": "Earnings",
     "deductions": "Deductions",
@@ -2424,6 +2438,7 @@
     "createDefaultField": "Create Default Field",
     "saveQueryAndFieldList": "Save Query and Field List",
     "generate": "Generate",
+    "generatePayroll": "Generate Payroll",
     "submit": "Submit"
   },
   "languages": {
@@ -3726,7 +3741,8 @@
       "printTodayBreakfastList": "Print Today Breakfast List",
       "printTomorrowBreakfastList": "Print Tomorrow Breakfast List",
       "printVoucher": "Print Voucher",
-      "exportToExcel": "Export To Excel"
+      "exportToExcel": "Export To Excel",
+      "detail": "Detail"
     },
     "menu": {
       "trackingData": "Tracking Data",

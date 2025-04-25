@@ -3,10 +3,21 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
+        title="Employee Payroll"
+        type="button"
+        class="btn btn-secondary mr-1"
+        @click="handleShowEmployeePayrollDetails('', $global.modePayroll.detail)"
+        :disabled="!canSubmit"
+      >
+        <i class="fa fa-save mr-1" aria-hidden="true"></i>{{
+        $t('buttons.detail')}}
+      </button>
+      <button
         title="Save Draft"
         type="button"
         class="btn btn-secondary mr-1"
         @click="handleSave('', $global.modePayroll.save)"
+        :disabled="!canSubmit"
       >
         <i class="fa fa-save mr-1" aria-hidden="true"></i>{{ $t('buttons.save')
         }}
@@ -15,95 +26,110 @@
         title="Submit for Approval"
         type="button"
         class="btn btn-success mr-1"
-        @click="handleSubmit('', $global.modeData.submit)"
+        @click="handleSubmitForApproval()"
+        :disabled="!canSubmit"
       >
         <i class="fa fa-paper-plane mr-1" aria-hidden="true"></i>{{
         $t('buttons.submit') }}
       </button>
       <button
-        title="Insert Payroll"
+        title="Generate Payroll"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('', $global.modeData.insert)"
+        @click="handleShowModal()"
+        :disabled="periodData.status !== 'Draft'"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
-        $t('buttons.insert') }}
+        $t('buttons.generate') }}
       </button>
     </div>
+
+    <!-- insert form -->
+    <!-- <transition>
+      <div class="px-2">
+        <c-input-form
+          ref="inputFormElement"
+          v-show="showForm"
+          :schema="schema"
+          :modeData="modeData"
+          @save="handleSave"
+          @close="showForm=false"
+        />
+      </div>
+    </transition> -->
 
     <!-- period detail -->
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">{{$t('title.periodDetail')}}</h3>
-        <div class="float-right">
-          <span class="badge text-bg-secondary px-3 py-2">Draft</span>
-          <!-- <span
-            class="badge text-bg-secondary px-3 py-2"
-            :class="getStatusBadgeClass(periodData.status)"
-            >{{periodData.status}}</span
-          > -->
-        </div>
       </div>
       <div class="card-body">
-        <p>Period Name</p>
-        <hr />
         <div class="row mb-3">
           <div class="col-md-6">
-            <div class="row">
-              <div class="col-3">
-                <p class="text-bold">Placement</p>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.periodName')}}</strong>
               </div>
-              <div class="col-9">: Amora Ubud</div>
+              <div class="col-8">: {{periodData.period_name}}</div>
             </div>
-            <div class="row">
-              <div class="col-3">
-                <p class="text-bold">Period Type</p>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>Placement</strong>
               </div>
-              <div class="col-9">: Monthly</div>
+              <div class="col-8">: {{periodData.placement}}</div>
             </div>
-            <div class="row">
-              <div class="col-3">
-                <p class="text-bold">Period Date</p>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.periodType')}}</strong>
               </div>
-              <div class="col-9">: 01/04/2025 - 31/04/2025</div>
+              <div class="col-8">: {{periodData.period_type}}</div>
             </div>
-            <div class="row">
-              <div class="col-3">
-                <p class="text-bold">Payment Date</p>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.periodDate')}}</strong>
               </div>
-              <div class="col-9">: 01/05/2025</div>
+              <div class="col-8">
+                : {{periodData.start_date}} - {{periodData.end_date}}
+              </div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.paymentDate')}}</strong>
+              </div>
+              <div class="col-8">: {{periodData.payment_date}}</div>
             </div>
           </div>
           <div class="col-md-6">
-            <div class="row">
-              <div class="col-3">
-                <p class="text-bold">{{$t('commons.table.status')}}</p>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.status')}}</strong>
               </div>
-              <div class="col-9">: Draft</div>
+              <div class="col-8">
+                :
+                <span
+                  class="badge text-bg-secondary px-3 py-1"
+                  :class="getStatusBadgeClass(periodData.status)"
+                  >{{periodData.status}}</span
+                >
+              </div>
             </div>
-            <div class="row">
-              <div class="col-3">
-                <p class="text-bold">
-                  {{$t('commons.table.payroll.payroll.createdBy')}}
-                </p>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.createdBy')}}</strong>
               </div>
-              <div class="col-9">: Budi Admin</div>
+              <div class="col-8">: {{periodData.created_by}}</div>
             </div>
-            <div class="row">
-              <div class="col-3">
-                <p class="text-bold">
-                  {{$t('commons.table.payroll.payroll.createdAt')}}
-                </p>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.createdAt')}}</strong>
               </div>
-              <div class="col-9">: 20/04/2025</div>
+              <div class="col-8">: {{periodData.created_at}}</div>
             </div>
-            <div class="row">
-              <div class="col-3">
-                <p class="text-bold">
-                  {{$t('commons.table.payroll.payroll.updateAt')}}
-                </p>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.updatedAt')}}</strong>
               </div>
-              <div class="col-9">: 20/04/2025</div>
+              <div class="col-8">: {{periodData.updated_at}}</div>
             </div>
           </div>
         </div>
@@ -116,39 +142,51 @@
         <h3 class="card-title">{{$t('title.periodSummary')}}</h3>
       </div>
       <div class="card-body">
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <div class="row">
-              <div class="col-3">
-                <p class="text-bold">
-                  {{$t('commons.table.payroll.employee.totalEmployee')}}
-                </p>
+        <div class="row">
+          <div class="col-md-6 col-lg-3 mb-3">
+            <div class="info-box bg-info">
+              <div class="info-box-content">
+                <span class="info-box-text"
+                  >{{$t('labels.payroll.payroll.totalEmployee')}}</span
+                >
+                <span class="info-box-number">{{totalEmployees}}</span>
               </div>
-              <div class="col-9">: 0 of 50</div>
             </div>
-            <div class="row">
-              <div class="col-3">
-                <p class="text-bold">
-                  {{$t('commons.table.payroll.payroll.totalGrossSalary')}}
-                </p>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <div class="info-box bg-success">
+              <div class="info-box-content">
+                <span class="info-box-text"
+                  >{{$t('labels.payroll.payroll.totalGrossSalary')}}</span
+                >
+                <span class="info-box-number"
+                  >Rp {{totalGrossSalary.toLocaleString()}}</span
+                >
               </div>
-              <div class="col-9">: Rp100,000,000</div>
             </div>
-            <div class="row">
-              <div class="col-3">
-                <p class="text-bold">
-                  {{$t('commons.table.payroll.payroll.totalDeductions')}}
-                </p>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <div class="info-box bg-danger">
+              <div class="info-box-content">
+                <span class="info-box-text"
+                  >{{$t('labels.payroll.payroll.totalDeductions')}}</span
+                >
+                <span class="info-box-number"
+                  >Rp {{totalDeductions.toLocaleString()}}</span
+                >
               </div>
-              <div class="col-9">: Rp20,000,000</div>
             </div>
-            <div class="row">
-              <div class="col-3">
-                <p class="text-bold">
-                  {{$t('commons.table.payroll.payroll.totalPayment')}}
-                </p>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <div class="info-box bg-warning">
+              <div class="info-box-content">
+                <span class="info-box-text"
+                  >{{$t('labels.payroll.payroll.totalNetSalary')}}</span
+                >
+                <span class="info-box-number"
+                  >Rp {{totalNetSalary.toLocaleString()}}</span
+                >
               </div>
-              <div class="col-9">: Rp80,000,000</div>
             </div>
           </div>
         </div>
@@ -184,27 +222,17 @@
       </div>
     </div>
 
-    <!-- dialog -->
-    <c-dialog
-      v-show="showDialog"
-      dialogTitle="Confirm"
-      size="sm"
-      @confirm="confirmAction"
-      @cancel="showDialog=false"
-    >
-      <template #body> {{dialogMessage}} </template>
-    </c-dialog>
-
     <!-- modal -->
     <c-modal
-      v-show="showInsertModal"
-      :title="$t('buttons.generateForm')"
+      v-show="showGenerateModal"
+      :title="$t('buttons.generatePayroll')"
       size="lg"
-      @close="showInsertModal = false"
-      @save="handleSaveForm"
+      @close="showGenerateModal = false"
+      @save="handleSaveModal"
     >
       <p>Select employees to generate payroll</p>
       <div class="row mb-3">
+        <!-- select option -->
         <div class="col-md-6">
           <div class="form-group">
             <label
@@ -229,6 +257,7 @@
             </select>
           </div>
         </div>
+        <!-- option department -->
         <div
           class="col-md-6"
           v-if="generateOptions.selectionMode === 'department'"
@@ -246,7 +275,9 @@
                 v-for="dept in departments"
                 :key="dept.id"
                 :value="dept.id"
-              ></option>
+              >
+                {{dept.name}}
+              </option>
             </select>
           </div>
         </div>
@@ -263,15 +294,43 @@
               v-model="generateOptions.positionId"
               multiple
             >
-              <option
-                v-for="pos in positions"
-                :key="pos.id"
-                :value="pos.id"
-              ></option>
+              <option v-for="pos in positions" :key="pos.id" :value="pos.id">
+                {{pos.name}}
+              </option>
             </select>
           </div>
         </div>
       </div>
+      <!-- button -->
+      <div class="d-flex justify-content-end mt-2">
+        <button
+          type="button"
+          class="btn btn-danger mr-1 px-3"
+          @click="handleShowModal = false"
+        >
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.cancel')}}
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary px-3"
+          @click="handleSaveModal"
+        >
+          <i class="fa fa-play"></i>
+          {{$t('buttons.generate')}}
+        </button>
+      </div>
     </c-modal>
+
+    <!-- dialog -->
+    <c-dialog
+      v-show="showDialog"
+      dialogTitle="Confirm"
+      size="sm"
+      @confirm="confirmAction"
+      @cancel="showDialog=false"
+    >
+      <template #body> {{dialogMessage}} </template>
+    </c-dialog>
   </div>
 </section>

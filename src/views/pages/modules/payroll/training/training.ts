@@ -77,7 +77,7 @@ export default class Training extends Vue {
     }
   }
   async handleEdit(params: any) {
-    this.showDialog2 = true;
+    // this.showDialog2 = true;
     this.modeData = $global.modeData.edit;
     await this.loadEditData(params.id);
     this.modeData = $global.modeData.edit;
