@@ -69,7 +69,9 @@
         "attendanceSummary": "Attendance Summary",
         "attendanceEntry": "Attendance Entry",
         "leaveApplication": "Leave Application",
-        "leaveApproval": "Leave Approval"
+        "leaveApproval": "Leave Approval",
+        "workSchedule": "Work Schedule",
+        "holidayCalender": "Holiday Calender"
       },
       "payroll": {
         "payroll": "Payroll",
@@ -2871,6 +2873,14 @@
           "selectPosition": "Select Position",
           "allEmployees": "All Employees",
           "selectedEmployees": "Selected Employees"
+        },
+        "attendance": {
+          "date": "Date",
+          "currentSchedule": "Current Schedule",
+          "checkIn": "Check In",
+          "checkOut": "Check Out",
+          "workingHour": "Working Hour",
+          "overtime": "Overtime"
         }
       },
       "reminderDate": "Reminder Date",

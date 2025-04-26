@@ -93,6 +93,24 @@ export default [
     },
   },
   {
+    path: "attendance",
+    name: "Attendance",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/attendance/attendance.vue"
+      ),
+    meta: {
+      pageTitle: "title.attendance",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.attendance" },
+        { title: "title.attendance", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
     path: "payroll-period",
     name: "Payroll Period",
     component: () =>
