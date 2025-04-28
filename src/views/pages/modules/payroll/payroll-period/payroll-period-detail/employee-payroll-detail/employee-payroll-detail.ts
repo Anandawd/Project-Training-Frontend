@@ -396,8 +396,6 @@ export default class EmployeePayrollDetail extends Vue {
 
   editComponent(component: any) {}
 
-  deleteComponent(component: any) {}
-
   handleShowForm(params: any, mode: any) {
     this.modeData = mode;
 
@@ -424,10 +422,6 @@ export default class EmployeePayrollDetail extends Vue {
   confirmAction() {
     if (this.dialogAction === "submit") {
       this.submitPayroll();
-    } else if (this.dialogAction === "delete") {
-      if (this.editingComponent) {
-        this.deleteComponent(this.editingComponent);
-      }
     }
     this.showDialog = false;
   }
