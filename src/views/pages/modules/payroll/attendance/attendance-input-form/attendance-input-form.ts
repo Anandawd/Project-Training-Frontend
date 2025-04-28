@@ -35,15 +35,7 @@ export default class InputForm extends Vue {
   public form: any = reactive({});
   public formDetail: any = reactive({});
 
-  // form settings
-  public formats: Array<any> = [
-    { code: 1, name: ",0.;-,0." },
-    { code: 2, name: ",0.0;-,0.0" },
-    { code: 3, name: ",0.00;-,0.00" },
-    { code: 4, name: ",0.000;-,0.000" },
-  ];
-
-  placementOptions: any = [
+  employeeOptions: any = [
     {
       SubGroupName: "Placement",
       code: "P001",
@@ -55,26 +47,26 @@ export default class InputForm extends Vue {
       name: "Amora Canggu",
     },
   ];
-  periodTypeOptions: any = [
+  statusOptions: any = [
     {
-      SubGroupName: "Period Type",
-      code: "PT001",
-      name: "Daily",
+      SubGroupName: "Status",
+      code: "PRESENT",
+      name: "Present",
     },
     {
-      SubGroupName: "Period Type",
-      code: "PT002",
-      name: "Weekly",
+      SubGroupName: "Status",
+      code: "LATE",
+      name: "Late",
     },
     {
-      SubGroupName: "Period Type",
-      code: "PT003",
-      name: "Bi-Weekly",
+      SubGroupName: "Status",
+      code: "ABSENT",
+      name: "Absent",
     },
     {
-      SubGroupName: "Period Type",
-      code: "PT004",
-      name: "Monthly",
+      SubGroupName: "Status",
+      code: "LEAVE",
+      name: "Leave",
     },
   ];
 

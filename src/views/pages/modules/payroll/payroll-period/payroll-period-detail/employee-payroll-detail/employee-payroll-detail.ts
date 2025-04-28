@@ -227,6 +227,24 @@ export default class EmployeePayrollDetail extends Vue {
         quantity: 1,
         remark: "Monthly transportation allowance",
       },
+      {
+        id: 3,
+        component_id: "EC002",
+        name: "Meal Allowance",
+        type: "earnings",
+        category: "Fixed Allowance",
+        amount: 1500000,
+        original_amount: 1500000,
+        prorata_amount: 1500000,
+        is_taxable: false,
+        is_included_in_bpjs_health: true,
+        is_included_in_bpjs_employee: true,
+        is_fixed: false,
+        apply_prorata: true,
+        unit: "",
+        quantity: 1,
+        remark: "Monthly transportation allowance",
+      },
       // Add more mock components as needed
       // Deduction Components
       {
@@ -347,7 +365,34 @@ export default class EmployeePayrollDetail extends Vue {
     }
   }
 
-  addComponent(componentData: any) {}
+  addComponent(componentData: any) {
+    const newId = new Date().getTime();
+
+    this.payrollComponents.push({
+      id: newId,
+      component_id: componentData.component_id,
+      name: componentData.name,
+      type: componentData.type,
+      category: componentData.category,
+      amount: componentData.amount,
+      original_amount: componentData.original_amount,
+      prorata_amount: componentData.prorata_amount,
+      is_taxable: componentData.is_taxable,
+      is_included_in_bpjs_health: componentData.is_included_in_bpjs_health,
+      is_included_in_bpjs_employee: componentData.is_included_in_bpjs_employee,
+      is_fixed: componentData.is_fixed,
+      apply_prorata: componentData.apply_prorata,
+      unit: componentData.unit,
+      quantity: componentData.quantity,
+      remark: componentData.remark,
+    });
+
+    this.calculateTotals();
+
+    this.showForm = false;
+
+    getToastSuccess("Component added successfully");
+  }
 
   editComponent(component: any) {}
 

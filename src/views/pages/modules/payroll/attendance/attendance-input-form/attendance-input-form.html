@@ -17,24 +17,70 @@
             offset="right"
             class="row mb-1"
             selectType="column"
-            name="placement"
+            name="selectedEmployee"
             labelName="name"
             keyName="code"
-            v-model="form.placement"
-            :label="$t('labels.payroll.employee.placement')"
+            v-model="form.selected_employee"
+            :label="$t('labels.payroll.attendance.selectEmployee')"
             :columnOptions="columnOptions"
-            :options="placementOptions"
+            :options="employeeOptions"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            disabled
+            id="department"
+            class="row mb-1"
+            type="text"
+            name="department"
+            v-model="form.employee_department"
+            :label="$t('labels.payroll.employee.department')"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            disabled
+            id="position"
+            class="row mb-1"
+            type="text"
+            name="position"
+            v-model="form.employee_position"
+            :label="$t('labels.payroll.employee.position')"
+          />
+        </div>
+        <div class="col-md-4 mb-1">
+          <c-datepicker
+            required
+            id="date"
+            customLabelClass="col-3"
+            :label="$t('labels.date')"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            name="date"
+            v-model="form.date"
           />
         </div>
         <div class="col-md-4">
           <c-input
             required
-            id="periodName"
+            id="checkIn"
             class="row mb-1"
             type="text"
-            name="periodName"
-            v-model="form.periodName"
-            :label="$t('labels.payroll.payroll.periodName')"
+            name="checkIn"
+            v-model="form.employee_check_in"
+            :label="$t('labels.payroll.attendance.checkIn')"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            id="checkOut"
+            class="row mb-1"
+            type="text"
+            name="checkOut"
+            v-model="form.employee_check_out"
+            :label="$t('labels.payroll.attendance.checkOut')"
           />
         </div>
         <div class="col-md-4">
@@ -42,58 +88,19 @@
             required
             offset="right"
             class="row mb-1"
-            name="periodType"
+            name="status"
             labelName="name"
             keyName="code"
-            v-model="form.periodType"
-            :label="$t('labels.payroll.payroll.periodType')"
-            :options="periodTypeOptions"
-          />
-        </div>
-        <div class="col-md-4 mb-1">
-          <c-datepicker
-            required
-            id="startDate"
-            customLabelClass="col-3"
-            label="Start Date"
-            type="date"
-            valueType="YYYY-MM-DD"
-            format="DD/MM/YYYY"
-            name="startDate"
-            v-model="form.startDate"
-          />
-        </div>
-        <div class="col-md-4 mb-1">
-          <c-datepicker
-            required
-            id="endDate"
-            customLabelClass="col-3"
-            label="End Date"
-            type="date"
-            valueType="YYYY-MM-DD"
-            format="DD/MM/YYYY"
-            name="endDate"
-            v-model="form.endDate"
-          />
-        </div>
-        <div class="col-md-4 mb-1">
-          <c-datepicker
-            required
-            id="Payment Date"
-            customLabelClass="col-3"
-            label="Payment Date"
-            type="date"
-            valueType="YYYY-MM-DD"
-            format="DD/MM/YYYY"
-            name="paymentDate"
-            v-model="form.paymentDate"
+            v-model="form.employe_status"
+            :label="$t('labels.payroll.attendance.status')"
+            :options="statusOptions"
           />
         </div>
         <div class="col-md-4 mb-1">
           <c-input
             id="remark"
             class="row mb-1"
-            type="textarea"
+            type="text"
             name="remark"
             v-model="form.remark"
             :label="$t('labels.remark')"

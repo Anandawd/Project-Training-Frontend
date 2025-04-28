@@ -71,7 +71,16 @@
         "leaveApplication": "Leave Application",
         "leaveApproval": "Leave Approval",
         "workSchedule": "Work Schedule",
-        "holidayCalender": "Holiday Calender"
+        "holidayCalender": "Holiday Calender",
+        "selectEmployee": "Select Employee",
+        "checkIn": "Check In",
+        "checkOut": "Check Out",
+        "status": "Status",
+        "workingDays": "Working Days",
+        "present": "Present",
+        "late": "Late",
+        "absent": "Absent",
+        "leave": "Leave"
       },
       "payroll": {
         "payroll": "Payroll",
@@ -137,6 +146,7 @@
         "selectComponent": "Select Component",
         "amount": "Amount"
       },
+
       "reimbursement": {
         "reimbursement": "Reimbursement",
         "reimbursementApplication": "Reimbursement Application",
@@ -2458,7 +2468,11 @@
     "saveQueryAndFieldList": "Save Query and Field List",
     "generate": "Generate",
     "generatePayroll": "Generate Payroll",
-    "submit": "Submit"
+    "submit": "Submit",
+    "export": "Export",
+    "import": "Import",
+    "selectImage": "Select Image",
+    "selectFile": "Select File"
   },
   "languages": {
     "english": "English",
@@ -2879,7 +2893,7 @@
           "currentSchedule": "Current Schedule",
           "checkIn": "Check In",
           "checkOut": "Check Out",
-          "workingHour": "Working Hour",
+          "workingHours": "Working Hours",
           "overtime": "Overtime"
         }
       },
@@ -4110,7 +4124,11 @@
         "hkStore": "HK Store",
         "laundry": "Laundry",
         "room": "Room",
-        "inactive": "Inactive"
+        "inactive": "Inactive",
+        "showPresent": "Show Present",
+        "showLate": "Show Late",
+        "showAbsent": "Show Absent",
+        "showLeave": "Show Leave"
       },
       "select": {
         "buildingFloor": "Building/Floor",

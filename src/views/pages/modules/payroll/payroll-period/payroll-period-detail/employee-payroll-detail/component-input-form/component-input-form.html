@@ -72,6 +72,48 @@
             v-model="form.unit"
           />
         </div>
+        <div class="col-md-4">
+          <c-select
+            disabled
+            required
+            offset="right"
+            class="row mb-1"
+            name="type"
+            labelName="name"
+            keyName="code"
+            v-model="form.is_taxable"
+            :label="$t('labels.payroll.payroll.taxable')"
+            :options="taxableOptions"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            disabled
+            required
+            offset="right"
+            class="row mb-1"
+            name="type"
+            labelName="name"
+            keyName="code"
+            v-model="form.is_included_in_bpjs_employee"
+            :label="$t('labels.payroll.payroll.includedBpjsEmployee')"
+            :options="taxableOptions"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            disabled
+            required
+            offset="right"
+            class="row mb-1"
+            name="type"
+            labelName="name"
+            keyName="code"
+            v-model="form.is_included_in_bpjs_health"
+            :label="$t('labels.payroll.payroll.includedBpjsHealth')"
+            :options="taxableOptions"
+          />
+        </div>
       </div>
 
       <!-- buttons -->

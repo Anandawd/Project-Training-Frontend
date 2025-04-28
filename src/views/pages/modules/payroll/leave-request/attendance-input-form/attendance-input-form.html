@@ -1,0 +1,124 @@
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">{{title}}</div>
+    <div class="card-body">
+      <!-- form -->
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            selectType="column"
+            name="selectedEmployee"
+            labelName="name"
+            keyName="code"
+            v-model="form.selected_employee"
+            :label="$t('labels.payroll.attendance.selectEmployee')"
+            :columnOptions="columnOptions"
+            :options="employeeOptions"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            disabled
+            id="department"
+            class="row mb-1"
+            type="text"
+            name="department"
+            v-model="form.employee_department"
+            :label="$t('labels.payroll.employee.department')"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            disabled
+            id="position"
+            class="row mb-1"
+            type="text"
+            name="position"
+            v-model="form.employee_position"
+            :label="$t('labels.payroll.employee.position')"
+          />
+        </div>
+        <div class="col-md-4 mb-1">
+          <c-datepicker
+            required
+            id="date"
+            customLabelClass="col-3"
+            :label="$t('labels.date')"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            name="date"
+            v-model="form.date"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            id="checkIn"
+            class="row mb-1"
+            type="text"
+            name="checkIn"
+            v-model="form.employee_check_in"
+            :label="$t('labels.payroll.attendance.checkIn')"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            id="checkOut"
+            class="row mb-1"
+            type="text"
+            name="checkOut"
+            v-model="form.employee_check_out"
+            :label="$t('labels.payroll.attendance.checkOut')"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            name="status"
+            labelName="name"
+            keyName="code"
+            v-model="form.employe_status"
+            :label="$t('labels.payroll.attendance.status')"
+            :options="statusOptions"
+          />
+        </div>
+        <div class="col-md-4 mb-1">
+          <c-input
+            id="remark"
+            class="row mb-1"
+            type="text"
+            name="remark"
+            v-model="form.remark"
+            :label="$t('labels.remark')"
+          />
+        </div>
+      </div>
+
+      <!-- buttons -->
+      <div class="d-flex justify-content-end mt-2">
+        <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.close')}}
+        </button>
+        <button type="button" class="btn btn-primary px-3" @click="onSubmit">
+          <i class="fa fa-save"></i>
+          {{$t('buttons.save')}}
+        </button>
+      </div>
+    </div>
+  </div>
+</c-form>

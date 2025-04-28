@@ -111,8 +111,80 @@ export default [
     },
   },
   {
+    path: "leave-application",
+    name: "LeaveApplication",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/attendance/attendance.vue"
+      ),
+    meta: {
+      pageTitle: "title.leaveApplication",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.attendance" },
+        { title: "title.leaveApplication", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
+    path: "leave-approval",
+    name: "LeaveApproval",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/attendance/attendance.vue"
+      ),
+    meta: {
+      pageTitle: "title.leaveApproval",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.attendance" },
+        { title: "title.leaveApproval", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
+    path: "work-schedule",
+    name: "WorkSchedule",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/attendance/attendance.vue"
+      ),
+    meta: {
+      pageTitle: "title.wokSchedule",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.attendance" },
+        { title: "title.wokSchedule", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
+    path: "holiday-calender",
+    name: "HolidayCalender",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/attendance/attendance.vue"
+      ),
+    meta: {
+      pageTitle: "title.holidayCalender",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.attendance" },
+        { title: "title.holidayCalender", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
     path: "payroll-period",
-    name: "Payroll Period",
+    name: "PayrollPeriod",
     component: () =>
       import(
         /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-period/payroll-period.vue"
@@ -173,7 +245,7 @@ export default [
   },
   {
     path: "payroll-component",
-    name: "Payroll Component",
+    name: "PayrollComponent",
     component: () =>
       import(
         /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-component/payroll-component.vue"
@@ -191,7 +263,7 @@ export default [
   },
   {
     path: "payroll-approval",
-    name: "Payroll Approval",
+    name: "PayrollApproval",
     component: () =>
       import(
         /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-period/payroll-period.vue"
@@ -209,7 +281,7 @@ export default [
   },
   {
     path: "payroll-disbursement",
-    name: "Payroll Disbursement",
+    name: "PayrollDisbursement",
     component: () =>
       import(
         /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-period/payroll-period.vue"

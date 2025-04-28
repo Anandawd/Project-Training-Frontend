@@ -51,8 +51,11 @@
         <c-input-form
           ref="inputFormElement"
           v-show="showForm"
-          :schema="schema"
           :modeData="modeData"
+          :employeeId="employeeId"
+          :periodId="periodId"
+          :existingComponents="payrollComponents"
+          :schema="schema"
           @save="handleSave"
           @close="showForm=false"
         />
@@ -252,7 +255,7 @@
               />
             </div>
             <c-input
-              disabled
+              :disabled="is_fixed"
               type="number"
               :name="component.name"
               :id="component.name"
@@ -320,7 +323,7 @@
               />
             </div>
             <c-input
-              disabled
+              :disabled="!is_fixed"
               type="number"
               :name="component.name"
               :id="component.name"

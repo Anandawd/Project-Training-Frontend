@@ -199,6 +199,8 @@ export default class Employee extends Vue {
     this.deleteParam = params.id;
   }
 
+  handleMenu() {}
+
   // API FUNCTION
   async loadDataGrid(search: any = this.searchDefault) {
     try {

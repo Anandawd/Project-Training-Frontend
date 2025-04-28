@@ -199,7 +199,6 @@ export default class ComponentInputForm extends Vue {
     },
   ];
 
-  // Deductions components
   public deductionsComponentOptions: any = [
     {
       SubGroupName: "Statutory",
@@ -315,7 +314,6 @@ export default class ComponentInputForm extends Vue {
     },
   ];
 
-  // Statutory components (Company Contributions)
   public statutoryComponentOptions: any = [
     {
       SubGroupName: "Company Contribution",
@@ -386,6 +384,19 @@ export default class ComponentInputForm extends Vue {
       default_amount: 0,
       default_quantity: 1,
       unit: "%",
+    },
+  ];
+
+  public taxableOptions: any = [
+    {
+      SubGroupName: "Options",
+      code: "OP02",
+      name: "Yes",
+    },
+    {
+      SubGroupName: "Options",
+      code: "OP02",
+      name: "No",
     },
   ];
 
