@@ -111,37 +111,55 @@ export default [
     },
   },
   {
-    path: "leave-application",
-    name: "LeaveApplication",
+    path: "fingerprint-enrollment",
+    name: "FingerprintEnrollment",
     component: () =>
       import(
         /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/attendance/attendance.vue"
       ),
     meta: {
-      pageTitle: "title.leaveApplication",
+      pageTitle: "title.fingerprintEnrollment",
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
         { title: "title.home", url: "/" },
         { title: "title.attendance" },
-        { title: "title.leaveApplication", active: true },
+        { title: "title.fingerprintEnrollment", active: true },
       ],
       menu: getRouterMenu(menu, 1),
     },
   },
   {
-    path: "leave-approval",
-    name: "LeaveApproval",
+    path: "leave-requests",
+    name: "LeaveRequests",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/leave-requests/leave-requests.vue"
+      ),
+    meta: {
+      pageTitle: "title.leaveRequests",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.attendance" },
+        { title: "title.leaveRequests", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
+    path: "leave-approvals",
+    name: "LeaveApprovals",
     component: () =>
       import(
         /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/attendance/attendance.vue"
       ),
     meta: {
-      pageTitle: "title.leaveApproval",
+      pageTitle: "title.leaveApprovals",
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
         { title: "title.home", url: "/" },
         { title: "title.attendance" },
-        { title: "title.leaveApproval", active: true },
+        { title: "title.leaveApprovals", active: true },
       ],
       menu: getRouterMenu(menu, 1),
     },
@@ -154,12 +172,12 @@ export default [
         /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/attendance/attendance.vue"
       ),
     meta: {
-      pageTitle: "title.wokSchedule",
+      pageTitle: "title.workSchedule",
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
         { title: "title.home", url: "/" },
         { title: "title.attendance" },
-        { title: "title.wokSchedule", active: true },
+        { title: "title.workSchedule", active: true },
       ],
       menu: getRouterMenu(menu, 1),
     },
@@ -183,25 +201,25 @@ export default [
     },
   },
   {
-    path: "payroll-period",
-    name: "PayrollPeriod",
+    path: "payroll-periods",
+    name: "PayrollPeriods",
     component: () =>
       import(
         /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-period/payroll-period.vue"
       ),
     meta: {
-      pageTitle: "title.payrollPeriod",
+      pageTitle: "title.payrollPeriods",
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
         { title: "title.home", url: "/" },
         { title: "title.payroll" },
-        { title: "title.payrollPeriod", active: true },
+        { title: "title.payrollPeriods", active: true },
       ],
       menu: getRouterMenu(menu, 1),
     },
   },
   {
-    path: "payroll-period/detail/:id?",
+    path: "payroll-periods/detail/:id?",
     name: "PeriodDetail",
     component: () =>
       import(
@@ -213,14 +231,14 @@ export default [
       breadcrumb: [
         { title: "title.home", url: "/" },
         { title: "title.payroll", url: "/payroll/payroll-period" },
-        { title: "title.payrollPeriod", url: "/payroll/payroll-period" },
-        { title: "title.payrollPeriodDetail", active: true },
+        { title: "title.payrollPeriods", url: "/payroll/payroll-periods" },
+        { title: "title.payrollPeriodsDetail", active: true },
       ],
       menu: getRouterMenu(menu, 1),
     },
   },
   {
-    path: "payroll-period/employee/:periodId/:employeeId",
+    path: "payroll-periods/employee/:periodId/:employeeId",
     name: "EmployeePayrollDetail",
     component: () =>
       import(
@@ -231,12 +249,12 @@ export default [
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
         { title: "title.home", url: "/" },
-        { title: "title.payroll", url: "/payroll/payroll-period" },
-        { title: "title.payrollPeriod", url: "/payroll/payroll-period" },
+        { title: "title.payroll", url: "/payroll/payroll-periods" },
+        { title: "title.payrollPeriods", url: "/payroll/payroll-periods" },
         {
-          title: "title.payrollPeriodDetail",
+          title: "title.payrollPeriodsDetail",
           url: (route: any) =>
-            `/payroll/payroll-period/detail/${route.params.periodId}`,
+            `/payroll/payroll-periods/detail/${route.params.periodId}`,
         },
         { title: "title.employeePayrollDetail", active: true },
       ],
@@ -244,37 +262,37 @@ export default [
     },
   },
   {
-    path: "payroll-component",
-    name: "PayrollComponent",
+    path: "payroll-components",
+    name: "PayrollComponents",
     component: () =>
       import(
         /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-component/payroll-component.vue"
       ),
     meta: {
-      pageTitle: "title.payrollComponent",
+      pageTitle: "title.payrollComponents",
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
         { title: "title.home", url: "/" },
         { title: "title.payroll" },
-        { title: "title.payrollComponent", active: true },
+        { title: "title.payrollComponents", active: true },
       ],
       menu: getRouterMenu(menu, 1),
     },
   },
   {
-    path: "payroll-approval",
-    name: "PayrollApproval",
+    path: "payroll-approvals",
+    name: "PayrollApprovals",
     component: () =>
       import(
         /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-period/payroll-period.vue"
       ),
     meta: {
-      pageTitle: "title.payrollApproval",
+      pageTitle: "title.payrollApprovals",
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
         { title: "title.home", url: "/" },
         { title: "title.payroll" },
-        { title: "title.payrollApproval", active: true },
+        { title: "title.payrollApprovals", active: true },
       ],
       menu: getRouterMenu(menu, 1),
     },
