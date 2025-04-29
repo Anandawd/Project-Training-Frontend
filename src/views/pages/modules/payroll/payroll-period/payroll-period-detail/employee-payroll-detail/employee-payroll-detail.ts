@@ -4,12 +4,31 @@ import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
 import { getError } from "@/utils/general";
 import $global from "@/utils/global";
-import { getToastSuccess } from "@/utils/toast";
+import { getToastError, getToastSuccess } from "@/utils/toast";
 import { Form as CForm } from "vee-validate";
 import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import * as Yup from "yup";
 import CInputForm from "./component-input-form/component-input-form.vue";
+
+interface PayrollComponent {
+  id: number;
+  component_id: string;
+  name: string;
+  type: "earnings" | "deductions" | "statutory";
+  category: string;
+  amount: number;
+  original_amount: number;
+  prorata_amount: number;
+  quantity: number;
+  is_taxable: boolean;
+  is_included_in_bpjs_health: boolean;
+  is_included_in_bpjs_employee: boolean;
+  is_fixed: boolean;
+  apply_prorata: boolean;
+  unit: string;
+  remark: string;
+}
 
 @Options({
   name: "EmployeePayrollDetail",
@@ -41,9 +60,6 @@ export default class EmployeePayrollDetail extends Vue {
   public dialogMessage: string = "";
   public dialogAction: string = "";
 
-  // Component editing
-  public editingComponent: any = null;
-
   // Employee Data
   public employee: any = reactive({
     id: 0,
@@ -59,6 +75,7 @@ export default class EmployeePayrollDetail extends Vue {
     bank_name: "",
     bank_account_holder: "",
     bank_account_number: "",
+    salary_type: "monthly",
   });
 
   // Period data
@@ -78,7 +95,7 @@ export default class EmployeePayrollDetail extends Vue {
   });
 
   // Payroll Components
-  public payrollComponents: any = reactive([]);
+  public payrollComponents: PayrollComponent[] = reactive([]);
 
   // Payroll Data
   public form: any = reactive({
@@ -103,6 +120,7 @@ export default class EmployeePayrollDetail extends Vue {
     total_gross_salary_taxable: 0,
     total_deductions_salary_taxable: 0,
     pkp: 0,
+    tax_rate: 0,
     ter_tax_rate: 0,
     progressive_tax_rate_layer_1: 5,
     progressive_tax_rate_layer_2: 15,
@@ -118,6 +136,10 @@ export default class EmployeePayrollDetail extends Vue {
 
     ter_category: "A",
     status: "Draft",
+    workdays_in_month: 22,
+    actual_workdays: 22,
+    prorata_factor: 1,
+    yearly_calculation: false,
   });
 
   // validation
@@ -132,8 +154,8 @@ export default class EmployeePayrollDetail extends Vue {
   async loadData() {
     try {
       this.isLoading = true;
-      const periodId = this.$route.params.periodId;
-      const employeeId = this.$route.params.employeeId;
+      this.periodId = this.$route.params.periodId;
+      this.employeeId = this.$route.params.employeeId;
 
       // In a real implementation, you would make API calls here
       // const { data } = await payrollAPI.GetEmployeePayrollDetail(this.periodId, this.employeeId);
@@ -149,9 +171,12 @@ export default class EmployeePayrollDetail extends Vue {
       this.form.employee_id = this.employee.employee_id;
       this.form.period_id = this.periodData.id;
 
+      // Calculate workdays and prorata factor
+      // this.calculateWorkdaysAndProrata();
+
       // Calculate all totals
-      const periodDate = "april";
-      this.calculateTotals(periodDate);
+
+      this.calculateTotals();
     } catch (error) {
       getError(error);
     } finally {
@@ -169,8 +194,9 @@ export default class EmployeePayrollDetail extends Vue {
       position: "Staff",
       gender: "Male",
       tax_number: "10101010",
-      maritial_status: "TK0",
+      maritial_status: "TK/0",
       employee_type: "Fixed Employee",
+      salary_type: "monthly",
       bank_name: "BRI",
       bank_account_holder: "JOHN DOE",
       bank_account_number: "101010101",
@@ -192,25 +218,26 @@ export default class EmployeePayrollDetail extends Vue {
     };
 
     this.payrollComponents = [
-      // Earnings Components
+      // Base salary component
       {
         id: 1,
         component_id: "EC001",
         name: "Base Salary",
         type: "earnings",
         category: "Basic",
-        amount: 10000000,
-        original_amount: 10000000,
-        prorata_amount: 10000000,
+        amount: 7000000,
+        original_amount: 7000000,
+        prorata_amount: 7000000,
+        quantity: 1,
         is_taxable: true,
         is_included_in_bpjs_health: true,
         is_included_in_bpjs_employee: true,
         is_fixed: true,
         apply_prorata: true,
         unit: "",
-        quantity: 1,
-        remark: "",
+        remark: "Monthly base salary",
       },
+      // Earnings Components
       {
         id: 2,
         component_id: "EC002",
@@ -220,34 +247,51 @@ export default class EmployeePayrollDetail extends Vue {
         amount: 1500000,
         original_amount: 1500000,
         prorata_amount: 1500000,
+        quantity: 1,
         is_taxable: true,
         is_included_in_bpjs_health: true,
         is_included_in_bpjs_employee: true,
         is_fixed: true,
         apply_prorata: true,
         unit: "",
-        quantity: 1,
         remark: "Monthly transportation allowance",
       },
       {
         id: 3,
-        component_id: "EC002",
+        component_id: "EC003",
         name: "Meal Allowance",
         type: "earnings",
         category: "Fixed Allowance",
-        amount: 1500000,
-        original_amount: 1500000,
-        prorata_amount: 1500000,
+        amount: 1000000,
+        original_amount: 1000000,
+        prorata_amount: 1000000,
+        quantity: 1,
         is_taxable: false,
         is_included_in_bpjs_health: true,
         is_included_in_bpjs_employee: true,
         is_fixed: false,
         apply_prorata: true,
         unit: "",
-        quantity: 1,
-        remark: "Monthly transportation allowance",
+        remark: "Monthly meal allowance",
       },
-      // Add more mock components as needed
+      {
+        id: 4,
+        component_id: "EC005",
+        name: "Overtime",
+        type: "earnings",
+        category: "Variable Allowance",
+        amount: 500000,
+        original_amount: 500000,
+        prorata_amount: 500000,
+        quantity: 10,
+        is_taxable: true,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_fixed: false,
+        apply_prorata: false,
+        unit: "Hours",
+        remark: "Overtime hours",
+      },
       // Deduction Components
       {
         id: 9,
@@ -300,11 +344,10 @@ export default class EmployeePayrollDetail extends Vue {
   async savePayroll() {
     try {
       this.isSave = true;
-      const periodDate = "april";
-      this.calculateTotals(periodDate);
+
+      this.calculateTotals();
 
       const payrollData = {
-        // id: null,
         employee_id: this.employeeId,
         period_id: this.periodId,
         basic_salary: this.form.base_salary,
@@ -314,14 +357,13 @@ export default class EmployeePayrollDetail extends Vue {
         net_salary: this.form.take_home_pay,
         status: "Draft",
         components: this.payrollComponents,
+        workdays_in_month: this.form.workdays_in_month,
+        actual_workdays: this.form.actual_workdays,
+        prorata_factor: this.form.prorata_factor,
       };
 
       // In a real implementation, you would make an API call here
       // const { status2 } = await payrollAPI.SaveEmployeePayroll(payrollData);
-
-      // if (status2.status === 0) {
-      //   getToastSuccess(this.$t("messages.saveSuccess"));
-      // }
 
       // For demonstration, just show success message
       getToastSuccess("Employee payroll saved successfully");
@@ -335,11 +377,10 @@ export default class EmployeePayrollDetail extends Vue {
   async submitPayroll() {
     try {
       this.isSave = true;
-      const periodDate = "april";
-      this.calculateTotals(periodDate);
+
+      this.calculateTotals();
 
       const payrollData = {
-        // id: null,
         employee_id: this.employeeId,
         period_id: this.periodId,
         basic_salary: this.form.base_salary,
@@ -347,17 +388,15 @@ export default class EmployeePayrollDetail extends Vue {
         total_deductions: this.form.total_deductions,
         tax_amount: this.form.tax_amount_floor_up,
         net_salary: this.form.take_home_pay,
-        status: "Pending", // Changed to Pending for submission
+        status: "Pending",
         components: this.payrollComponents,
+        workdays_in_month: this.form.workdays_in_month,
+        actual_workdays: this.form.actual_workdays,
+        prorata_factor: this.form.prorata_factor,
       };
 
       // In a real implementation, you would make an API call here
       // const { status2 } = await payrollAPI.SubmitEmployeePayroll(payrollData);
-
-      // if (status2.status === 0) {
-      //   getToastSuccess(this.$t("messages.submitSuccess"));
-      //   this.form.status = "Pending";
-      // }
 
       // For demonstration, just show success message and update status
       this.form.status = "Pending";
@@ -370,6 +409,17 @@ export default class EmployeePayrollDetail extends Vue {
   }
 
   addComponent(componentData: any) {
+    const existingComponent = this.payrollComponents.find(
+      (comp: PayrollComponent) =>
+        comp.component_id === componentData.component_id
+    );
+
+    if (existingComponent) {
+      getToastError("Component already exists in this payroll");
+      this.showForm = false;
+      return;
+    }
+
     const newId = new Date().getTime();
 
     this.payrollComponents.push({
@@ -379,8 +429,10 @@ export default class EmployeePayrollDetail extends Vue {
       type: componentData.type,
       category: componentData.category,
       amount: componentData.amount,
-      original_amount: componentData.original_amount,
-      prorata_amount: componentData.prorata_amount,
+      original_amount: componentData.amount,
+      prorata_amount: componentData.apply_prorata
+        ? componentData.amount * this.form.prorata_factor
+        : componentData.amount,
       is_taxable: componentData.is_taxable,
       is_included_in_bpjs_health: componentData.is_included_in_bpjs_health,
       is_included_in_bpjs_employee: componentData.is_included_in_bpjs_employee,
@@ -391,23 +443,26 @@ export default class EmployeePayrollDetail extends Vue {
       remark: componentData.remark,
     });
 
-    const periodDate = "april";
-    this.calculateTotals(periodDate);
+    this.calculateTotals();
 
     this.showForm = false;
 
     getToastSuccess("Component added successfully");
   }
 
-  onComponentAmountChange(component: any) {
+  onComponentAmountChange(component: PayrollComponent) {
     if (component.is_fixed) {
       component.amount = component.original_amount;
       return;
     }
 
-    component.prorata_amount = component.amount;
-    const periodDate = "april";
-    this.calculateTotals(periodDate);
+    if (component.apply_prorata) {
+      component.prorata_amount = component.amount * this.form.prorata_factor;
+    } else {
+      component.prorata_amount = component.amount;
+    }
+
+    this.calculateTotals();
   }
 
   getComponentsByType(type: string) {
@@ -448,8 +503,6 @@ export default class EmployeePayrollDetail extends Vue {
   }
 
   created(): void {
-    this.periodId = this.$route.params.periodId;
-    this.employeeId = this.$route.params.employeeId;
     this.loadData();
   }
 
@@ -457,38 +510,11 @@ export default class EmployeePayrollDetail extends Vue {
     return this.periodData.status === "Draft" && this.form.status === "Draft";
   }
 
-  get totalEarnings() {
-    return (
-      this.form.base_salary +
-      this.form.allowance +
-      this.form.incentive +
-      this.form.thr +
-      this.form.jkm +
-      this.form.jkk +
-      this.form.bpjs_health +
-      this.form.overtime +
-      this.form.reimburse
-    );
-  }
-
-  get totalDeductions() {
-    return (
-      this.form.bpjs_health_employee +
-      this.form.bpjs_employment_employee +
-      this.form.tax_amount +
-      this.form.loan_installment +
-      this.form.absent_deduction +
-      this.form.late_arrival_deduction +
-      this.form.other_deduction
-    );
-  }
-
-  get netSalary() {
-    return this.totalEarnings - this.totalDeductions;
-  }
-
-  get formattedBaseSalary() {
-    return this.form.base_salary.toLocaleString();
+  get isDecemberPeriod() {
+    if (this.periodData && this.periodData.period_name) {
+      return this.periodData.period_name.toLowerCase().includes("december");
+    }
+    return false;
   }
 
   get amountPtkp(): number {
@@ -525,39 +551,34 @@ export default class EmployeePayrollDetail extends Vue {
 
   get terCategory() {
     const maritialStatus = this.employee.maritial_status;
+
     if (
       maritialStatus === "TK/0" ||
       maritialStatus === "TK/1" ||
       maritialStatus === "K/0"
     ) {
-      return (this.form.ter_category = "A");
+      return "A";
     } else if (
       maritialStatus === "TK/2" ||
       maritialStatus === "TK/3" ||
       maritialStatus === "K/1" ||
       maritialStatus === "K/2"
     ) {
-      return (this.form.ter_category = "B");
+      return "B";
     } else {
-      return (this.employee.maritial_status = "C");
+      return "C";
     }
   }
 
   /**
    * Calculation Methods
    */
-  calculateTotals(periodDate: string) {
-    // Reset all totals
+  calculateTotals() {
     this.resetTotals();
 
-    // Calculate totals for each component type
-    this.calculateTotalGrossSalary();
-    this.calculateTotalDeductionsSalary();
+    this.calculateComponentTotals();
 
-    // Calculate taxable earnings for tax calculation
-    this.calculateTotalGrossSalaryTaxable();
-
-    if (periodDate === "december") {
+    if (this.isDecemberPeriod || this.form.yearly_calculation) {
       this.calculateAnnualTax();
     } else {
       this.calculateMonthlyTax(
@@ -590,87 +611,118 @@ export default class EmployeePayrollDetail extends Vue {
 
     // Reset tax totals
     this.form.total_gross_salary_taxable = 0;
-    this.form.total_deductions_taxable = 0;
+    this.form.total_deductions_salary_taxable = 0;
     this.form.pkp = 0;
+    this.form.tax_rate = 0;
     this.form.ter_tax_rate = 0;
     this.form.tax_amount = 0;
     this.form.tax_amount_floor_up = 0;
 
     // Reset final totals
     this.form.total_gross_salary = 0;
-    this.form.total_deductions = 0;
+    this.form.total_deduction_salary = 0;
     this.form.take_home_pay = 0;
   }
 
-  calculateTotalGrossSalary() {
-    const earningsComponents = this.getComponentsByType("earnings");
+  calculateWorkdaysAndProrata() {
+    // Calculate workdays in month based on period start and end date
+    // This is a simplified example - in a real app, you'd calculate actual workdays
+    this.form.workdays_in_month = 22;
 
-    earningsComponents.forEach((component: any) => {
-      const totalAmount = component.amount * component.quantity;
-      this.form.total_gross_salary += totalAmount;
-    });
+    // For employee who just joined or resigned in the middle of the period
+    // we'd calculate the actual workdays
+    this.form.actual_workdays = 22;
+
+    // Calculate prorata factor
+    this.form.prorata_factor = Math.min(
+      1,
+      this.form.actual_workdays / this.form.workdays_in_month
+    );
   }
 
-  calculateTotalDeductionsSalary() {
-    const deductionsComponents = this.getComponentsByType("deductions");
+  calculateComponentTotals() {
+    this.payrollComponents.forEach((component: any) => {
+      const effectiveAmount = component.apply_prorata
+        ? component.amount * this.form.prorata_factor
+        : component.amount;
 
-    deductionsComponents.forEach((component: any) => {
-      const totalAmount = component.amount * component.quantity;
-      this.form.total_deduction_salary += totalAmount;
-    });
-  }
+      const totalAmount = effectiveAmount * component.quantity;
 
-  calculateStatutoryTotals() {
-    // Get all statutory components
-    const statutoryComponents = this.getComponentsByType("statutory");
+      if (component.type === "earnings") {
+        this.form.total_gross_salary += totalAmount;
 
-    // Calculate each category total
-    statutoryComponents.forEach((component: any) => {
-      const totalAmount = component.amount * component.quantity;
+        if (component.is_taxable) {
+          this.form.total_gross_salary_taxable += totalAmount;
+        }
 
-      switch (component.name) {
-        case "BPJS Health Company":
-          this.form.company_bpjs_health += totalAmount;
-          break;
-        case "BPJS JKK":
-          this.form.company_bpjs_jkk += totalAmount;
-          break;
-        case "BPJS JKM":
-          this.form.company_bpjs_jkm += totalAmount;
-          break;
+        if (component.name === "Base Salary") {
+          this.form.base_salary = totalAmount;
+        } else if (component.name === "Overtime") {
+          this.form.overtime += totalAmount;
+        }
+      } else if (component.type === "deductions") {
+        this.form.total_deduction_salary += totalAmount;
+
+        if (component.is_taxable) {
+          this.form.total_deductions_salary_taxable += totalAmount;
+        }
+
+        if (component.name === "BPJS Health Employee") {
+          this.form.employee_bpjs_health = totalAmount;
+        } else if (component.name === "BPJS JHT Employee") {
+          this.form.employee_bpjs_jht = totalAmount;
+        } else if (component.name === "BPJS JP Employee") {
+          this.form.employee_bpjs_jp = totalAmount;
+        } else if (component.name.includes("Loan")) {
+          this.form.loan_installment += totalAmount;
+        }
+      } else if (component.type === "statutory") {
+        if (component.name === "BPJS Health Company") {
+          this.form.company_bpjs_health = totalAmount;
+        } else if (component.name === "BPJS JKK") {
+          this.form.company_bpjs_jkk = totalAmount;
+        } else if (component.name === "BPJS JKM") {
+          this.form.company_bpjs_jkm = totalAmount;
+        } else if (component.name === "BPJS JHT Company") {
+          this.form.company_bpjs_jht = totalAmount;
+        } else if (component.name === "BPJS JP Company") {
+          this.form.company_bpjs_jp = totalAmount;
+        }
+
+        // if (component.is_taxable) {
+        //   this.form.total_gross_salary += totalAmount;
+        //   this.form.total_gross_salary_taxable += totalAmount;
+        // }
       }
     });
   }
 
-  calculateTotalGrossSalaryTaxable() {
-    let totalGrossSalaryTaxable = 0;
-    const earningsComponents = this.getComponentsByType("earnings");
-    earningsComponents.forEach((component: any) => {
-      if (component.is_taxable) {
-        totalGrossSalaryTaxable += component.amount * component.quantity;
-      }
-    });
+  // PTKP = Penghasilan Tidak Kena Pajak
+  calculatePTKP() {
+    const maritalStatus = this.employee.maritial_status;
 
-    this.form.total_gross_salary_taxable = totalGrossSalaryTaxable;
+    const statusParts = maritalStatus.split("/");
+    const statusCode = statusParts[0];
+    const dependents = statusParts.length > 1 ? parseInt(statusParts[1]) : 0;
 
-    this.form.pkp = this.calculatePkp(totalGrossSalaryTaxable);
+    // Base PTKP values (2023 rates)
+    const basePTKP = 54000000;
+    const marriedAddition = 4500000;
+    const dependentAddition = 4500000;
+
+    let ptkp = basePTKP;
+
+    if (statusCode === "K") {
+      ptkp += marriedAddition;
+    }
+
+    ptkp += Math.min(dependents, 3) * dependentAddition;
+
+    return ptkp;
   }
 
-  calculateTotalDeductionsSalaryTaxable() {
-    let totalDeductionsSalaryTaxable = 0;
-    const deductionsComponents = this.getComponentsByType("deductions");
-    deductionsComponents.forEach((component: any) => {
-      if (component.is_taxable) {
-        totalDeductionsSalaryTaxable += component.amount * component.quantity;
-      }
-    });
-
-    this.form.total_gross_salary_taxable = totalDeductionsSalaryTaxable;
-
-    this.form.pkp = this.calculatePkp(totalDeductionsSalaryTaxable);
-  }
-
-  calculatePkp(monthlyGrossSalaryTaxable: number) {
+  // PKP = Penghasilan Kena Pajak
+  calculatePKP(monthlyGrossSalaryTaxable: number) {
     const annualIncome = monthlyGrossSalaryTaxable * 12;
     let ptkp = this.amountPtkp;
 
@@ -679,18 +731,23 @@ export default class EmployeePayrollDetail extends Vue {
     return pkp;
   }
 
+  // Tahunan (Khusus Desember) memakai tarif umum/progresif
   calculateAnnualTax() {
     let annualTax = 0;
     const pkp = this.form.pkp;
+
     if (pkp <= 60000000) {
       // layer 1
       annualTax = pkp * 0.05;
+      this.form.tax_rate = 5;
     } else if (pkp <= 250000000) {
       // layer 2
       annualTax = 60000000 * 0.05 + (pkp - 60000000) * 0.15;
+      this.form.tax_rate = 15;
     } else if (pkp <= 500000000) {
       // layer 3
       annualTax = 60000000 * 0.05 + 190000000 * 0.15 + (pkp - 250000000) * 0.25;
+      this.form.tax_rate = 25;
     } else if (pkp <= 50000000000) {
       // layer 4
       annualTax =
@@ -698,14 +755,16 @@ export default class EmployeePayrollDetail extends Vue {
         190000000 * 0.15 +
         250000000 * 0.25 +
         (pkp - 500000000) * 0.3;
+      this.form.tax_rate = 30;
     } else {
       // layer 5
       annualTax =
         60000000 * 0.05 +
         190000000 * 0.15 +
         250000000 * 0.25 +
-        5000000000 * 0.3;
-      (pkp - 5000000000) * 0.35;
+        5000000000 * 0.3 +
+        (pkp - 5000000000) * 0.35;
+      this.form.tax_rate = 35;
     }
 
     // Calculate monthly tax (annual tax / 12)
@@ -721,6 +780,8 @@ export default class EmployeePayrollDetail extends Vue {
     this.updateTaxComponent();
   }
 
+  // Bulanan (Januari-November) memakai tarif TER
+  // TER = Tarif Efektif Rata Rata
   calculateMonthlyTax(salary: number, salaryType: string) {
     const terCategory = this.terCategory;
     let dailySalary = 0;
@@ -803,21 +864,21 @@ export default class EmployeePayrollDetail extends Vue {
     }
 
     // Tarif TER Harian
-    if ((salaryType = "bi-weekly")) {
+    if (salaryType === "bi-weekly") {
       dailySalary = salary / 14;
       if (dailySalary <= 450000) {
         this.form.ter_tax_rate = 0;
       } else if (dailySalary > 450000 && dailySalary <= 2500000) {
         this.form.ter_tax_rate = 0.5;
       }
-    } else if ((salaryType = "weekly")) {
+    } else if (salaryType === "weekly") {
       dailySalary = salary / 7;
       if (dailySalary <= 450000) {
         this.form.ter_tax_rate = 0;
       } else if (dailySalary > 450000 && dailySalary <= 2500000) {
         this.form.ter_tax_rate = 0.5;
       }
-    } else if ((salaryType = "daily")) {
+    } else if (salaryType === "daily") {
       dailySalary = salary;
       if (dailySalary <= 450000) {
         this.form.ter_tax_rate = 0;
@@ -825,24 +886,31 @@ export default class EmployeePayrollDetail extends Vue {
         this.form.ter_tax_rate = 0.5;
       }
     }
+
+    const taxAmount = salary * (this.form.ter_tax_rate / 100);
+    this.form.tax_rate = this.form.ter_tax_rate;
+    this.form.tax_amount = taxAmount;
+
+    this.form.tax_amount_floor_up = Math.ceil(taxAmount / 1000) * 1000;
   }
 
   updateTaxComponent() {
     // Find existing tax component
-    const taxComponent = this.payrollComponents.find(
+    const taxComponentIndex = this.payrollComponents.findIndex(
       (component: any) =>
-        component.name === "PPh 21" && component.type === "deductions"
+        component.component_id === "DC008" && component.name === "PPh 21"
     );
 
-    if (taxComponent) {
+    if (taxComponentIndex >= 0) {
       // Update existing tax component
+      const taxComponent = this.payrollComponents[taxComponentIndex];
       taxComponent.amount = this.form.tax_amount_floor_up;
       taxComponent.original_amount = this.form.tax_amount_floor_up;
       taxComponent.prorata_amount = this.form.tax_amount_floor_up;
-    } else {
-      // Add new tax component
+    } else if (this.form.tax_amount_floor_up > 0) {
+      // Add new tax component only if tax amount is greater than zero
       this.payrollComponents.push({
-        id: new Date().getTime(), // Temporary ID
+        id: new Date().getTime(),
         component_id: "DC008",
         name: "PPh 21",
         type: "deductions",
@@ -865,33 +933,29 @@ export default class EmployeePayrollDetail extends Vue {
   calculateFinalTotals() {
     // Calculate gross salary (all earnings + taxable statutory)
     let grossSalary = 0;
+    let totalDeductions = 0;
 
-    // Add all earnings and statutory components
     this.payrollComponents.forEach((component: any) => {
+      const totalComponentAmount = component.amount * component.quantity;
+
       if (
         component.type === "earnings" ||
         (component.type === "statutory" && component.is_taxable)
       ) {
-        grossSalary += component.amount * component.quantity;
+        grossSalary += totalComponentAmount;
+      }
+
+      if (component.type === "deductions") {
+        totalDeductions += totalComponentAmount;
       }
     });
 
     this.form.total_gross_salary = grossSalary;
-
-    // Calculate total deductions (all deductions)
-    let totalDeductions = 0;
-
-    // Add all deduction components
-    this.payrollComponents.forEach((component: any) => {
-      if (component.type === "deductions") {
-        totalDeductions += component.amount * component.quantity;
-      }
-    });
-
     this.form.total_deductions = totalDeductions;
 
-    // Calculate take home pay (gross salary - deductions)
-    this.form.take_home_pay =
-      this.form.total_gross_salary - this.form.total_deductions;
+    this.form.take_home_pay = Math.max(
+      0,
+      this.form.total_gross_salary - this.form.total_deductions
+    );
   }
 }
