@@ -279,7 +279,7 @@
             >
           </div>
           <div class="col-6 d-flex justify-content-end">
-            Rp{{form.total_gross_salary}}
+            Rp{{formatCurrency(form.total_gross_salary)}}
           </div>
         </div>
       </div>
@@ -348,7 +348,7 @@
             >
           </div>
           <div class="col-6 d-flex justify-content-end">
-            Rp{{form.total_deduction_salary}}
+            Rp{{formatCurrency(form.total_deduction_salary)}}
           </div>
         </div>
       </div>
@@ -367,7 +367,7 @@
             </p>
           </div>
           <div class="col-6 d-flex justify-content-end">
-            Rp {{form.total_gross_salary_taxable}}
+            Rp {{formatCurrency(form.total_gross_salary_taxable)}}
           </div>
         </div>
         <div class="row">
@@ -389,7 +389,8 @@
             </strong>
           </div>
           <div class="col-6 d-flex justify-content-end">
-            Rp{{form.tax_amount}} ~ Rp{{form.tax_amount_floor_up}}
+            Rp{{formatCurrency(form.tax_amount)}} ~
+            Rp{{formatCurrency(form.tax_amount_floor_up)}}
           </div>
         </div>
       </div>
@@ -408,7 +409,7 @@
             </p>
           </div>
           <div class="col-6 d-flex justify-content-end">
-            Rp{{form.total_gross_salary}}
+            Rp{{formatCurrency(form.total_gross_salary)}}
           </div>
         </div>
         <div class="row">
@@ -418,7 +419,7 @@
             </p>
           </div>
           <div class="col-6 d-flex justify-content-end">
-            Rp{{form.total_deduction_salary}}
+            Rp{{formatCurrency(form.total_deduction_salary)}}
           </div>
         </div>
         <div class="row">
@@ -426,7 +427,7 @@
             <p class="text-h6">{{$t('labels.payroll.payroll.pph21')}}</p>
           </div>
           <div class="col-6 d-flex justify-content-end">
-            Rp{{form.tax_amount_floor_up}}
+            Rp{{formatCurrency(form.tax_amount_floor_up)}}
           </div>
         </div>
       </div>
@@ -438,7 +439,7 @@
             >
           </div>
           <div class="col-6 d-flex justify-content-end">
-            Rp{{form.take_home_pay}}
+            Rp{{formatCurrency(form.take_home_pay)}}
           </div>
         </div>
       </div>

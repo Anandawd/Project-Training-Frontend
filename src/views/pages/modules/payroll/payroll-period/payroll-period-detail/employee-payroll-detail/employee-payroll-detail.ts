@@ -2,6 +2,7 @@ import CDatepicker from "@/components/datepicker/datepicker.vue";
 import CInput from "@/components/input/input.vue";
 import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
+import { formatCurrency, formatNumber2 } from "@/utils/format";
 import { getError } from "@/utils/general";
 import $global from "@/utils/global";
 import { getToastError, getToastSuccess } from "@/utils/toast";
@@ -59,6 +60,8 @@ export default class EmployeePayrollDetail extends Vue {
   public showForm: boolean = false;
   public dialogMessage: string = "";
   public dialogAction: string = "";
+  public formatCurrency = formatCurrency;
+  public formatNumber2 = formatNumber2;
 
   // Employee Data
   public employee: any = reactive({
