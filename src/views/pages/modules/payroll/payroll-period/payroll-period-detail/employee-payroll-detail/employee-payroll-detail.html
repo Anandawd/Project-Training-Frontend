@@ -324,7 +324,7 @@
               />
             </div>
             <c-input
-              :disabled="!is_fixed"
+              :disabled="component.is_fixed"
               type="number"
               :name="component.name"
               :id="component.name"
@@ -335,6 +335,7 @@
               v-model="component.amount"
               formatted
               showZeroNumber
+              @change="onComponentAmountChange(component)"
             />
           </div>
         </div>

@@ -134,7 +134,7 @@ export default class EmployeePayrollDetail extends Vue {
     total_deduction_salary: 0,
     take_home_pay: 0,
 
-    ter_category: "A",
+    ter_category: "",
     status: "Draft",
     workdays_in_month: 22,
     actual_workdays: 22,
@@ -225,9 +225,9 @@ export default class EmployeePayrollDetail extends Vue {
         name: "Base Salary",
         type: "earnings",
         category: "Basic",
-        amount: 7000000,
-        original_amount: 7000000,
-        prorata_amount: 7000000,
+        amount: 10000000,
+        original_amount: 10000000,
+        prorata_amount: 10000000,
         quantity: 1,
         is_taxable: true,
         is_included_in_bpjs_health: true,
@@ -244,9 +244,9 @@ export default class EmployeePayrollDetail extends Vue {
         name: "Transport Allowance",
         type: "earnings",
         category: "Fixed Allowance",
-        amount: 1500000,
-        original_amount: 1500000,
-        prorata_amount: 1500000,
+        amount: 1000000,
+        original_amount: 1000000,
+        prorata_amount: 1000000,
         quantity: 1,
         is_taxable: true,
         is_included_in_bpjs_health: true,
@@ -259,16 +259,16 @@ export default class EmployeePayrollDetail extends Vue {
       {
         id: 3,
         component_id: "EC003",
-        name: "Meal Allowance",
+        name: "Incentive",
         type: "earnings",
-        category: "Fixed Allowance",
-        amount: 1000000,
-        original_amount: 1000000,
-        prorata_amount: 1000000,
+        category: "Incentive",
+        amount: 0,
+        original_amount: 0,
+        prorata_amount: 0,
         quantity: 1,
-        is_taxable: false,
-        is_included_in_bpjs_health: true,
-        is_included_in_bpjs_employee: true,
+        is_taxable: true,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
         is_fixed: false,
         apply_prorata: true,
         unit: "",
@@ -276,47 +276,63 @@ export default class EmployeePayrollDetail extends Vue {
       },
       {
         id: 4,
-        component_id: "EC005",
-        name: "Overtime",
+        component_id: "EC004",
+        name: "THR",
         type: "earnings",
         category: "Variable Allowance",
-        amount: 500000,
-        original_amount: 500000,
-        prorata_amount: 500000,
-        quantity: 10,
+        amount: 0,
+        original_amount: 0,
+        prorata_amount: 0,
+        quantity: 1,
         is_taxable: true,
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: false,
         apply_prorata: false,
-        unit: "Hours",
-        remark: "Overtime hours",
+        unit: "",
+        remark: "",
       },
-      // Deduction Components
       {
-        id: 9,
-        component_id: "DC001",
-        name: "BPJS Health Employee",
-        type: "deductions",
-        category: "Statutory",
-        amount: 110000,
-        original_amount: 110000,
-        prorata_amount: 110000,
-        is_taxable: false,
+        id: 5,
+        component_id: "EC005",
+        name: "JKM (0,3%)",
+        type: "earnings",
+        category: "Fix Allowance",
+        amount: 33000,
+        original_amount: 33000,
+        prorata_amount: 33000,
+        quantity: 1,
+        is_taxable: true,
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: true,
         apply_prorata: false,
-        unit: "%",
-        quantity: 1,
-        remark: "Employee portion of BPJS Kesehatan (1%)",
+        unit: "",
+        remark: "",
       },
-      // Statutory Components
       {
-        id: 16,
+        id: 6,
+        component_id: "EC006",
+        name: "JKK (0,89%)",
+        type: "earnings",
+        category: "Fix Allowance",
+        amount: 97900,
+        original_amount: 97900,
+        prorata_amount: 97900,
+        quantity: 1,
+        is_taxable: true,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_fixed: true,
+        apply_prorata: false,
+        unit: "",
+        remark: "",
+      },
+      {
+        id: 7,
         component_id: "SC001",
         name: "BPJS Health Company",
-        type: "statutory",
+        type: "earnings",
         category: "Company Contribution",
         amount: 440000,
         original_amount: 440000,
@@ -329,6 +345,187 @@ export default class EmployeePayrollDetail extends Vue {
         unit: "%",
         quantity: 1,
         remark: "Company portion of BPJS Kesehatan (4%)",
+      },
+      {
+        id: 8,
+        component_id: "EC008",
+        name: "Overtime",
+        type: "earnings",
+        category: "Variable Allowance",
+        amount: 0,
+        original_amount: 0,
+        prorata_amount: 0,
+        quantity: 1,
+        is_taxable: true,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_fixed: false,
+        apply_prorata: false,
+        unit: "Hours",
+        remark: "Overtime hours",
+      },
+      {
+        id: 9,
+        component_id: "EC009",
+        name: "Reimburse",
+        type: "earnings",
+        category: "Reimburse",
+        amount: 1000000,
+        original_amount: 1000000,
+        prorata_amount: 1000000,
+        quantity: 1,
+        is_taxable: false,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_fixed: false,
+        apply_prorata: false,
+        unit: "",
+        remark: "",
+      },
+      {
+        id: 10,
+        component_id: "EC008",
+        name: "Loan",
+        type: "earnings",
+        category: "Loan",
+        amount: 0,
+        original_amount: 0,
+        prorata_amount: 0,
+        quantity: 1,
+        is_taxable: false,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_fixed: false,
+        apply_prorata: false,
+        unit: "",
+        remark: "",
+      },
+      // Deduction Components
+      {
+        id: 11,
+        component_id: "DC001",
+        name: "BPJS Health Employee",
+        type: "deductions",
+        category: "Statutory",
+        amount: 0,
+        original_amount: 0,
+        prorata_amount: 0,
+        is_taxable: true,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_fixed: true,
+        apply_prorata: false,
+        unit: "%",
+        quantity: 1,
+        remark: "Employee portion of BPJS Kesehatan (1%)",
+      },
+      {
+        id: 12,
+        component_id: "DC002",
+        name: "BPJS Employee JP (1%)",
+        type: "deductions",
+        category: "Statutory",
+        amount: 110000,
+        original_amount: 110000,
+        prorata_amount: 110000,
+        is_taxable: true,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_fixed: true,
+        apply_prorata: false,
+        unit: "%",
+        quantity: 1,
+        remark: "",
+      },
+      {
+        id: 13,
+        component_id: "DC003",
+        name: "BPJS Employee JHT (2%)",
+        type: "deductions",
+        category: "Statutory",
+        amount: 220000,
+        original_amount: 220000,
+        prorata_amount: 220000,
+        is_taxable: true,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_fixed: true,
+        apply_prorata: false,
+        unit: "%",
+        quantity: 1,
+        remark: "",
+      },
+      {
+        id: 14,
+        component_id: "DC004",
+        name: "Position Deductions (5%)",
+        type: "deductions",
+        category: "Statutory",
+        amount: 500000,
+        original_amount: 500000,
+        prorata_amount: 500000,
+        is_taxable: true,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_fixed: true,
+        apply_prorata: false,
+        unit: "%",
+        quantity: 1,
+        remark: "",
+      },
+      {
+        id: 15,
+        component_id: "DC005",
+        name: "Unpaid Leave",
+        type: "deductions",
+        category: "Statutory",
+        amount: 0,
+        original_amount: 0,
+        prorata_amount: 0,
+        is_taxable: true,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_fixed: true,
+        apply_prorata: false,
+        unit: "%",
+        quantity: 1,
+        remark: "",
+      },
+      {
+        id: 16,
+        component_id: "DC006",
+        name: "Loan Installment",
+        type: "deductions",
+        category: "Statutory",
+        amount: 0,
+        original_amount: 0,
+        prorata_amount: 0,
+        is_taxable: false,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_fixed: true,
+        apply_prorata: false,
+        unit: "%",
+        quantity: 1,
+        remark: "",
+      },
+      {
+        id: 17,
+        component_id: "DC007",
+        name: "Late Arrival",
+        type: "deductions",
+        category: "Statutory",
+        amount: 0,
+        original_amount: 0,
+        prorata_amount: 0,
+        is_taxable: false,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_fixed: true,
+        apply_prorata: false,
+        unit: "%",
+        quantity: 1,
+        remark: "",
       },
     ];
   }
@@ -557,16 +754,16 @@ export default class EmployeePayrollDetail extends Vue {
       maritialStatus === "TK/1" ||
       maritialStatus === "K/0"
     ) {
-      return "A";
+      return (this.form.ter_category = "A");
     } else if (
       maritialStatus === "TK/2" ||
       maritialStatus === "TK/3" ||
       maritialStatus === "K/1" ||
       maritialStatus === "K/2"
     ) {
-      return "B";
+      return (this.form.ter_category = "B");
     } else {
-      return "C";
+      return (this.form.ter_category = "C");
     }
   }
 
@@ -775,158 +972,126 @@ export default class EmployeePayrollDetail extends Vue {
 
     // Round up to nearest 1000
     this.form.tax_amount_floor_up = Math.ceil(monthlyTax / 1000) * 1000;
-
-    // Update or add tax component
-    this.updateTaxComponent();
   }
 
   // Bulanan (Januari-November) memakai tarif TER
   // TER = Tarif Efektif Rata Rata
   calculateMonthlyTax(salary: number, salaryType: string) {
+    if (salary <= 0) {
+      this.form.ter_tax_rate = 0;
+      this.form.tax_amount = 0;
+      this.form.tax_amount_floor_up = 0;
+      return;
+    }
+
     const terCategory = this.terCategory;
     let dailySalary = 0;
-    // Tarif TER Bulanan
-    if (salaryType === "monthly") {
-      switch (terCategory) {
-        case "A":
-          if (salary <= 5400000) {
-            this.form.ter_tax_rate = 0;
-          } else if (salary > 5400000 && salary <= 5650000) {
-            this.form.ter_tax_rate = 0.25;
-          } else if (salary > 5650000 && salary <= 5950000) {
-            this.form.ter_tax_rate = 0.5;
-          } else if (salary > 5950000 && salary <= 6300000) {
-            this.form.ter_tax_rate = 0.75;
-          } else if (salary > 6300000 && salary <= 6750000) {
-            this.form.ter_tax_rate = 1;
-          } else if (salary > 6750000 && salary <= 7500000) {
-            this.form.ter_tax_rate = 1.25;
-          } else if (salary > 7500000 && salary <= 8550000) {
-            this.form.ter_tax_rate = 1.5;
-          } else if (salary > 8550000 && salary <= 9650000) {
-            this.form.ter_tax_rate = 1.75;
-          } else if (salary > 9650000 && salary <= 10050000) {
-            this.form.ter_tax_rate = 2;
-          } else if (salary > 10050000 && salary <= 10350000) {
-            this.form.ter_tax_rate = 2.25;
-          } else if (salary > 10350000 && salary <= 10700000) {
-            this.form.ter_tax_rate = 2.5;
-          } else if (salary > 10700000 && salary <= 11050000) {
-            this.form.ter_tax_rate = 3;
-          } else if (salary > 11050000 && salary <= 11600000) {
-            this.form.ter_tax_rate = 3.5;
-          } else if (salary > 11600000 && salary <= 12500000) {
-            this.form.ter_tax_rate = 4;
-          } else if (salary > 12500000 && salary <= 13750000) {
-            this.form.ter_tax_rate = 5;
-          }
-          break;
-        case "B":
-          if (salary <= 6200000) {
-            this.form.ter_tax_rate = 0;
-          } else if (salary > 6200000 && salary <= 6500000) {
-            this.form.ter_tax_rate = 0.25;
-          } else if (salary > 6500000 && salary <= 6850000) {
-            this.form.ter_tax_rate = 0.5;
-          } else if (salary > 6850000 && salary <= 7300000) {
-            this.form.ter_tax_rate = 0.75;
-          } else if (salary > 7300000 && salary <= 9200000) {
-            this.form.ter_tax_rate = 1;
-          } else if (salary > 9200000 && salary <= 10750000) {
-            this.form.ter_tax_rate = 1.5;
-          } else if (salary > 10750000 && salary <= 11250000) {
-            this.form.ter_tax_rate = 2;
-          }
-          break;
-        case "C":
-          if (salary <= 6600000) {
-            this.form.ter_tax_rate = 0;
-          } else if (salary > 6600000 && salary <= 6950000) {
-            this.form.ter_tax_rate = 0.25;
-          } else if (salary > 6950000 && salary <= 7350000) {
-            this.form.ter_tax_rate = 0.5;
-          } else if (salary > 7350000 && salary <= 7800000) {
-            this.form.ter_tax_rate = 0.75;
-          } else if (salary > 7800000 && salary <= 8850000) {
-            this.form.ter_tax_rate = 1;
-          } else if (salary > 8850000 && salary <= 9800000) {
-            this.form.ter_tax_rate = 1.25;
-          } else if (salary > 9800000 && salary <= 10950000) {
-            this.form.ter_tax_rate = 1.5;
-          }
-          break;
-        default:
-          this.form.ter_tax_rate = 0;
-          break;
-      }
-      if (terCategory === "A") {
-      }
-    }
 
-    // Tarif TER Harian
+    // Convert salary to daily basis for non-monthly salary types
     if (salaryType === "bi-weekly") {
       dailySalary = salary / 14;
-      if (dailySalary <= 450000) {
-        this.form.ter_tax_rate = 0;
-      } else if (dailySalary > 450000 && dailySalary <= 2500000) {
-        this.form.ter_tax_rate = 0.5;
-      }
     } else if (salaryType === "weekly") {
       dailySalary = salary / 7;
-      if (dailySalary <= 450000) {
-        this.form.ter_tax_rate = 0;
-      } else if (dailySalary > 450000 && dailySalary <= 2500000) {
-        this.form.ter_tax_rate = 0.5;
-      }
     } else if (salaryType === "daily") {
       dailySalary = salary;
-      if (dailySalary <= 450000) {
-        this.form.ter_tax_rate = 0;
-      } else if (dailySalary > 450000 && dailySalary <= 2500000) {
-        this.form.ter_tax_rate = 0.5;
-      }
     }
 
+    // Apply TER rates based on salary type and category
+    if (salaryType === "monthly") {
+      this.applyMonthlyTerRates(salary, terCategory);
+    } else {
+      this.applyDailyTerRates(dailySalary);
+    }
+
+    // Calculate tax amount based on TER rate
     const taxAmount = salary * (this.form.ter_tax_rate / 100);
     this.form.tax_rate = this.form.ter_tax_rate;
     this.form.tax_amount = taxAmount;
 
+    // Round up to nearest 1000
     this.form.tax_amount_floor_up = Math.ceil(taxAmount / 1000) * 1000;
   }
 
-  updateTaxComponent() {
-    // Find existing tax component
-    const taxComponentIndex = this.payrollComponents.findIndex(
-      (component: any) =>
-        component.component_id === "DC008" && component.name === "PPh 21"
-    );
+  applyMonthlyTerRates(salary: number, category: string) {
+    switch (category) {
+      case "A":
+        if (salary <= 5400000) {
+          this.form.ter_tax_rate = 0;
+        } else if (salary > 5400000 && salary <= 5650000) {
+          this.form.ter_tax_rate = 0.25;
+        } else if (salary > 5650000 && salary <= 5950000) {
+          this.form.ter_tax_rate = 0.5;
+        } else if (salary > 5950000 && salary <= 6300000) {
+          this.form.ter_tax_rate = 0.75;
+        } else if (salary > 6300000 && salary <= 6750000) {
+          this.form.ter_tax_rate = 1;
+        } else if (salary > 6750000 && salary <= 7500000) {
+          this.form.ter_tax_rate = 1.25;
+        } else if (salary > 7500000 && salary <= 8550000) {
+          this.form.ter_tax_rate = 1.5;
+        } else if (salary > 8550000 && salary <= 9650000) {
+          this.form.ter_tax_rate = 1.75;
+        } else if (salary > 9650000 && salary <= 10050000) {
+          this.form.ter_tax_rate = 2;
+        } else if (salary > 10050000 && salary <= 10350000) {
+          this.form.ter_tax_rate = 2.25;
+        } else if (salary > 10350000 && salary <= 10700000) {
+          this.form.ter_tax_rate = 2.5;
+        } else if (salary > 10700000 && salary <= 11050000) {
+          this.form.ter_tax_rate = 3;
+        } else if (salary > 11050000 && salary <= 11600000) {
+          this.form.ter_tax_rate = 3.5;
+        } else if (salary > 11600000 && salary <= 12500000) {
+          this.form.ter_tax_rate = 4;
+        } else if (salary > 12500000 && salary <= 13750000) {
+          this.form.ter_tax_rate = 5;
+        }
+        break;
+      case "B":
+        if (salary <= 6200000) {
+          this.form.ter_tax_rate = 0;
+        } else if (salary > 6200000 && salary <= 6500000) {
+          this.form.ter_tax_rate = 0.25;
+        } else if (salary > 6500000 && salary <= 6850000) {
+          this.form.ter_tax_rate = 0.5;
+        } else if (salary > 6850000 && salary <= 7300000) {
+          this.form.ter_tax_rate = 0.75;
+        } else if (salary > 7300000 && salary <= 9200000) {
+          this.form.ter_tax_rate = 1;
+        } else if (salary > 9200000 && salary <= 10750000) {
+          this.form.ter_tax_rate = 1.5;
+        } else if (salary > 10750000 && salary <= 11250000) {
+          this.form.ter_tax_rate = 2;
+        }
+        break;
+      case "C":
+        if (salary <= 6600000) {
+          this.form.ter_tax_rate = 0;
+        } else if (salary > 6600000 && salary <= 6950000) {
+          this.form.ter_tax_rate = 0.25;
+        } else if (salary > 6950000 && salary <= 7350000) {
+          this.form.ter_tax_rate = 0.5;
+        } else if (salary > 7350000 && salary <= 7800000) {
+          this.form.ter_tax_rate = 0.75;
+        } else if (salary > 7800000 && salary <= 8850000) {
+          this.form.ter_tax_rate = 1;
+        } else if (salary > 8850000 && salary <= 9800000) {
+          this.form.ter_tax_rate = 1.25;
+        } else if (salary > 9800000 && salary <= 10950000) {
+          this.form.ter_tax_rate = 1.5;
+        }
+        break;
+      default:
+        this.form.ter_tax_rate = 0;
+        break;
+    }
+  }
 
-    if (taxComponentIndex >= 0) {
-      // Update existing tax component
-      const taxComponent = this.payrollComponents[taxComponentIndex];
-      taxComponent.amount = this.form.tax_amount_floor_up;
-      taxComponent.original_amount = this.form.tax_amount_floor_up;
-      taxComponent.prorata_amount = this.form.tax_amount_floor_up;
-    } else if (this.form.tax_amount_floor_up > 0) {
-      // Add new tax component only if tax amount is greater than zero
-      this.payrollComponents.push({
-        id: new Date().getTime(),
-        component_id: "DC008",
-        name: "PPh 21",
-        type: "deductions",
-        category: "Tax",
-        amount: this.form.tax_amount_floor_up,
-        original_amount: this.form.tax_amount_floor_up,
-        prorata_amount: this.form.tax_amount_floor_up,
-        is_taxable: false,
-        is_included_in_bpjs_health: false,
-        is_included_in_bpjs_employee: false,
-        is_fixed: false,
-        apply_prorata: false,
-        unit: "",
-        quantity: 1,
-        remark: "Income tax (PPh 21)",
-      });
+  applyDailyTerRates(dailySalary: number) {
+    if (dailySalary <= 450000) {
+      this.form.ter_tax_rate = 0;
+    } else if (dailySalary > 450000 && dailySalary <= 2500000) {
+      this.form.ter_tax_rate = 0.5;
     }
   }
 
@@ -934,6 +1099,10 @@ export default class EmployeePayrollDetail extends Vue {
     // Calculate gross salary (all earnings + taxable statutory)
     let grossSalary = 0;
     let totalDeductions = 0;
+    console.info("Before");
+    console.info("grossSalary : ", grossSalary);
+    console.info("totalDeductions : ", totalDeductions);
+    console.info("take home pay : ", this.form.take_home_pay);
 
     this.payrollComponents.forEach((component: any) => {
       const totalComponentAmount = component.amount * component.quantity;
@@ -950,12 +1119,18 @@ export default class EmployeePayrollDetail extends Vue {
       }
     });
 
+    console.info("After");
+    console.info("grossSalary : ", grossSalary);
+    console.info("totalDeductions : ", totalDeductions);
+    console.info("take home pay : ", this.form.take_home_pay);
+
     this.form.total_gross_salary = grossSalary;
     this.form.total_deductions = totalDeductions;
 
     this.form.take_home_pay = Math.max(
       0,
-      this.form.total_gross_salary - this.form.total_deductions
+      this.form.total_gross_salary -
+        (this.form.total_deductions + this.form.tax_amount_floor_up)
     );
   }
 }
