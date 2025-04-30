@@ -13,7 +13,7 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import CInputForm from "./payroll-approvals-input-form/payroll-approvals-input-form.vue";
+import CInputForm from "./employee-document-input-form/employee-document-input-form.vue";
 
 @Options({
   components: {
@@ -91,36 +91,44 @@ export default class PayrollApprovals extends Vue {
   async loadMockData() {
     this.rowData = [
       {
-        id: 4,
-        period_name: "April 2025",
-        period_date: "01/04/2025 - 30/04/2025",
-        payment_date: "01/05/2025",
-        remark: "-",
-        status: "Pending",
-      },
-      {
         id: 1,
-        period_name: "May 2025",
-        period_date: "01/05/2025 - 31/05/2025",
-        payment_date: "01/06/2025",
-        remark: "-",
-        status: "Pending",
+        document_id: "DC001",
+        employee_name: "John Doe",
+        document_type: "ID Card",
+        issue_date: "01/02/2025",
+        expired_date: "01/02/2025",
+        remark: "",
+        status: "Valid",
       },
       {
         id: 2,
-        period_name: "June 2025",
-        period_date: "01/06/2025 - 30/06/2025",
-        payment_date: "01/07/2025",
-        remark: "-",
-        status: "Pending",
+        document_id: "DC001",
+        employee_name: "John Doe",
+        document_type: "ID Card",
+        issue_date: "01/02/2025",
+        expired_date: "01/02/2025",
+        remark: "",
+        status: "Valid",
       },
       {
         id: 3,
-        period_name: "July 2025",
-        period_date: "01/07/2025 - 30/07/2025",
-        payment_date: "01/08/2025",
-        remark: "-",
-        status: "Pending",
+        document_id: "DC001",
+        employee_name: "John Doe",
+        document_type: "ID Card",
+        issue_date: "01/02/2025",
+        expired_date: "01/02/2025",
+        remark: "",
+        status: "Valid",
+      },
+      {
+        id: 4,
+        document_id: "DC001",
+        employee_name: "John Doe",
+        document_type: "ID Card",
+        issue_date: "01/02/2025",
+        expired_date: "01/02/2025",
+        remark: "",
+        status: "Valid",
       },
     ];
   }
@@ -136,12 +144,6 @@ export default class PayrollApprovals extends Vue {
 
     const result = [
       {
-        name: this.$t("commons.contextMenu.detail"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("detail_icon24"),
-        action: () => this.handleShowDetail("", $global.modePayroll.detail),
-      },
-      {
         name: this.$t("commons.contextMenu.remark"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
@@ -150,18 +152,18 @@ export default class PayrollApprovals extends Vue {
       },
       "separator",
       {
-        name: this.$t("commons.contextMenu.setApprove"),
+        name: this.$t("commons.contextMenu.print"),
         disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("edit_icon24"),
+        icon: generateIconContextMenuAgGrid("print_icon24"),
         action: () =>
-          this.handleApprove(this.paramsData, $global.modePayroll.approve),
+          this.handleApprove(this.paramsData, $global.modePayroll.print),
       },
       {
-        name: this.$t("commons.contextMenu.setReject"),
+        name: this.$t("commons.contextMenu.download"),
         disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("edit_icon24"),
+        icon: generateIconContextMenuAgGrid("download_icon24"),
         action: () =>
-          this.handleApprove(this.paramsData, $global.modePayroll.reject),
+          this.handleApprove(this.paramsData, $global.modePayroll.download),
       },
     ];
     return result;
@@ -184,13 +186,6 @@ export default class PayrollApprovals extends Vue {
     this.inputFormElement.initialize();
     this.modeData = mode;
     this.showForm = true;
-  }
-
-  handleShowDetail(params: any, mode: any) {
-    this.$router.push({
-      name: "PeriodDetail",
-      params: { id: params.id },
-    });
   }
 
   // API FUNCTION
@@ -259,6 +254,8 @@ export default class PayrollApprovals extends Vue {
     this.gridOptions = {
       actionGrid: {
         menu: true,
+        edit: true,
+        delete: true,
       },
       rowHeight: $global.agGrid.rowHeightDefault,
       headerHeight: $global.agGrid.headerHeight,
@@ -280,35 +277,42 @@ export default class PayrollApprovals extends Vue {
         width: 80,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.periodName"),
+        headerName: this.$t("commons.table.payroll.employee.documentId"),
         headerClass: "align-header-center",
-        field: "period_name",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.periodDate"),
-        headerClass: "align-header-center",
-        field: "period_date",
+        field: "document_id",
         width: 100,
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.paymentDate"),
+        headerName: this.$t("commons.table.payroll.employee.employee"),
         headerClass: "align-header-center",
-        field: "payment_date",
+        field: "employee_name",
         width: 100,
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.remark"),
+        headerName: this.$t("commons.table.payroll.employee.documentType"),
         headerClass: "align-header-center",
-        field: "remark",
+        field: "document_type",
         width: 100,
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.status"),
+        headerName: this.$t("commons.table.payroll.employee.issueDate"),
+        headerClass: "align-header-center",
+        field: "issue_date",
+        width: 100,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.expiry"),
+        headerClass: "align-header-center",
+        field: "expired_date",
+        width: 100,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.status"),
         headerClass: "align-header-center",
         field: "status",
         width: 100,

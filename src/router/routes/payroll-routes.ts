@@ -58,10 +58,10 @@ export default [
   },
   {
     path: "employee-document",
-    name: "Employee Document",
+    name: "EmployeeDocument",
     component: () =>
       import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/training/training.vue"
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/employee-document/employee-document.vue"
       ),
     meta: {
       pageTitle: "title.employeeDocument",
@@ -302,7 +302,7 @@ export default [
     name: "PayrollDisbursement",
     component: () =>
       import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-periods/payroll-periods.vue"
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-disbursement/payroll-disbursement.vue"
       ),
     meta: {
       pageTitle: "title.payrollDisbursement",

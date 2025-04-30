@@ -13,7 +13,6 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import CInputForm from "./payroll-approvals-input-form/payroll-approvals-input-form.vue";
 
 @Options({
   components: {
@@ -21,7 +20,6 @@ import CInputForm from "./payroll-approvals-input-form/payroll-approvals-input-f
     CSearchFilter,
     CModal,
     CDialog,
-    CInputForm,
   },
 })
 export default class PayrollApprovals extends Vue {
@@ -96,7 +94,7 @@ export default class PayrollApprovals extends Vue {
         period_date: "01/04/2025 - 30/04/2025",
         payment_date: "01/05/2025",
         remark: "-",
-        status: "Pending",
+        status: "Ready To Payment",
       },
       {
         id: 1,
@@ -104,7 +102,7 @@ export default class PayrollApprovals extends Vue {
         period_date: "01/05/2025 - 31/05/2025",
         payment_date: "01/06/2025",
         remark: "-",
-        status: "Pending",
+        status: "Ready To Payment",
       },
       {
         id: 2,
@@ -112,7 +110,7 @@ export default class PayrollApprovals extends Vue {
         period_date: "01/06/2025 - 30/06/2025",
         payment_date: "01/07/2025",
         remark: "-",
-        status: "Pending",
+        status: "Ready To Payment",
       },
       {
         id: 3,
@@ -120,7 +118,7 @@ export default class PayrollApprovals extends Vue {
         period_date: "01/07/2025 - 30/07/2025",
         payment_date: "01/08/2025",
         remark: "-",
-        status: "Pending",
+        status: "Ready To Payment",
       },
     ];
   }
@@ -141,27 +139,20 @@ export default class PayrollApprovals extends Vue {
         icon: generateIconContextMenuAgGrid("detail_icon24"),
         action: () => this.handleShowDetail("", $global.modePayroll.detail),
       },
-      {
-        name: this.$t("commons.contextMenu.remark"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () =>
-          this.handleShowForm(this.paramsData, $global.modePayroll.remark),
-      },
       "separator",
       {
-        name: this.$t("commons.contextMenu.setApprove"),
+        name: this.$t("commons.contextMenu.setProcessing"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () =>
-          this.handleApprove(this.paramsData, $global.modePayroll.approve),
+          this.handleApprove(this.paramsData, $global.modePayroll.processing),
       },
       {
-        name: this.$t("commons.contextMenu.setReject"),
+        name: this.$t("commons.contextMenu.setCompleted"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () =>
-          this.handleApprove(this.paramsData, $global.modePayroll.reject),
+          this.handleApprove(this.paramsData, $global.modePayroll.completed),
       },
     ];
     return result;

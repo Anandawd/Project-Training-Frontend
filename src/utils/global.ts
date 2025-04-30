@@ -217,6 +217,10 @@ export default {
     reject: 18,
     ready: 19,
     remark: 20,
+    print: 21,
+    download: 22,
+    processing: 23,
+    completed: 24,
   },
   modeBreakdown: {
     insert: "00",

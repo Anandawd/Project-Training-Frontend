@@ -1,0 +1,287 @@
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">{{title}}</div>
+    <div class="card-body">
+      <div class="tabs">
+        <!-- tab nav -->
+        <div>
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                id="form-document-tab"
+                class="nav-link active"
+                role="tab"
+                data-bs-toggle="tab"
+                data-bs-target="#form-document"
+                aria-controls="form-document"
+                aria-selected="true"
+                tabindex="-1"
+              >
+                {{$t('labels.payroll.employee.document')}}
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                id="form-document-type-tab"
+                class="nav-link"
+                role="tab"
+                data-bs-toggle="tab"
+                data-bs-target="#form-document-type"
+                aria-controls="form-document-type"
+                aria-selected="false"
+                tabindex="-1"
+              >
+                {{$t('labels.payroll.employee.documentType')}}
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- tab content -->
+        <div class="tab-content mt-3">
+          <!-- form document -->
+          <div
+            id="form-document"
+            class="tab-pane active show fade"
+            role="tabpanel"
+            aria-labelledby="form-document-tab"
+          >
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <c-select
+                  required
+                  offset="right"
+                  class="row mb-1"
+                  selectType="column"
+                  name="selectEmployee"
+                  labelName="name"
+                  keyName="code"
+                  v-model="form.selectEmployee"
+                  :label="$t('labels.payroll.attendance.selectEmployee')"
+                  :columnOptions="columnOptions"
+                  :options="selectEmployeeOptions"
+                >
+                </c-select>
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  disabled
+                  type="text"
+                  name="department"
+                  id="department"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.employee.department')"
+                  v-model="form.employee_department"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  disabled
+                  id="position"
+                  class="row mb-1"
+                  type="text"
+                  name="position"
+                  v-model="form.employee_position"
+                  :label="$t('labels.payroll.employee.position')"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  required
+                  id="documentName"
+                  class="row mb-1"
+                  type="text"
+                  name="documentName"
+                  v-model="form.document_name"
+                  :label="$t('labels.payroll.employee.documentName')"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-select
+                  required
+                  offset="right"
+                  class="row mb-1"
+                  selectType="column"
+                  name="documentType"
+                  labelName="name"
+                  keyName="code"
+                  v-model="form.type"
+                  :label="$t('labels.payroll.employee.documentType')"
+                  :columnOptions="columnOptions"
+                  :options="documentTypeOptions"
+                >
+                </c-select>
+              </div>
+              <div class="col-md-4 mb-1">
+                <c-datepicker
+                  required
+                  id="issueDate"
+                  customLabelClass="col-3"
+                  :label="$t('labels.payroll.employee.issueDate')"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="issueDate"
+                  v-model="form.issue_date"
+                />
+              </div>
+              <div class="col-md-4 mb-1">
+                <c-datepicker
+                  required
+                  id="expiredDate"
+                  customLabelClass="col-3"
+                  :label="$t('labels.payroll.employee.expiredDate')"
+                  type="date"
+                  valueType="YYYY-MM-DD"
+                  format="DD/MM/YYYY"
+                  name="expiredDate"
+                  v-model="form.expired_date"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-select
+                  required
+                  offset="right"
+                  class="row mb-1"
+                  name="status"
+                  labelName="name"
+                  keyName="code"
+                  v-model="form.type"
+                  :label="$t('labels.payroll.employee.status')"
+                  :options="documentStatusOptions"
+                >
+                </c-select>
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  id="remark"
+                  class="row mb-1"
+                  type="text"
+                  name="remark"
+                  v-model="form.remark"
+                  :label="$t('labels.remark')"
+                />
+              </div>
+            </div>
+            <!-- buttons -->
+            <div class="d-flex justify-content-end mt-2">
+              <button
+                type="button"
+                class="btn btn-danger mr-1 px-3"
+                @click="onClose"
+              >
+                <i class="fa fa-times" aria-hidden="true"></i>
+                {{$t('buttons.close')}}
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary px-3"
+                @click="onSubmit"
+              >
+                <i class="fa fa-save"></i>
+                {{$t('buttons.save')}}
+              </button>
+            </div>
+          </div>
+
+          <!-- form type -->
+          <div
+            id="form-document-type"
+            class="tab-pane fade"
+            role="tabpanel"
+            aria-labelledby="form-document-type-tab"
+          >
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <c-input
+                  required
+                  type="text"
+                  name="typeCode"
+                  id="typeCode"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.employee.typeCode')"
+                  v-model="formDocumentType.type_code"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  required
+                  type="text"
+                  name="typeName"
+                  id="typeName"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.employee.typeName')"
+                  v-model="formDocumentType.type_name"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  id="remark"
+                  class="row mb-1"
+                  type="text"
+                  name="remark"
+                  v-model="formDocumentType.remark"
+                  :label="$t('labels.remark')"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-select
+                  required
+                  offset="right"
+                  class="row mb-1"
+                  name="required"
+                  labelName="name"
+                  keyName="code"
+                  v-model="formDocumentType.required"
+                  :label="$t('labels.payroll.employee.required')"
+                  :options="requiredOptions"
+                >
+                </c-select>
+              </div>
+              <div class="col-md-4">
+                <c-select
+                  required
+                  offset="right"
+                  class="row mb-1"
+                  name="allowExpiry"
+                  labelName="name"
+                  keyName="code"
+                  v-model="formDocumentType.allow_expiry"
+                  :label="$t('labels.payroll.employee.allowExpiry')"
+                  :options="requiredOptions"
+                >
+                </c-select>
+              </div>
+            </div>
+            <!-- buttons -->
+            <div class="d-flex justify-content-end mt-2">
+              <button
+                type="button"
+                class="btn btn-danger mr-1 px-3"
+                @click="onClose"
+              >
+                <i class="fa fa-times" aria-hidden="true"></i>
+                {{$t('buttons.close')}}
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary px-3"
+                @click="onSubmit"
+              >
+                <i class="fa fa-save"></i>
+                {{$t('buttons.save')}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</c-form>
