@@ -13,7 +13,18 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import CInputForm from "./fingerprint-enrollment-input-form/fingerprint-enrollment-input-form.vue";
+import CInputForm from "./holiday-calender-input-form/holiday-calender-input-form.vue";
+
+interface Holiday {
+  id: string | number;
+  code: string;
+  name: string;
+  type: string;
+  date: string | Date;
+  remark: string;
+  status: string;
+  is_recuring: boolean;
+}
 
 @Options({
   components: {
@@ -24,9 +35,9 @@ import CInputForm from "./fingerprint-enrollment-input-form/fingerprint-enrollme
     CInputForm,
   },
 })
-export default class Employee extends Vue {
+export default class HolidayCalender extends Vue {
   //table
-  public rowData: any = [];
+  public rowData: Holiday[] = [];
 
   // filter
   public searchOptions: any;
@@ -47,6 +58,7 @@ export default class Employee extends Vue {
 
   // dialog
   public showDialog: boolean = false;
+  public dialogMessage: string;
   public deleteParam: any;
 
   // AG GRID VARIABLE
@@ -94,42 +106,53 @@ export default class Employee extends Vue {
     this.rowData = [
       {
         id: 1,
-        date: "01/02/2025",
-        employee_name: "John Doe",
-        employee_department: "IT",
-        employee_position: "Staff",
-        employee_current_schedule: "Regular",
-        employee_check_in: "08:00",
-        employee_check_out: "16:00",
-        employee_working_hours: "8",
-        employee_overtime: "0",
-        employee_status: "Present",
+        code: "HOLIDAY1",
+        name: "New Year's Day",
+        type: "National",
+        date: "01/01/2025",
+        remark: "",
+        is_recuring: true,
+        status: "Active",
       },
       {
-        id: 1,
-        date: "01/02/2025",
-        employee_name: "John Smith",
-        employee_department: "Marketing",
-        employee_position: "Staff",
-        employee_current_schedule: "Regular",
-        employee_check_in: "08:00",
-        employee_check_out: "16:00",
-        employee_working_hours: "8",
-        employee_overtime: "0",
-        employee_status: "Present",
+        id: 2,
+        code: "HOLIDAY2",
+        name: "Chinese New Year",
+        type: "National",
+        date: "21/01/2025",
+        remark: "",
+        is_recuring: true,
+        status: "Active",
       },
       {
-        id: 1,
-        date: "01/02/2025",
-        employee_name: "Lukas Graham",
-        employee_department: "IT",
-        employee_position: "Staff",
-        employee_current_schedule: "Regular",
-        employee_check_in: "08:00",
-        employee_check_out: "16:00",
-        employee_working_hours: "8",
-        employee_overtime: "0",
-        employee_status: "Present",
+        id: 3,
+        code: "HOLIDAY3",
+        name: "Nyepi",
+        type: "National",
+        date: "19/02/2025",
+        remark: "",
+        is_recuring: true,
+        status: "Active",
+      },
+      {
+        id: 4,
+        code: "HOLIDAY4",
+        name: "Good Friday",
+        type: "National",
+        date: "29/03/2025",
+        remark: "",
+        is_recuring: true,
+        status: "Active",
+      },
+      {
+        id: 5,
+        code: "HOLIDAY5",
+        name: "Easter",
+        type: "Company",
+        date: "30/03/2025",
+        remark: "",
+        is_recuring: true,
+        status: "Active",
       },
     ];
   }
@@ -156,13 +179,6 @@ export default class Employee extends Vue {
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("delete_icon24"),
         action: () => this.handleDelete(this.paramsData),
-      },
-      {
-        name: this.$t("commons.contextMenu.set"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () =>
-          this.handleShowForm(this.paramsData, $global.modeData.edit),
       },
     ];
     return result;
@@ -270,14 +286,11 @@ export default class Employee extends Vue {
   beforeMount(): void {
     this.searchOptions = [
       { text: this.$t("commons.filter.all"), value: 0 },
-      { text: this.$t("commons.filter.payroll.employee.department"), value: 0 },
-      { text: this.$t("commons.filter.payroll.employee.position"), value: 1 },
-      { text: this.$t("commons.filter.payroll.employee.placement"), value: 2 },
+      { text: this.$t("commons.filter.payroll.attendace.type"), value: 0 },
     ];
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
       actionGrid: {
-        menu: true,
         edit: true,
         delete: true,
       },
@@ -308,31 +321,30 @@ export default class Employee extends Vue {
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.employeeName"),
+        headerName: this.$t("commons.table.payroll.attendance.name"),
         headerClass: "align-header-center",
-        field: "employee_name",
+        field: "name",
         width: 120,
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.department"),
+        headerName: this.$t("commons.table.payroll.attendance.type"),
         headerClass: "align-header-center",
-        field: "employee_department",
+        field: "type",
         width: 100,
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.position"),
+        headerName: this.$t("commons.table.remark"),
         headerClass: "align-header-center",
-        field: "employee_position",
+        field: "remark",
         width: 100,
         enableRowGroup: true,
       },
-
       {
         headerName: this.$t("commons.table.payroll.payroll.status"),
         headerClass: "align-header-center",
-        field: "employee_status",
+        field: "status",
         width: 100,
         enableRowGroup: true,
       },

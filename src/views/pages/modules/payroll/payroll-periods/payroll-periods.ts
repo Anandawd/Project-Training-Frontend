@@ -13,7 +13,7 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import CInputForm from "./fingerprint-enrollment-input-form/fingerprint-enrollment-input-form.vue";
+import CInputForm from "./payroll-period-input-form/payroll-period-input-form.vue";
 
 @Options({
   components: {
@@ -26,14 +26,47 @@ import CInputForm from "./fingerprint-enrollment-input-form/fingerprint-enrollme
 })
 export default class Employee extends Vue {
   //table
-  public rowData: any = [];
+  public rowData: any = [
+    {
+      id: 1,
+      period_name: "January 2025",
+      period_date: "01/01/2025 - 31/01/2025",
+      payment_date: "01/02/2025",
+      remark: "-",
+      status: "Completed",
+    },
+    {
+      id: 2,
+      period_name: "February 2025",
+      period_date: "01/02/2025 - 30/02/2025",
+      payment_date: "01/03/2025",
+      remark: "-",
+      status: "Completed",
+    },
+    {
+      id: 3,
+      period_name: "March 2025",
+      period_date: "01/03/2025 - 31/03/2025",
+      payment_date: "01/04/2025",
+      remark: "-",
+      status: "Completed",
+    },
+    {
+      id: 4,
+      period_name: "April 2025",
+      period_date: "01/04/2025 - 30/04/2025",
+      payment_date: "01/05/2025",
+      remark: "-",
+      status: "Draft",
+    },
+  ];
 
   // filter
   public searchOptions: any;
   searchDefault: any = {
     index: 0,
     text: "",
-    filter: [0],
+    filter: [1],
   };
 
   // form
@@ -90,50 +123,6 @@ export default class Employee extends Vue {
     this.loadDataGrid(search);
   }
 
-  async loadMockData() {
-    this.rowData = [
-      {
-        id: 1,
-        date: "01/02/2025",
-        employee_name: "John Doe",
-        employee_department: "IT",
-        employee_position: "Staff",
-        employee_current_schedule: "Regular",
-        employee_check_in: "08:00",
-        employee_check_out: "16:00",
-        employee_working_hours: "8",
-        employee_overtime: "0",
-        employee_status: "Present",
-      },
-      {
-        id: 1,
-        date: "01/02/2025",
-        employee_name: "John Smith",
-        employee_department: "Marketing",
-        employee_position: "Staff",
-        employee_current_schedule: "Regular",
-        employee_check_in: "08:00",
-        employee_check_out: "16:00",
-        employee_working_hours: "8",
-        employee_overtime: "0",
-        employee_status: "Present",
-      },
-      {
-        id: 1,
-        date: "01/02/2025",
-        employee_name: "Lukas Graham",
-        employee_department: "IT",
-        employee_position: "Staff",
-        employee_current_schedule: "Regular",
-        employee_check_in: "08:00",
-        employee_check_out: "16:00",
-        employee_working_hours: "8",
-        employee_overtime: "0",
-        employee_status: "Present",
-      },
-    ];
-  }
-
   // UI FUNCTION
   getContextMenu(params: any) {
     const { node } = params;
@@ -152,17 +141,10 @@ export default class Employee extends Vue {
           this.handleShowForm(this.paramsData, $global.modeData.edit),
       },
       {
-        name: this.$t("commons.contextMenu.delete"),
+        name: this.$t("commons.contextMenu.detail"),
         disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("delete_icon24"),
-        action: () => this.handleDelete(this.paramsData),
-      },
-      {
-        name: this.$t("commons.contextMenu.set"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () =>
-          this.handleShowForm(this.paramsData, $global.modeData.edit),
+        icon: generateIconContextMenuAgGrid("detail_icon24"),
+        action: () => this.handleShowDetail("", $global.modePayroll.detail),
       },
     ];
     return result;
@@ -211,6 +193,8 @@ export default class Employee extends Vue {
     this.showDialog = true;
     this.deleteParam = params.id;
   }
+
+  handleMenu() {}
 
   // API FUNCTION
   async loadDataGrid(search: any = this.searchDefault) {
@@ -263,23 +247,17 @@ export default class Employee extends Vue {
     }
   }
 
-  created(): void {
-    this.loadMockData();
-  }
-
   beforeMount(): void {
     this.searchOptions = [
-      { text: this.$t("commons.filter.all"), value: 0 },
-      { text: this.$t("commons.filter.payroll.employee.department"), value: 0 },
-      { text: this.$t("commons.filter.payroll.employee.position"), value: 1 },
+      { text: this.$t("commons.filter.payroll.payroll.periodName"), value: 0 },
+      { text: this.$t("commons.filter.payroll.payroll.status"), value: 1 },
       { text: this.$t("commons.filter.payroll.employee.placement"), value: 2 },
     ];
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
       actionGrid: {
-        menu: true,
         edit: true,
-        delete: true,
+        menu: true,
       },
       rowHeight: $global.agGrid.rowHeightDefault,
       headerHeight: $global.agGrid.headerHeight,
@@ -301,38 +279,37 @@ export default class Employee extends Vue {
         width: 80,
       },
       {
-        headerName: this.$t("commons.table.payroll.attendance.date"),
+        headerName: this.$t("commons.table.payroll.payroll.periodName"),
         headerClass: "align-header-center",
-        field: "date",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.employeeName"),
-        headerClass: "align-header-center",
-        field: "employee_name",
+        field: "period_name",
         width: 120,
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.department"),
+        headerName: this.$t("commons.table.payroll.payroll.periodDate"),
         headerClass: "align-header-center",
-        field: "employee_department",
+        field: "period_date",
         width: 100,
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.position"),
+        headerName: this.$t("commons.table.payroll.payroll.paymentDate"),
         headerClass: "align-header-center",
-        field: "employee_position",
+        field: "payment_date",
         width: 100,
         enableRowGroup: true,
       },
-
+      {
+        headerName: this.$t("commons.table.remark"),
+        headerClass: "align-header-center",
+        field: "remark",
+        width: 100,
+        enableRowGroup: true,
+      },
       {
         headerName: this.$t("commons.table.payroll.payroll.status"),
         headerClass: "align-header-center",
-        field: "employee_status",
+        field: "status",
         width: 100,
         enableRowGroup: true,
       },

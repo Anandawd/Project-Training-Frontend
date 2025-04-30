@@ -432,6 +432,19 @@ export default class Employee extends Vue {
     this.showDialog = false;
   }
 
+  goBack() {
+    if (this.form.status === "Draft") {
+      this.dialogMessage =
+        "You have unsaved changes. Do you want to save before going back?";
+      this.dialogAction = "saveAndGoBack";
+      this.showDialog = true;
+    } else {
+      this.$router.push({
+        name: "PayrollPeriods",
+      });
+    }
+  }
+
   // METHODS
   async created() {
     this.initializeData();

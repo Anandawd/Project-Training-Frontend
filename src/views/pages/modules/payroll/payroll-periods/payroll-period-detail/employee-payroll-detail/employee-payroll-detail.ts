@@ -691,15 +691,29 @@ export default class EmployeePayrollDetail extends Vue {
   confirmAction() {
     if (this.dialogAction === "submit") {
       this.submitPayroll();
+    } else if (this.dialogAction === "saveAndGoBack") {
+      this.savePayroll().then(() => {
+        this.$router.push({
+          name: "PeriodDetail",
+          params: { id: this.periodId },
+        });
+      });
     }
     this.showDialog = false;
   }
 
   goBack() {
-    this.$router.push({
-      name: "PeriodDetail",
-      params: { id: this.periodId },
-    });
+    if (this.form.status === "Draft") {
+      this.dialogMessage =
+        "You have unsaved changes. Do you want to save before going back?";
+      this.dialogAction = "saveAndGoBack";
+      this.showDialog = true;
+    } else {
+      this.$router.push({
+        name: "PeriodDetail",
+        params: { id: this.periodId },
+      });
+    }
   }
 
   created(): void {

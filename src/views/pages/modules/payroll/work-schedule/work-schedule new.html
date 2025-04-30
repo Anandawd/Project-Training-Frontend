@@ -1,0 +1,437 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- Search and Filter -->
+    <c-search-filter
+      date-range
+      :options="searchOptions"
+      :searchDefault="searchDefault"
+      @search="refreshData"
+    >
+      <template v-slot="{search}">
+        <div class="row mb-3">
+          <div class="col-md-3">
+            <c-select
+              offset="right"
+              class="mb-2"
+              name="department"
+              labelName="name"
+              keyName="id"
+              v-model="search.department"
+              :label="$t('labels.payroll.employee.department')"
+              :options="departmentOptions"
+              @change="onDepartmentChange"
+            />
+          </div>
+          <div class="col-md-3">
+            <c-select
+              offset="right"
+              class="mb-2"
+              name="position"
+              labelName="name"
+              keyName="id"
+              v-model="search.position"
+              :label="$t('labels.payroll.employee.position')"
+              :options="positionOptions"
+            />
+          </div>
+          <div class="col-md-3">
+            <c-select
+              offset="right"
+              class="mb-2"
+              name="employee"
+              labelName="name"
+              keyName="id"
+              v-model="search.employee"
+              :label="$t('labels.payroll.employee.employeeName')"
+              :options="employeeOptions"
+            />
+          </div>
+        </div>
+      </template>
+    </c-search-filter>
+
+    <!-- Actions -->
+    <div class="d-flex justify-content-end mb-3">
+      <button
+        title="Generate Schedule"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleGenerateSchedule()"
+      >
+        <i class="fa fa-calendar-plus mr-1" aria-hidden="true"></i>
+        {{$t('buttons.generateSchedule')}}
+      </button>
+      <button
+        title="Import Schedule"
+        type="button"
+        class="btn btn-secondary mr-1"
+        @click="handleImportSchedule()"
+      >
+        <i class="fa fa-file-import mr-1" aria-hidden="true"></i>
+        {{$t('buttons.import')}}
+      </button>
+      <button
+        title="Export Schedule"
+        type="button"
+        class="btn btn-info mr-1"
+        @click="handleExportSchedule()"
+      >
+        <i class="fa fa-file-export mr-1" aria-hidden="true"></i>
+        {{$t('buttons.export')}}
+      </button>
+      <div class="dropdown">
+        <button
+          class="btn btn-outline-dark dropdown-toggle"
+          type="button"
+          id="templateDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="fa fa-file-alt mr-1" aria-hidden="true"></i>
+          {{$t('buttons.templates')}}
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="templateDropdown">
+          <li>
+            <a
+              class="dropdown-item"
+              href="#"
+              @click.prevent="handleSaveTemplate()"
+              >{{$t('buttons.saveAsTemplate')}}</a
+            >
+          </li>
+          <li>
+            <a
+              class="dropdown-item"
+              href="#"
+              @click.prevent="handleLoadTemplate()"
+              >{{$t('buttons.loadTemplate')}}</a
+            >
+          </li>
+          <li>
+            <a
+              class="dropdown-item"
+              href="#"
+              @click.prevent="handleManageTemplates()"
+              >{{$t('buttons.manageTemplates')}}</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Weekly Schedule -->
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">
+            {{$t('title.workSchedule')}} - {{$t('title.week')}}:
+            {{currentWeekRange}}
+          </h5>
+          <div>
+            <button
+              class="btn btn-sm btn-outline-secondary mx-1"
+              @click="navigateWeek(-1)"
+            >
+              <i class="fa fa-chevron-left"></i>
+            </button>
+            <button
+              class="btn btn-sm btn-outline-secondary mx-1"
+              @click="navigateWeek(1)"
+            >
+              <i class="fa fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table
+            class="table table-bordered table-hover"
+            v-if="scheduleData.length > 0"
+          >
+            <thead class="table-light">
+              <tr>
+                <th>{{$t('labels.payroll.employee.employeeName')}}</th>
+                <th v-for="(day, index) in weekDays" :key="index">
+                  {{ day.name }}<br />
+                  <small>{{ day.date }}</small>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(employee, empIndex) in scheduleData" :key="empIndex">
+                <td>{{ employee.employee_name }}</td>
+                <td
+                  v-for="(day, dayIndex) in weekDays"
+                  :key="dayIndex"
+                  :class="{'table-primary': isShiftSelected(employee.id, dayIndex)}"
+                  @click="selectShift(employee, dayIndex)"
+                  class="position-relative text-center"
+                >
+                  <span
+                    :class="{
+                  'badge rounded-pill': true,
+                  'bg-success': getShiftCode(employee.id, dayIndex) === 'M',
+                  'bg-warning': getShiftCode(employee.id, dayIndex) === 'E',
+                  'bg-dark': getShiftCode(employee.id, dayIndex) === 'N',
+                  'bg-secondary': getShiftCode(employee.id, dayIndex) === 'OFF',
+                  'bg-info': getShiftCode(employee.id, dayIndex) === 'SP'
+                }"
+                  >
+                    {{ getShiftCode(employee.id, dayIndex) }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-else class="alert alert-info">
+            {{$t('messages.noScheduleData')}}
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <h6>{{$t('labels.payroll.workSchedule.legend')}}</h6>
+          <div class="d-flex flex-wrap">
+            <div class="me-3 mb-2">
+              <span class="badge bg-success">M</span> -
+              {{$t('labels.payroll.workSchedule.morning')}} (07:00-15:00)
+            </div>
+            <div class="me-3 mb-2">
+              <span class="badge bg-warning">E</span> -
+              {{$t('labels.payroll.workSchedule.evening')}} (15:00-23:00)
+            </div>
+            <div class="me-3 mb-2">
+              <span class="badge bg-dark">N</span> -
+              {{$t('labels.payroll.workSchedule.night')}} (23:00-07:00)
+            </div>
+            <div class="me-3 mb-2">
+              <span class="badge bg-secondary">OFF</span> -
+              {{$t('labels.payroll.workSchedule.dayOff')}}
+            </div>
+            <div class="me-3 mb-2">
+              <span class="badge bg-info">SP</span> -
+              {{$t('labels.payroll.workSchedule.splitShift')}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shift Details -->
+    <div class="card" v-if="selectedShift">
+      <div class="card-header">
+        <h5 class="mb-0">{{$t('title.shiftDetails')}}</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4">
+            <p>
+              <strong>{{$t('labels.payroll.workSchedule.selected')}}:</strong>
+              {{ selectedShift.employee_name }} - {{
+              weekDays[selectedShift.dayIndex].name }}, {{
+              weekDays[selectedShift.dayIndex].date }}
+            </p>
+          </div>
+          <div class="col-md-3">
+            <p>
+              <strong>{{$t('labels.payroll.workSchedule.shift')}}:</strong>
+              {{ getShiftName(selectedShift.employee_id, selectedShift.dayIndex)
+              }}
+            </p>
+          </div>
+          <div class="col-md-2">
+            <p>
+              <strong>{{$t('labels.payroll.workSchedule.break')}}:</strong>
+              {{ getShiftBreak(selectedShift.employee_id,
+              selectedShift.dayIndex) }}
+            </p>
+          </div>
+          <div class="col-md-3">
+            <p>
+              <strong>{{$t('labels.payroll.workSchedule.location')}}:</strong>
+              {{ getShiftLocation(selectedShift.employee_id,
+              selectedShift.dayIndex) }}
+            </p>
+          </div>
+          <div class="col-md-12">
+            <p>
+              <strong>{{$t('labels.payroll.workSchedule.notes')}}:</strong>
+              {{ getShiftNotes(selectedShift.employee_id,
+              selectedShift.dayIndex) }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-primary me-2" @click="handleEditShift()">
+          <i class="fa fa-edit me-1"></i> {{$t('buttons.editShift')}}
+        </button>
+        <button class="btn btn-info me-2" @click="handleCopySchedule()">
+          <i class="fa fa-copy me-1"></i> {{$t('buttons.copySchedule')}}
+        </button>
+        <button class="btn btn-danger" @click="handleClearSchedule()">
+          <i class="fa fa-trash me-1"></i> {{$t('buttons.clearSchedule')}}
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal for shift editing -->
+    <c-modal
+      v-show="showEditShiftModal"
+      :title="$t('title.editShift')"
+      size="lg"
+      @close="showEditShiftModal = false"
+      @save="saveEditedShift"
+    >
+      <div class="row">
+        <div class="col-md-6">
+          <c-select
+            required
+            offset="right"
+            class="mb-3"
+            name="shiftType"
+            labelName="name"
+            keyName="code"
+            v-model="editShiftForm.shiftType"
+            :label="$t('labels.payroll.workSchedule.shiftType')"
+            :options="shiftTypeOptions"
+            @change="handleShiftTypeChange"
+          />
+        </div>
+        <div class="col-md-6">
+          <c-select
+            offset="right"
+            class="mb-3"
+            name="location"
+            labelName="name"
+            keyName="code"
+            v-model="editShiftForm.location"
+            :label="$t('labels.payroll.workSchedule.location')"
+            :options="locationOptions"
+          />
+        </div>
+        <div class="col-md-6">
+          <c-input
+            type="time"
+            name="startTime"
+            id="startTime"
+            class="row mb-3"
+            :label="$t('labels.payroll.workSchedule.startTime')"
+            v-model="editShiftForm.startTime"
+          />
+        </div>
+        <div class="col-md-6">
+          <c-input
+            type="time"
+            name="endTime"
+            id="endTime"
+            class="row mb-3"
+            :label="$t('labels.payroll.workSchedule.endTime')"
+            v-model="editShiftForm.endTime"
+          />
+        </div>
+        <div class="col-md-6">
+          <c-select
+            offset="right"
+            class="mb-3"
+            name="breakDuration"
+            labelName="name"
+            keyName="value"
+            v-model="editShiftForm.breakDuration"
+            :label="$t('labels.payroll.workSchedule.breakDuration')"
+            :options="breakDurationOptions"
+          />
+        </div>
+        <div class="col-md-12">
+          <c-input
+            type="textarea"
+            name="notes"
+            id="notes"
+            class="row mb-3"
+            :label="$t('labels.payroll.workSchedule.notes')"
+            v-model="editShiftForm.notes"
+          />
+        </div>
+      </div>
+    </c-modal>
+
+    <!-- Modal for template saving -->
+    <c-modal
+      v-show="showSaveTemplateModal"
+      :title="$t('title.saveAsTemplate')"
+      size="md"
+      @close="showSaveTemplateModal = false"
+      @save="saveTemplate"
+    >
+      <div class="row">
+        <div class="col-md-12">
+          <c-input
+            required
+            type="text"
+            name="templateName"
+            id="templateName"
+            class="row mb-3"
+            :label="$t('labels.payroll.workSchedule.templateName')"
+            v-model="templateForm.name"
+          />
+        </div>
+        <div class="col-md-12">
+          <c-input
+            type="textarea"
+            name="templateDescription"
+            id="templateDescription"
+            class="row mb-3"
+            :label="$t('labels.payroll.workSchedule.templateDescription')"
+            v-model="templateForm.description"
+          />
+        </div>
+      </div>
+    </c-modal>
+
+    <!-- Modal for template loading -->
+    <c-modal
+      v-show="showLoadTemplateModal"
+      :title="$t('title.loadTemplate')"
+      size="md"
+      @close="showLoadTemplateModal = false"
+      @save="loadTemplate"
+    >
+      <div class="row">
+        <div class="col-md-12">
+          <c-select
+            required
+            offset="right"
+            class="mb-3"
+            name="templateId"
+            labelName="name"
+            keyName="id"
+            v-model="templateForm.id"
+            :label="$t('labels.payroll.workSchedule.selectTemplate')"
+            :options="templateOptions"
+          />
+        </div>
+        <div class="col-md-12" v-if="selectedTemplateDescription">
+          <div class="alert alert-info">
+            <p>
+              <strong
+                >{{$t('labels.payroll.workSchedule.description')}}:</strong
+              >
+              {{ selectedTemplateDescription }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </c-modal>
+
+    <!-- Dialog for confirmations -->
+    <c-dialog
+      v-show="showDialog"
+      :dialogTitle="dialogTitle"
+      size="sm"
+      @confirm="confirmAction"
+      @cancel="showDialog = false"
+    >
+      <template #body>{{ dialogMessage }}</template>
+    </c-dialog>
+  </div>
+</section>

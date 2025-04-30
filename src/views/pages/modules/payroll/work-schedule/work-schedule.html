@@ -1,0 +1,210 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- button insert -->
+    <div class="d-flex justify-content-end mb-2">
+      <button
+        title="Shift Configuration"
+        type="button"
+        class="btn btn-secondary mr-1"
+        @click="handleShowForm('', $global.modePayroll.shift)"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.shift')}}
+      </button>
+      <button
+        title="Export Schedule"
+        type="button"
+        class="btn btn-secondary mr-1"
+        @click="handleShowForm('', $global.modePayroll.export)"
+      >
+        <i class="fa fa-file-export mr-1" aria-hidden="true"></i>{{
+        $t('buttons.export')}}
+      </button>
+      <button
+        title="Generate Schedule"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleShowForm('', $global.modePayroll.generate)"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.generate') }}
+      </button>
+    </div>
+
+    <!-- insert form -->
+    <transition>
+      <div class="px-2">
+        <c-input-form
+          ref="inputFormElement"
+          v-show="showForm"
+          :schema="schema"
+          :modeData="modeData"
+          @save="handleSave"
+          @close="showForm=false"
+        />
+      </div>
+    </transition>
+
+    <!-- filter -->
+    <c-search-filter
+      date-range
+      :options="searchOptions"
+      :searchDefault="searchDefault"
+      @search="refreshData"
+    >
+    </c-search-filter>
+
+    <!-- Weekly Schedule -->
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <h3 class="card-title mb-0">
+            {{$t('title.workSchedule')}} - {{$t('title.week')}}:
+            {{currentWeekRange}}
+          </h3>
+          <div>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary mx-1"
+              @click="navigateWeek(-1)"
+            >
+              <i class="fa fa-chevron-left mx-1" aria-hidden="true"></i>{{
+              $t('buttons.prevWeek')}}
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary mx-1"
+              @click="navigateWeek(-1)"
+            >
+              {{ $t('buttons.nextWeek')}}
+              <i class="fa fa-chevron-right mx-1" aria-hidden="true"> </i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table
+            class="table table-bordered table-hover"
+            v-if="scheduleData.length > 0"
+          >
+            <thead class="">
+              <tr>
+                <th>{{$t('labels.payroll.employee.employeeId')}}</th>
+                <th>{{$t('labels.payroll.employee.employeeName')}}</th>
+                <th
+                  v-for="(day, index) in weekDays"
+                  :key="index"
+                  class="text-center"
+                >
+                  {{ day.name}} <br />
+                  <small>{{day.date}}</small>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(employee, empIndex) in scheduleData" :key="empIndex">
+                <td>{{employee.employee_id}}</td>
+                <td>{{employee.employee_name}}</td>
+                <td
+                  v-for="(day, dayIndex) in weekDays"
+                  :key="dayIndex"
+                  @click="selectedShift(employee, dayIndex)"
+                  class="position-relative text-center"
+                >
+                  <span
+                    :class="{
+                      'badge rounded-pill px-5 p-2': true,
+                      'bg-success': getShiftCode(employee.id, dayIndex) === 'M',
+                      'bg-warning': getShiftCode(employee.id, dayIndex) === 'E',
+                      'bg-dark': getShiftCode(employee.id, dayIndex) === 'N',
+                      'bg-secondary': getShiftCode(employee.id, dayIndex) === 'OFF',
+                      'bg-info': getShiftCode(employee.id, dayIndex) === 'SP'
+                  }"
+                    >{{getShiftCode(employee.id, dayIndex)}}</span
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-else class="alert alert-info">
+            {{$t('messages.noScheduleData')}}
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <h6>{{$t('labels.payroll.attendance.legend')}}</h6>
+          <div class="d-flex flex-wrap">
+            <div class="me-4 mb-2">
+              <span class="badge bg-success">M</span> - Morning
+            </div>
+            <div class="me-4 mb-2">
+              <span class="badge bg-warning">E</span> - Evening
+            </div>
+            <div class="me-4 mb-2">
+              <span class="badge bg-dark">N</span> - Night
+            </div>
+            <div class="me-4 mb-2">
+              <span class="badge bg-secondary">OFF</span> - Day Off
+            </div>
+          </div>
+        </div>
+        <!-- <ag-grid-vue
+          :style="agGridSetting.styleAgGridFrame"
+          :class="agGridSetting.themeAgGrid"
+          :columnDefs="columnDefs"
+          :rowData="rowData"
+          :paginationPageSize="paginationPageSize"
+          :gridOptions="gridOptions"
+          :context="context"
+          :frameworkComponents="frameworkComponents"
+          :enableCellChangeFlash="true"
+          :rowSelection="rowSelection"
+          :getContextMenuItems="getContextMenu"
+          :defaultColDef="agGridSetting.defColDef"
+          :rowGroupPanelShow="rowGroupPanelShow"
+          :suppressDragLeaveHidesColumns="true"
+          :suppressMakeColumnVisibleAfterUnGroup=" true"
+          :statusBar="statusBar"
+          @grid-ready="onGridReady"
+          @cellContextMenu="handleRowRightClicked"
+        ></ag-grid-vue> -->
+      </div>
+    </div>
+
+    <!-- Shift Detail -->
+    <!-- <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">{{$t('title.shiftDetails')}}</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4">
+            <p>
+              <strong>Selected:</strong>
+              {{selectedShift.employee_name}} -
+              {{weekDays[selectedShift.dayIndex].name}},
+              {{weekDays[selectedShift.dayIndex].date}}
+            </p>
+          </div>
+          <div class="col-md-4">
+            <strong>Shift</strong>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- dialog -->
+    <c-dialog
+      v-show="showDialog"
+      :dialogTitle="dialogTitle"
+      size="sm"
+      @confirm="confirmAction"
+      @cancel="showDialog=false"
+    >
+      <template #body>{{ dialogMessage }}</template>
+    </c-dialog>
+
+    <!-- modal -->
+  </div>
+</section>

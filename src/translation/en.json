@@ -88,7 +88,11 @@
         "startDate": "Start Date",
         "endDate": "End Date",
         "employeeInformation": "Employee Information",
-        "leaveInformation": "Leave Information"
+        "leaveInformation": "Leave Information",
+        "legend": "Legend",
+        "code": "Code",
+        "name": "Name",
+        "type": "Type"
       },
       "payroll": {
         "payroll": "Payroll",
@@ -1588,9 +1592,11 @@
     "attendance": "Attendance",
     "attendanceSummary": "Attendance Summary",
     "fingerprintEnrollment": "Fingerprint Enrollment",
+    "enrollment": "Enrollment",
     "leaveRequests": "Leave Requests",
     "leaveApprovals": "Leave Approvals",
     "workSchedule": "Work Schedule",
+    "week": "Week",
     "holidayCalender": "Holiday Calender",
     "payroll": "Payroll",
     "payrollPeriods": "Payroll Periods",
@@ -2483,7 +2489,10 @@
     "export": "Export",
     "import": "Import",
     "selectImage": "Select Image",
-    "selectFile": "Select File"
+    "selectFile": "Select File",
+    "shift": "Shift",
+    "prevWeek": "Prev Week",
+    "nextWeek": "Next Week"
   },
   "languages": {
     "english": "English",
@@ -2912,7 +2921,10 @@
           "quotaLeave": "Quota Leave",
           "remainingLeave": "Remaining Leave",
           "totalDays": "Total Days",
-          "reason": "Reason"
+          "reason": "Reason",
+          "name": "Name",
+          "type": "Type",
+          "remark": "Remark"
         }
       },
       "reminderDate": "Reminder Date",
@@ -3801,7 +3813,17 @@
       "printTomorrowBreakfastList": "Print Tomorrow Breakfast List",
       "printVoucher": "Print Voucher",
       "exportToExcel": "Export To Excel",
-      "detail": "Detail"
+      "detail": "Detail",
+      "setDraft": "Set Draft",
+      "setCalculated": "Set Calculated",
+      "setSubmitToApproval": "Set Submit To Approval",
+      "setApprove": "Set Approve",
+      "setReject": "Set Reject",
+      "setReadyToPayment": "Set Ready to Payment",
+      "processPayment": "Process Payment",
+      "printPayslip": "Print Payslip",
+      "export": "Export",
+      "remark": "Remark"
     },
     "menu": {
       "trackingData": "Tracking Data",

@@ -115,7 +115,7 @@ export default [
     name: "FingerprintEnrollment",
     component: () =>
       import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/attendance/attendance.vue"
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/fingerprint-enrollment/fingerprint-enrollment.vue"
       ),
     meta: {
       pageTitle: "title.fingerprintEnrollment",
@@ -151,7 +151,7 @@ export default [
     name: "LeaveApprovals",
     component: () =>
       import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/attendance/attendance.vue"
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/leave-approvals/leave-approvals.vue"
       ),
     meta: {
       pageTitle: "title.leaveApprovals",
@@ -169,7 +169,7 @@ export default [
     name: "WorkSchedule",
     component: () =>
       import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/attendance/attendance.vue"
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/work-schedule/work-schedule.vue"
       ),
     meta: {
       pageTitle: "title.workSchedule",
@@ -187,7 +187,7 @@ export default [
     name: "HolidayCalender",
     component: () =>
       import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/attendance/attendance.vue"
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/holiday-calender/holiday-calender.vue"
       ),
     meta: {
       pageTitle: "title.holidayCalender",
@@ -205,7 +205,7 @@ export default [
     name: "PayrollPeriods",
     component: () =>
       import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-period/payroll-period.vue"
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-periods/payroll-periods.vue"
       ),
     meta: {
       pageTitle: "title.payrollPeriods",
@@ -223,14 +223,14 @@ export default [
     name: "PeriodDetail",
     component: () =>
       import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-period/payroll-period-detail/payroll-period-detail.vue"
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-periods/payroll-period-detail/payroll-period-detail.vue"
       ),
     meta: {
-      pageTitle: "title.payrollPeriodDetail",
+      pageTitle: "title.payrollPeriodsDetail",
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
         { title: "title.home", url: "/" },
-        { title: "title.payroll", url: "/payroll/payroll-period" },
+        { title: "title.payroll", url: "/payroll/payroll-periods" },
         { title: "title.payrollPeriods", url: "/payroll/payroll-periods" },
         { title: "title.payrollPeriodsDetail", active: true },
       ],
@@ -242,7 +242,7 @@ export default [
     name: "EmployeePayrollDetail",
     component: () =>
       import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-period/payroll-period-detail/employee-payroll-detail/employee-payroll-detail.vue"
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-periods/payroll-period-detail/employee-payroll-detail/employee-payroll-detail.vue"
       ),
     meta: {
       pageTitle: "title.employeePayrollDetail",
@@ -284,7 +284,7 @@ export default [
     name: "PayrollApprovals",
     component: () =>
       import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-period/payroll-period.vue"
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-approvals/payroll-approvals.vue"
       ),
     meta: {
       pageTitle: "title.payrollApprovals",
@@ -302,7 +302,7 @@ export default [
     name: "PayrollDisbursement",
     component: () =>
       import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-period/payroll-period.vue"
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-periods/payroll-periods.vue"
       ),
     meta: {
       pageTitle: "title.payrollDisbursement",

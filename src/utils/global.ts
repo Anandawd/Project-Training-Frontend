@@ -212,6 +212,11 @@ export default {
     submit: 13,
     generate: 14,
     disbursement: 15,
+    draft: 16,
+    approve: 17,
+    reject: 18,
+    ready: 19,
+    remark: 20,
   },
   modeBreakdown: {
     insert: "00",

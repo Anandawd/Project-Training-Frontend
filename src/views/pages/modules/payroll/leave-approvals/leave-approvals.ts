@@ -13,7 +13,7 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import CInputForm from "./fingerprint-enrollment-input-form/fingerprint-enrollment-input-form.vue";
+import CInputForm from "./leave-approvals-input-form/leave-approvals-input-form.vue";
 
 @Options({
   components: {
@@ -38,9 +38,7 @@ export default class Employee extends Vue {
 
   // form
   public showForm: boolean = false;
-  public showDetail: boolean = false;
   public modeData: any;
-  public modePayroll: any;
   public form: any = {};
   public inputFormElement: any = ref();
   public formType: any;
@@ -67,10 +65,6 @@ export default class Employee extends Vue {
 
   // GENERAL FUNCTION
   handleSave(formData: any) {
-    formData.periodName = parseInt(formData.periodName);
-    formData.startDate = parseInt(formData.startDate);
-    formData.endDate = parseInt(formData.endDate);
-    formData.paymentDate = parseInt(formData.paymentDate);
     formData.remark = parseInt(formData.remark);
 
     if (this.modeData == $global.modeData.insert) {
@@ -86,6 +80,10 @@ export default class Employee extends Vue {
     await this.loadEditData(params.id);
   }
 
+  handleMenu() {}
+
+  handleApprove(params: any, mode: any) {}
+
   refreshData(search: any) {
     this.loadDataGrid(search);
   }
@@ -94,42 +92,51 @@ export default class Employee extends Vue {
     this.rowData = [
       {
         id: 1,
-        date: "01/02/2025",
+        employee_id: "EMP001",
         employee_name: "John Doe",
         employee_department: "IT",
         employee_position: "Staff",
-        employee_current_schedule: "Regular",
-        employee_check_in: "08:00",
-        employee_check_out: "16:00",
-        employee_working_hours: "8",
-        employee_overtime: "0",
-        employee_status: "Present",
+        leave_type: "Annual",
+        start_date: "01/02/2025",
+        end_date: "01/04/2025",
+        total_days_leave: 2,
+        total_quota_leave: 12,
+        total_remaining_leave: 8,
+        reason: "",
+        remark: "",
+        status: "Draft",
       },
       {
-        id: 1,
-        date: "01/02/2025",
+        id: 2,
+        employee_id: "EMP001",
         employee_name: "John Smith",
-        employee_department: "Marketing",
-        employee_position: "Staff",
-        employee_current_schedule: "Regular",
-        employee_check_in: "08:00",
-        employee_check_out: "16:00",
-        employee_working_hours: "8",
-        employee_overtime: "0",
-        employee_status: "Present",
-      },
-      {
-        id: 1,
-        date: "01/02/2025",
-        employee_name: "Lukas Graham",
         employee_department: "IT",
         employee_position: "Staff",
-        employee_current_schedule: "Regular",
-        employee_check_in: "08:00",
-        employee_check_out: "16:00",
-        employee_working_hours: "8",
-        employee_overtime: "0",
-        employee_status: "Present",
+        leave_type: "Annual",
+        start_date: "01/02/2025",
+        end_date: "01/04/2025",
+        total_days_leave: 2,
+        total_quota_leave: 12,
+        total_remaining_leave: 8,
+        reason: "",
+        remark: "",
+        status: "Pending",
+      },
+      {
+        id: 3,
+        employee_id: "EMP001",
+        employee_name: "Alex Doe",
+        employee_department: "IT",
+        employee_position: "Staff",
+        leave_type: "Annual",
+        start_date: "01/02/2025",
+        end_date: "01/04/2025",
+        total_days_leave: 2,
+        total_quota_leave: 12,
+        total_remaining_leave: 8,
+        reason: "",
+        remark: "",
+        status: "Approve",
       },
     ];
   }
@@ -145,24 +152,26 @@ export default class Employee extends Vue {
 
     const result = [
       {
-        name: this.$t("commons.contextMenu.update"),
+        name: this.$t("commons.contextMenu.remark"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () =>
-          this.handleShowForm(this.paramsData, $global.modeData.edit),
+          this.handleShowForm(this.paramsData, $global.modePayroll.remark),
       },
+      "separator",
       {
-        name: this.$t("commons.contextMenu.delete"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("delete_icon24"),
-        action: () => this.handleDelete(this.paramsData),
-      },
-      {
-        name: this.$t("commons.contextMenu.set"),
+        name: this.$t("commons.contextMenu.setApprove"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () =>
-          this.handleShowForm(this.paramsData, $global.modeData.edit),
+          this.handleApprove(this.paramsData, $global.modePayroll.approve),
+      },
+      {
+        name: this.$t("commons.contextMenu.setReject"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("edit_icon24"),
+        action: () =>
+          this.handleApprove(this.paramsData, $global.modePayroll.reject),
       },
     ];
     return result;
@@ -181,35 +190,10 @@ export default class Employee extends Vue {
     }
   }
 
-  // handleShowForm(params: any, mode: any) {
-  //   this.inputFormElement.initialize();
-  //   this.modeData = mode;
-  //   this.showForm = true;
-  // }
-
   handleShowForm(params: any, mode: any) {
-    if (mode === $global.modePayroll.detail) {
-      this.$router.push({
-        name: "PeriodDetail",
-        params: { id: params.id || "new" },
-      });
-    } else {
-      this.inputFormElement.initialize();
-      this.modeData = mode;
-      this.showForm = true;
-    }
-  }
-
-  handleShowDetail(params: any, mode: any) {
-    this.$router.push({
-      name: "PeriodDetail",
-      params: { id: params.id },
-    });
-  }
-
-  handleDelete(params: any) {
-    this.showDialog = true;
-    this.deleteParam = params.id;
+    this.inputFormElement.initialize();
+    this.modeData = mode;
+    this.showForm = true;
   }
 
   // API FUNCTION
@@ -278,8 +262,6 @@ export default class Employee extends Vue {
     this.gridOptions = {
       actionGrid: {
         menu: true,
-        edit: true,
-        delete: true,
       },
       rowHeight: $global.agGrid.rowHeightDefault,
       headerHeight: $global.agGrid.headerHeight,
@@ -299,13 +281,6 @@ export default class Employee extends Vue {
         cellRenderer: "actionGrid",
         colId: "params",
         width: 80,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.attendance.date"),
-        headerClass: "align-header-center",
-        field: "date",
-        width: 100,
-        enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.employeeName"),
@@ -330,9 +305,66 @@ export default class Employee extends Vue {
       },
 
       {
+        headerName: this.$t("commons.table.payroll.attendance.leaveType"),
+        headerClass: "align-header-center",
+        field: "leave_type",
+        width: 120,
+        enableRowGroup: true,
+      },
+
+      {
+        headerName: this.$t("commons.table.payroll.attendance.quotaLeave"),
+        headerClass: "align-header-center",
+        field: "total_quota_leave",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.attendance.remainingLeave"),
+        headerClass: "align-header-center",
+        field: "total_remaining_leave",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.attendance.startDate"),
+        headerClass: "align-header-center",
+        field: "start_date",
+        width: 100,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.attendance.endDate"),
+        headerClass: "align-header-center",
+        field: "end_date",
+        width: 100,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.attendance.totalDays"),
+        headerClass: "align-header-center",
+        field: "total_days_leave",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.attendance.reason"),
+        headerClass: "align-header-center",
+        field: "reason",
+        width: 100,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.remark"),
+        headerClass: "align-header-center",
+        field: "remark",
+        width: 100,
+        enableRowGroup: true,
+      },
+      {
         headerName: this.$t("commons.table.payroll.payroll.status"),
         headerClass: "align-header-center",
-        field: "employee_status",
+        field: "status",
         width: 100,
         enableRowGroup: true,
       },
@@ -361,7 +393,7 @@ export default class Employee extends Vue {
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
 
-    params.api.sizeColumnsToFit();
+    // params.api.sizeColumnsToFit();
   }
 
   // GETTER AND SETTER

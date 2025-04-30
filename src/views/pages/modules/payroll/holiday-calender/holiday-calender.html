@@ -59,7 +59,7 @@
               @change="onRefresh"
             />
             <label for="showPresent"
-              >{{ $t('commons.filter.checkList.showPresent') }}</label
+              >{{ $t('commons.filter.checkList.showActive') }}</label
             >
           </div>
           <div class="checklist">
@@ -73,35 +73,7 @@
               @change="onRefresh"
             />
             <label for="showLate"
-              >{{ $t('commons.filter.checkList.showLate') }}</label
-            >
-          </div>
-          <div class="checklist">
-            <input
-              class="mr-1"
-              type="radio"
-              name="showAbsent"
-              id="showAbsent"
-              v-model="search.filter[0]"
-              value="3"
-              @change="onRefresh"
-            />
-            <label for="showAbsent"
-              >{{ $t('commons.filter.checkList.showAbsent') }}</label
-            >
-          </div>
-          <div class="checklist">
-            <input
-              class="mr-1"
-              type="radio"
-              name="showLeave"
-              id="showLeave"
-              v-model="search.filter[0]"
-              value="4"
-              @change="onRefresh"
-            />
-            <label for="showLeave"
-              >{{ $t('commons.filter.checkList.showLeave') }}</label
+              >{{ $t('commons.filter.checkList.showInactive') }}</label
             >
           </div>
         </div>
@@ -111,7 +83,7 @@
     <!-- table -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">{{$t('title.enrollment')}}</h3>
+        <h3 class="card-title">{{$t('title.holidayCalender')}}</h3>
       </div>
       <div class="card-body">
         <ag-grid-vue
@@ -140,12 +112,12 @@
     <!-- dialog -->
     <c-dialog
       v-show="showDialog"
-      dialogTitle="Confirm"
+      :dialogTitle="dialogTitle"
       size="sm"
       @confirm="deleteData"
       @cancel="showDialog=false"
     >
-      <template #body> Are you sure to delete this data? </template>
+      <template #body>{{dialogMessage}}</template>
     </c-dialog>
 
     <!-- modal -->
