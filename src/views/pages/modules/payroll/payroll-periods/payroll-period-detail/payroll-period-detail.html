@@ -232,95 +232,106 @@
       @close="showGenerateModal = false"
       @save="handleSaveModal"
     >
-      <p>Select employees to generate payroll</p>
-      <div class="row mb-3">
-        <!-- select option -->
-        <div class="col-md-6">
-          <div class="form-group">
-            <label
-              >{{$t('commons.table.payroll.payroll.selectEmployees')}}</label
-            >
-            <select
-              class="form-control"
-              v-model="generateOptions.selectionMode"
-            >
-              <option value="all">
-                {{$t('commons.table.payroll.payroll.allEmployees')}}
-              </option>
-              <option value="department">
-                {{$t('commons.table.payroll.employee.department')}}
-              </option>
-              <option value="position">
-                {{$t('commons.table.payroll.employee.position')}}
-              </option>
-              <option value="selected">
-                {{$t('commons.table.payroll.payroll.selectedEmployees')}}
-              </option>
-            </select>
+      <div @click.stop>
+        <!-- <p>Select employees to generate payroll</p> -->
+        <div class="row mb-3">
+          <!-- select option -->
+          <div class="col-md-6">
+            <c-select
+              required
+              offset="right"
+              class="row mb-1"
+              name="selectEmployee"
+              labelName="name"
+              keyName="code"
+              v-model="form.select_employee"
+              :label="$t('labels.payroll.payroll.selectEmployee')"
+              :options="selectEmployeeOptions"
+            />
+          </div>
+
+          <!-- option department -->
+          <div
+            class="col-md-6"
+            v-if="generateOptions.selectionMode === 'department'"
+          >
+            <c-select
+              required
+              offset="right"
+              class="row mb-1"
+              name="departments"
+              labelName="name"
+              keyName="code"
+              v-model="form.departments"
+              :label="$t('labels.payroll.payroll.departments')"
+              :options="departmentsOptions"
+            />
+          </div>
+          <div
+            class="col-md-6"
+            v-if="generateOptions.selectionMode === 'position'"
+          >
+            <c-select
+              required
+              offset="right"
+              class="row mb-1"
+              name="positions"
+              labelName="name"
+              keyName="code"
+              v-model="form.positions"
+              :label="$t('labels.payroll.payroll.positions')"
+              :options="positionsOptions"
+            />
           </div>
         </div>
-        <!-- option department -->
-        <div
-          class="col-md-6"
-          v-if="generateOptions.selectionMode === 'department'"
-        >
-          <div class="form-group">
-            <label
-              >{{$t('commons.table.payroll.payroll.selectDepartment')}}</label
-            >
-            <select
-              class="form-control"
-              v-model="generateOptions.departmentId"
-              multiple
-            >
-              <option
-                v-for="dept in departments"
-                :key="dept.id"
-                :value="dept.id"
-              >
-                {{dept.name}}
-              </option>
-            </select>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <c-select
+              required
+              offset="right"
+              class="row mb-1"
+              name="taxIncome"
+              labelName="name"
+              keyName="code"
+              v-model="form.tax_income"
+              :label="$t('labels.payroll.payroll.taxIncome')"
+              :options="taxIncomeOptions"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-select
+              required
+              offset="right"
+              class="row mb-1"
+              name="taxMethod"
+              labelName="name"
+              keyName="code"
+              v-model="form.tax_method"
+              :label="$t('labels.payroll.payroll.taxMethod')"
+              :options="taxMethodOptions"
+            />
           </div>
         </div>
-        <div
-          class="col-md-6"
-          v-if="generateOptions.selectionMode === 'position'"
-        >
-          <div class="form-group">
-            <label
-              >{{$t('commons.table.payroll.payroll.selectPosition')}}</label
-            >
-            <select
-              class="form-control"
-              v-model="generateOptions.positionId"
-              multiple
-            >
-              <option v-for="pos in positions" :key="pos.id" :value="pos.id">
-                {{pos.name}}
-              </option>
-            </select>
-          </div>
+        <!-- button -->
+        <div class="d-flex justify-content-end mt-2">
+          <button
+            type="button"
+            class="btn btn-danger mr-1 px-3"
+            @click="showGenerateModal = false"
+          >
+            <i class="fa fa-times" aria-hidden="true"></i>
+            {{$t('buttons.cancel')}}
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary px-3"
+            @click="handleSaveModal"
+          >
+            <i class="fa fa-play"></i>
+            {{$t('buttons.generate')}}
+          </button>
         </div>
-      </div>
-      <!-- button -->
-      <div class="d-flex justify-content-end mt-2">
-        <button
-          type="button"
-          class="btn btn-danger mr-1 px-3"
-          @click="handleShowModal = false"
-        >
-          <i class="fa fa-times" aria-hidden="true"></i>
-          {{$t('buttons.cancel')}}
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary px-3"
-          @click="handleSaveModal"
-        >
-          <i class="fa fa-play"></i>
-          {{$t('buttons.generate')}}
-        </button>
       </div>
     </c-modal>
 

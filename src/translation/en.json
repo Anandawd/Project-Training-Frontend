@@ -167,7 +167,10 @@
         "takeHomePay": "Take Home Pay",
         "selectType": "Select Type",
         "selectComponent": "Select Component",
-        "amount": "Amount"
+        "selectEmployee": "Select Employee",
+        "amount": "Amount",
+        "taxIncome": "Tax Income",
+        "taxMethod": "Tax Method"
       },
 
       "reimbursement": {
@@ -2923,7 +2926,14 @@
           "selectDepartment": "Select Department",
           "selectPosition": "Select Position",
           "allEmployees": "All Employees",
-          "selectedEmployees": "Selected Employees"
+          "selectedEmployees": "Selected Employees",
+          "taxIncome": "Tax Income",
+          "taxMethod": "Tax Method",
+          "pph26": "PPh 26",
+          "default": "Default",
+          "gross": "Gross",
+          "grossUp": "Gross Up",
+          "netto": "Netto"
         },
         "attendance": {
           "date": "Date",

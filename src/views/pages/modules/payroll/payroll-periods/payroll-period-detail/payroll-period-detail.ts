@@ -416,11 +416,27 @@ export default class Employee extends Vue {
   //   this.showGenerateModal = true;
   // }
   handleShowModal() {
+    this.generateOptions = {
+      selectionMode: "all",
+      departmentId: [],
+      positionId: [],
+      selectedEmployeeIds: [],
+    };
     this.showGenerateModal = true;
   }
 
-  handleSaveModal() {
-    this.generatePayroll();
+  async handleSaveModal() {
+    try {
+      this.isGenerating = true;
+
+      await this.generatePayroll();
+
+      this.showGenerateModal = false;
+    } catch (error) {
+      getError(error);
+    } finally {
+      this.isGenerating = false;
+    }
   }
 
   confirmAction() {
@@ -586,7 +602,7 @@ export default class Employee extends Vue {
   onGridReady(params: any) {
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
-    params.api.sizeColumnsToFit();
+    // params.api.sizeColumnsToFit();
   }
 
   // GETTER AND SETTER
