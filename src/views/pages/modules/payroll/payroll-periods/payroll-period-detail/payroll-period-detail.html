@@ -233,8 +233,7 @@
       @save="handleSaveModal"
     >
       <div @click.stop>
-        <!-- <p>Select employees to generate payroll</p> -->
-        <div class="row mb-3">
+        <div class="row">
           <!-- select option -->
           <div class="col-md-6">
             <c-select
@@ -247,14 +246,12 @@
               v-model="form.select_employee"
               :label="$t('labels.payroll.payroll.selectEmployee')"
               :options="selectEmployeeOptions"
+              @change="onSelectEmployeeChange"
             />
           </div>
 
           <!-- option department -->
-          <div
-            class="col-md-6"
-            v-if="generateOptions.selectionMode === 'department'"
-          >
+          <div class="col-md-6" v-if="form.select_employee === 'department'">
             <c-select
               required
               offset="right"
@@ -263,14 +260,12 @@
               labelName="name"
               keyName="code"
               v-model="form.departments"
-              :label="$t('labels.payroll.payroll.departments')"
+              :label="$t('labels.payroll.payroll.selectDepartment')"
               :options="departmentsOptions"
+              multiple
             />
           </div>
-          <div
-            class="col-md-6"
-            v-if="generateOptions.selectionMode === 'position'"
-          >
+          <div class="col-md-6" v-if="form.select_employee === 'position'">
             <c-select
               required
               offset="right"
@@ -279,8 +274,9 @@
               labelName="name"
               keyName="code"
               v-model="form.positions"
-              :label="$t('labels.payroll.payroll.positions')"
+              :label="$t('labels.payroll.payroll.selectPosition')"
               :options="positionsOptions"
+              multiple
             />
           </div>
         </div>

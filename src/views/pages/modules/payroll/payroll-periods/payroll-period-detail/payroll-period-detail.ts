@@ -12,7 +12,7 @@ import $global from "@/utils/global";
 import { getToastSuccess } from "@/utils/toast";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
-import { reactive } from "vue";
+import { reactive, watch } from "vue";
 import { Options, Vue } from "vue-class-component";
 
 @Options({
@@ -24,65 +24,48 @@ import { Options, Vue } from "vue-class-component";
   },
 })
 export default class Employee extends Vue {
-  public form: any = reactive({});
+  public form: any = reactive({
+    select_employee: "all",
+    departments: [],
+    positions: [],
+    tax_income: "",
+    tax_method: "TM01",
+  });
   public modeData: any;
-  // Period data
-  public periodData: any = {
-    id: 1,
-    period_name: "April 2025",
-    placement: "Amora Ubud",
-    period_type: "Monthly",
-    start_date: "01/04/2025",
-    end_date: "30/04/2025",
-    payment_date: "01/05/2025",
-    remark: "",
-    status: "Draft",
-    created_by: "Budi Admin",
-    created_at: "25/04/2025",
-    updated_at: "25/04/2025",
-  };
+  public periodData: any = {};
+  public rowData: any = [];
 
-  // Employee payroll data
-  public rowData: any = [
-    {
-      id: 1,
-      employe_id: "EMP001",
-      employee_name: "John Doe",
-      department_name: "IT",
-      position_name: "Developer",
-      base_salary: 7000000,
-      gross_salary: 8500000,
-      total_deductions: 1200000,
-      tax: 500000,
-      net_salary: 6800000,
-      status: "Draft",
-    },
-    {
-      id: 2,
-      employe_id: "EMP002",
-      employee_name: "Jane Smith",
-      department_name: "Marketing",
-      position_name: "Manager",
-      base_salary: 8500000,
-      gross_salary: 10000000,
-      total_deductions: 1500000,
-      tax: 600000,
-      net_salary: 7900000,
-      status: "Draft",
-    },
-    {
-      id: 3,
-      employe_id: "EMP003",
-      employee_name: "Robert Johnson",
-      department_name: "Finance",
-      position_name: "Accountant",
-      base_salary: 6000000,
-      gross_salary: 7200000,
-      total_deductions: 950000,
-      tax: 450000,
-      net_salary: 5800000,
-      status: "Draft",
-    },
+  // Selector options
+  public selectEmployeeOptions: any = [
+    { code: "all", name: "All Employees" },
+    { code: "department", name: "By Department" },
+    { code: "position", name: "By Position" },
+    { code: "select", name: "Select Employees" },
+  ];
+
+  public departmentsOptions: any = [
+    { code: "D01", name: "IT" },
+    { code: "D02", name: "Marketing" },
+    { code: "D03", name: "Finance" },
+    { code: "D04", name: "Human Resources" },
+  ];
+
+  public positionsOptions: any = [
+    { code: "P01", name: "Manager" },
+    { code: "P02", name: "Developer" },
+    { code: "P03", name: "Accountant" },
+    { code: "P04", name: "HR Officer" },
+  ];
+
+  public taxIncomeOptions: any = [
+    { code: "TI01", name: "PPh 21" },
+    { code: "TI02", name: "PPh 26" },
+  ];
+
+  public taxMethodOptions: any = [
+    { code: "TM01", name: "Gross" },
+    { code: "TM02", name: "Gross Up" },
+    { code: "TM03", name: "Netto" },
   ];
 
   // Filter
@@ -144,19 +127,22 @@ export default class Employee extends Vue {
 
   // GENERAL FUNCTION
   async handleEdit(params: any) {
-    // this.showDialog = true;
     this.modeData = $global.modeData.edit;
     this.handleShowEmployeePayrollDetails(params);
-    // await this.loadEditData(params.id);
-    // this.modeData = $global.modeData.edit;
-    // await this.loadEditData(params.id);
   }
 
-  handleDelete(params: any) {
+  async handleDelete(params: any) {
     this.dialogMessage =
       "Are you sure you want to remove this employee from the payroll?";
     this.dialogAction = "delete";
     this.showDialog = true;
+    try {
+      this.rowData = this.rowData.filter((item: any) => item.id !== params.id);
+      getToastSuccess("Employee removed from payroll successfully");
+      this.showDialog = false;
+    } catch (error) {
+      getError(error);
+    }
   }
 
   handleSubmit(params: any) {
@@ -232,45 +218,8 @@ export default class Employee extends Vue {
     }
   }
 
-  handleShowDetail(params: any, mode: any) {}
-
-  async insertData(formData: any) {
-    try {
-      // API call to insert data
-      // const {status2} = await payrollAPI.InsertPayrollPeriod(formData)
-      // if(status2.status == 0){
-      //   getToastSuccess(this.$t('messages.saveSuccess'))
-      //   this.showForm = false
-      //   this.loadDataGrid()
-      // }
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadEditData(params: any) {
-    try {
-      // API call to get period data for editing
-      // const {data} = await payrollAPI.GetPayrollPeriod(params)
-      // this.inputFormElement.form = data
-      // this.showForm = true
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async updateData(formData: any) {
-    try {
-      // API call to update data
-      // const { status2 } = await payrollAPI.UpdatePayrollPeriod(formData);
-      // if (status2.status == 0) {
-      //   this.loadDataGrid("");
-      //   this.showForm = false;
-      //   getToastSuccess(this.$t("messages.saveSuccess"));
-      // }
-    } catch (error) {
-      getError(error);
-    }
+  onSelectEmployeeChange() {
+    this.generateOptions.selectionMode = this.form.select_employee;
   }
 
   async generatePayroll() {
@@ -358,7 +307,7 @@ export default class Employee extends Vue {
     }
   }
 
-  async loadPosition() {
+  async loadPositions() {
     try {
       // API call to load positions
       // const { data } = await payrollAPI.GetPositions();
@@ -368,9 +317,66 @@ export default class Employee extends Vue {
     }
   }
 
-  // Payroll Actions
+  async loadMock() {
+    this.periodData = {
+      id: 1,
+      period_name: "April 2025",
+      placement: "Amora Ubud",
+      period_type: "Monthly",
+      start_date: "01/04/2025",
+      end_date: "30/04/2025",
+      payment_date: "01/05/2025",
+      remark: "",
+      status: "Draft",
+      created_by: "Budi Admin",
+      created_at: "25/04/2025",
+      updated_at: "25/04/2025",
+    };
+
+    this.rowData = [
+      {
+        id: 1,
+        employe_id: "EMP001",
+        employee_name: "John Doe",
+        department_name: "IT",
+        position_name: "Developer",
+        base_salary: 7000000,
+        gross_salary: 8500000,
+        total_deductions: 1200000,
+        tax: 500000,
+        net_salary: 6800000,
+        status: "Draft",
+      },
+      {
+        id: 2,
+        employe_id: "EMP002",
+        employee_name: "Jane Smith",
+        department_name: "Marketing",
+        position_name: "Manager",
+        base_salary: 8500000,
+        gross_salary: 10000000,
+        total_deductions: 1500000,
+        tax: 600000,
+        net_salary: 7900000,
+        status: "Draft",
+      },
+      {
+        id: 3,
+        employe_id: "EMP003",
+        employee_name: "Robert Johnson",
+        department_name: "Finance",
+        position_name: "Accountant",
+        base_salary: 6000000,
+        gross_salary: 7200000,
+        total_deductions: 950000,
+        tax: 450000,
+        net_salary: 5800000,
+        status: "Draft",
+      },
+    ];
+  }
+
   handleShowEmployeePayrollDetails(employee: any) {
-    console.log("button clicked", employee);
     this.$router.push({
       name: "EmployeePayrollDetail",
       params: {
@@ -378,26 +384,6 @@ export default class Employee extends Vue {
         employeeId: employee.id,
       },
     });
-  }
-
-  async removeEmployeePayroll(employee: any) {
-    try {
-      // API call to remove employee from payroll
-      // const { status2 } = await payrollAPI.RemoveEmployeePayroll(this.periodData.id, employee.id);
-
-      // if (status2.status == 0) {
-      //   await this.loadEmployeePayrolls();
-      //   getToastSuccess(this.$t("messages.deleteSuccess"));
-      // }
-
-      this.rowData = this.rowData.filter(
-        (item: any) => item.id !== employee.id
-      );
-      getToastSuccess("Employee removed from payroll successfully");
-      this.showDialog = false;
-    } catch (error) {
-      getError(error);
-    }
   }
 
   // FORM ACTIONS
@@ -412,10 +398,12 @@ export default class Employee extends Vue {
     getToastSuccess("Payroll saved successfully");
   }
 
-  // handleShowForm() {
-  //   this.showGenerateModal = true;
-  // }
   handleShowModal() {
+    this.form = {
+      select_employee: "all",
+      tax_income: "TI01",
+      tax_method: "TM01",
+    };
     this.generateOptions = {
       selectionMode: "all",
       departmentId: [],
@@ -443,7 +431,12 @@ export default class Employee extends Vue {
     if (this.dialogAction === "submit") {
       this.handleSubmit(null);
     } else if (this.dialogAction === "delete") {
-      this.removeEmployeePayroll(this.paramsData);
+      this.handleDelete(this.paramsData);
+    } else if (this.dialogAction === "saveAndGoBack") {
+      this.handleSave();
+      this.$router.push({
+        name: "PayrollPeriods",
+      });
     }
     this.showDialog = false;
   }
@@ -463,7 +456,7 @@ export default class Employee extends Vue {
 
   // METHODS
   async created() {
-    this.initializeData();
+    this.loadMock();
 
     const periodId = this.$route.params.id;
     if (periodId) {
@@ -471,20 +464,37 @@ export default class Employee extends Vue {
     }
 
     await this.loadDepartments();
-    await this.loadPosition();
+    await this.loadPositions();
 
     if (this.periodData.status !== "Draft") {
       await this.loadEmployeePayrolls();
     }
-  }
 
-  initializeData() {}
+    // Watch for form changes to update generateOptions
+    watch(
+      () => this.form.select_employee,
+      (newValue) => {
+        this.generateOptions.selectionMode = newValue;
+      }
+    );
+    watch(
+      () => this.form.departments,
+      (newValue) => {
+        this.generateOptions.departmentId = newValue;
+      }
+    );
+    watch(
+      () => this.form.positions,
+      (newValue) => {
+        this.generateOptions.positionId = newValue;
+      }
+    );
+  }
 
   beforeMount(): void {
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
       actionGrid: {
-        edit: true,
         menu: true,
         delete: true,
       },
@@ -610,10 +620,6 @@ export default class Employee extends Vue {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
   }
 
-  get isRunPayrollDisabled(): boolean {
-    return !this.rowData.some((item: any) => item.status === "Draft");
-  }
-
   // COMPUTED PROPERTIES
   get totalEmployees(): number {
     return this.rowData.length;
@@ -638,6 +644,6 @@ export default class Employee extends Vue {
   }
 
   get canSubmit(): boolean {
-    return this.rowData.length > 0;
+    return this.rowData.length > 0 && this.periodData.status === "Draft";
   }
 }
