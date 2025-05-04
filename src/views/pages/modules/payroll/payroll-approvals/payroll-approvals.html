@@ -3,19 +3,19 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
-        title="Reject Requests"
+        title="Reject Payroll"
         type="button"
         class="btn btn-danger mr-1"
-        @click="handleApprove('', $global.modePayroll.reject)"
+        @click="handleBulkApprove"
       >
         <i class="fa fa-times mr-1" aria-hidden="true"></i>{{
         $t('buttons.reject') }}
       </button>
       <button
-        title="Approve Requests"
+        title="Approve Payroll"
         type="button"
         class="btn btn-success mr-1"
-        @click="handleApprove('', $global.modePayroll.approve)"
+        @click="handleBulkReject"
       >
         <i class="fa fa-check mr-1" aria-hidden="true"></i>{{
         $t('buttons.approve') }}
@@ -77,12 +77,12 @@
     <!-- dialog -->
     <c-dialog
       v-show="showDialog"
-      dialogTitle="Confirm"
+      :dialogTitle="dialogTitle"
       size="sm"
-      @confirm="deleteData"
+      @confirm="confirmAction"
       @cancel="showDialog=false"
     >
-      <template #body> Are you sure to delete this data? </template>
+      <template #body>{{dialogMessage}}</template>
     </c-dialog>
   </div>
 </section>
