@@ -265,6 +265,20 @@
               multiple
             />
           </div>
+          <div class="col-md-6" v-if="form.select_employee === 'specific'">
+            <c-select
+              required
+              offset="right"
+              class="row mb-1"
+              name="selectedEmployees"
+              labelName="name"
+              keyName="code"
+              v-model="form.selectedEmployees"
+              :label="$t('labels.payroll.payroll.selectSpecificEmployees')"
+              :options="employeesOptions"
+              multiple
+            />
+          </div>
         </div>
 
         <div class="row mb-3">

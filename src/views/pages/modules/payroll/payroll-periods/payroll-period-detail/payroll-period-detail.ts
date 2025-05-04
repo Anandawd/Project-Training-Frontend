@@ -49,7 +49,7 @@ export default class Employee extends Vue {
     { code: "all", name: "All Employees" },
     { code: "department", name: "By Department" },
     { code: "position", name: "By Position" },
-    { code: "select", name: "Select Employees" },
+    { code: "specific", name: "Select Specific Employees" },
   ];
 
   public departmentsOptions: any = [
@@ -64,6 +64,13 @@ export default class Employee extends Vue {
     { code: "P02", name: "Developer" },
     { code: "P03", name: "Accountant" },
     { code: "P04", name: "HR Officer" },
+  ];
+
+  public employeesOptions: any = [
+    { code: "EMP01", name: "John Doe" },
+    { code: "EMP02", name: "James Smith" },
+    { code: "EMP03", name: "Budi Doremi" },
+    { code: "EMP04", name: "Lukas Graham" },
   ];
 
   public taxIncomeOptions: any = [

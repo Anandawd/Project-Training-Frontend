@@ -33,91 +33,51 @@ export default class InputForm extends Vue {
 
   public defaultForm: any = {};
   public form: any = reactive({});
+  public formDetail: any = reactive({});
 
-  selectEmployeeOptions: any = [
+  // form settings
+  public formats: Array<any> = [
+    { code: 1, name: ",0.;-,0." },
+    { code: 2, name: ",0.0;-,0.0" },
+    { code: 3, name: ",0.00;-,0.00" },
+    { code: 4, name: ",0.000;-,0.000" },
+  ];
+
+  placementOptions: any = [
     {
       SubGroupName: "Placement",
-      code: "EMP001",
-      name: "John Doe",
+      code: "P001",
+      name: "Amora Ubud",
     },
     {
       SubGroupName: "Placement",
-      code: "EMP002",
-      name: "Deddy Cagur",
+      code: "P001",
+      name: "Amora Canggu",
     },
   ];
-  leaveTypeOptions: any = [
+  periodTypeOptions: any = [
     {
-      SubGroupName: "Type",
-      code: "T01",
-      name: "Annual Leave",
+      SubGroupName: "Period Type",
+      code: "PT001",
+      name: "Daily",
     },
     {
-      SubGroupName: "Type",
-      code: "T02",
-      name: "Sick Leave",
+      SubGroupName: "Period Type",
+      code: "PT002",
+      name: "Weekly",
     },
     {
-      SubGroupName: "Type",
-      code: "T03",
-      name: "Maternity Leave",
+      SubGroupName: "Period Type",
+      code: "PT003",
+      name: "Bi-Weekly",
     },
     {
-      SubGroupName: "Type",
-      code: "T04",
-      name: "Paternity Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T05",
-      name: "Marriage Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T06",
-      name: "Bereavement Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T07",
-      name: "Unpaid Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T08",
-      name: "Public Holiday",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T09",
-      name: "Compassionate Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T10",
-      name: "Study Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T11",
-      name: "Special Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T12",
-      name: "Emergency Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T13",
-      name: "Religious Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T14",
-      name: "Quarantine Holiday",
+      SubGroupName: "Period Type",
+      code: "PT004",
+      name: "Monthly",
     },
   ];
+
   columnOptions = [
     {
       label: "name",
@@ -138,16 +98,12 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      employee_id: "",
-      employee_name: "",
-      employee_department: "",
-      employee_position: "",
-      total_quota_leave: 0,
-      total_remaining_leave: 0,
-      leave_type: "",
-      reason: "",
-      start_date: new Date(),
-      end_date: new Date(),
+      placement: "",
+      periodName: "",
+      periodType: "",
+      startDate: "",
+      endDate: "",
+      paymentDate: "",
       remark: "",
     };
   }
@@ -178,7 +134,14 @@ export default class InputForm extends Vue {
 
   // validation
   get schema() {
-    return Yup.object().shape({});
+    return Yup.object().shape({
+      placement: Yup.string().required("Placement is required"),
+      periodName: Yup.string().required("Period name is required"),
+      periodType: Yup.string().required("Period type is required"),
+      startDate: Yup.string().required("Start date is required"),
+      endDate: Yup.string().required("End date is required"),
+      paymentDate: Yup.string().required("Payment date is required"),
+    });
   }
 
   get title() {
