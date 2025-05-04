@@ -34,8 +34,8 @@ export default class Employee extends Vue {
     select_employee: "all",
     departments: [],
     positions: [],
-    tax_income: "TI01",
-    tax_method: "TM01",
+    tax_income_type: "PPH21",
+    tax_method: "GROSS",
     selectedEmployees: [],
   });
   public modeData: any;
@@ -67,14 +67,14 @@ export default class Employee extends Vue {
   ];
 
   public taxIncomeOptions: any = [
-    { code: "TI01", name: "PPh 21" },
-    { code: "TI02", name: "PPh 26" },
+    { code: "PPH21", name: "PPh 21" },
+    { code: "PPH26", name: "PPh 26" },
   ];
 
   public taxMethodOptions: any = [
-    { code: "TM01", name: "Gross" },
-    { code: "TM02", name: "Gross Up" },
-    { code: "TM03", name: "Netto" },
+    { code: "GROSS", name: "Gross" },
+    { code: "GROSSUP", name: "Gross Up" },
+    { code: "NETTO", name: "Netto" },
   ];
 
   // Filter
@@ -206,14 +206,12 @@ export default class Employee extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.employee.position"),
-
         field: "position_name",
         width: 100,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.baseSalary"),
-
         field: "base_salary",
         width: 120,
         enableRowGroup: true,
@@ -221,7 +219,6 @@ export default class Employee extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.grossSalary"),
-
         field: "gross_salary",
         width: 120,
         enableRowGroup: true,
@@ -229,7 +226,6 @@ export default class Employee extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.totalDeductions"),
-
         field: "total_deductions",
         width: 120,
         enableRowGroup: true,
@@ -237,7 +233,6 @@ export default class Employee extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.pph21"),
-
         field: "tax",
         width: 120,
         enableRowGroup: true,
@@ -245,7 +240,6 @@ export default class Employee extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.takeHomePay"),
-
         field: "net_salary",
         width: 120,
         enableRowGroup: true,
@@ -649,7 +643,7 @@ export default class Employee extends Vue {
         positionId: this.generateOptions.positionId,
         selectedEmployeeIds: this.generateOptions.selectedEmployeeIds,
         taxMethod: this.form.tax_method,
-        taxIncome: this.form.tax_income,
+        taxIncome: this.form.tax_income_type_type,
       };
 
       // In a real implementation, this would be an API call
@@ -741,7 +735,7 @@ export default class Employee extends Vue {
       select_employee: "all",
       departments: [],
       positions: [],
-      tax_income: "TI01",
+      tax_income_type: "TI01",
       tax_method: "TM01",
       selectedEmployees: [],
     };

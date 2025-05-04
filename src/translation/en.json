@@ -170,7 +170,10 @@
         "selectEmployee": "Select Employee",
         "amount": "Amount",
         "taxIncome": "Tax Income",
-        "taxMethod": "Tax Method"
+        "taxMethod": "Tax Method",
+        "totalWorkDaysInMonth": "Total Work Days In Month",
+        "totalActualWorkDays": "Total Actual Work Days",
+        "prorataFactor": "Prorate Factor"
       },
 
       "reimbursement": {
@@ -1621,6 +1624,7 @@
     "employeePayrollDetail": "Employee Payroll Detail",
     "employeeInformation": "Employee Information",
     "pph21": "PPh 21",
+    "prorate": "Prorate",
     "insertComponent": "Insert Component",
     "totalPayment": "Total Payment",
     "payrollComponent": "Payroll Component",
@@ -2506,7 +2510,8 @@
     "selectFile": "Select File",
     "shift": "Shift",
     "prevWeek": "Prev Week",
-    "nextWeek": "Next Week"
+    "nextWeek": "Next Week",
+    "prorate": "Prorate"
   },
   "languages": {
     "english": "English",

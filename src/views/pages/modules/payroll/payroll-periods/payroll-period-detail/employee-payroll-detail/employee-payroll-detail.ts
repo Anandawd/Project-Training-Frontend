@@ -1,5 +1,6 @@
 import CDatepicker from "@/components/datepicker/datepicker.vue";
 import CInput from "@/components/input/input.vue";
+import CModal from "@/components/modal/modal.vue";
 import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
 import { formatCurrency, formatNumber2 } from "@/utils/format";
@@ -26,7 +27,7 @@ interface PayrollComponent {
   is_included_in_bpjs_health: boolean;
   is_included_in_bpjs_employee: boolean;
   is_fixed: boolean;
-  apply_prorata: boolean;
+  is_prorated: boolean;
   unit: string;
   remark: string;
 }
@@ -40,6 +41,7 @@ interface PayrollComponent {
     CDatepicker,
     CRadio,
     CInputForm,
+    CModal,
   },
   emits: ["save", "close"],
 })
@@ -56,8 +58,10 @@ export default class EmployeePayrollDetail extends Vue {
   // UI State
   public isSave: boolean = false;
   public isLoading: boolean = false;
+  public isGenerating: boolean = false;
   public showDialog: boolean = false;
   public showForm: boolean = false;
+  public showModal: boolean = false;
   public dialogMessage: string = "";
   public dialogAction: string = "";
   public formatCurrency = formatCurrency;
@@ -79,6 +83,8 @@ export default class EmployeePayrollDetail extends Vue {
     bank_account_holder: "",
     bank_account_number: "",
     salary_type: "monthly",
+    tax_income_type: "",
+    tax_method: "",
   });
 
   // Period data
@@ -104,6 +110,8 @@ export default class EmployeePayrollDetail extends Vue {
   public form: any = reactive({
     employee_id: "",
     period_id: "",
+    tax_income: "pph21",
+    tax_method: "gross",
     base_salary: 0,
     overtime: 0,
     reimbursement: 0,
@@ -134,7 +142,7 @@ export default class EmployeePayrollDetail extends Vue {
     tax_amount_floor_up: 0,
 
     total_gross_salary: 0,
-    total_deduction_salary: 0,
+    total_deductions_salary: 0,
     take_home_pay: 0,
 
     ter_category: "",
@@ -144,6 +152,17 @@ export default class EmployeePayrollDetail extends Vue {
     prorata_factor: 1,
     yearly_calculation: false,
   });
+
+  public taxIncomeOptions: any = [
+    { code: "PPH21", name: "PPh 21" },
+    { code: "PPH26", name: "PPh 26" },
+  ];
+
+  public taxMethodOptions: any = [
+    { code: "GROSS", name: "Gross" },
+    { code: "GROSSUP", name: "Gross Up" },
+    { code: "NETTO", name: "Netto" },
+  ];
 
   // LIFECYCLE HOOKS
   created(): void {
@@ -195,6 +214,8 @@ export default class EmployeePayrollDetail extends Vue {
       bank_name: "BRI",
       bank_account_holder: "JOHN DOE",
       bank_account_number: "101010101",
+      tax_income_type: "PPH21",
+      tax_method: "GROSS",
     };
 
     this.periodData = {
@@ -228,7 +249,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: true,
         is_included_in_bpjs_employee: true,
         is_fixed: true,
-        apply_prorata: true,
+        is_prorated: true,
         unit: "",
         remark: "Monthly base salary",
       },
@@ -247,7 +268,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: true,
         is_included_in_bpjs_employee: true,
         is_fixed: true,
-        apply_prorata: true,
+        is_prorated: true,
         unit: "",
         remark: "Monthly transportation allowance",
       },
@@ -265,7 +286,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: false,
-        apply_prorata: true,
+        is_prorated: true,
         unit: "",
         remark: "Monthly meal allowance",
       },
@@ -283,7 +304,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: false,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "",
         remark: "",
       },
@@ -301,7 +322,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: true,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "",
         remark: "",
       },
@@ -319,7 +340,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: true,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "",
         remark: "",
       },
@@ -336,7 +357,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: true,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "%",
         quantity: 1,
         remark: "Company portion of BPJS Kesehatan (4%)",
@@ -355,7 +376,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: false,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "Hours",
         remark: "Overtime hours",
       },
@@ -373,7 +394,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: false,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "",
         remark: "",
       },
@@ -391,7 +412,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: false,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "",
         remark: "",
       },
@@ -409,7 +430,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: true,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "%",
         quantity: 1,
         remark: "Employee portion of BPJS Kesehatan (1%)",
@@ -427,7 +448,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: true,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "%",
         quantity: 1,
         remark: "",
@@ -445,7 +466,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: true,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "%",
         quantity: 1,
         remark: "",
@@ -463,7 +484,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: true,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "%",
         quantity: 1,
         remark: "",
@@ -481,7 +502,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: true,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "%",
         quantity: 1,
         remark: "",
@@ -499,7 +520,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: true,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "%",
         quantity: 1,
         remark: "",
@@ -517,7 +538,7 @@ export default class EmployeePayrollDetail extends Vue {
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
         is_fixed: true,
-        apply_prorata: false,
+        is_prorated: false,
         unit: "%",
         quantity: 1,
         remark: "",
@@ -536,7 +557,7 @@ export default class EmployeePayrollDetail extends Vue {
         period_id: this.periodId,
         basic_salary: this.form.base_salary,
         gross_salary: this.form.total_gross_salary,
-        total_deductions: this.form.total_deduction_salary,
+        total_deductions: this.form.total_deductions_salary,
         tax_amount: this.form.tax_amount_floor_up,
         net_salary: this.form.take_home_pay,
         status: "Pending",
@@ -570,7 +591,7 @@ export default class EmployeePayrollDetail extends Vue {
         period_id: this.periodId,
         basic_salary: this.form.base_salary,
         gross_salary: this.form.total_gross_salary,
-        total_deductions: this.form.total_deductions,
+        total_deductions: this.form.total_deductions_salary,
         tax_amount: this.form.tax_amount_floor_up,
         net_salary: this.form.take_home_pay,
         status: "Pending",
@@ -615,14 +636,14 @@ export default class EmployeePayrollDetail extends Vue {
       category: componentData.category,
       amount: componentData.amount,
       original_amount: componentData.amount,
-      prorata_amount: componentData.apply_prorata
+      prorata_amount: componentData.is_prorated
         ? componentData.amount * this.form.prorata_factor
         : componentData.amount,
       is_taxable: componentData.is_taxable,
       is_included_in_bpjs_health: componentData.is_included_in_bpjs_health,
       is_included_in_bpjs_employee: componentData.is_included_in_bpjs_employee,
       is_fixed: componentData.is_fixed,
-      apply_prorata: componentData.apply_prorata,
+      is_prorated: componentData.is_prorated,
       unit: componentData.unit,
       quantity: componentData.quantity,
       remark: componentData.remark,
@@ -641,7 +662,7 @@ export default class EmployeePayrollDetail extends Vue {
       return;
     }
 
-    if (component.apply_prorata) {
+    if (component.is_prorated) {
       component.prorata_amount = component.amount * this.form.prorata_factor;
     } else {
       component.prorata_amount = component.amount;
@@ -649,6 +670,8 @@ export default class EmployeePayrollDetail extends Vue {
 
     this.calculateTotals();
   }
+
+  onComponentQuantityChange(component: PayrollComponent) {}
 
   getComponentsByType(type: string) {
     return this.payrollComponents.filter(
@@ -672,6 +695,15 @@ export default class EmployeePayrollDetail extends Vue {
     }
 
     this.showForm = true;
+  }
+
+  handleShowModal() {
+    this.form = {
+      workdays_in_month: 0,
+      actual_workdays: 0,
+      prorata_factor: 1,
+    };
+    this.showModal = true;
   }
 
   handleSubmitForApproval() {
@@ -832,7 +864,7 @@ export default class EmployeePayrollDetail extends Vue {
 
     // Reset final totals
     this.form.total_gross_salary = 0;
-    this.form.total_deduction_salary = 0;
+    this.form.total_deductions_salary = 0;
     this.form.take_home_pay = 0;
   }
 
@@ -854,7 +886,7 @@ export default class EmployeePayrollDetail extends Vue {
 
   calculateComponentTotals() {
     this.payrollComponents.forEach((component: any) => {
-      const effectiveAmount = component.apply_prorata
+      const effectiveAmount = component.is_prorated
         ? component.amount * this.form.prorata_factor
         : component.amount;
 
@@ -873,7 +905,7 @@ export default class EmployeePayrollDetail extends Vue {
           this.form.overtime += totalAmount;
         }
       } else if (component.type === "deductions") {
-        this.form.total_deduction_salary += totalAmount;
+        this.form.total_deductions_salary += totalAmount;
 
         if (component.is_taxable) {
           this.form.total_deductions_salary_taxable += totalAmount;
@@ -1140,12 +1172,12 @@ export default class EmployeePayrollDetail extends Vue {
     console.info("take home pay : ", this.form.take_home_pay);
 
     this.form.total_gross_salary = grossSalary;
-    this.form.total_deductions = totalDeductions;
+    this.form.total_deductions_salary = totalDeductions;
 
     this.form.take_home_pay = Math.max(
       0,
       this.form.total_gross_salary -
-        (this.form.total_deductions + this.form.tax_amount_floor_up)
+        (this.form.total_deductions_salary + this.form.tax_amount_floor_up)
     );
   }
 }

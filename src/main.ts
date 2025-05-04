@@ -7,14 +7,20 @@ import store from "./store";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faFacebook, faGooglePlus } from "@fortawesome/free-brands-svg-icons";
 import {
+  faAdjust,
   faArrowCircleRight,
+  faBalanceScale,
+  faDivide,
   faEnvelope,
   faFileInvoiceDollar,
   faHardHat,
   faLock,
   faMedkit,
   faNotesMedical,
+  faPercent,
+  faPizzaSlice,
   faPlay,
+  faPuzzlePiece,
   faSave,
   faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
@@ -92,7 +98,13 @@ library.add(
   faHardHat,
   faSave,
   faArrowCircleRight,
-  faPlay
+  faPlay,
+  faPercent,
+  faBalanceScale,
+  faDivide,
+  faPuzzlePiece,
+  faAdjust,
+  faPizzaSlice
 );
 
 // Gatekeeper.initialize("de378d9c-38c8-42c1-b961-9e4fa92d6a5e");

@@ -26,16 +26,26 @@
           title="Submit for Approval"
           type="button"
           class="btn btn-success mr-1"
-          @click="handleSubmitForApproval()"
+          @click="handleSubmitForApproval"
           :disabled="!canSubmit || isSave"
         >
           <i class="fa fa-paper-plane mr-1" aria-hidden="true"></i>{{
           $t('buttons.submit') }}
         </button>
         <button
+          title="Apply Prorate"
+          type="button"
+          class="btn btn-primary mr-1"
+          @click="handleShowModal"
+          :disabled="!canSubmit || isSave"
+        >
+          <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+          $t('buttons.prorate') }}
+        </button>
+        <button
           title="Insert Component"
           type="button"
-          class="btn btn-warning mr-1"
+          class="btn btn-primary mr-1"
           @click="handleShowForm('', $global.modeData.insert)"
         >
           <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
@@ -60,6 +70,73 @@
         />
       </div>
     </transition>
+
+    <!-- modal prorate -->
+    <c-modal
+      v-show="showModal"
+      :title="$t('title.prorate')"
+      size="lg"
+      @close="showModal = false"
+      @save="handleSaveModal"
+      :isSaving="isGenerating"
+    >
+      <div @click.stop>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <c-input
+              required
+              id="workDaysInMonth"
+              class="row mb-1"
+              type="number"
+              name="workDaysInMonth"
+              v-model="form.workdays_in_month"
+              :label="$t('labels.payroll.payroll.totalWorkDaysInMonth')"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-input
+              required
+              id="actualWorkDays"
+              class="row mb-1"
+              type="number"
+              name="actualWorkDays"
+              v-model="form.actual_workdays"
+              :label="$t('labels.payroll.payroll.totalActualWorkDays')"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-input
+              disabled
+              id="prorataFactor"
+              class="row mb-1"
+              type="number"
+              name="prorataFactor"
+              v-model="form.prorata_factor"
+              :label="$t('labels.payroll.payroll.prorataFactor')"
+            />
+          </div>
+        </div>
+        <!-- button -->
+        <div class="d-flex justify-content-end mt-2">
+          <button
+            type="button"
+            class="btn btn-danger mr-1 px-3"
+            @click="showGenerateModal = false"
+          >
+            <i class="fa fa-times" aria-hidden="true"></i>
+            {{$t('buttons.cancel')}}
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary px-3"
+            @click="handleSaveModal"
+          >
+            <i class="fa fa-play"></i>
+            {{$t('buttons.generate')}}
+          </button>
+        </div>
+      </div>
+    </c-modal>
 
     <!-- Employee Information -->
     <div class="card">
@@ -211,6 +288,30 @@
               :label="$t('labels.payroll.employee.bankAccountNumber')"
             />
           </div>
+          <div class="col-md-4">
+            <c-select
+              offset="right"
+              class="row mb-1"
+              name="taxIncomeType"
+              labelName="name"
+              keyName="code"
+              v-model="employee.tax_income_type"
+              :label="$t('labels.payroll.payroll.taxIncome')"
+              :options="taxIncomeOptions"
+            />
+          </div>
+          <div class="col-md-4">
+            <c-select
+              offset="right"
+              class="row mb-1"
+              name="taxMethod"
+              labelName="name"
+              keyName="code"
+              v-model="employee.tax_method"
+              :label="$t('labels.payroll.payroll.taxMethod')"
+              :options="taxMethodOptions"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -252,21 +353,45 @@
                 data-bs-toggle="tooltip"
                 title="Included in BPJS Ketenagakerjaan"
               />
+              <font-awesome-icon
+                v-show="component.is_prorated"
+                :icon="['fas', 'pizza-slice']"
+                class="me-1 text-info"
+                data-bs-toggle="tooltip"
+                title="Included in Prorate"
+              />
             </div>
-            <c-input
-              :disabled="component.is_fixed"
-              type="number"
-              :name="component.name"
-              :id="component.name"
-              class="row mb-1"
-              :max="9999999999"
-              :min="0"
-              :label="component.name"
-              v-model="component.amount"
-              formatted
-              showZeroNumber
-              @change="onComponentAmountChange(component)"
-            />
+            <div class="row mb-1">
+              <div class="col-9">
+                <c-input
+                  :disabled="component.is_fixed"
+                  type="number"
+                  :name="component.name"
+                  :id="component.name"
+                  class=""
+                  :max="9999999999"
+                  :min="0"
+                  :label="component.name"
+                  v-model="component.amount"
+                  formatted
+                  showZeroNumber
+                  @change="onComponentAmountChange(component)"
+                />
+              </div>
+              <div class="col-3">
+                <c-input
+                  :disabled="component.is_fixed"
+                  type="number"
+                  :name="component.quantity"
+                  :id="component.name"
+                  class=""
+                  :label="$t('labels.payroll.payroll.qty')"
+                  v-model="component.quantity"
+                  showZeroNumber
+                  @change="onComponentQuantityChange(component)"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -322,20 +447,36 @@
                 title="Included in BPJS Ketenagakerjaan"
               />
             </div>
-            <c-input
-              :disabled="component.is_fixed"
-              type="number"
-              :name="component.name"
-              :id="component.name"
-              class="row mb-1"
-              :max="9999999999"
-              :min="0"
-              :label="component.name"
-              v-model="component.amount"
-              formatted
-              showZeroNumber
-              @change="onComponentAmountChange(component)"
-            />
+            <div class="row mb-1">
+              <div class="col-9">
+                <c-input
+                  :disabled="component.is_fixed"
+                  type="number"
+                  :name="component.name"
+                  :id="component.name"
+                  :max="9999999999"
+                  :min="0"
+                  :label="component.name"
+                  v-model="component.amount"
+                  formatted
+                  showZeroNumber
+                  @change="onComponentAmountChange(component)"
+                />
+              </div>
+              <div class="col-3">
+                <c-input
+                  :disabled="component.is_fixed"
+                  type="number"
+                  :name="component.quantity"
+                  :id="component.name"
+                  class=""
+                  :label="$t('labels.payroll.payroll.qty')"
+                  v-model="component.quantity"
+                  showZeroNumber
+                  @change="onComponentQuantityChange(component)"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -347,7 +488,7 @@
             >
           </div>
           <div class="col-6 d-flex justify-content-end">
-            Rp{{formatCurrency(form.total_deduction_salary)}}
+            Rp{{formatCurrency(form.total_deductions_salary)}}
           </div>
         </div>
       </div>
@@ -418,7 +559,7 @@
             </p>
           </div>
           <div class="col-6 d-flex justify-content-end">
-            Rp{{formatCurrency(form.total_deduction_salary)}}
+            Rp{{formatCurrency(form.total_deductions_salary)}}
           </div>
         </div>
         <div class="row">
