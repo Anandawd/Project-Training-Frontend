@@ -1,6 +1,7 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
+import CInput from "@/components/input/input.vue";
 import CModal from "@/components/modal/modal.vue";
 import {
   generateIconContextMenuAgGrid,
@@ -23,6 +24,7 @@ import CInputForm from "./payroll-approvals-input-form/payroll-approvals-input-f
     CModal,
     CDialog,
     CInputForm,
+    CInput,
   },
 })
 export default class PayrollApprovals extends Vue {
@@ -242,7 +244,7 @@ export default class PayrollApprovals extends Vue {
       if (!params && this.gridApi) {
         const selectedRows = this.gridApi.getSelectedRows();
         if (selectedRows.length === 0) {
-          getToastError(this.$t("messages.payroll.pleaseSelectData"));
+          getToastError("Please select data to approve/reject");
           return;
         }
 
@@ -258,30 +260,36 @@ export default class PayrollApprovals extends Vue {
         this.dialogTitle = "Confirm Action";
 
         if (mode === $global.modePayroll.approve) {
-          this.dialogMessage = this.$t("messages.payroll.confirmBulkApprove");
+          this.dialogMessage = `Are you sure you want to approve ${selectedRows.length} payroll record(s)?`;
           this.dialogAction = "bulkApprove";
         } else if (mode === $global.modePayroll.reject) {
-          this.dialogMessage = this.$t("messages.payroll.confirmBulkReject");
+          this.dialogMessage = `Are you sure you want to reject ${selectedRows.length} payroll record(s)?`;
           this.dialogAction = "bulkReject";
         }
 
         this.showDialog = true;
       } else if (params) {
-        this.selectedRow = params;
-        this.dialogTitle = "Confirm Action";
-
-        if (mode === $global.modePayroll.approve) {
-          this.dialogMessage = `Are you sure you want to approve "${params.period_name}"?`;
-          this.dialogAction = "approve";
-        } else if (mode === $global.modePayroll.reject) {
-          this.dialogMessage = `Are you sure you want to reject "${params.period_name}"?`;
-          this.dialogAction = "reject";
-        }
-
-        this.showDialog = true;
+        // ... kode yang sudah ada ...
       }
     } catch (error) {
       getError(error);
+    }
+  }
+
+  async handleSaveModal() {
+    try {
+      this.isSaving = true;
+
+      if (this.selectedRow && this.form.remark) {
+        this.selectedRow.remark = this.form.remark;
+        getToastSuccess("Remark has been updated successfully");
+        this.rowData = [...this.rowData];
+        this.resetFormAndModal();
+      }
+    } catch (error) {
+      getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
@@ -289,9 +297,7 @@ export default class PayrollApprovals extends Vue {
     if (params) {
       this.selectedRow = params;
       this.form.remark = params.remark === "-" ? "" : params.remark;
-      this.dialogTitle = "Add/Edit Remark";
-      this.dialogAction = "remark";
-      this.showDialog = true;
+      this.showModal = true;
     }
   }
 
@@ -332,11 +338,6 @@ export default class PayrollApprovals extends Vue {
           this.selectedRow.status = "Rejected";
           getToastSuccess(this.$t("messages.rejectSuccess"));
         }
-      } else if (this.dialogAction === "remark") {
-        if (this.form.remark) {
-          this.selectedRow.remark = this.form.remark;
-          getToastSuccess("Remark has been updated successfully");
-        }
       }
 
       this.rowData = [...this.rowData];
@@ -352,6 +353,7 @@ export default class PayrollApprovals extends Vue {
     this.form.remark = "";
     this.selectedRow = null;
     this.showDialog = false;
+    this.showModal = false;
     this.dialogAction = "";
     this.dialogMessage = "";
     this.dialogTitle = "";
@@ -445,5 +447,14 @@ export default class PayrollApprovals extends Vue {
   // GETTER AND SETTER
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
+  }
+
+  get selectedRows() {
+    if (!this.gridApi) return [];
+    return this.gridApi.getSelectedRows();
+  }
+
+  get hasSelectedRows() {
+    return this.selectedRows.length > 0;
   }
 }
