@@ -13,7 +13,7 @@ import * as Yup from "yup";
 import CInputForm from "./component-input-form/component-input-form.vue";
 
 interface PayrollComponent {
-  id: number;
+  id?: number;
   component_id: string;
   name: string;
   type: "earnings" | "deductions" | "statutory";
@@ -145,27 +145,23 @@ export default class EmployeePayrollDetail extends Vue {
     yearly_calculation: false,
   });
 
-  // validation
-  get schema() {
-    return Yup.object().shape({
-      type: Yup.string().required("Component type is required"),
-      component: Yup.string().required("Component is required"),
-    });
+  // LIFECYCLE HOOKS
+  created(): void {
+    this.periodId = this.$route.params.periodId;
+    this.employeeId = this.$route.params.employeeId;
+    this.loadData();
   }
 
-  // Actions
+  // METHODS
   async loadData() {
     try {
       this.isLoading = true;
-      this.periodId = this.$route.params.periodId;
-      this.employeeId = this.$route.params.employeeId;
 
       // In a real implementation, you would make API calls here
-      // const { data } = await payrollAPI.GetEmployeePayrollDetail(this.periodId, this.employeeId);
-      // this.employee = data.employee;
-      // this.form = data.payroll;
-      // this.periodData = data.period;
-      // this.payrollComponents = data.components;
+      // await Promise.all([
+      //   this.loadPeriodData(this.periodId),
+      //   this.loadEmployeeData(this.employeeId)
+      // ]);
 
       // For demonstration, we'll load some mock data
       await this.loadMockData();
@@ -174,11 +170,7 @@ export default class EmployeePayrollDetail extends Vue {
       this.form.employee_id = this.employee.employee_id;
       this.form.period_id = this.periodData.id;
 
-      // Calculate workdays and prorata factor
-      // this.calculateWorkdaysAndProrata();
-
       // Calculate all totals
-
       this.calculateTotals();
     } catch (error) {
       getError(error);
@@ -533,14 +525,6 @@ export default class EmployeePayrollDetail extends Vue {
     ];
   }
 
-  handleSave(formData: any, mode: any) {
-    if (mode === $global.modePayroll.save) {
-      this.savePayroll();
-    } else {
-      this.addComponent(formData);
-    }
-  }
-
   async savePayroll() {
     try {
       this.isSave = true;
@@ -552,10 +536,10 @@ export default class EmployeePayrollDetail extends Vue {
         period_id: this.periodId,
         basic_salary: this.form.base_salary,
         gross_salary: this.form.total_gross_salary,
-        total_deductions: this.form.total_deductions,
+        total_deductions: this.form.total_deduction_salary,
         tax_amount: this.form.tax_amount_floor_up,
         net_salary: this.form.take_home_pay,
-        status: "Draft",
+        status: "Pending",
         components: this.payrollComponents,
         workdays_in_month: this.form.workdays_in_month,
         actual_workdays: this.form.actual_workdays,
@@ -563,10 +547,11 @@ export default class EmployeePayrollDetail extends Vue {
       };
 
       // In a real implementation, you would make an API call here
-      // const { status2 } = await payrollAPI.SaveEmployeePayroll(payrollData);
+      // const { status2 } = await payrollAPI.SubmitEmployeePayroll(payrollData);
 
-      // For demonstration, just show success message
-      getToastSuccess("Employee payroll saved successfully");
+      // For demonstration, just show success message and update status
+      this.form.status = "Pending";
+      getToastSuccess("Employee payroll submitted for approval");
     } catch (error) {
       getError(error);
     } finally {
@@ -671,6 +656,14 @@ export default class EmployeePayrollDetail extends Vue {
     );
   }
 
+  handleSave(formData: any, mode: any) {
+    if (mode === $global.modePayroll.save) {
+      this.savePayroll();
+    } else {
+      this.addComponent(formData);
+    }
+  }
+
   handleShowForm(params: any, mode: any) {
     this.modeData = mode;
 
@@ -716,8 +709,13 @@ export default class EmployeePayrollDetail extends Vue {
     }
   }
 
-  created(): void {
-    this.loadData();
+  // COMPUTED PROPERTIES
+
+  get schema() {
+    return Yup.object().shape({
+      type: Yup.string().required("Component type is required"),
+      component: Yup.string().required("Component is required"),
+    });
   }
 
   get canSubmit() {

@@ -6,8 +6,7 @@
         title="Back"
         type="button"
         class="btn btn-secondary mr-1"
-        @click="goBack()"
-        :disabled="!canSubmit"
+        @click="goBack"
       >
         <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>{{
         $t('buttons.back') }}
@@ -17,8 +16,8 @@
           title="Save Draft"
           type="button"
           class="btn btn-secondary mr-1"
-          @click="handleSave('', $global.modePayroll.save)"
-          :disabled="!canSubmit"
+          @click="handleSave"
+          :disabled="!canEdit"
         >
           <i class="fa fa-save mr-1" aria-hidden="true"></i>{{
           $t('buttons.save') }}
@@ -27,7 +26,7 @@
           title="Submit for Approval"
           type="button"
           class="btn btn-success mr-1"
-          @click="handleSubmitForApproval()"
+          @click="handleSubmitForApproval"
           :disabled="!canSubmit"
         >
           <i class="fa fa-paper-plane mr-1" aria-hidden="true"></i>{{
@@ -37,28 +36,14 @@
           title="Generate Payroll"
           type="button"
           class="btn btn-primary mr-1"
-          @click="handleShowModal()"
-          :disabled="periodData.status !== 'Draft'"
+          @click="handleShowModal"
+          :disabled="!canEdit"
         >
           <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
           $t('buttons.generate') }}
         </button>
       </div>
     </div>
-
-    <!-- insert form -->
-    <!-- <transition>
-      <div class="px-2">
-        <c-input-form
-          ref="inputFormElement"
-          v-show="showForm"
-          :schema="schema"
-          :modeData="modeData"
-          @save="handleSave"
-          @close="showForm=false"
-        />
-      </div>
-    </transition> -->
 
     <!-- period detail -->
     <div class="card">
@@ -231,6 +216,7 @@
       size="lg"
       @close="showGenerateModal = false"
       @save="handleSaveModal"
+      :isSaving="isGenerating"
     >
       <div @click.stop>
         <div class="row">
