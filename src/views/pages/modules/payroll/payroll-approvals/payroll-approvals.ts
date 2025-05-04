@@ -164,7 +164,7 @@ export default class PayrollApprovals extends Vue {
       ],
     };
     this.paginationPageSize = this.agGridSetting.limitDefaultPageSize;
-    this.rowSelection = "single";
+    this.rowSelection = "multiple";
     this.rowModelType = "serverSide";
     this.limitPageSize = this.agGridSetting.limitDefaultPageSize;
   }
@@ -205,15 +205,25 @@ export default class PayrollApprovals extends Vue {
         name: this.$t("commons.contextMenu.setApprove"),
         disabled: !canApproveReject,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () =>
-          this.handleApprove(this.paramsData, $global.modePayroll.approve),
+        action: () => {
+          this.selectedRow = [this.paramsData]; // Pastikan selectedRow adalah array
+          this.dialogTitle = "Confirm Approval";
+          this.dialogMessage = `Are you sure you want to approve ${this.paramsData.period_name}?`;
+          this.dialogAction = "approve";
+          this.showDialog = true;
+        },
       },
       {
         name: this.$t("commons.contextMenu.setReject"),
         disabled: !canApproveReject,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () =>
-          this.handleApprove(this.paramsData, $global.modePayroll.reject),
+        action: () => {
+          this.selectedRow = [this.paramsData]; // Pastikan selectedRow adalah array
+          this.dialogTitle = "Confirm Rejection";
+          this.dialogMessage = `Are you sure you want to reject ${this.paramsData.period_name}?`;
+          this.dialogAction = "reject";
+          this.showDialog = true;
+        },
       },
     ];
     return result;
@@ -327,17 +337,25 @@ export default class PayrollApprovals extends Vue {
             row.status = "Rejected";
           }
         });
-        getToastSuccess(this.$t("messages.rejectSuccess"));
+        getToastSuccess(this.$t("messages.payroll.rejectSuccess"));
       } else if (this.dialogAction === "approve") {
-        if (this.selectedRow.status === "Pending") {
-          this.selectedRow.status = "Approved";
-          getToastSuccess(this.$t("messages.approveSuccess"));
+        if (Array.isArray(this.selectedRow)) {
+          this.selectedRow.forEach((row: any) => {
+            if (row.status === "Pending") {
+              row.status = "Approved";
+            }
+          });
         }
+        getToastSuccess(this.$t("messages.payroll.approveSuccess"));
       } else if (this.dialogAction === "reject") {
-        if (this.selectedRow.status === "Pending") {
-          this.selectedRow.status = "Rejected";
-          getToastSuccess(this.$t("messages.rejectSuccess"));
+        if (Array.isArray(this.selectedRow)) {
+          this.selectedRow.forEach((row: any) => {
+            if (row.status === "Pending") {
+              row.status = "Rejected";
+            }
+          });
         }
+        getToastSuccess(this.$t("messages.rejectSuccess"));
       }
 
       this.rowData = [...this.rowData];
@@ -357,6 +375,11 @@ export default class PayrollApprovals extends Vue {
     this.dialogAction = "";
     this.dialogMessage = "";
     this.dialogTitle = "";
+  }
+
+  handleSelectionChanged() {
+    // Force update computed property
+    this.$forceUpdate();
   }
 
   // API FUNCTION
@@ -454,7 +477,9 @@ export default class PayrollApprovals extends Vue {
     return this.gridApi.getSelectedRows();
   }
 
-  get hasSelectedRows() {
-    return this.selectedRows.length > 0;
+  hasSelectedRows() {
+    if (!this.gridApi) return false;
+    const selectedRows = this.gridApi.getSelectedRows();
+    return selectedRows && selectedRows.length > 0;
   }
 }
