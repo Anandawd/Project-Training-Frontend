@@ -221,6 +221,8 @@ export default {
     download: 22,
     processing: 23,
     completed: 24,
+    prorate: 25,
+    component: 26,
   },
   modeBreakdown: {
     insert: "00",

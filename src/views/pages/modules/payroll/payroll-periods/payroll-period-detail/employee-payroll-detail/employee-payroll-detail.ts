@@ -8,7 +8,7 @@ import { getError } from "@/utils/general";
 import $global from "@/utils/global";
 import { getToastError, getToastSuccess } from "@/utils/toast";
 import { Form as CForm } from "vee-validate";
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import { Options, Vue } from "vue-class-component";
 import * as Yup from "yup";
 import CInputForm from "./component-input-form/component-input-form.vue";
@@ -21,7 +21,7 @@ interface PayrollComponent {
   category: string;
   amount: number;
   original_amount: number;
-  prorata_amount: number;
+  prorate_amount: number;
   quantity: number;
   is_taxable: boolean;
   is_included_in_bpjs_health: boolean;
@@ -149,7 +149,7 @@ export default class EmployeePayrollDetail extends Vue {
     status: "Draft",
     workdays_in_month: 22,
     actual_workdays: 22,
-    prorata_factor: 1,
+    prorate_factor: 1,
     yearly_calculation: false,
   });
 
@@ -169,6 +169,16 @@ export default class EmployeePayrollDetail extends Vue {
     this.periodId = this.$route.params.periodId;
     this.employeeId = this.$route.params.employeeId;
     this.loadData();
+
+    watch(
+      () => this.form.workdays_in_month,
+      () => this.calculateProrateFactor()
+    );
+
+    watch(
+      () => this.form.actual_workdays,
+      () => this.calculateProrateFactor()
+    );
   }
 
   // METHODS
@@ -243,7 +253,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Basic",
         amount: 10000000,
         original_amount: 10000000,
-        prorata_amount: 10000000,
+        prorate_amount: 10000000,
         quantity: 1,
         is_taxable: true,
         is_included_in_bpjs_health: true,
@@ -262,7 +272,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Fixed Allowance",
         amount: 1000000,
         original_amount: 1000000,
-        prorata_amount: 1000000,
+        prorate_amount: 1000000,
         quantity: 1,
         is_taxable: true,
         is_included_in_bpjs_health: true,
@@ -280,7 +290,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Incentive",
         amount: 0,
         original_amount: 0,
-        prorata_amount: 0,
+        prorate_amount: 0,
         quantity: 1,
         is_taxable: true,
         is_included_in_bpjs_health: false,
@@ -298,7 +308,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Variable Allowance",
         amount: 0,
         original_amount: 0,
-        prorata_amount: 0,
+        prorate_amount: 0,
         quantity: 1,
         is_taxable: true,
         is_included_in_bpjs_health: false,
@@ -316,7 +326,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Fix Allowance",
         amount: 33000,
         original_amount: 33000,
-        prorata_amount: 33000,
+        prorate_amount: 33000,
         quantity: 1,
         is_taxable: true,
         is_included_in_bpjs_health: false,
@@ -334,7 +344,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Fix Allowance",
         amount: 97900,
         original_amount: 97900,
-        prorata_amount: 97900,
+        prorate_amount: 97900,
         quantity: 1,
         is_taxable: true,
         is_included_in_bpjs_health: false,
@@ -352,7 +362,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Company Contribution",
         amount: 440000,
         original_amount: 440000,
-        prorata_amount: 440000,
+        prorate_amount: 440000,
         is_taxable: true,
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
@@ -370,7 +380,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Variable Allowance",
         amount: 0,
         original_amount: 0,
-        prorata_amount: 0,
+        prorate_amount: 0,
         quantity: 1,
         is_taxable: true,
         is_included_in_bpjs_health: false,
@@ -388,7 +398,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Reimburse",
         amount: 1000000,
         original_amount: 1000000,
-        prorata_amount: 1000000,
+        prorate_amount: 1000000,
         quantity: 1,
         is_taxable: false,
         is_included_in_bpjs_health: false,
@@ -406,7 +416,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Loan",
         amount: 0,
         original_amount: 0,
-        prorata_amount: 0,
+        prorate_amount: 0,
         quantity: 1,
         is_taxable: false,
         is_included_in_bpjs_health: false,
@@ -425,7 +435,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Statutory",
         amount: 0,
         original_amount: 0,
-        prorata_amount: 0,
+        prorate_amount: 0,
         is_taxable: true,
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
@@ -443,7 +453,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Statutory",
         amount: 110000,
         original_amount: 110000,
-        prorata_amount: 110000,
+        prorate_amount: 110000,
         is_taxable: true,
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
@@ -461,7 +471,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Statutory",
         amount: 220000,
         original_amount: 220000,
-        prorata_amount: 220000,
+        prorate_amount: 220000,
         is_taxable: true,
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
@@ -479,7 +489,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Statutory",
         amount: 500000,
         original_amount: 500000,
-        prorata_amount: 500000,
+        prorate_amount: 500000,
         is_taxable: true,
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
@@ -497,7 +507,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Statutory",
         amount: 0,
         original_amount: 0,
-        prorata_amount: 0,
+        prorate_amount: 0,
         is_taxable: true,
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
@@ -515,7 +525,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Statutory",
         amount: 0,
         original_amount: 0,
-        prorata_amount: 0,
+        prorate_amount: 0,
         is_taxable: false,
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
@@ -533,7 +543,7 @@ export default class EmployeePayrollDetail extends Vue {
         category: "Statutory",
         amount: 0,
         original_amount: 0,
-        prorata_amount: 0,
+        prorate_amount: 0,
         is_taxable: false,
         is_included_in_bpjs_health: false,
         is_included_in_bpjs_employee: false,
@@ -564,7 +574,7 @@ export default class EmployeePayrollDetail extends Vue {
         components: this.payrollComponents,
         workdays_in_month: this.form.workdays_in_month,
         actual_workdays: this.form.actual_workdays,
-        prorata_factor: this.form.prorata_factor,
+        prorate_factor: this.form.prorate_factor,
       };
 
       // In a real implementation, you would make an API call here
@@ -577,6 +587,46 @@ export default class EmployeePayrollDetail extends Vue {
       getError(error);
     } finally {
       this.isSave = false;
+    }
+  }
+
+  async saveProrate() {
+    try {
+      if (!this.form.workdays_in_month || this.form.workdays_in_month <= 0) {
+        getToastError("Work days in month must be greateer than 0");
+        return;
+      }
+
+      if (!this.form.actual_workdays || this.form.actual_workdays <= 0) {
+        getToastError("Actual work days must be greater than 0");
+        return;
+      }
+
+      if (this.form.actual_workdays > this.form.workdays_in_month) {
+        getToastError(
+          "Actual work days cannot exceed total work days in month"
+        );
+        return;
+      }
+
+      this.isGenerating = true;
+
+      this.calculateProrateFactor();
+
+      this.payrollComponents.forEach((component: any) => {
+        if (component.is_prorated) {
+          component.prorate_amount =
+            component.amount * Number(this.form.prorate_factor);
+        }
+      });
+
+      this.calculateTotals();
+      this.showModal = false;
+      getToastSuccess("Prorate has been applied successfully");
+    } catch (error) {
+      getError(error);
+    } finally {
+      this.isGenerating = false;
     }
   }
 
@@ -598,7 +648,7 @@ export default class EmployeePayrollDetail extends Vue {
         components: this.payrollComponents,
         workdays_in_month: this.form.workdays_in_month,
         actual_workdays: this.form.actual_workdays,
-        prorata_factor: this.form.prorata_factor,
+        prorate_factor: this.form.prorate_factor,
       };
 
       // In a real implementation, you would make an API call here
@@ -636,8 +686,8 @@ export default class EmployeePayrollDetail extends Vue {
       category: componentData.category,
       amount: componentData.amount,
       original_amount: componentData.amount,
-      prorata_amount: componentData.is_prorated
-        ? componentData.amount * this.form.prorata_factor
+      prorate_amount: componentData.is_prorated
+        ? componentData.amount * this.form.prorate_factor
         : componentData.amount,
       is_taxable: componentData.is_taxable,
       is_included_in_bpjs_health: componentData.is_included_in_bpjs_health,
@@ -663,15 +713,33 @@ export default class EmployeePayrollDetail extends Vue {
     }
 
     if (component.is_prorated) {
-      component.prorata_amount = component.amount * this.form.prorata_factor;
+      component.prorate_amount =
+        component.amount * Number(this.form.prorate_factor);
     } else {
-      component.prorata_amount = component.amount;
+      component.prorate_amount = component.amount;
     }
 
     this.calculateTotals();
   }
 
-  onComponentQuantityChange(component: PayrollComponent) {}
+  onComponentQuantityChange(component: PayrollComponent) {
+    if (component.quantity < 0) {
+      component.quantity = 0;
+    }
+
+    if (component.is_fixed) {
+      component.quantity = 1;
+    }
+
+    if (component.is_prorated) {
+      component.prorate_amount =
+        component.amount * Number(this.form.prorate_factor);
+    } else {
+      component.prorate_amount = component.amount;
+    }
+
+    this.calculateTotals();
+  }
 
   getComponentsByType(type: string) {
     return this.payrollComponents.filter(
@@ -682,8 +750,12 @@ export default class EmployeePayrollDetail extends Vue {
   handleSave(formData: any, mode: any) {
     if (mode === $global.modePayroll.save) {
       this.savePayroll();
-    } else {
+    } else if (mode === $global.modePayroll.prorate) {
+      this.saveProrate();
+    } else if (mode === $global.modePayroll.component) {
       this.addComponent(formData);
+    } else {
+      return;
     }
   }
 
@@ -699,9 +771,10 @@ export default class EmployeePayrollDetail extends Vue {
 
   handleShowModal() {
     this.form = {
-      workdays_in_month: 0,
-      actual_workdays: 0,
-      prorata_factor: 1,
+      ...this.form,
+      workdays_in_month: 22,
+      actual_workdays: 22,
+      prorate_factor: 1,
     };
     this.showModal = true;
   }
@@ -868,7 +941,16 @@ export default class EmployeePayrollDetail extends Vue {
     this.form.take_home_pay = 0;
   }
 
-  calculateWorkdaysAndProrata() {
+  calculateProrateFactor() {
+    if (this.form.workdays_in_month && this.form.actual_workdays) {
+      this.form.prorate_factor = Math.min(
+        1,
+        this.form.actual_workdays / this.form.workdays_in_month
+      ).toFixed(3);
+    }
+  }
+
+  calculateWorkdaysAndProrate() {
     // Calculate workdays in month based on period start and end date
     // This is a simplified example - in a real app, you'd calculate actual workdays
     this.form.workdays_in_month = 22;
@@ -878,7 +960,7 @@ export default class EmployeePayrollDetail extends Vue {
     this.form.actual_workdays = 22;
 
     // Calculate prorata factor
-    this.form.prorata_factor = Math.min(
+    this.form.prorate_factor = Math.min(
       1,
       this.form.actual_workdays / this.form.workdays_in_month
     );
@@ -887,7 +969,7 @@ export default class EmployeePayrollDetail extends Vue {
   calculateComponentTotals() {
     this.payrollComponents.forEach((component: any) => {
       const effectiveAmount = component.is_prorated
-        ? component.amount * this.form.prorata_factor
+        ? component.amount * this.form.prorate_factor
         : component.amount;
 
       const totalAmount = effectiveAmount * component.quantity;
@@ -1143,33 +1225,22 @@ export default class EmployeePayrollDetail extends Vue {
   }
 
   calculateFinalTotals() {
-    // Calculate gross salary (all earnings + taxable statutory)
     let grossSalary = 0;
     let totalDeductions = 0;
-    console.info("Before");
-    console.info("grossSalary : ", grossSalary);
-    console.info("totalDeductions : ", totalDeductions);
-    console.info("take home pay : ", this.form.take_home_pay);
 
     this.payrollComponents.forEach((component: any) => {
-      const totalComponentAmount = component.amount * component.quantity;
+      const effectiveAmount = component.is_prorated
+        ? component.prorate_amount
+        : component.amount;
 
-      if (
-        component.type === "earnings" ||
-        (component.type === "statutory" && component.is_taxable)
-      ) {
+      const totalComponentAmount = effectiveAmount * component.quantity;
+
+      if (component.type === "earnings") {
         grossSalary += totalComponentAmount;
-      }
-
-      if (component.type === "deductions") {
+      } else if (component.type === "deductions") {
         totalDeductions += totalComponentAmount;
       }
     });
-
-    console.info("After");
-    console.info("grossSalary : ", grossSalary);
-    console.info("totalDeductions : ", totalDeductions);
-    console.info("take home pay : ", this.form.take_home_pay);
 
     this.form.total_gross_salary = grossSalary;
     this.form.total_deductions_salary = totalDeductions;

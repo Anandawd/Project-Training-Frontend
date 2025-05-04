@@ -173,7 +173,7 @@
         "taxMethod": "Tax Method",
         "totalWorkDaysInMonth": "Total Work Days In Month",
         "totalActualWorkDays": "Total Actual Work Days",
-        "prorataFactor": "Prorate Factor"
+        "prorateFactor": "Prorate Factor"
       },
 
       "reimbursement": {

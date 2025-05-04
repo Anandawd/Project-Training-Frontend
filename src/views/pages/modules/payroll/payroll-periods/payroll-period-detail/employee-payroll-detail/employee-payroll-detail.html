@@ -65,7 +65,7 @@
           :periodId="periodId"
           :existingComponents="payrollComponents"
           :schema="schema"
-          @save="handleSave"
+          @save="handleSave('', $global.modePayroll.component)"
           @close="showForm=false"
         />
       </div>
@@ -77,7 +77,7 @@
       :title="$t('title.prorate')"
       size="lg"
       @close="showModal = false"
-      @save="handleSaveModal"
+      @save="handleSave('', $global.modePayroll.prorate)"
       :isSaving="isGenerating"
     >
       <div @click.stop>
@@ -107,12 +107,12 @@
           <div class="col-md-6">
             <c-input
               disabled
-              id="prorataFactor"
+              id="prorateFactor"
               class="row mb-1"
               type="number"
-              name="prorataFactor"
-              v-model="form.prorata_factor"
-              :label="$t('labels.payroll.payroll.prorataFactor')"
+              name="prorateFactor"
+              v-model="form.prorate_factor"
+              :label="$t('labels.payroll.payroll.prorateFactor')"
             />
           </div>
         </div>
@@ -121,7 +121,7 @@
           <button
             type="button"
             class="btn btn-danger mr-1 px-3"
-            @click="showGenerateModal = false"
+            @click="showModal = false"
           >
             <i class="fa fa-times" aria-hidden="true"></i>
             {{$t('buttons.cancel')}}
@@ -129,7 +129,7 @@
           <button
             type="button"
             class="btn btn-primary px-3"
-            @click="handleSaveModal"
+            @click="handleSave('', $global.modePayroll.prorate)"
           >
             <i class="fa fa-play"></i>
             {{$t('buttons.generate')}}
