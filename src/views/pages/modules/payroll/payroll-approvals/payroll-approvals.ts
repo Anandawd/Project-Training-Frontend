@@ -28,6 +28,8 @@ import CInputForm from "./payroll-approvals-input-form/payroll-approvals-input-f
 export default class PayrollApprovals extends Vue {
   //table
   public rowData: any = [];
+  public isLoading: boolean = false;
+  public selectedRows: any[] = [];
 
   // filter
   public searchOptions: any;
@@ -161,7 +163,7 @@ export default class PayrollApprovals extends Vue {
       ],
     };
     this.paginationPageSize = this.agGridSetting.limitDefaultPageSize;
-    this.rowSelection = "single";
+    this.rowSelection = "multiple";
     this.rowModelType = "serverSide";
     this.limitPageSize = this.agGridSetting.limitDefaultPageSize;
   }
@@ -169,6 +171,11 @@ export default class PayrollApprovals extends Vue {
   onGridReady(params: any) {
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
+
+    this.gridApi.addEventListener(
+      "selectionChanged",
+      this.handleSelectionChanged.bind(this)
+    );
 
     params.api.sizeColumnsToFit();
   }
@@ -247,38 +254,27 @@ export default class PayrollApprovals extends Vue {
     await this.loadEditData(params.id);
   }
 
-  handleApprove(params: any, mode: any) {
-    if (!params && this.gridApi) {
-      const selectedRow = this.gridApi.getSelectedRows();
-      if (selectedRow.length === 0) {
-        getToastError(this.$t("messages.pleaseSelectData"));
-        return;
-      }
+  async handleApprove(params: any, mode: any) {
+    try {
+      this.isLoading = true;
+      let selectedItems = params ? [params] : this.gridApi.getSelectedRows();
 
-      if (mode === $global.modePayroll.approve) {
-        selectedRow.forEach((row: any) => {
-          row.status = "Approved";
-        });
+      // Make API call
+      // const { status2 } = await payrollAPI.bulkApprove(selectedItems, mode);
 
-        getToastSuccess(this.$t("messages.approveSuccess"));
-      } else if (mode === $global.modePayroll.reject) {
-        selectedRow.forEach((row: any) => {
-          row.status = "Rejected";
-        });
+      // if (status2.status === 0) {
+      selectedItems.forEach((item: any) => {
+        item.status =
+          mode === $global.modePayroll.approve ? "Approved" : "Rejected";
+      });
 
-        getToastSuccess(this.$t("messages.rejectSuccess"));
-      }
-
-      this.rowData = [...this.rowData];
-    } else if (params) {
-      if (mode === $global.modePayroll.approve) {
-        params.status = "Approved";
-        getToastSuccess(this.$t("messages.approveSuccess"));
-      } else if (mode === $global.modePayroll.reject) {
-        params.status = "Rejected";
-        getToastSuccess(this.$t("messages.rejectSuccess"));
-      }
-      this.rowData = [...this.rowData];
+      getToastSuccess(this.$t("messages.payroll.approveSuccess"));
+      this.gridApi.deselectAll();
+      // }
+    } catch (error) {
+      getError(error);
+    } finally {
+      this.isLoading = false;
     }
   }
 
@@ -336,14 +332,29 @@ export default class PayrollApprovals extends Vue {
     });
   }
 
+  handleSelectionChanged() {
+    if (this.gridApi) {
+      this.selectedRows = this.gridApi.getSelectedRows();
+    }
+  }
+
   handleBulkApprove() {
-    this.dialogMessage = this.$t("messages.confirmBulkApprove");
+    if (!this.gridApi || this.gridApi.getSelectedRows().length === 0) {
+      getToastError(this.$t("messages.payroll.pleaseSelectData"));
+      return;
+    }
+    this.dialogMessage = this.$t("messages.payroll.confirmBulkApprove");
     this.dialogAction = "bulkApprove";
     this.showDialog = true;
   }
 
   handleBulkReject() {
-    this.dialogMessage = this.$t("messages.confirmBulkReject");
+    if (!this.gridApi || this.gridApi.getSelectedRows().length === 0) {
+      getToastError(this.$t("messages.payroll.pleaseSelectData"));
+      return;
+    }
+
+    this.dialogMessage = this.$t("messages.payroll.confirmBulkReject");
     this.dialogAction = "bulkReject";
     this.showDialog = true;
   }

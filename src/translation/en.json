@@ -2074,6 +2074,13 @@
     "management": "Management"
   },
   "messages": {
+    "payroll": {
+      "confirmBulkApprove": "Are you sure you want to approve all selected payroll records?",
+      "confirmBulkReject": "Are you sure you want to reject all selected payroll records?",
+      "pleaseSelectData": "Please select at least one record to perform this action",
+      "approveSuccess": "Payroll records have been approved successfully",
+      "rejectSuccess": "Payroll records have been rejected successfully"
+    },
     "reservationForm": [
       "Reservation number changed, please save again.",
       "Please save reservation data first",

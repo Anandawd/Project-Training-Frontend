@@ -6,7 +6,8 @@
         title="Reject Payroll"
         type="button"
         class="btn btn-danger mr-1"
-        @click="handleBulkApprove"
+        @click="handleBulkReject"
+        :disabled="!selectedRows.length"
       >
         <i class="fa fa-times mr-1" aria-hidden="true"></i>{{
         $t('buttons.reject') }}
@@ -15,7 +16,8 @@
         title="Approve Payroll"
         type="button"
         class="btn btn-success mr-1"
-        @click="handleBulkReject"
+        @click="handleBulkApprove"
+        :disabled="!selectedRows.length"
       >
         <i class="fa fa-check mr-1" aria-hidden="true"></i>{{
         $t('buttons.approve') }}
@@ -70,7 +72,13 @@
           :statusBar="statusBar"
           @grid-ready="onGridReady"
           @cellContextMenu="handleRowRightClicked"
+          @selection-changed="handleSelectionChanged"
         ></ag-grid-vue>
+      </div>
+    </div>
+    <div class="d-flex justify-content-start mb-2" v-if="selectedRows.length">
+      <div class="alert alert-info">
+        {{selectedRows.length}} payroll record(s) selected
       </div>
     </div>
 
