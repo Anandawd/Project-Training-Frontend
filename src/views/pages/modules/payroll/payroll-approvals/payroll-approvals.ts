@@ -12,7 +12,7 @@ import { getToastError, getToastSuccess } from "@/utils/toast";
 import CSearchFilter from "@/views/pages/components/filter/filter.vue";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
-import { ref } from "vue";
+import { reactive } from "vue";
 import { Options, Vue } from "vue-class-component";
 import CInputForm from "./payroll-approvals-input-form/payroll-approvals-input-form.vue";
 
@@ -28,8 +28,6 @@ import CInputForm from "./payroll-approvals-input-form/payroll-approvals-input-f
 export default class PayrollApprovals extends Vue {
   //table
   public rowData: any = [];
-  public isLoading: boolean = false;
-  public selectedRows: any[] = [];
 
   // filter
   public searchOptions: any;
@@ -39,12 +37,13 @@ export default class PayrollApprovals extends Vue {
     filter: [0],
   };
 
-  // form
-  public showForm: boolean = false;
-  public modeData: any;
-  public form: any = {};
-  public inputFormElement: any = ref();
-  public formType: any;
+  // modal
+  public form: any = reactive({
+    remark: "",
+  });
+  public showModal: boolean = false;
+  public selectedRow: any = null;
+  public isSaving: boolean = false;
 
   // dialog
   public showDialog: boolean = false;
@@ -163,7 +162,7 @@ export default class PayrollApprovals extends Vue {
       ],
     };
     this.paginationPageSize = this.agGridSetting.limitDefaultPageSize;
-    this.rowSelection = "multiple";
+    this.rowSelection = "single";
     this.rowModelType = "serverSide";
     this.limitPageSize = this.agGridSetting.limitDefaultPageSize;
   }
@@ -171,11 +170,6 @@ export default class PayrollApprovals extends Vue {
   onGridReady(params: any) {
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
-
-    this.gridApi.addEventListener(
-      "selectionChanged",
-      this.handleSelectionChanged.bind(this)
-    );
 
     params.api.sizeColumnsToFit();
   }
@@ -189,31 +183,32 @@ export default class PayrollApprovals extends Vue {
       this.paramsData = null;
     }
 
+    const canApproveReject = this.paramsData?.status === "Pending";
+
     const result = [
       {
         name: this.$t("commons.contextMenu.detail"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("detail_icon24"),
-        action: () => this.handleShowDetail("", $global.modePayroll.detail),
+        action: () => this.handleShowDetail(this.paramsData),
       },
       {
         name: this.$t("commons.contextMenu.remark"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () =>
-          this.handleShowForm(this.paramsData, $global.modePayroll.remark),
+        action: () => this.handleShowModal(this.paramsData),
       },
       "separator",
       {
         name: this.$t("commons.contextMenu.setApprove"),
-        disabled: !this.paramsData,
+        disabled: !canApproveReject,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () =>
           this.handleApprove(this.paramsData, $global.modePayroll.approve),
       },
       {
         name: this.$t("commons.contextMenu.setReject"),
-        disabled: !this.paramsData,
+        disabled: !canApproveReject,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () =>
           this.handleApprove(this.paramsData, $global.modePayroll.reject),
@@ -238,50 +233,131 @@ export default class PayrollApprovals extends Vue {
   handleMenu() {}
 
   // GENERAL FUNCTION
-  handleSave(formData: any) {
-    formData.remark = parseInt(formData.remark);
-
-    if (this.modeData == $global.modeData.insert) {
-      this.insertData(formData);
-    } else {
-      this.updateData(formData);
-    }
-  }
-
-  async handleEdit(params: any) {
-    this.showForm = true;
-    this.modeData = $global.modeData.edit;
-    await this.loadEditData(params.id);
-  }
-
-  async handleApprove(params: any, mode: any) {
-    try {
-      this.isLoading = true;
-      let selectedItems = params ? [params] : this.gridApi.getSelectedRows();
-
-      // Make API call
-      // const { status2 } = await payrollAPI.bulkApprove(selectedItems, mode);
-
-      // if (status2.status === 0) {
-      selectedItems.forEach((item: any) => {
-        item.status =
-          mode === $global.modePayroll.approve ? "Approved" : "Rejected";
-      });
-
-      getToastSuccess(this.$t("messages.payroll.approveSuccess"));
-      this.gridApi.deselectAll();
-      // }
-    } catch (error) {
-      getError(error);
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
   refreshData(search: any) {
     this.loadDataGrid(search);
   }
 
+  async handleApprove(params: any, mode: any) {
+    try {
+      if (!params && this.gridApi) {
+        const selectedRows = this.gridApi.getSelectedRows();
+        if (selectedRows.length === 0) {
+          getToastError(this.$t("messages.payroll.pleaseSelectData"));
+          return;
+        }
+
+        const pendingRows = selectedRows.filter(
+          (row: any) => row.status === "Pending"
+        );
+        if (pendingRows.length === 0) {
+          getToastError("Please select only pending payroll records");
+          return;
+        }
+
+        this.selectedRow = selectedRows;
+        this.dialogTitle = "Confirm Action";
+
+        if (mode === $global.modePayroll.approve) {
+          this.dialogMessage = this.$t("messages.payroll.confirmBulkApprove");
+          this.dialogAction = "bulkApprove";
+        } else if (mode === $global.modePayroll.reject) {
+          this.dialogMessage = this.$t("messages.payroll.confirmBulkReject");
+          this.dialogAction = "bulkReject";
+        }
+
+        this.showDialog = true;
+      } else if (params) {
+        this.selectedRow = params;
+        this.dialogTitle = "Confirm Action";
+
+        if (mode === $global.modePayroll.approve) {
+          this.dialogMessage = `Are you sure you want to approve "${params.period_name}"?`;
+          this.dialogAction = "approve";
+        } else if (mode === $global.modePayroll.reject) {
+          this.dialogMessage = `Are you sure you want to reject "${params.period_name}"?`;
+          this.dialogAction = "reject";
+        }
+
+        this.showDialog = true;
+      }
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  handleShowModal(params: any) {
+    if (params) {
+      this.selectedRow = params;
+      this.form.remark = params.remark === "-" ? "" : params.remark;
+      this.dialogTitle = "Add/Edit Remark";
+      this.dialogAction = "remark";
+      this.showDialog = true;
+    }
+  }
+
+  handleShowDetail(params: any) {
+    if (params) {
+      this.$router.push({
+        name: "PeriodDetail",
+        params: { id: params.id },
+      });
+    }
+  }
+
+  async confirmAction() {
+    try {
+      this.isSaving = true;
+
+      if (this.dialogAction === "bulkApprove") {
+        this.selectedRow.forEach((row: any) => {
+          if (row.status === "Pending") {
+            row.status = "Approved";
+          }
+        });
+        getToastSuccess(this.$t("messages.approveSuccess"));
+      } else if (this.dialogAction === "bulkReject") {
+        this.selectedRow.forEach((row: any) => {
+          if (row.status === "Pending") {
+            row.status = "Rejected";
+          }
+        });
+        getToastSuccess(this.$t("messages.rejectSuccess"));
+      } else if (this.dialogAction === "approve") {
+        if (this.selectedRow.status === "Pending") {
+          this.selectedRow.status = "Approved";
+          getToastSuccess(this.$t("messages.approveSuccess"));
+        }
+      } else if (this.dialogAction === "reject") {
+        if (this.selectedRow.status === "Pending") {
+          this.selectedRow.status = "Rejected";
+          getToastSuccess(this.$t("messages.rejectSuccess"));
+        }
+      } else if (this.dialogAction === "remark") {
+        if (this.form.remark) {
+          this.selectedRow.remark = this.form.remark;
+          getToastSuccess("Remark has been updated successfully");
+        }
+      }
+
+      this.rowData = [...this.rowData];
+      this.resetFormAndModal();
+    } catch (error) {
+      getError(error);
+    } finally {
+      this.isSaving = false;
+    }
+  }
+
+  resetFormAndModal() {
+    this.form.remark = "";
+    this.selectedRow = null;
+    this.showDialog = false;
+    this.dialogAction = "";
+    this.dialogMessage = "";
+    this.dialogTitle = "";
+  }
+
+  // API FUNCTION
   async loadMockData() {
     this.rowData = [
       {
@@ -319,56 +395,6 @@ export default class PayrollApprovals extends Vue {
     ];
   }
 
-  handleShowForm(params: any, mode: any) {
-    this.inputFormElement.initialize();
-    this.modeData = mode;
-    this.showForm = true;
-  }
-
-  handleShowDetail(params: any, mode: any) {
-    this.$router.push({
-      name: "PeriodDetail",
-      params: { id: params.id },
-    });
-  }
-
-  handleSelectionChanged() {
-    if (this.gridApi) {
-      this.selectedRows = this.gridApi.getSelectedRows();
-    }
-  }
-
-  handleBulkApprove() {
-    if (!this.gridApi || this.gridApi.getSelectedRows().length === 0) {
-      getToastError(this.$t("messages.payroll.pleaseSelectData"));
-      return;
-    }
-    this.dialogMessage = this.$t("messages.payroll.confirmBulkApprove");
-    this.dialogAction = "bulkApprove";
-    this.showDialog = true;
-  }
-
-  handleBulkReject() {
-    if (!this.gridApi || this.gridApi.getSelectedRows().length === 0) {
-      getToastError(this.$t("messages.payroll.pleaseSelectData"));
-      return;
-    }
-
-    this.dialogMessage = this.$t("messages.payroll.confirmBulkReject");
-    this.dialogAction = "bulkReject";
-    this.showDialog = true;
-  }
-
-  confirmAction() {
-    if (this.dialogAction === "bulkApprove") {
-      this.handleApprove("", $global.modePayroll.approve);
-    } else if (this.dialogAction === "bulkReject") {
-      this.handleApprove("", $global.modePayroll.reject);
-    }
-    this.showDialog = false;
-  }
-
-  // API FUNCTION
   async loadDataGrid(search: any = this.searchDefault) {
     try {
       let params = {
@@ -376,19 +402,17 @@ export default class PayrollApprovals extends Vue {
         Text: search.text,
         IndexCheckBox: search.filter[0],
       };
-      // const {data} = await payrollAPI.getPayrollPeriod(params)
+      // const {data} = await payrollAPI.getPayrollApprovals(params)
       // this.rowData = data
     } catch (error) {
       getError(error);
     }
   }
 
-  async insertData(formData: any) {
+  async approvePayroll(params: any) {
     try {
-      // const {status2} = await payrollAPI.InsertPayrollPeriod(formData)
-      // if(status2.status ==0){
-      //   getToastSuccess(this.$t('messages.saveSuccess'))
-      //   this.showForm = false
+      // const {status2} = await payrollAPI.approvePayroll(params)
+      // if(status2.status === 0) {
       //   this.loadDataGrid()
       // }
     } catch (error) {
@@ -396,23 +420,22 @@ export default class PayrollApprovals extends Vue {
     }
   }
 
-  async loadEditData(params: any) {
+  async rejectPayroll(params: any) {
     try {
-      // const {data} = await payrollAPI.GetPayrollPeriod(params)
-      // this.inputFormElement.form = data
-      // this.showForm = true
+      // const {status2} = await payrollAPI.rejectPayroll(params)
+      // if(status2.status === 0) {
+      //   this.loadDataGrid()
+      // }
     } catch (error) {
       getError(error);
     }
   }
 
-  async updateData(formData: any) {
+  async updateRemark(params: any) {
     try {
-      // const { status2 } = await trainingAPI.UpdateLostAndFound(formData);
-      // if (status2.status == 0) {
-      //   this.loadDataGrid("");
-      //   this.showForm = false;
-      //   getToastSuccess(this.$t("messages.saveSuccess"));
+      // const {status2} = await payrollAPI.updateRemark(params)
+      // if(status2.status === 0) {
+      //   this.loadDataGrid()
       // }
     } catch (error) {
       getError(error);
@@ -422,9 +445,5 @@ export default class PayrollApprovals extends Vue {
   // GETTER AND SETTER
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
-  }
-
-  get isRunPayrollDisabled(): boolean {
-    return !this.rowData.some((item: any) => item.status === "Pending");
   }
 }

@@ -6,8 +6,7 @@
         title="Reject Payroll"
         type="button"
         class="btn btn-danger mr-1"
-        @click="handleBulkReject"
-        :disabled="!selectedRows.length"
+        @click="handleApprove('', $global.modePayroll.reject)"
       >
         <i class="fa fa-times mr-1" aria-hidden="true"></i>{{
         $t('buttons.reject') }}
@@ -16,27 +15,12 @@
         title="Approve Payroll"
         type="button"
         class="btn btn-success mr-1"
-        @click="handleBulkApprove"
-        :disabled="!selectedRows.length"
+        @click="handleApprove('', $global.modePayroll.approve)"
       >
         <i class="fa fa-check mr-1" aria-hidden="true"></i>{{
         $t('buttons.approve') }}
       </button>
     </div>
-
-    <!-- insert form -->
-    <transition>
-      <div class="px-2">
-        <c-input-form
-          ref="inputFormElement"
-          v-show="showForm"
-          :schema="schema"
-          :modeData="modeData"
-          @save="handleSave"
-          @close="showForm=false"
-        />
-      </div>
-    </transition>
 
     <!-- filter -->
     <c-search-filter
@@ -76,15 +60,56 @@
         ></ag-grid-vue>
       </div>
     </div>
-    <div class="d-flex justify-content-start mb-2" v-if="selectedRows.length">
-      <div class="alert alert-info">
-        {{selectedRows.length}} payroll record(s) selected
+
+    <!-- modal -->
+    <c-modal
+      v-show="showModal"
+      :title="$t('title.remark')"
+      size="lg"
+      @close="showModal = false"
+      @save="handleSave('', $global.modePayroll.remark)"
+      :isSaving="isSaving"
+    >
+      <div @click.stop>
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <c-input
+              required
+              id="remark"
+              class="row mb-1"
+              type="textarea"
+              name="remark"
+              v-model="form.remark"
+              :label="$t('labels.remark')"
+              rows="3"
+            />
+          </div>
+        </div>
+        <!-- button -->
+        <!-- <div class="d-flex justify-content-end mt-2">
+          <button
+            type="button"
+            class="btn btn-danger mr-1 px-3"
+            @click="showGenerateModal = false"
+          >
+            <i class="fa fa-times" aria-hidden="true"></i>
+            {{$t('buttons.cancel')}}
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary px-3"
+            @click="handleSaveModal"
+          >
+            <i class="fa fa-play"></i>
+            {{$t('buttons.generate')}}
+          </button>
+        </div> -->
       </div>
-    </div>
+    </c-modal>
 
     <!-- dialog -->
     <c-dialog
-      v-show="showDialog"
+      v-show="showDialog && dialogAction !== 'remark'"
       :dialogTitle="dialogTitle"
       size="sm"
       @confirm="confirmAction"
