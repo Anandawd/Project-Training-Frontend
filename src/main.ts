@@ -9,6 +9,7 @@ import { faFacebook, faGooglePlus } from "@fortawesome/free-brands-svg-icons";
 import {
   faAdjust,
   faArrowCircleRight,
+  faArrowRight,
   faBalanceScale,
   faDivide,
   faEnvelope,
@@ -104,7 +105,8 @@ library.add(
   faDivide,
   faPuzzlePiece,
   faAdjust,
-  faPizzaSlice
+  faPizzaSlice,
+  faArrowRight
 );
 
 // Gatekeeper.initialize("de378d9c-38c8-42c1-b961-9e4fa92d6a5e");

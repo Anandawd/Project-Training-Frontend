@@ -179,7 +179,7 @@ export default class PayrollApprovals extends Vue {
 
   handleShowDetail(params: any, mode: any) {
     this.$router.push({
-      name: "PeriodDetail",
+      name: "DisbursementDetail",
       params: { id: params.id },
     });
   }

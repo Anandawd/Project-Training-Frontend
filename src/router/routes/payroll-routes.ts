@@ -315,4 +315,26 @@ export default [
       menu: getRouterMenu(menu, 1),
     },
   },
+  {
+    path: "payroll-disbursement/detail/:id?",
+    name: "DisbursementDetail",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-disbursement/payroll-disbursement-detail/payroll-disbursement-detail.vue"
+      ),
+    meta: {
+      pageTitle: "title.payrollDisbursementDetail",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.payroll", url: "/payroll/payroll-disbursement" },
+        {
+          title: "title.payrollDisbursement",
+          url: "/payroll/payroll-disbursement",
+        },
+        { title: "title.payrollDisbursementDetail", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
 ];
