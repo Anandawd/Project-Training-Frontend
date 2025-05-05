@@ -337,4 +337,26 @@ export default [
       menu: getRouterMenu(menu, 1),
     },
   },
+  {
+    path: "payroll-disbursement/process/:id?",
+    name: "DisbursementProcess",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-disbursement/payroll-disbursement-process/payroll-disbursement-process.vue"
+      ),
+    meta: {
+      pageTitle: "title.payrollDisbursementProcess",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.payroll", url: "/payroll/payroll-disbursement" },
+        {
+          title: "title.payrollDisbursement",
+          url: "/payroll/payroll-disbursement",
+        },
+        { title: "title.payrollDisbursementProcess", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
 ];

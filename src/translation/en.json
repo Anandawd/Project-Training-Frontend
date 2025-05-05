@@ -1662,6 +1662,8 @@
     "summaryPaymentByBank": "Summary Payment by Bank",
     "payrollDisbursementBankSummary": "Payroll Disbursement Bank Summary",
     "selectPaymentMethod": "Select Payment Method",
+    "payrollDisbursementProcess": "Payroll Disbursement Process",
+    "trackingPayment": "Tracking Payment",
     "reimbursement": "Reimbursement",
     "reimbursementApplication": "Reimbursement Application",
     "reimbursementApproval": "Reimbursement Approval",
@@ -2548,7 +2550,9 @@
     "nextWeek": "Next Week",
     "prorate": "Prorate",
     "process": "Process",
-    "completed": "Completed"
+    "completed": "Completed",
+    "download": "Download",
+    "uploadProof": "Upload Proof"
   },
   "languages": {
     "english": "English",

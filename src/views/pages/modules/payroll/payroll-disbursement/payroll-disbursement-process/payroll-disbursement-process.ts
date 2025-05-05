@@ -5,21 +5,17 @@ import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
 import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
-import {
-  formatCurrency,
-  formatNumber2,
-  formatNumberValue,
-} from "@/utils/format";
+import { formatCurrency, formatNumber2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
   getError,
 } from "@/utils/general";
 import $global from "@/utils/global";
-import { getToastError, getToastSuccess } from "@/utils/toast";
+import { getToastSuccess } from "@/utils/toast";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
-import { reactive, watch } from "vue";
+import { reactive } from "vue";
 import { Options, Vue } from "vue-class-component";
 
 @Options({
@@ -32,22 +28,19 @@ import { Options, Vue } from "vue-class-component";
     CCheckBox,
   },
 })
-export default class Employee extends Vue {
-  // form and data
-  public form: any = reactive({
-    select_employee: "all",
-    departments: [],
-    positions: [],
-    tax_income_type: "PPH21",
-    tax_method: "GROSS",
-    selectedEmployees: [],
-  });
-  public modeData: any;
+export default class PayrollDisbursementProcess extends Vue {
   public periodId: string = "";
   public periodData: any = {};
+  public processOptions: any = reactive({
+    selectedBank: "",
+    formatFile: "",
+    includeId: false,
+    includeName: false,
+  });
+  public isProcessing: boolean = false;
+  public formatCurrency = formatCurrency;
+
   public rowData: any = [];
-  public rowDataSummary: any = [];
-  public employees: any = [];
 
   // Selector options
   public selectBankOptions: any = [
@@ -81,7 +74,7 @@ export default class Employee extends Vue {
   };
 
   // Processing state
-  public isProcessing: boolean = false;
+  public isGenerating: boolean = false;
   public isSubmitting: boolean = false;
   public isSaving: boolean = false;
 
@@ -92,6 +85,7 @@ export default class Employee extends Vue {
 
   // Modal
   public showModal: boolean = false;
+  public showEmployeeSelectorModal: boolean = false;
 
   // AG GRID VARIABLE
   gridOptions: any = {};
@@ -110,41 +104,20 @@ export default class Employee extends Vue {
   ColumnApi: any;
   agGridSetting: any;
 
-  // FORMAT FUNCTION
-  formatCurrency = formatCurrency;
-  formatNumberValue = formatNumberValue;
-
   // LIFECYCLE HOOKS
-  created() {
+  async created() {
     const periodId = this.$route.params.id as string;
-    this.loadInitialData();
 
-    // Watch for form changes to update generateOptions
-    watch(
-      () => this.form.select_employee,
-      (newValue) => {
-        this.generateOptions.selectionMode = newValue;
-      }
-    );
-    watch(
-      () => this.form.departments,
-      (newValue) => {
-        this.generateOptions.departmentId = newValue;
-      }
-    );
-    watch(
-      () => this.form.positions,
-      (newValue) => {
-        this.generateOptions.positionId = newValue;
-      }
-    );
+    const query = this.$route.query;
+    this.processOptions = {
+      selectedBank: query.selectedBank || "all",
+      formatFile: query.formatFile || "CSV",
+      separateFiles: query.separateFiles === "true",
+      includeId: query.includeId === "true",
+      includeName: query.includeName === "true",
+    };
 
-    watch(
-      () => this.form.selectedEmployees,
-      (newValue) => {
-        this.generateOptions.selectedEmployeeIds = newValue;
-      }
-    );
+    await this.loadPeriodData();
   }
 
   beforeMount(): void {
@@ -291,50 +264,10 @@ export default class Employee extends Vue {
     params.api.sizeColumnsToFit();
   }
 
-  // DATA LOADING METHODS
-  async loadInitialData() {
+  // API METHOD
+  async loadPeriodData() {
     try {
-      await this.loadPeriodData(this.periodId);
-      await Promise.all([
-        this.loadDepartments(),
-        this.loadPositions(),
-        this.loadEmployees,
-      ]);
-
-      if (this.periodData.id) {
-        await this.loadEmployeePayrolls();
-      }
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadPeriodData(periodId: any) {
-    try {
-      if (periodId === "new") {
-        // this.periodData = {
-        //   id: null,
-        //   period_name: "",
-        //   placement: "",
-        //   period_type: "",
-        //   start_date: "",
-        //   end_date: "",
-        //   payment_date: "",
-        //   remark: "",
-        //   status: "Draft",
-        //   created_by: "",
-        //   created_at: "",
-        //   updated_at: "",
-        // };
-        // this.rowData = [];
-      } else {
-        // In a real implementation, this would be an API call
-        // const { data } = await payrollAPI.GetPayrollPeriodDetail(periodId);
-        // this.periodData = data;
-
-        // For demonstration, we're using mock data
-        await this.loadMockDisbursementData();
-      }
+      await this.loadMockDisbursementData();
     } catch (error) {
       getError(error);
     }
@@ -418,122 +351,41 @@ export default class Employee extends Vue {
         reference: "",
       },
     ];
-
-    this.rowDataSummary = [
-      {
-        id: 1,
-        bank_name: "BCA",
-        total_employees: 8,
-        total_amount: 85000000,
-        status: "Ready",
-      },
-      {
-        id: 2,
-        bank_name: "BRI",
-        total_employees: 7,
-        total_amount: 74500000,
-        status: "Ready",
-      },
-      {
-        id: 3,
-        bank_name: "Mandiri",
-        total_employees: 4,
-        total_amount: 48000000,
-        status: "Ready",
-      },
-      {
-        id: 4,
-        bank_name: "BNI",
-        total_employees: 2,
-        total_amount: 29000000,
-        status: "Ready",
-      },
-      {
-        id: 5,
-        bank_name: "Cash",
-        total_employees: 2,
-        total_amount: 10000000,
-        status: "Ready",
-      },
-    ];
   }
 
-  async loadEmployeePayrolls() {
+  async handleDownloadFile() {
     try {
-      // In a real implementation, this would be an API call
-      // const { data } = await payrollAPI.GetEmployeePayrolls(this.periodData.id);
-      // this.rowData = data;
-      // For now, we're using the mock data loaded in loadMockDisbursementData
+      this.isProcessing = true;
+
+      const filename = `Payroll_${this.periodData.period_name.replace(
+        /\s+/g,
+        "_"
+      )}_${this.processOptions.formatFile}`;
+
+      // Mock download logic
+      getToastSuccess(`File ${filename} has been downloaded successfully`);
+
+      this.markAsProccesing();
+    } catch (error) {
+      getError(error);
+    } finally {
+      this.isProcessing = false;
+    }
+  }
+
+  async handleMarkAsCompleted() {
+    try {
+      this.periodData.status = "Completed";
+      getToastSuccess("Payroll disbursement has been marked as completed");
     } catch (error) {
       getError(error);
     }
   }
 
-  async loadDepartments() {
+  async markAsProccesing() {
     try {
-      // In a real implementation, this would be an API call
-      // const { data } = await payrollAPI.GetDepartments();
-      // this.departments = data;
-      // this.departmentsOptions = data.map(d => ({ code: d.id, name: d.name }));
-      // Using mock data for now
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadPositions() {
-    try {
-      // In a real implementation, this would be an API call
-      // const { data } = await payrollAPI.GetPositions();
-      // this.positions = data;
-      // this.positionsOptions = data.map(p => ({ code: p.id, name: p.name }));
-      // Using mock data for now
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadEmployees(search: any = this.searchDefault) {
-    try {
-      // const { data } = await payrollAPI.GetEmployees(search);
-      // this.employees = data;
-      this.employees = [
-        {
-          id: 1,
-          code: "EMP001",
-          name: "John Doe",
-          department: "IT",
-          position: "Developer",
-        },
-        {
-          id: 2,
-          code: "EMP002",
-          name: "Jane Smith",
-          department: "Marketing",
-          position: "Manager",
-        },
-        {
-          id: 3,
-          code: "EMP003",
-          name: "Robert Johnson",
-          department: "Finance",
-          position: "Accountant",
-        },
-        {
-          id: 4,
-          code: "EMP004",
-          name: "Emily Davis",
-          department: "HR",
-          position: "HR Officer",
-        },
-        {
-          id: 5,
-          code: "EMP005",
-          name: "Michael Wilson",
-          department: "IT",
-          position: "Project Manager",
-        },
-      ];
+      this.periodData.status = "Processing";
+      getToastSuccess("Payroll status updated to Processing");
     } catch (error) {
       getError(error);
     }
@@ -602,10 +454,6 @@ export default class Employee extends Vue {
     }
   }
 
-  onSelectEmployeeChange() {
-    this.generateOptions.selectionMode = this.form.select_employee;
-  }
-
   // GENERAL FUNCTION
   async handleSave() {
     try {
@@ -640,77 +488,11 @@ export default class Employee extends Vue {
     });
   }
 
-  async handleDelete(params: any) {
-    try {
-      // In a real implementation, this would be an API call
-      // const { status2 } = await payrollAPI.RemoveEmployeeFromPayroll({
-      //   periodId: this.periodData.id,
-      //   employeeId: employee.id
-      // });
-
-      // For now, simulate a successful deletion
-      this.rowData = this.rowData.filter((item: any) => item.id !== params.id);
-
-      getToastSuccess("Employee removed from payroll successfully");
-      return true;
-    } catch (error) {
-      getError(error);
-      return false;
-    }
-  }
-
-  async handleSubmit() {
-    try {
-      this.isSubmitting = true;
-
-      // In a real implementation, this would be an API call
-      // const { status2 } = await payrollAPI.SubmitPayrollForApproval({
-      //   id: this.periodData.id
-      // });
-
-      // For now, simulate a successful submission
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      this.periodData.status = "Pending";
-      getToastSuccess("Payroll has been submitted for approval");
-
-      return true;
-    } catch (error) {
-      getError(error);
-      return false;
-    } finally {
-      this.isSubmitting = false;
-    }
-  }
-
   refreshData(search: any) {
     // this.loadDataGrid(search);
   }
 
-  async handleSubmitForApproval() {
-    if (this.rowData.length === 0) {
-      getToastError(
-        "Cannot submit empty payroll. Please generate payroll data first."
-      );
-      return;
-    }
-
-    this.dialogMessage =
-      "Are you sure you want to submit this payroll for approval?";
-    this.dialogAction = "submit";
-    this.showDialog = true;
-  }
-
   handleShowModal() {
-    this.form = {
-      select_employee: "all",
-      departments: [],
-      positions: [],
-      tax_income_type: "TI01",
-      tax_method: "TM01",
-      selectedEmployees: [],
-    };
-
     this.generateOptions = {
       selectionMode: "all",
       departmentId: [],
@@ -723,45 +505,18 @@ export default class Employee extends Vue {
 
   async handleSaveModal() {
     try {
-      this.isProcessing = true;
-
-      if (this.form.payment_method === "Manual") {
-        this.$router.push({
-          name: "DisbursementProcess",
-          params: { id: this.periodData.id },
-          query: {
-            selectedBank: this.form.select_bank,
-            formatFile: this.form.format_file,
-            separateFiles: this.form.is_separate_file_each_bank,
-            inludeId: this.form.is_include_employee_id,
-            inludeName: this.form.is_include_employee_name,
-          },
-        });
-      } else {
-        await this.processAutomaticPayment();
-      }
-      this.showModal = false;
+      // const success = await this.generatePayroll();
+      // if (success) {
+      //   this.showModal = false;
+      // }
     } catch (error) {
       getError(error);
-    } finally {
-      this.isProcessing = false;
     }
   }
 
-  handleProcessPayment() {
-    this.$router.push({
-      name: "DisbursementProcess",
-      params: { id: this.periodData.id },
-    });
-  }
-
-  processAutomaticPayment() {}
-
   confirmAction() {
     if (this.dialogAction === "submit") {
-      this.handleSubmit();
-    } else if (this.dialogAction === "delete") {
-      this.handleDelete(this.paramsData);
+      // this.handleSubmit();
     } else if (this.dialogAction === "saveAndGoBack") {
       this.handleSave().then((success) => {
         if (success) {
@@ -776,16 +531,10 @@ export default class Employee extends Vue {
   }
 
   goBack() {
-    if (this.form.status === "Draft") {
-      this.dialogMessage =
-        "You have unsaved changes. Do you want to save before going back?";
-      this.dialogAction = "saveAndGoBack";
-      this.showDialog = true;
-    } else {
-      this.$router.push({
-        name: "PayrollDisbursement",
-      });
-    }
+    this.$router.push({
+      name: "DisbursementDetail",
+      params: { id: this.periodId },
+    });
   }
 
   // COMPUTED PROPERTIES
@@ -815,11 +564,7 @@ export default class Employee extends Vue {
     }, 0);
   }
 
-  get canSubmit(): boolean {
-    return this.rowData.length > 0 && this.periodData.status === "Draft";
-  }
-
-  get canEdit(): boolean {
-    return this.periodData.status === "Draft";
+  get canMarkComplete(): boolean {
+    return this.periodData.status === "Processing";
   }
 }
