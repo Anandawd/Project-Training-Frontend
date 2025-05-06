@@ -194,7 +194,14 @@
         "additionalOptions": "Additional Options",
         "separateFileForEachBank": "Separate File for Each Bank",
         "includeEmployeeIdInDescription": "Include Employee ID in Description",
-        "includeEmployeeNameInDescription": "Include Employee Name in Description"
+        "includeEmployeeNameInDescription": "Include Employee Name in Description",
+        "disbursementDetail": "Disbursement Detail",
+        "paymentMethod": "Payment Method",
+        "downloadOptions": "Download Options",
+        "confirmation": "Confirmation",
+        "csvFormat": "CSV Format",
+        "excelFormat": "Excel Format",
+        "downloadPreferences": "Download Preferences"
       },
 
       "reimbursement": {
@@ -1663,6 +1670,10 @@
     "payrollDisbursementBankSummary": "Payroll Disbursement Bank Summary",
     "selectPaymentMethod": "Select Payment Method",
     "payrollDisbursementProcess": "Payroll Disbursement Process",
+    "fileFormat": "File Format",
+    "configureDownloadOptions": "Configure Download Options",
+    "filesToBeGenerated": "Files To Be Generated",
+    "confirmDisbursement": "Confirm Disbursement",
     "trackingPayment": "Tracking Payment",
     "reimbursement": "Reimbursement",
     "reimbursementApplication": "Reimbursement Application",
@@ -2987,7 +2998,8 @@
           "accountNumber": "Account Number",
           "accountHolder": "Account Holder",
           "amount": "Amount",
-          "reference": "Reference"
+          "reference": "Reference",
+          "totalEmployees": "Total Employees"
         },
         "attendance": {
           "date": "Date",

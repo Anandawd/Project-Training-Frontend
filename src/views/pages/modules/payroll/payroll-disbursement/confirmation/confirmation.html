@@ -1,0 +1,63 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- button -->
+    <div class="d-flex justify-content-between mb-2">
+      <button
+        title="Back"
+        type="button"
+        class="btn btn-secondary mr-1"
+        @click="handleBack"
+      >
+        <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>{{
+        $t('buttons.back') }}
+      </button>
+      <div>
+        <button
+          title="Download Files"
+          type="button"
+          class="btn btn-secondary mr-1"
+          @click="handleDownload"
+        >
+          <i class="fa fa-download ml-1" aria-hidden="true"></i>
+          {{ $t('buttons.download') }}
+        </button>
+        <button
+          title="Continue"
+          type="button"
+          class="btn btn-primary mr-1"
+          @click="handleContinue"
+        >
+          {{ $t('buttons.continue') }}
+          <i class="fa fa-arrow-right ml-1" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-4">{{$t('title.confirmDisbursement')}}</h4>
+
+        <!-- Period Summary -->
+        <div class="summary-section mb-4">
+          <p><strong>Period:</strong> {{periodData.period_name}}</p>
+          <p><strong>Method:</strong> {{getPaymentMethodName}}</p>
+          <p>
+            <strong>Total Amount:</strong>
+            {{formatCurrency(periodData.total_payment)}}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- dialog -->
+    <c-dialog
+      v-show="showDialog"
+      dialogTitle="Confirm"
+      size="sm"
+      @confirm="confirmAction"
+      @cancel="showDialog=false"
+    >
+      <template #body> {{dialogMessage}} </template>
+    </c-dialog>
+  </div>
+</section>

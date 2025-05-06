@@ -1,0 +1,160 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- button -->
+    <div class="d-flex justify-content-between mb-2">
+      <button
+        title="Back"
+        type="button"
+        class="btn btn-secondary mr-1"
+        @click="goBack"
+      >
+        <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>{{
+        $t('buttons.back') }}
+      </button>
+      <button
+        v-show="canContinue"
+        title="Continue"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleContinue"
+      >
+        {{ $t('buttons.continue') }}
+        <i class="fa fa-arrow-right ml-1" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <!-- disbursement detail -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{$t('title.disbursementDetail')}}</h3>
+      </div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.periodName')}}</strong>
+              </div>
+              <div class="col-8">: {{periodData.period_name}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>Placement</strong>
+              </div>
+              <div class="col-8">: {{periodData.placement}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.periodType')}}</strong>
+              </div>
+              <div class="col-8">: {{periodData.period_type}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.periodDate')}}</strong>
+              </div>
+              <div class="col-8">
+                : {{periodData.start_date}} - {{periodData.end_date}}
+              </div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.paymentDate')}}</strong>
+              </div>
+              <div class="col-8">: {{periodData.payment_date}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.totalEmployees')}}</strong>
+              </div>
+              <div class="col-8">: {{periodData.total_employees}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.totalPayment')}}</strong>
+              </div>
+              <div class="col-8">
+                : Rp{{formatCurrency(periodData.total_payment)}}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.status')}}</strong>
+              </div>
+              <div class="col-8">
+                :
+                <span
+                  class="badge text-bg-secondary px-3 py-1"
+                  :class="getStatusBadgeClass(periodData.status)"
+                  >{{periodData.status}}</span
+                >
+              </div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.level')}}</strong>
+              </div>
+              <div class="col-8">
+                : {{periodData.current_level}} of {{periodData.total_level}}
+              </div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.approver')}}</strong>
+              </div>
+              <div class="col-8">: {{periodData.approved_by}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
+                <strong>{{$t('labels.remark')}}</strong>
+              </div>
+              <div class="col-8">: {{periodData.remark}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- period bank summary -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{$t('title.summaryPaymentByBank')}}</h3>
+      </div>
+      <div class="card-body">
+        <ag-grid-vue
+          :style="agGridSetting.styleAgGridFrame"
+          :class="agGridSetting.themeAgGrid"
+          :columnDefs="columnDefs"
+          :rowData="rowData"
+          :paginationPageSize="paginationPageSize"
+          :gridOptions="gridOptions"
+          :context="context"
+          :frameworkComponents="frameworkComponents"
+          :enableCellChangeFlash="true"
+          :rowSelection="rowSelection"
+          :getContextMenuItems="getContextMenu"
+          :defaultColDef="agGridSetting.defColDef"
+          :rowGroupPanelShow="rowGroupPanelShow"
+          :suppressDragLeaveHidesColumns="true"
+          :suppressMakeColumnVisibleAfterUnGroup=" true"
+          :statusBar="statusBar"
+          @grid-ready="onGridReady"
+          @cellContextMenu="handleRowRightClicked"
+        ></ag-grid-vue>
+      </div>
+    </div>
+
+    <!-- dialog -->
+    <c-dialog
+      v-show="showDialog"
+      dialogTitle="Confirm"
+      size="sm"
+      @confirm="confirmAction"
+      @cancel="showDialog=false"
+    >
+      <template #body> {{dialogMessage}} </template>
+    </c-dialog>
+  </div>
+</section>

@@ -762,7 +762,7 @@ export default class Employee extends Vue {
       this.handleSubmit();
     } else if (this.dialogAction === "delete") {
       this.handleDelete(this.paramsData);
-    } else if (this.dialogAction === "saveAndGoBack") {
+    } else if (this.dialogAction === "saveAndhandleBack") {
       this.handleSave().then((success) => {
         if (success) {
           this.$router.push({
@@ -775,11 +775,11 @@ export default class Employee extends Vue {
     this.showDialog = false;
   }
 
-  goBack() {
+  handleBack() {
     if (this.form.status === "Draft") {
       this.dialogMessage =
         "You have unsaved changes. Do you want to save before going back?";
-      this.dialogAction = "saveAndGoBack";
+      this.dialogAction = "saveAndhandleBack";
       this.showDialog = true;
     } else {
       this.$router.push({

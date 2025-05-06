@@ -1,0 +1,110 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- button -->
+    <div class="d-flex justify-content-between mb-2">
+      <button
+        title="Back"
+        type="button"
+        class="btn btn-secondary mr-1"
+        @click="$emit('back')"
+      >
+        <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>{{
+        $t('buttons.back') }}
+      </button>
+      <button
+        :disabled="!selectedMethod"
+        title="Continue"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleContinue"
+      >
+        {{ $t('buttons.continue') }}
+        <i class="fa fa-arrow-right ml-1" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <!-- disbursement detail -->
+    <div class="card">
+      <div class="card-body text-center">
+        <h4 class="mb-2">{{$t('title.selectPaymentMethod')}}</h4>
+        <p class="mb-4">
+          Select how you want to process the payroll disbursement:
+        </p>
+
+        <!-- Manual Bank Transfer Option -->
+        <div
+          class="payment-option mb-4"
+          :class="{ 'selected': selectedMethod === 'manual' }"
+          @click="selectMethod('manual')"
+        >
+          <div class="form-check">
+            <input
+              type="radio"
+              id="manualTransfer"
+              class="form-check-input"
+              value="manual"
+              v-model="selectedMethod"
+            />
+            <label class="form-check-label" for="manualTransfer">
+              <strong>Manual Bank Transfer</strong>
+            </label>
+          </div>
+          <p class="ms-3 mb-2">Generate transfer files for manual processing</p>
+          <ul class="feature-list">
+            <li>
+              <i class="fa fa-file-excel" aria-hidden="true"></i> Generate
+              CSV/Excel files per bank
+            </li>
+            <li>
+              <i class="fa fa-download" aria-hidden="true"></i> Download and
+              process via your bank portal
+            </li>
+          </ul>
+        </div>
+
+        <!-- Automatic Payment Option -->
+        <div
+          class="payment-option mb-4 disabled"
+          :class="{ 'selected': selectedMethod === 'automatic' }"
+        >
+          <div class="form-check">
+            <input
+              type="radio"
+              id="automaticPayment"
+              class="form-check-input"
+              value="automatic"
+              v-model="selectedMethod"
+              disabled
+            />
+            <label class="form-check-label" for="automaticPayment">
+              <strong>Automatic Payment Integration</strong>
+              <span class="badge text-bg-secondary ms-2">Coming Soon</span>
+            </label>
+          </div>
+          <p class="ms-3 mb-2">Process payments through secured API</p>
+          <ul class="feature-list">
+            <li>
+              <i class="fa fa-plug" aria-hidden="true"></i> Direct bank API
+              integration
+            </li>
+            <li>
+              <i class="fa fa-clock" aria-hidden="true"></i> Real-time
+              processing
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- dialog -->
+    <c-dialog
+      v-show="showDialog"
+      dialogTitle="Confirm"
+      size="sm"
+      @confirm="confirmAction"
+      @cancel="showDialog=false"
+    >
+      <template #body> {{dialogMessage}} </template>
+    </c-dialog>
+  </div>
+</section>

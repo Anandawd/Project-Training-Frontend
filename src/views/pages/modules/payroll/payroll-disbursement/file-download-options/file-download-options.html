@@ -1,0 +1,128 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- button -->
+    <div class="d-flex justify-content-between mb-2">
+      <button
+        title="Back"
+        type="button"
+        class="btn btn-secondary mr-1"
+        @click="handleBack"
+      >
+        <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>{{
+        $t('buttons.back') }}
+      </button>
+      <div>
+        <button
+          title="Download Files"
+          type="button"
+          class="btn btn-secondary mr-1"
+          @click="handleDownload"
+        >
+          <i class="fa fa-download ml-1" aria-hidden="true"></i>
+          {{ $t('buttons.download') }}
+        </button>
+        <button
+          title="Continue"
+          type="button"
+          class="btn btn-primary mr-1"
+          @click="handleContinue"
+        >
+          {{ $t('buttons.continue') }}
+          <i class="fa fa-arrow-right ml-1" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h4 class="mb-4">{{$t('title.configureDownloadOptions')}}</h4>
+
+        <!-- File Format Selection -->
+        <div class="mb-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{$t('title.fileFormat')}}</h5>
+              <div class="row">
+                <div class="mb-2">
+                  <c-radio
+                    :label="$t('labels.payroll.payroll.csvFormat')"
+                    v-model="options.fileFormat"
+                    value="csv"
+                  ></c-radio>
+                </div>
+                <div class="mb-2">
+                  <c-radio
+                    :label="$t('labels.payroll.payroll.excelFormat')"
+                    v-model="options.fileFormat"
+                    value="excel"
+                  ></c-radio>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Download Preferences -->
+        <div class="mb-4">
+          <h5>{{$t('labels.payroll.payroll.downloadPreferences')}}:</h5>
+          <div class="row">
+            <div class="mb-2">
+              <c-checkbox
+                :label="$t('labels.payroll.payroll.separateFileForEachBank')"
+                v-model="options.separatePerBank"
+              ></c-checkbox>
+            </div>
+            <div class="mb-2">
+              <c-checkbox
+                :label="$t('labels.payroll.payroll.includeEmployeeIdInDescription')"
+                v-model="options.includeEmployeeId"
+              ></c-checkbox>
+            </div>
+            <div class="mb-2">
+              <c-checkbox
+                :label="$t('labels.payroll.payroll.includeEmployeeNameInDescription')"
+                v-model="options.includeEmployeeName"
+              ></c-checkbox>
+            </div>
+          </div>
+        </div>
+
+        <!-- File Preview -->
+        <div class="mb-4">
+          <h5>{{$t('title.filesToBeGenerated')}}:</h5>
+          <div class="card">
+            <ul class="list-group list-group-flush">
+              <li
+                v-for="file in filesList"
+                :key="file.bank"
+                class="list-group-item d-flex justify-content-between align-items-center"
+              >
+                <div>
+                  <i
+                    class="fa fa-file-excel text-success me-2"
+                    aria-hidden="true"
+                  ></i>
+                  {{file.filename}}
+                </div>
+                <span class="text-muted"
+                  >(Rp {{formatCurrency(file.amount)}})</span
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- dialog -->
+    <c-dialog
+      v-show="showDialog"
+      dialogTitle="Confirm"
+      size="sm"
+      @confirm="confirmAction"
+      @cancel="showDialog=false"
+    >
+      <template #body> {{dialogMessage}} </template>
+    </c-dialog>
+  </div>
+</section>

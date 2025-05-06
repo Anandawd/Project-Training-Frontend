@@ -1,0 +1,49 @@
+.payment-option {
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+
+  &:hover {
+    border-color: #007bff;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.1);
+  }
+
+  &.selected {
+    border-color: #007bff;
+    background-color: #f8f9fa;
+  }
+
+  &.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.feature-list {
+  list-style: none;
+  padding-left: 20px;
+  margin-bottom: 0;
+
+  li {
+    margin-bottom: 5px;
+    color: #6c757d;
+
+    i {
+      margin-right: 10px;
+      color: #007bff;
+    }
+  }
+}
+
+.form-check-label {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.badge {
+  font-size: 12px;
+  padding: 3px 8px;
+}
