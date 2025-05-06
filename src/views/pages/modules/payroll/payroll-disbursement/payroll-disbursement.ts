@@ -172,12 +172,12 @@ export default class PayrollApprovals extends Vue {
   handleShowDetail(params: any, mode: any) {
     if (mode === $global.modePayroll.process) {
       this.$router.push({
-        name: "DisbursementDetail",
+        name: "DisbursementProcess",
         params: { id: params.id },
       });
     } else {
       this.$router.push({
-        name: "DisbursementDetail",
+        name: "DisbursementProcess",
         params: { id: params.id },
       });
     }

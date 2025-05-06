@@ -135,7 +135,7 @@
     <!-- dialog -->
     <c-dialog
       v-show="showDialog"
-      dialogTitle="Confirm"
+      :dialogTitle="dialogTitle"
       size="sm"
       @confirm="confirmAction"
       @cancel="showDialog=false"

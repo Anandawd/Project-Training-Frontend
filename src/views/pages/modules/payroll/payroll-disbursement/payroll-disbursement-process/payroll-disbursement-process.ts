@@ -21,7 +21,7 @@ import PaymentMethodSelection from "../payment-method-selection/payment-method-s
   },
 })
 export default class PayrollDisbursementProcess extends Vue {
-  public currentStep: number = 5;
+  public currentStep: number = 1;
   public periodData: any = reactive({});
   public selectedPaymentMethod: string = "manual";
   public downloadOptions: any = reactive({});
@@ -29,6 +29,7 @@ export default class PayrollDisbursementProcess extends Vue {
 
   // Dialog
   public showDialog: boolean = false;
+  public dialogTitle: string = "";
   public dialogMessage: string = "";
   public dialogAction: string = "";
 
@@ -102,8 +103,9 @@ export default class PayrollDisbursementProcess extends Vue {
   }
 
   async handleComplete() {
+    this.dialogTitle = this.$t("title.confirm");
     this.dialogMessage = this.$t(
-      "messages.disbursement.confirmProcess"
+      "messages.payroll.completeConfirmation"
     ) as string;
     this.dialogAction = "complete";
     this.showDialog = true;

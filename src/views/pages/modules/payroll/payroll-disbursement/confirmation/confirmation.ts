@@ -3,8 +3,6 @@ import CDialog from "@/components/dialog/dialog.vue";
 import CInputFile from "@/components/input-file/input-file.vue";
 import CInput from "@/components/input/input.vue";
 import { formatCurrency } from "@/utils/format";
-import { getError } from "@/utils/general";
-import { getToastSuccess } from "@/utils/toast";
 import "ag-grid-enterprise";
 import { reactive } from "vue";
 import { Options, Vue } from "vue-class-component";
@@ -111,13 +109,13 @@ export default class Confirmation extends Vue {
     if (!this.isFormValid) {
       return;
     }
-
-    this.dialogTitle = this.$t("title.confirmation").toString();
-    this.dialogMessage = this.$t(
-      "messages.payroll.completeConfirmation"
-    ).toString();
-    this.dialogAction = "complete";
-    this.showDialog = true;
+    this.$emit("complete");
+    // this.dialogTitle = this.$t("title.confirmation").toString();
+    // this.dialogMessage = this.$t(
+    //   "messages.payroll.completeConfirmation"
+    // ).toString();
+    // this.dialogAction = "complete";
+    // this.showDialog = true;
   }
 
   showErrorDialog(message: string) {
@@ -137,17 +135,8 @@ export default class Confirmation extends Vue {
     this.showDialog = false;
   }
 
-  // API
-  async completeProcess(): Promise<void> {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      getToastSuccess(
-        this.$t("messages.payroll.disbursementCompleted").toString()
-      );
-      this.$emit("complete");
-    } catch (error) {
-      getError(error);
-    }
+  completeProcess() {
+    this.$emit("complete");
   }
 
   cancelProcess(): void {
