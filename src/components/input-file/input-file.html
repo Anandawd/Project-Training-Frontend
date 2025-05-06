@@ -1,0 +1,68 @@
+<template>
+  <div
+    class="c-input c-input-file position-relative"
+    :class="{ 'has-error': !valid || !meta.valid && meta.touched, 'row': inlineLabel, 'focus': focus }"
+  >
+    <label
+      v-if="label"
+      :for="ID"
+      class="col-form-label d-flex"
+      :class="[!inlineLabel ? '': (multicol ? 'col-6' : (customLabelClass ? customLabelClass : 'col-3')), {'required': required} ]"
+      >{{ label }}</label
+    >
+
+    <div
+      :class="[ !inlineLabel ? '' : ( multicol ? 'col-6' : half ? 'col-4' : (customClass ? customClass : 'col'))]"
+      class="input-group align-items-center"
+    >
+      <div class="file-input-wrapper d-flex align-items-center">
+        <label :for="ID" class="btn" :class="buttonClass">
+          <i :class="buttonIcon" class="me-1"></i> {{ buttonText }}
+        </label>
+
+        <input
+          :id="ID"
+          :tabindex="tabindex"
+          class="d-none"
+          type="file"
+          :accept="accept"
+          :multiple="multiple"
+          :disabled="disabled"
+          @change="handleFileChange"
+        />
+
+        <div v-if="selectedFiles.length > 0" class="selected-files ms-2">
+          <div
+            v-for="(file, index) in selectedFiles"
+            :key="index"
+            class="selected-file d-flex align-items-center"
+          >
+            <span class="file-name text-truncate">{{ file.name }}</span>
+            <button
+              class="btn btn-sm btn-link text-danger"
+              @click.prevent="removeFile(index)"
+            >
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+        </div>
+
+        <span v-else-if="showPlaceholder" class="placeholder text-muted">
+          {{ placeholder || 'No file selected' }}
+        </span>
+      </div>
+    </div>
+
+    <div v-if="showError" class="row">
+      <div
+        class="col-form-label d-flex"
+        :class="[!inlineLabel ? '': (multicol ? 'col-6' : (customLabelClass ? customLabelClass : 'col-3')), {'required': required} ]"
+      ></div>
+      <span
+        class="text-danger pl-2 text-error"
+        :class="[ !inlineLabel ? '' : ( multicol ? 'col-6' : half ? 'col-4' : (customClass ? customClass : 'col'))]"
+        >{{errorText ?? errorMessage}}</span
+      >
+    </div>
+  </div>
+</template>

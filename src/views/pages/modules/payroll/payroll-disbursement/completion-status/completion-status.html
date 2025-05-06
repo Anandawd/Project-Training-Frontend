@@ -1,0 +1,100 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- button -->
+    <div class="d-flex justify-content-end mb-2">
+      <button
+        title="Download Summary"
+        type="button"
+        class="btn btn-secondary me-1"
+        @click="handleDownloadSummary"
+      >
+        <i class="fa fa-download me-1" aria-hidden="true"></i>
+        {{ $t('buttons.download') }}
+      </button>
+      <button
+        title="Send Email Confirmation"
+        type="button"
+        class="btn btn-warning me-1"
+        @click="handleEmailConfirmation"
+      >
+        <i class="fa fa-envelope me-1" aria-hidden="true"></i>
+        {{ $t('buttons.sendEmail') }}
+      </button>
+      <button
+        title="Return to Payroll Disbursement"
+        type="button"
+        class="btn btn-primary"
+        @click="handleReturn"
+      >
+        {{ $t('buttons.return') }}
+        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="card-body text-center">
+        <div class="success-icon my-4">
+          <i
+            class="fa fa-check-circle text-success"
+            style="font-size: 4rem"
+          ></i>
+        </div>
+
+        <h4 class="mb-4">
+          {{$t('labels.payroll.payroll.disbursementCompleted')}}
+        </h4>
+
+        <!-- period and status information -->
+        <div class="my-2 mb-4">
+          <p>
+            <strong>{{$t('labels.payroll.payroll.period')}}:</strong>
+            {{periodData.period_name}}
+          </p>
+          <p>
+            <strong>{{$t('labels.payroll.payroll.status')}}:</strong>
+            <span class="badge bg-success px-3 py-1"
+              >{{$t('labels.payroll.payroll.completed')}}</span
+            >
+          </p>
+          <p>
+            <strong>{{$t('labels.payroll.payroll.completedAt')}}:</strong>
+            {{completionTime}}
+          </p>
+          <p>
+            <strong>{{$t('labels.payroll.payroll.processedBy')}}:</strong>
+            {{processedBy}}
+          </p>
+        </div>
+
+        <!-- bank processing status -->
+        <div class="bank-status-section mb-4">
+          <h5>{{$t('labels.payroll.payroll.bankProcessingStatus')}}:</h5>
+          <table class="table table-borderless">
+            <tbody>
+              <tr v-for="bank in bankStatus" :key="bank.name">
+                <td class="text-start">
+                  <i class="fa fa-check text-success me-2"></i>
+                  {{bank.name}}
+                </td>
+                <td class="text-start">
+                  <span :class="bank.statusClass">{{bank.status}}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- dialog -->
+    <c-dialog
+      v-show="showDialog"
+      dialogTitle="Confirm"
+      size="sm"
+      @confirm="confirmAction"
+      @cancel="showDialog=false"
+    >
+      <template #body> {{dialogMessage}} </template>
+    </c-dialog>
+  </div>
+</section>

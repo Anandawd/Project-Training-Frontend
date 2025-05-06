@@ -1,11 +1,11 @@
-import FeatherIcon from "./components/FeatherIcon.vue";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import Confirmation from "./views/pages/components/confirmation/confirmation.vue";
-import CDialog from "./components/dialog/dialog.vue";
-import SaveCloseButton from "./components/save-close-button/save-close-button.vue";
 import Pagination from "@/components/pagination/pagination.vue";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { Form } from "vee-validate";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
+import CDialog from "./components/dialog/dialog.vue";
+import FeatherIcon from "./components/FeatherIcon.vue";
+import SaveCloseButton from "./components/save-close-button/save-close-button.vue";
+import Confirmation from "./views/pages/components/confirmation/confirmation.vue";
 
 class GlobalComponent {
   constructor(main: any) {

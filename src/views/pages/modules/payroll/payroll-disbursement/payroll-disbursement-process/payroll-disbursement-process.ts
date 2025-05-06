@@ -1,8 +1,10 @@
 import CDialog from "@/components/dialog/dialog.vue";
 import { getError } from "@/utils/general";
+import { getToastSuccess } from "@/utils/toast";
 import "ag-grid-enterprise";
 import { reactive } from "vue";
 import { Options, Vue } from "vue-class-component";
+import CompletionStatus from "../completion-status/completion-status.vue";
 import Confirmation from "../confirmation/confirmation.vue";
 import DisbursementDetail from "../disbursement-detail/disbursement-detail.vue";
 import FileDownloadOptions from "../file-download-options/file-download-options.vue";
@@ -14,11 +16,12 @@ import PaymentMethodSelection from "../payment-method-selection/payment-method-s
     PaymentMethodSelection,
     FileDownloadOptions,
     Confirmation,
+    CompletionStatus,
     CDialog,
   },
 })
 export default class PayrollDisbursementProcess extends Vue {
-  public currentStep: number = 4;
+  public currentStep: number = 5;
   public periodData: any = reactive({});
   public selectedPaymentMethod: string = "manual";
   public downloadOptions: any = reactive({});
@@ -94,13 +97,52 @@ export default class PayrollDisbursementProcess extends Vue {
     }
   }
 
-  async handleComplete() {
-    await this.processDisbursement();
-    this.goToNextStep;
+  handleReturn() {
+    this.$router.push({ name: "PayrollDisbursement" });
   }
 
+  async handleComplete() {
+    this.dialogMessage = this.$t(
+      "messages.disbursement.confirmProcess"
+    ) as string;
+    this.dialogAction = "complete";
+    this.showDialog = true;
+  }
+
+  handleMethodSelection(method: string) {
+    this.selectedPaymentMethod = method;
+  }
+
+  handleDownloadOptions(options: any) {
+    Object.assign(this.downloadOptions, options);
+  }
+
+  confirmAction() {
+    if (this.dialogAction === "complete") {
+      this.processDisbursement();
+    }
+    this.showDialog = false;
+  }
+
+  // API
   async processDisbursement() {
-    // API call to process the disbursement
-    console.log("Processing disbursement...");
+    try {
+      // In a real implementation, this would be an API call
+      // const { status2 } = await payrollAPI.ProcessDisbursement({
+      //   periodId: this.periodId,
+      //   method: this.selectedPaymentMethod,
+      //   options: this.downloadOptions
+      // });
+
+      // Mock processing
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      getToastSuccess(
+        this.$t("messages.disbursement.processSuccess") as string
+      );
+      this.goToNextStep();
+    } catch (error) {
+      getError(error);
+    }
   }
 }

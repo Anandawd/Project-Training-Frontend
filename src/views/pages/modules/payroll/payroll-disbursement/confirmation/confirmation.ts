@@ -1,6 +1,10 @@
 import CCheckbox from "@/components/checkbox/checkbox.vue";
-import CRadio from "@/components/radio/radio.vue";
+import CDialog from "@/components/dialog/dialog.vue";
+import CInputFile from "@/components/input-file/input-file.vue";
+import CInput from "@/components/input/input.vue";
 import { formatCurrency } from "@/utils/format";
+import { getError } from "@/utils/general";
+import { getToastSuccess } from "@/utils/toast";
 import "ag-grid-enterprise";
 import { reactive } from "vue";
 import { Options, Vue } from "vue-class-component";
@@ -24,67 +28,147 @@ interface FileListItem {
 }
 
 @Options({
-  name: "FileDownloadOptions",
+  name: "Confirmation",
   components: {
+    CInput,
+    CDialog,
     CCheckbox,
-    CRadio,
+    CInputFile,
   },
   props: {
+    periodData: {
+      type: Object,
+      required: true,
+    },
+    selectedMethod: {
+      type: String,
+      default: "manual",
+    },
     downloadOptions: {
-      type: Object as () => Partial<FileOptions>,
+      type: Object,
       default: () => ({}),
     },
   },
-  emits: ["continue", "back", "options-selected"],
+  emits: ["complete", "back"],
 })
-export default class FileDownloadOptions extends Vue {
-  public periodData: any = reactive({});
-  public fileList: any;
+export default class Confirmation extends Vue {
+  // props
+  public periodData!: any;
+  public selectedMethod!: string;
   public downloadOptions: any;
-  public options: FileOptions = reactive({
-    fileFormat: "csv",
-    separatePerBank: true,
-    includeEmployeeId: true,
-    includeEmployeeName: true,
+
+  public uploadedFiles: Record<string, File> = reactive({});
+
+  public confirmations = reactive({
+    paymentsProcessed: false,
+    documentsUploaded: false,
   });
-  public bankData: BankData[] = [
-    { bank: "BCA", amount: 40000000 },
-    { bank: "Mandiri", amount: 25000000 },
-    { bank: "BNI", amount: 20000000 },
-    { bank: "BRI", amount: 15000000 },
-    { bank: "Cash", amount: 10000000 },
+
+  public bankSummary = [
+    { name: "BCA", amount: 40000000 },
+    { name: "Mandiri", amount: 25000000 },
+    { name: "BNI", amount: 20000000 },
+    { name: "BRI", amount: 15000000 },
+    { name: "Cash", amount: 10000000 },
   ];
+
+  // Dialog
+  public showDialog: boolean = false;
+  public dialogTitle: string = "Confirm";
+  public dialogMessage: string = "";
+  public dialogAction: string = "";
+
   public formatCurrency = formatCurrency;
 
   // LIFECYCLE HOOKS
-  created(): void {
-    Object.assign(this.options, this.downloadOptions);
-    console.info("bank:", this.bankData);
-    console.info("fileList:", this.filesList);
-  }
+  created(): void {}
 
-  handleDownload(): void {
-    console.log("Downloading files with options:", this.options);
-    this.$emit("options-selected", this.options);
+  handleFileUpload(event: any, bankName: string): void {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      this.showErrorDialog(
+        this.$t("messages.payroll.fileSizeExceeded").toString()
+      );
+      return;
+    }
+
+    this.uploadedFiles[bankName] = file;
   }
 
   handleBack() {
+    this.dialogTitle = this.$t("title.confirmation").toString();
+    this.dialogMessage = this.$t(
+      "messages.payroll.cancelConfirmation"
+    ).toString();
+    this.dialogAction = "cancel";
+    this.showDialog = true;
+  }
+
+  handleComplete() {
+    if (!this.isFormValid) {
+      return;
+    }
+
+    this.dialogTitle = this.$t("title.confirmation").toString();
+    this.dialogMessage = this.$t(
+      "messages.payroll.completeConfirmation"
+    ).toString();
+    this.dialogAction = "complete";
+    this.showDialog = true;
+  }
+
+  showErrorDialog(message: string) {
+    this.dialogTitle = this.$t("title.error").toString();
+    this.dialogMessage = message;
+    this.dialogAction = "error";
+    this.showDialog = true;
+  }
+
+  confirmAction() {
+    if (this.dialogAction === "complete") {
+      this.completeProcess();
+    } else if (this.dialogAction === "cancel") {
+      this.cancelProcess();
+    }
+
+    this.showDialog = false;
+  }
+
+  // API
+  async completeProcess(): Promise<void> {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      getToastSuccess(
+        this.$t("messages.payroll.disbursementCompleted").toString()
+      );
+      this.$emit("complete");
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  cancelProcess(): void {
     this.$emit("back");
   }
 
-  handleContinue() {
-    this.$emit("options-selected", this.options);
-    this.$emit("continue");
+  // COMPUTED PROPERTIES
+  get isFormValid(): boolean {
+    const hasUploadedFiles = Object.keys(this.uploadedFiles).length > 0;
+
+    return (
+      this.confirmations.paymentsProcessed &&
+      this.confirmations.documentsUploaded
+      // &&
+      // hasUploadedFiles
+    );
   }
 
-  get filesList(): FileListItem[] {
-    const extension = this.options.fileFormat === "excel" ? ".xlsx" : ".csv";
-    const period = "April2025";
-
-    return this.bankData.map((item) => ({
-      bank: item.bank,
-      filename: `${item.bank}_PayrollTransfer_${period}${extension}`,
-      amount: item.amount,
-    }));
+  get paymentMethodName(): string {
+    return this.selectedMethod === "manual"
+      ? "Manual Bank Transfer"
+      : "Automatic Payment";
   }
 }

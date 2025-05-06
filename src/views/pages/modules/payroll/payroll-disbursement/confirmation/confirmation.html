@@ -13,22 +13,14 @@
       </button>
       <div>
         <button
-          title="Download Files"
+          title="Complete Process"
           type="button"
-          class="btn btn-secondary mr-1"
-          @click="handleDownload"
+          class="btn btn-primary"
+          @click="handleComplete"
+          :disabled="!isFormValid"
         >
-          <i class="fa fa-download ml-1" aria-hidden="true"></i>
-          {{ $t('buttons.download') }}
-        </button>
-        <button
-          title="Continue"
-          type="button"
-          class="btn btn-primary mr-1"
-          @click="handleContinue"
-        >
-          {{ $t('buttons.continue') }}
-          <i class="fa fa-arrow-right ml-1" aria-hidden="true"></i>
+          {{ $t('buttons.complete') }}
+          <i class="fa fa-check ml-1" aria-hidden="true"></i>
         </button>
       </div>
     </div>
@@ -37,14 +29,102 @@
       <div class="card-body">
         <h4 class="mb-4">{{$t('title.confirmDisbursement')}}</h4>
 
-        <!-- Period Summary -->
-        <div class="summary-section mb-4">
-          <p><strong>Period:</strong> {{periodData.period_name}}</p>
-          <p><strong>Method:</strong> {{getPaymentMethodName}}</p>
-          <p>
-            <strong>Total Amount:</strong>
-            {{formatCurrency(periodData.total_payment)}}
-          </p>
+        <!-- period summary -->
+        <div class="mb-4">
+          <div class="row mb-2">
+            <div class="col-3 text-muted">
+              <strong>{{$t('labels.payroll.payroll.period')}}</strong>
+            </div>
+            <div class="col-9">: {{periodData.period_name}}</div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-3 text-muted">
+              <strong>{{$t('labels.payroll.payroll.paymentMethod')}}</strong>
+            </div>
+            <div class="col-9">: {{paymentMethodName}}</div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-3 text-muted">
+              <strong>{{$t('labels.payroll.payroll.totalAmount')}}</strong>
+            </div>
+            <div class="col-9">
+              : Rp{{formatCurrency(periodData.total_payment)}}
+            </div>
+          </div>
+        </div>
+
+        <!-- transfer receipts upload section -->
+        <div class="section-header mb-4">
+          <h5>{{$t('labels.payroll.payroll.uploadVerification')}}</h5>
+        </div>
+        <div class="transfer-receipt-section mb-4">
+          <div
+            v-for="(bank, index) in bankSummary"
+            :key="bank.name"
+            class="upload-box mb-3 p-3 border rounded"
+          >
+            <div class="d-flex align-items-center">
+              <div class="document-icon mr-3">
+                <i class="fa fa-file-alt text-primary"></i>
+              </div>
+
+              <!-- button upload  -->
+              <div class="flex-grow-1">
+                <div class="font-weight-bold">
+                  {{bank.name}} Transfer Receipt
+                  <span>({{$t('labels.payroll.payroll.clickToUpload')}})</span>
+                </div>
+                <div class="text-muted small">
+                  {{$t('labels.payroll.payroll.acceptedFormats')}}: PDF, JPG,
+                  PNG ({{$t('labels.payroll.payroll.maxFileSize')}})
+                </div>
+              </div>
+
+              <!-- status upload  -->
+              <div class="file-upload-status ml-3">
+                <span v-if="uploadedFiles[bank.name]" class="text-success"
+                  ><i class="fa fa-check-circle"></i>
+                  <!-- {{uploadedFiles[bank.name].name}} -->
+                </span>
+                <label
+                  :for="'file-upload-'+index"
+                  class="btn btn-sm btn-outline-primary mb-0"
+                >
+                  <i class="fa fa-upload me-1"></i>{{$t('buttons.upload')}}
+                </label>
+                <!-- <c-input-file
+                  :name="'file-upload-' + index"
+                  :label="'Document for ' + bank.bank"
+                  buttonText="Upload Document"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  @update:modelValue="(file) => handleFileUpload(file, bank.bank)"
+                ></c-input-file> -->
+              </div>
+
+              <!-- i -->
+            </div>
+          </div>
+        </div>
+
+        <!-- confirmation checkboxes -->
+        <div class="section-header mb-4">
+          <h5>{{$t('labels.payroll.payroll.confirmChecklist')}}</h5>
+        </div>
+        <div class="mb-4">
+          <div class="mb-2">
+            <c-checkbox
+              required
+              :label="$t('labels.payroll.payroll.confirmPaymentsProcessed')"
+              v-model="confirmations.paymentsProcessed"
+            />
+          </div>
+          <div class="mb-2">
+            <c-checkbox
+              required
+              :label="$t('labels.payroll.payroll.confirmDocumentsUploaded')"
+              v-model="confirmations.documentsUploaded"
+            />
+          </div>
         </div>
       </div>
     </div>

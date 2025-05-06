@@ -118,7 +118,7 @@
           :selectedMethod="selectedPaymentMethod"
           :downloadOptions="downloadOptions"
           @complete="handleComplete"
-          @back="goToPreviousStep"
+          @back="goToPrevStep"
         />
       </transition>
 
@@ -127,7 +127,7 @@
         <completion-status
           v-if="currentStep === 5"
           :periodData="periodData"
-          @return="handleReturnToDashboard"
+          @return="handleReturn"
         />
       </transition>
     </div>

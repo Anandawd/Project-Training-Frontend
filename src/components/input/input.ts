@@ -1,7 +1,7 @@
+import { BFormInput } from "bootstrap-vue-3";
 import { v4 as uuidv4 } from "uuid";
 import { useField } from "vee-validate";
-import { computed, onMounted, ref, watch } from "vue";
-import { BFormInput } from "bootstrap-vue-3";
+import { computed, ref, watch } from "vue";
 
 export default {
   name: "c-input",

@@ -63,10 +63,10 @@ export default class PayrollApprovals extends Vue {
 
   // GENERAL FUNCTION
   handleSave(formData: any) {
-    formData.remark = parseInt(formData.remark);
-
-    if (this.modeData == $global.modeData.insert) {
+    if (this.modeData === $global.modeData.insert) {
       this.insertData(formData);
+    } else if (this.modeData === $global.modePayroll.process) {
+      this.handleShowDetail(formData, $global.modePayroll.process);
     } else {
       this.updateData(formData);
     }
@@ -94,7 +94,7 @@ export default class PayrollApprovals extends Vue {
         period_date: "01/04/2025 - 30/04/2025",
         payment_date: "01/05/2025",
         remark: "-",
-        status: "Ready To Payment",
+        status: "Completed",
       },
       {
         id: 1,
@@ -135,24 +135,16 @@ export default class PayrollApprovals extends Vue {
     const result = [
       {
         name: this.$t("commons.contextMenu.detail"),
-        disabled: !this.paramsData,
+        disabled: !this.paramsData && this.paramsData.status === "Completed",
         icon: generateIconContextMenuAgGrid("detail_icon24"),
         action: () => this.handleShowDetail("", $global.modePayroll.detail),
       },
-      "separator",
       {
-        name: this.$t("commons.contextMenu.setProcessing"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () =>
-          this.handleApprove(this.paramsData, $global.modePayroll.processing),
-      },
-      {
-        name: this.$t("commons.contextMenu.setCompleted"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () =>
-          this.handleApprove(this.paramsData, $global.modePayroll.completed),
+        name: this.$t("commons.contextMenu.process"),
+        disabled:
+          !this.paramsData && this.paramsData.status === "Ready to Payment",
+        icon: generateIconContextMenuAgGrid("process_icon24"),
+        action: () => this.handleShowDetail("", $global.modePayroll.process),
       },
     ];
     return result;
@@ -178,10 +170,17 @@ export default class PayrollApprovals extends Vue {
   }
 
   handleShowDetail(params: any, mode: any) {
-    this.$router.push({
-      name: "DisbursementDetail",
-      params: { id: params.id },
-    });
+    if (mode === $global.modePayroll.process) {
+      this.$router.push({
+        name: "DisbursementDetail",
+        params: { id: params.id },
+      });
+    } else {
+      this.$router.push({
+        name: "DisbursementDetail",
+        params: { id: params.id },
+      });
+    }
   }
 
   // API FUNCTION
@@ -326,6 +325,7 @@ export default class PayrollApprovals extends Vue {
     this.rowModelType = "serverSide";
     this.limitPageSize = this.agGridSetting.limitDefaultPageSize;
   }
+
   onGridReady(params: any) {
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;

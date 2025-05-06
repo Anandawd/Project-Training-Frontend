@@ -1,16 +1,31 @@
-.card {
-  margin-bottom: 20px;
+.section-header {
+  border-top: 1px solid #dee2e6;
+  padding-top: 1.5rem;
+
+  h5 {
+    margin-bottom: 0;
+    font-weight: 600;
+    color: #495057;
+  }
 }
 
-.list-group-item {
-  padding: 0.75rem 1.25rem;
-}
+.transfer-receipt-section {
+  .upload-box {
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
 
-.fa-file-excel {
-  font-size: 1.2rem;
-}
+    &:hover {
+      background-color: #e9ecef;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-h5 {
-  margin-bottom: 1rem;
-  font-weight: 600;
+    .document-icon {
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .file-upload-status {
+      text-align: right;
+    }
+  }
 }

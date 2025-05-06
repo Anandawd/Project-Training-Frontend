@@ -223,6 +223,7 @@ export default {
     completed: 24,
     prorate: 25,
     component: 26,
+    process: 27,
   },
   modeBreakdown: {
     insert: "00",

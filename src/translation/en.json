@@ -201,7 +201,20 @@
         "confirmation": "Confirmation",
         "csvFormat": "CSV Format",
         "excelFormat": "Excel Format",
-        "downloadPreferences": "Download Preferences"
+        "downloadPreferences": "Download Preferences",
+        "period": "Period",
+        "uploadVerification": "Upload Payment Verification",
+        "acceptedFormats": "Accepted Formats",
+        "clickToUpload": "Click to Upload",
+        "maxFileSize": "Max 5MB",
+        "confirmPaymentsProcessed": "I confirm that all payment have been processed",
+        "confirmDocumentsUploaded": "I have uploaded the required documentation",
+        "confirmChecklist": "Confirm Checklist",
+        "disbursementCompleted": "Disbursement Completed",
+        "completed": "Completed",
+        "completedAt": "Completed At",
+        "processedBy": "Processed By",
+        "bankProcessingStatus": "Bank Processing Status"
       },
 
       "reimbursement": {
@@ -2119,7 +2132,12 @@
       "confirmBulkReject": "Are you sure you want to reject all selected payroll records?",
       "pleaseSelectData": "Please select at least one record to perform this action",
       "approveSuccess": "Payroll records have been approved successfully",
-      "rejectSuccess": "Payroll records have been rejected successfully"
+      "rejectSuccess": "Payroll records have been rejected successfully",
+      "fileSizeExceeded": "File size limit exceeded. Please upload a smaller file or compress the current one to continue",
+      "cancelConfirmation": "Are you sure you want to cancel this operation? Any unsaved changes will be lost",
+      "completeConfirmation": "Are you sure you want to mark this payroll as complete? This action will finalize the payment process and cannot be undone",
+      "disbursementCompleted": "Disbursement completed successfully!",
+      "sendEmailConfirmation": "Are you sure you want to send email confirmation to all stakeholders?"
     },
     "reservationForm": [
       "Reservation number changed, please save again.",
@@ -2563,7 +2581,11 @@
     "process": "Process",
     "completed": "Completed",
     "download": "Download",
-    "uploadProof": "Upload Proof"
+    "uploadProof": "Upload Proof",
+    "complete": "Complete",
+    "upload": "Upload",
+    "uploadDocument": "Upload Document",
+    "sendEmail": "Send Email"
   },
   "languages": {
     "english": "English",
@@ -3697,6 +3719,7 @@
       "outstandingReal": "Outstanding Real"
     },
     "contextMenu": {
+      "process": "Process",
       "download": "Download",
       "setAsInProgress": "Set as In Progress",
       "setAsDone": "Set as Done",
