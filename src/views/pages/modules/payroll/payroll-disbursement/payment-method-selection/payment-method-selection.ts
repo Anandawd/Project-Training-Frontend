@@ -15,9 +15,7 @@ export default class PaymentMethodSelection extends Vue {
   public selectedMethod: string = "";
 
   selectMethod(method: string) {
-    this.selectedMethod = method;
     this.$emit("method-selected", method);
-    console.info("selectedMethod di selection", this.selectedMethod);
   }
 
   handleContinue() {

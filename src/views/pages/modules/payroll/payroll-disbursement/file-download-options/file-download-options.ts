@@ -35,17 +35,12 @@ interface FileListItem {
       default: () => ({}),
     },
   },
-  emits: ["continue", "back", "options-selected"],
+  emits: ["continue", "back", "download", "options-selected"],
 })
 export default class FileDownloadOptions extends Vue {
   public fileList: any;
   public downloadOptions: any;
-  public options: FileOptions = reactive({
-    fileFormat: "csv",
-    separatePerBank: true,
-    includeEmployeeId: true,
-    includeEmployeeName: true,
-  });
+  public options: any = reactive({});
   public bankData: BankData[] = [
     { bank: "BCA", amount: 40000000 },
     { bank: "Mandiri", amount: 25000000 },
@@ -58,13 +53,15 @@ export default class FileDownloadOptions extends Vue {
   // LIFECYCLE HOOKS
   created(): void {
     Object.assign(this.options, this.downloadOptions);
-    console.info("bank:", this.bankData);
-    console.info("fileList:", this.filesList);
+  }
+
+  selectFormat(format: string) {
+    this.options.fileFormat = format;
+    console.log("options", this.options);
   }
 
   handleDownload(): void {
-    console.info("Downloading files with options:", this.options);
-    this.$emit("options-selected", this.options);
+    this.$emit("download", this.options);
   }
 
   handleBack() {
@@ -85,5 +82,9 @@ export default class FileDownloadOptions extends Vue {
       filename: `${item.bank}_PayrollTransfer_${period}${extension}`,
       amount: item.amount,
     }));
+  }
+
+  get isFormatSelected() {
+    return this.options;
   }
 }

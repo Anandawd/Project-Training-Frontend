@@ -25,7 +25,7 @@ export default class PayrollDisbursementProcess extends Vue {
   public modeData: any;
   public currentStep: number = 1;
   public periodData: any = reactive({});
-  public selectedPaymentMethod: string = "manual";
+  public selectedPaymentMethod: string = "";
   public downloadOptions: any = reactive({});
   public periodId: string = "";
 
@@ -136,7 +136,6 @@ export default class PayrollDisbursementProcess extends Vue {
 
   handleMethodSelection(method: string) {
     this.selectedPaymentMethod = method;
-    console.info("selectedPaymentMethod", this.selectedPaymentMethod);
   }
 
   handleDownloadOptions(options: any) {

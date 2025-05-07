@@ -13,6 +13,7 @@
       </button>
       <div>
         <button
+          :disabled="!options.fileFormat"
           title="Download Files"
           type="button"
           class="btn btn-secondary mr-1"
@@ -22,6 +23,7 @@
           {{ $t('buttons.download') }}
         </button>
         <button
+          :disabled="!options.fileFormat"
           title="Continue"
           type="button"
           class="btn btn-primary mr-1"
@@ -88,7 +90,7 @@
         </div>
 
         <!-- File Preview -->
-        <div class="mb-4">
+        <div v-show="!isFormatSelected" class="mb-4">
           <h5>{{$t('title.filesToBeGenerated')}}:</h5>
           <div class="card">
             <ul class="list-group list-group-flush">

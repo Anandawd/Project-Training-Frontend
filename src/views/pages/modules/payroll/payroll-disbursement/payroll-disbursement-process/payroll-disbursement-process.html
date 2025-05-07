@@ -82,6 +82,7 @@
         <file-download-options
           v-if="currentStep === 3 && selectedPaymentMethod === 'manual'"
           :downloadOptions="downloadOptions"
+          @download="(options) => handleAction('',$global.modePayroll.download, options)"
           @options-selected="(options) => handleAction('',$global.modePayroll.next, options)"
           @continue="handleAction('',$global.modePayroll.next)"
           @back="handleAction('',$global.modePayroll.back)"
