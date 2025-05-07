@@ -229,7 +229,7 @@ export default {
     saveAndBack: 30,
     return: 31,
     methodSelection: 32,
-    downloadOption: 33,
+    downloadSelection: 33,
   },
   modeBreakdown: {
     insert: "00",

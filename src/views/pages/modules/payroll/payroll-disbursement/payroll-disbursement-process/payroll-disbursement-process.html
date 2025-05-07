@@ -1,59 +1,61 @@
 <section class="content">
   <div class="container-fluid">
     <!-- progress stepper -->
-    <div class="progress-stepper my-4">
-      <div class="step-wrapper">
-        <!-- step 1 -->
-        <div
-          class="step-item"
-          :class="{ 'completed': currentStep > 1, 'active': currentStep === 1 }"
-        >
-          <div class="step-icon">{{currentStep > 1 ? '✓' : '1'}}</div>
-          <div class="step-label">
-            {{$t('labels.payroll.payroll.disbursementDetail')}}
+    <transition name="fade">
+      <div v-show="isShowStepper" class="progress-stepper my-4">
+        <div class="step-wrapper">
+          <!-- step 1 -->
+          <div
+            class="step-item"
+            :class="{ 'completed': currentStep > 1, 'active': currentStep === 1 }"
+          >
+            <div class="step-icon">{{currentStep > 1 ? '✓' : '1'}}</div>
+            <div class="step-label">
+              {{$t('labels.payroll.payroll.disbursementDetail')}}
+            </div>
           </div>
-        </div>
 
-        <!-- step 2 -->
-        <div class="step-line" :class="{ 'active': currentStep >= 2 }"></div>
-        <div
-          class="step-item"
-          :class="{ 'completed': currentStep > 2, 'active': currentStep === 2 }"
-        >
-          <div class="step-icon">{{currentStep > 2 ? '✓' : '2'}}</div>
-          <div class="step-label">
-            {{$t('labels.payroll.payroll.paymentMethod')}}
+          <!-- step 2 -->
+          <div class="step-line" :class="{ 'active': currentStep >= 2 }"></div>
+          <div
+            class="step-item"
+            :class="{ 'completed': currentStep > 2, 'active': currentStep === 2 }"
+          >
+            <div class="step-icon">{{currentStep > 2 ? '✓' : '2'}}</div>
+            <div class="step-label">
+              {{$t('labels.payroll.payroll.paymentMethod')}}
+            </div>
           </div>
-        </div>
 
-        <!-- step 3 -->
-        <div class="step-line" :class="{ 'active': currentStep >= 3 }"></div>
-        <div
-          class="step-item"
-          :class="{ 'completed': currentStep > 3,'active': currentStep === 3 && selectedPaymentMethod === 'manual' }"
-        >
-          <div class="step-icon">{{currentStep > 3 ? '✓' : '3'}}</div>
-          <div class="step-label">
-            {{$t('labels.payroll.payroll.downloadOptions')}}
+          <!-- step 3 -->
+          <div class="step-line" :class="{ 'active': currentStep >= 3 }"></div>
+          <div
+            class="step-item"
+            :class="{ 'completed': currentStep > 3,'active': currentStep === 3 && selectedPaymentMethod === 'manual' }"
+          >
+            <div class="step-icon">{{currentStep > 3 ? '✓' : '3'}}</div>
+            <div class="step-label">
+              {{$t('labels.payroll.payroll.downloadOptions')}}
+            </div>
           </div>
-        </div>
 
-        <!-- step 4 -->
-        <div class="step-line" :class="{ 'active': currentStep >= 4 }"></div>
-        <div
-          class="step-item"
-          :class="{ 'completed': currentStep > 4, 'active': currentStep === 4 || (currentStep === 3 && selectedPaymentMethod !== 'manual') }"
-        >
-          <div class="step-icon">
-            {{currentStep > 4 ? '✓' : currentStep === 3 && selectedPaymentMethod
-            !== 'manual' ? '3' : '4'}}
-          </div>
-          <div class="step-label">
-            {{$t('labels.payroll.payroll.confirmation')}}
+          <!-- step 4 -->
+          <div class="step-line" :class="{ 'active': currentStep >= 4 }"></div>
+          <div
+            class="step-item"
+            :class="{ 'completed': currentStep > 4, 'active': currentStep === 4 || (currentStep === 3 && selectedPaymentMethod !== 'manual') }"
+          >
+            <div class="step-icon">
+              {{currentStep > 4 ? '✓' : currentStep === 3 &&
+              selectedPaymentMethod !== 'manual' ? '3' : '4'}}
+            </div>
+            <div class="step-label">
+              {{$t('labels.payroll.payroll.confirmation')}}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </transition>
 
     <!-- sliding panel -->
     <div class="sliding-panels" ref="slidingPanels">
@@ -83,8 +85,7 @@
           v-if="currentStep === 3 && selectedPaymentMethod === 'manual'"
           :downloadOptions="downloadOptions"
           @download="(options) => handleAction('',$global.modePayroll.download, options)"
-          @options-selected="(options) => handleAction('',$global.modePayroll.next, options)"
-          @continue="handleAction('',$global.modePayroll.next)"
+          @continue="(options) => handleAction('',$global.modePayroll.downloadSelection, options)"
           @back="handleAction('',$global.modePayroll.back)"
         />
       </transition>

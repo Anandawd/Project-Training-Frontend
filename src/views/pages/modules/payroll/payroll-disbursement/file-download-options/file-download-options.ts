@@ -35,7 +35,7 @@ interface FileListItem {
       default: () => ({}),
     },
   },
-  emits: ["continue", "back", "download", "options-selected"],
+  emits: ["back", "continue", "download"],
 })
 export default class FileDownloadOptions extends Vue {
   public fileList: any;
@@ -69,8 +69,7 @@ export default class FileDownloadOptions extends Vue {
   }
 
   handleContinue() {
-    this.$emit("options-selected", this.options);
-    this.$emit("continue");
+    this.$emit("continue", this.options);
   }
 
   get filesList(): FileListItem[] {
@@ -85,6 +84,6 @@ export default class FileDownloadOptions extends Vue {
   }
 
   get isFormatSelected() {
-    return this.options;
+    return Boolean(this.options.fileFormat);
   }
 }

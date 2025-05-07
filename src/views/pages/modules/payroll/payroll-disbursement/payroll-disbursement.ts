@@ -25,6 +25,7 @@ import { Options, Vue } from "vue-class-component";
 export default class PayrollApprovals extends Vue {
   //table
   public rowData: any = [];
+  public selectedRowData: any = null;
 
   // filter
   public searchOptions: any;
@@ -135,14 +136,17 @@ export default class PayrollApprovals extends Vue {
     const result = [
       {
         name: this.$t("commons.contextMenu.detail"),
-        disabled: !this.paramsData && this.paramsData.status === "Completed",
+        disabled:
+          !this.paramsData || this.paramsData.status === "Ready To Payment",
         icon: generateIconContextMenuAgGrid("detail_icon24"),
         action: () => this.handleShowDetail("", $global.modePayroll.detail),
       },
       {
         name: this.$t("commons.contextMenu.process"),
         disabled:
-          !this.paramsData && this.paramsData.status === "Ready to Payment",
+          !this.paramsData ||
+          this.paramsData.status === "Completed" ||
+          this.paramsData.status === "Processing",
         icon: generateIconContextMenuAgGrid("process_icon24"),
         action: () => this.handleShowDetail("", $global.modePayroll.process),
       },
@@ -152,12 +156,14 @@ export default class PayrollApprovals extends Vue {
 
   handleRowRightClicked() {
     if (this.paramsData) {
-      const vm = this;
-      vm.gridApi.forEachNode((node: any) => {
-        if (node.data) {
-          if (node.data.id_log == vm.paramsData.id_log) {
-            node.setSelected(true, true);
-          }
+      const rightClickedData = { ...this.paramsData };
+      this.selectedRowData = rightClickedData;
+      this.gridApi.forEachNode((node: any) => {
+        if (node.data && node.data.id === rightClickedData.id) {
+          node.setSelected(true);
+          this.gridApi.ensureNodeVisible(node);
+        } else if (node.selected) {
+          node.setSelected(false);
         }
       });
     }
@@ -170,6 +176,12 @@ export default class PayrollApprovals extends Vue {
   }
 
   handleShowDetail(params: any, mode: any) {
+    const rowData = params || this.selectedRowData;
+
+    if (!rowData) {
+      return;
+    }
+
     if (mode === $global.modePayroll.process) {
       this.$router.push({
         name: "DisbursementProcess",
@@ -232,6 +244,11 @@ export default class PayrollApprovals extends Vue {
     } catch (error) {
       getError(error);
     }
+  }
+
+  onSelectionChanged() {
+    const selectedRows = this.gridApi.getSelectedRows();
+    this.selectedRowData = selectedRows.length > 0 ? selectedRows[0] : null;
   }
 
   created(): void {
@@ -340,5 +357,13 @@ export default class PayrollApprovals extends Vue {
 
   get isRunPayrollDisabled(): boolean {
     return !this.rowData.some((item: any) => item.status === "Draft");
+  }
+
+  get isProcessButtonDisabled(): boolean {
+    if (!this.selectedRowData) {
+      return true;
+    }
+
+    return this.selectedRowData.status !== "Ready To Payment";
   }
 }

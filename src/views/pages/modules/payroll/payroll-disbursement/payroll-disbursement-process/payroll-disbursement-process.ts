@@ -28,6 +28,7 @@ export default class PayrollDisbursementProcess extends Vue {
   public selectedPaymentMethod: string = "";
   public downloadOptions: any = reactive({});
   public periodId: string = "";
+  public showStepper: boolean = true;
 
   // Dialog
   public showDialog: boolean = false;
@@ -99,6 +100,10 @@ export default class PayrollDisbursementProcess extends Vue {
       case $global.modePayroll.download:
         this.handleDownloadOptions(additonalParams[0]);
         break;
+      case $global.modePayroll.downloadSelection:
+        this.handleDownloadOptions(additonalParams[0]);
+        this.handleNext();
+        break;
       case $global.modePayroll.return:
         this.handleReturn();
         break;
@@ -109,7 +114,7 @@ export default class PayrollDisbursementProcess extends Vue {
   }
 
   handleBack() {
-    if (this.currentStep > 1) {
+    if (this.currentStep > 1 && this.currentStep < 5) {
       this.currentStep--;
     } else {
       this.handleReturn();
@@ -197,6 +202,14 @@ export default class PayrollDisbursementProcess extends Vue {
       this.handleNext();
     } catch (error) {
       getError(error);
+    }
+  }
+
+  get isShowStepper() {
+    if (this.currentStep >= 1 && this.currentStep < 5) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

@@ -3,10 +3,11 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
-        title="Approve Requests"
+        :disabled="isProcessButtonDisabled"
+        title="Process Disbursement"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleSave('', $global.modePayroll.process)"
+        @click="handleSave(selectedRowData, $global.modePayroll.process)"
       >
         {{ $t('buttons.process') }}
         <i class="fa fa-arrow-right mr-1" aria-hidden="true"></i>
@@ -47,6 +48,7 @@
           :statusBar="statusBar"
           @grid-ready="onGridReady"
           @cellContextMenu="handleRowRightClicked"
+          @selection-changed="onSelectionChanged"
         ></ag-grid-vue>
       </div>
     </div>
