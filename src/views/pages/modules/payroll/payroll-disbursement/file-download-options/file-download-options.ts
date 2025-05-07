@@ -63,7 +63,7 @@ export default class FileDownloadOptions extends Vue {
   }
 
   handleDownload(): void {
-    console.log("Downloading files with options:", this.options);
+    console.info("Downloading files with options:", this.options);
     this.$emit("options-selected", this.options);
   }
 

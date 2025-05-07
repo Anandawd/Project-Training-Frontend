@@ -1,5 +1,6 @@
 import CDialog from "@/components/dialog/dialog.vue";
 import { getError } from "@/utils/general";
+import $global from "@/utils/global";
 import { getToastSuccess } from "@/utils/toast";
 import "ag-grid-enterprise";
 import { reactive } from "vue";
@@ -21,6 +22,7 @@ import PaymentMethodSelection from "../payment-method-selection/payment-method-s
   },
 })
 export default class PayrollDisbursementProcess extends Vue {
+  public modeData: any;
   public currentStep: number = 1;
   public periodData: any = reactive({});
   public selectedPaymentMethod: string = "manual";
@@ -29,9 +31,10 @@ export default class PayrollDisbursementProcess extends Vue {
 
   // Dialog
   public showDialog: boolean = false;
+  public dialogAction: string = "";
   public dialogTitle: string = "";
   public dialogMessage: string = "";
-  public dialogAction: string = "";
+  public dialogParams: any;
 
   // LIFECYCLE HOOKS
   async created() {
@@ -74,27 +77,48 @@ export default class PayrollDisbursementProcess extends Vue {
     };
   }
 
-  goToNextStep() {
-    if (this.currentStep < 5) {
-      this.currentStep++;
+  // GENERAL FUNCTION
+  handleAction(params: any, mode: any = null, ...additonalParams: any[]) {
+    const actionMode = mode || this.modeData;
+
+    switch (actionMode) {
+      case $global.modePayroll.back:
+        this.handleBack();
+        break;
+      case $global.modePayroll.next:
+        this.handleNext();
+        break;
+      case $global.modePayroll.complete:
+        this.handleComplete();
+        break;
+      case $global.modePayroll.process:
+        break;
+      case $global.modePayroll.methodSelection:
+        this.handleMethodSelection(additonalParams[0]);
+        break;
+      case $global.modePayroll.download:
+        this.handleDownloadOptions(additonalParams[0]);
+        break;
+      case $global.modePayroll.return:
+        this.handleReturn();
+        break;
+      default:
+        console.warn("Unsupported action mode:", actionMode);
+        break;
     }
   }
 
-  goToPrevStep() {
+  handleBack() {
     if (this.currentStep > 1) {
       this.currentStep--;
+    } else {
+      this.handleReturn();
     }
   }
 
-  // GENERAL FUNCTION
-  handleBack() {
-    if (this.currentStep === 1) {
-      this.$router.push({
-        name: "PayrollDisbursement",
-        params: { id: this.periodId },
-      });
-    } else {
-      this.goToPrevStep();
+  handleNext() {
+    if (this.currentStep < 5) {
+      this.currentStep++;
     }
   }
 
@@ -102,28 +126,57 @@ export default class PayrollDisbursementProcess extends Vue {
     this.$router.push({ name: "PayrollDisbursement" });
   }
 
-  async handleComplete() {
-    this.dialogTitle = this.$t("title.confirm");
-    this.dialogMessage = this.$t(
-      "messages.payroll.completeConfirmation"
-    ) as string;
-    this.dialogAction = "complete";
-    this.showDialog = true;
+  handleComplete() {
+    this.showConfirmationDialog(
+      $global.dialogActions.complete,
+      this.$t("title.confirm"),
+      this.$t("messages.payroll.completeConfirmation")
+    );
   }
 
   handleMethodSelection(method: string) {
     this.selectedPaymentMethod = method;
+    console.info("selectedPaymentMethod", this.selectedPaymentMethod);
   }
 
   handleDownloadOptions(options: any) {
     Object.assign(this.downloadOptions, options);
   }
 
+  showConfirmationDialog(
+    action: string,
+    title: string = "Confirm",
+    message: string,
+    params: any = null
+  ): void {
+    this.dialogAction = action;
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.dialogParams = params;
+    this.showDialog = true;
+  }
+
   confirmAction() {
-    if (this.dialogAction === "complete") {
-      this.processDisbursement();
+    switch (this.dialogAction) {
+      case $global.dialogActions.save:
+        break;
+      case $global.dialogActions.delete:
+        break;
+      case $global.dialogActions.process:
+        break;
+      case $global.dialogActions.submit:
+        break;
+      case $global.dialogActions.complete:
+        this.processDisbursement();
+        break;
+      case $global.dialogActions.saveAndReturn:
+        break;
+      default:
+        console.warn("Unsupported dialog action:", this.dialogAction);
     }
+
     this.showDialog = false;
+    this.dialogParams = null;
   }
 
   // API
@@ -142,7 +195,7 @@ export default class PayrollDisbursementProcess extends Vue {
       getToastSuccess(
         this.$t("messages.disbursement.processSuccess") as string
       );
-      this.goToNextStep();
+      this.handleNext();
     } catch (error) {
       getError(error);
     }

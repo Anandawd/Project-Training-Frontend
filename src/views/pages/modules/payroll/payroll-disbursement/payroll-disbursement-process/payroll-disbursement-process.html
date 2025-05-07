@@ -1,29 +1,5 @@
 <section class="content">
   <div class="container-fluid">
-    <!-- button -->
-    <!-- <div class="d-flex justify-content-between mb-2">
-      <button
-        title="Back"
-        type="button"
-        class="btn btn-secondary mr-1"
-        @click="handleBack"
-      >
-        <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>{{
-        $t('buttons.back') }}
-      </button>
-      <div>
-        <button
-          title="Process Payment"
-          type="button"
-          class="btn btn-primary mr-1"
-          @click="handleShowModal"
-        >
-          {{ $t('buttons.continue') }}
-          <i class="fa fa-arrow-right mr-1" aria-hidden="true"></i>
-        </button>
-      </div>
-    </div> -->
-
     <!-- progress stepper -->
     <div class="progress-stepper my-4">
       <div class="step-wrapper">
@@ -78,6 +54,7 @@
         </div>
       </div>
     </div>
+
     <!-- sliding panel -->
     <div class="sliding-panels" ref="slidingPanels">
       <!-- step 1: disbursement detail -->
@@ -85,7 +62,7 @@
         <disbursement-detail
           v-if="currentStep === 1"
           :period-data="periodData"
-          @continue="goToNextStep"
+          @continue="handleAction('',$global.modePayroll.next)"
         />
       </transition>
 
@@ -94,9 +71,9 @@
         <payment-method-selection
           v-if="currentStep === 2"
           :selectedMethod="selectedPaymentMethod"
-          @method-selected="handleMethodSelection"
-          @continue="goToNextStep"
-          @back="goToPrevStep"
+          @method-selected="(method) => handleAction('',$global.modePayroll.methodSelection, method)"
+          @continue="handleAction('',$global.modePayroll.next)"
+          @back="handleAction('',$global.modePayroll.back)"
         />
       </transition>
 
@@ -105,11 +82,12 @@
         <file-download-options
           v-if="currentStep === 3 && selectedPaymentMethod === 'manual'"
           :downloadOptions="downloadOptions"
-          @options-selected="handleDownloadOptions"
-          @continue="goToNextStep"
-          @back="goToPrevStep"
+          @options-selected="(options) => handleAction('',$global.modePayroll.next, options)"
+          @continue="handleAction('',$global.modePayroll.next)"
+          @back="handleAction('',$global.modePayroll.back)"
         />
       </transition>
+
       <!-- Step 4: Confirmation -->
       <transition name="slide-fade">
         <confirmation
@@ -117,8 +95,8 @@
           :periodData="periodData"
           :selectedMethod="selectedPaymentMethod"
           :downloadOptions="downloadOptions"
-          @complete="handleComplete"
-          @back="goToPrevStep"
+          @complete="handleAction('',$global.modePayroll.complete)"
+          @back="handleAction('',$global.modePayroll.back)"
         />
       </transition>
 
@@ -127,7 +105,7 @@
         <completion-status
           v-if="currentStep === 5"
           :periodData="periodData"
-          @return="handleReturn"
+          @return="handleAction('',$global.modePayroll.back)"
         />
       </transition>
     </div>

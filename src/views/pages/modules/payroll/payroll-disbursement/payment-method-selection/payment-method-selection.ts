@@ -9,7 +9,7 @@ import { Options, Vue } from "vue-class-component";
       default: "",
     },
   },
-  emits: ["continue", "method-selected", "back"],
+  emits: ["back", "continue", "method-selected"],
 })
 export default class PaymentMethodSelection extends Vue {
   public selectedMethod: string = "";
@@ -17,6 +17,7 @@ export default class PaymentMethodSelection extends Vue {
   selectMethod(method: string) {
     this.selectedMethod = method;
     this.$emit("method-selected", method);
+    console.info("selectedMethod di selection", this.selectedMethod);
   }
 
   handleContinue() {

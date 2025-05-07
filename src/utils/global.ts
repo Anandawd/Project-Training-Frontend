@@ -220,10 +220,16 @@ export default {
     print: 21,
     download: 22,
     processing: 23,
-    completed: 24,
+    complete: 24,
     prorate: 25,
     component: 26,
     process: 27,
+    back: 28,
+    next: 29,
+    saveAndBack: 30,
+    return: 31,
+    methodSelection: 32,
+    downloadOption: 33,
   },
   modeBreakdown: {
     insert: "00",
@@ -489,6 +495,14 @@ export default {
   dialog: {
     typeDialog: "confirm", // alert & confirm
     isAddHeaderCloseButton: true,
+  },
+  dialogActions: {
+    save: "save",
+    delete: "delete",
+    process: "process",
+    submit: "submit",
+    saveAndReturn: "saveAndReturn",
+    complete: "complete",
   },
   accountSubGroup: {
     cashPayment: "PYMT",
