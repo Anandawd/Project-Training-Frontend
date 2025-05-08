@@ -108,44 +108,62 @@ export default class PayrollApprovals extends Vue {
       {
         headerName: this.$t("commons.table.payroll.payroll.periodName"),
         field: "period_name",
-        width: 120,
+        width: 150,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.periodDate"),
         field: "period_date",
-        width: 100,
+        width: 200,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.paymentDate"),
         field: "payment_date",
-        width: 100,
+        width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.remark"),
         field: "remark",
-        width: 100,
+        width: 200,
+        enableRowGroup: false,
+      },
+      {
+        headerName: this.$t("commons.table.createdAt"),
+        field: "created_at",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.createdBy"),
+        field: "created_by",
+        width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.status"),
         field: "status",
-        width: 100,
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        width: 140,
         enableRowGroup: true,
-        // cellRenderer: (params: any) => {
-        //   const status = params.value;
-        //   let badgeClass = 'text-bg-secondary';
-        //   if (status === 'Pending') {
-        //     badgeClass = 'text-bg-warning';
-        //   } else if (status === 'Approved') {
-        //     badgeClass = 'text-bg-success';
-        //   } else if (status === 'Rejected') {
-        //     badgeClass = 'text-bg-danger';
-        //   }
-        //   return `<span class="badge text-bg-secondary px-3 py-1 ${badgeClass}">${status}</span>`;
-        // }
+        cellRenderer: (params: any) => {
+          const status = params.value;
+          let badgeClass = "text-bg-secondary";
+          if (status === "Pending") {
+            badgeClass = "text-bg-warning";
+          } else if (status === "Approved") {
+            badgeClass = "text-bg-success";
+          } else if (status === "Ready To Payment") {
+            badgeClass = "text-bg-info";
+          } else if (status === "Completed") {
+            badgeClass = "text-bg-success";
+          } else if (status === "Rejected") {
+            badgeClass = "text-bg-danger";
+          }
+          return `<span class="badge text-bg-secondary px-3 py-1 ${badgeClass}">${status}</span>`;
+        },
       },
     ];
     this.context = { componentParent: this };
@@ -173,7 +191,7 @@ export default class PayrollApprovals extends Vue {
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
 
-    params.api.sizeColumnsToFit();
+    // params.api.sizeColumnsToFit();
   }
 
   // UI FUNCTION

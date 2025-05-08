@@ -44,40 +44,6 @@ export default class PayrollDisbursementProcess extends Vue {
     await this.loadPeriodData();
   }
 
-  // API METHOD
-  async loadPeriodData() {
-    try {
-      // In a real implementation, this would be an API call
-      // const { data } = await payrollAPI.GetPayrollDisbursementDetail(periodId);
-      // this.periodData = data;
-      await this.loadMockDisbursementData();
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadMockDisbursementData() {
-    this.periodData = {
-      id: this.periodId || 1,
-      period_name: "April 2025",
-      placement: "Amora Ubud",
-      period_type: "Monthly",
-      start_date: "01/04/2025",
-      end_date: "30/04/2025",
-      payment_date: "01/05/2025",
-      total_employees: 5,
-      total_payment: 25000000,
-      current_level: 2,
-      total_level: 2,
-      remark: "",
-      status: "Ready to Payment",
-      created_by: "Budi Admin",
-      approved_by: "Finance Manager",
-      created_at: "25/04/2025",
-      updated_at: "25/04/2025",
-    };
-  }
-
   // GENERAL FUNCTION
   handleAction(params: any, mode: any = null, ...additonalParams: any[]) {
     const actionMode = mode || this.modeData;
@@ -187,7 +153,40 @@ export default class PayrollDisbursementProcess extends Vue {
     Object.assign(this.downloadOptions, options);
   }
 
-  // API
+  // API METHOD
+  async loadPeriodData() {
+    try {
+      // In a real implementation, this would be an API call
+      // const { data } = await payrollAPI.GetPayrollDisbursementDetail(periodId);
+      // this.periodData = data;
+      await this.loadMockDisbursementData();
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadMockDisbursementData() {
+    this.periodData = {
+      id: this.periodId || 1,
+      period_name: "April 2025",
+      placement: "Amora Ubud",
+      period_type: "Monthly",
+      start_date: "01/04/2025",
+      end_date: "30/04/2025",
+      payment_date: "01/05/2025",
+      total_employees: 5,
+      total_payment: 25000000,
+      current_level: 2,
+      total_level: 2,
+      remark: "",
+      status: "Ready to Payment",
+      created_by: "Budi Admin",
+      approved_by: "Finance Manager",
+      created_at: "25/04/2025",
+      updated_at: "25/04/2025",
+    };
+  }
+
   async completeDisbursement() {
     try {
       // In a real implementation, this would be an API call
@@ -208,6 +207,8 @@ export default class PayrollDisbursementProcess extends Vue {
       getError(error);
     }
   }
+
+  // SETTER GETTER
 
   get isShowStepper() {
     if (this.currentStep >= 1 && this.currentStep < 5) {

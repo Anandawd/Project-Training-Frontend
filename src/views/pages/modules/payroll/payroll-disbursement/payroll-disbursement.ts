@@ -62,6 +62,131 @@ export default class PayrollApprovals extends Vue {
   ColumnApi: any;
   agGridSetting: any;
 
+  // LIFECYCLE HOOKs
+  created(): void {
+    this.loadMockData();
+  }
+
+  beforeMount(): void {
+    this.searchOptions = [
+      { text: this.$t("commons.filter.all"), value: 0 },
+      { text: this.$t("commons.filter.payroll.employee.department"), value: 0 },
+      { text: this.$t("commons.filter.payroll.employee.position"), value: 1 },
+      { text: this.$t("commons.filter.payroll.employee.placement"), value: 2 },
+    ];
+    this.agGridSetting = $global.agGrid;
+    this.gridOptions = {
+      actionGrid: {
+        menu: true,
+      },
+      rowHeight: $global.agGrid.rowHeightDefault,
+      headerHeight: $global.agGrid.headerHeight,
+    };
+    this.columnDefs = [
+      {
+        headerName: this.$t("commons.table.action"),
+        headerClass: "align-header-center",
+        field: "Code",
+        enableRowGroup: false,
+        resizable: false,
+        filter: false,
+        suppressMenu: true,
+        suppressMoveable: true,
+        lockPosition: "left",
+        sortable: false,
+        cellRenderer: "actionGrid",
+        colId: "params",
+        width: 80,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.periodName"),
+        field: "period_name",
+        width: 150,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.periodDate"),
+        field: "period_date",
+        width: 200,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.paymentDate"),
+        field: "payment_date",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.remark"),
+        field: "remark",
+        width: 200,
+        enableRowGroup: false,
+      },
+      {
+        headerName: this.$t("commons.table.createdAt"),
+        field: "created_at",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.createdBy"),
+        field: "created_by",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.status"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "status",
+        width: 140,
+        enableRowGroup: true,
+        cellRenderer: (params: any) => {
+          const status = params.value;
+          let badgeClass = "text-bg-secondary";
+          if (status === "Pending") {
+            badgeClass = "text-bg-warning";
+          } else if (status === "Approved") {
+            badgeClass = "text-bg-success";
+          } else if (status === "Ready To Payment") {
+            badgeClass = "text-bg-info";
+          } else if (status === "Completed") {
+            badgeClass = "text-bg-success";
+          } else if (status === "Rejected") {
+            badgeClass = "text-bg-danger";
+          }
+          return `<span class="badge text-bg-secondary px-3 py-1 ${badgeClass}">${status}</span>`;
+        },
+      },
+    ];
+    this.context = { componentParent: this };
+    this.frameworkComponents = {
+      actionGrid: ActionGrid,
+      iconLockRenderer: IconLockRenderer,
+    };
+    this.rowGroupPanelShow = "always";
+    this.statusBar = {
+      statusPanels: [
+        { statusPanel: "agTotalAndFilteredRowCountComponent", align: "left" },
+        { statusPanel: "agTotalRowCountComponent", align: "center" },
+        { statusPanel: "agFilteredRowCountComponent" },
+        { statusPanel: "agSelectedRowCountComponent" },
+        { statusPanel: "agAggregationComponent" },
+      ],
+    };
+    this.paginationPageSize = this.agGridSetting.limitDefaultPageSize;
+    this.rowSelection = "single";
+    this.rowModelType = "serverSide";
+    this.limitPageSize = this.agGridSetting.limitDefaultPageSize;
+  }
+
+  onGridReady(params: any) {
+    this.gridApi = params.api;
+    this.ColumnApi = params.columnApi;
+
+    // params.api.sizeColumnsToFit();
+  }
+
   // GENERAL FUNCTION
   handleSave(formData: any) {
     if (this.modeData === $global.modeData.insert) {
@@ -249,105 +374,6 @@ export default class PayrollApprovals extends Vue {
   onSelectionChanged() {
     const selectedRows = this.gridApi.getSelectedRows();
     this.selectedRowData = selectedRows.length > 0 ? selectedRows[0] : null;
-  }
-
-  created(): void {
-    this.loadMockData();
-  }
-
-  beforeMount(): void {
-    this.searchOptions = [
-      { text: this.$t("commons.filter.all"), value: 0 },
-      { text: this.$t("commons.filter.payroll.employee.department"), value: 0 },
-      { text: this.$t("commons.filter.payroll.employee.position"), value: 1 },
-      { text: this.$t("commons.filter.payroll.employee.placement"), value: 2 },
-    ];
-    this.agGridSetting = $global.agGrid;
-    this.gridOptions = {
-      actionGrid: {
-        menu: true,
-      },
-      rowHeight: $global.agGrid.rowHeightDefault,
-      headerHeight: $global.agGrid.headerHeight,
-    };
-    this.columnDefs = [
-      {
-        headerName: this.$t("commons.table.action"),
-        headerClass: "align-header-center",
-        field: "Code",
-        enableRowGroup: false,
-        resizable: false,
-        filter: false,
-        suppressMenu: true,
-        suppressMoveable: true,
-        lockPosition: "left",
-        sortable: false,
-        cellRenderer: "actionGrid",
-        colId: "params",
-        width: 80,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.periodName"),
-        headerClass: "align-header-center",
-        field: "period_name",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.periodDate"),
-        headerClass: "align-header-center",
-        field: "period_date",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.paymentDate"),
-        headerClass: "align-header-center",
-        field: "payment_date",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.remark"),
-        headerClass: "align-header-center",
-        field: "remark",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.status"),
-        headerClass: "align-header-center",
-        field: "status",
-        width: 100,
-        enableRowGroup: true,
-      },
-    ];
-    this.context = { componentParent: this };
-    this.frameworkComponents = {
-      actionGrid: ActionGrid,
-      iconLockRenderer: IconLockRenderer,
-    };
-    this.rowGroupPanelShow = "always";
-    this.statusBar = {
-      statusPanels: [
-        { statusPanel: "agTotalAndFilteredRowCountComponent", align: "left" },
-        { statusPanel: "agTotalRowCountComponent", align: "center" },
-        { statusPanel: "agFilteredRowCountComponent" },
-        { statusPanel: "agSelectedRowCountComponent" },
-        { statusPanel: "agAggregationComponent" },
-      ],
-    };
-    this.paginationPageSize = this.agGridSetting.limitDefaultPageSize;
-    this.rowSelection = "single";
-    this.rowModelType = "serverSide";
-    this.limitPageSize = this.agGridSetting.limitDefaultPageSize;
-  }
-
-  onGridReady(params: any) {
-    this.gridApi = params.api;
-    this.ColumnApi = params.columnApi;
-
-    params.api.sizeColumnsToFit();
   }
 
   // GETTER AND SETTER
