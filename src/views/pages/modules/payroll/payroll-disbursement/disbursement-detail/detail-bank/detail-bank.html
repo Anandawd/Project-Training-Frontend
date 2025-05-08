@@ -1,22 +1,39 @@
 <section class="content">
-  <ag-grid-vue
-    :style="agGridSetting.styleAgGridFrame"
-    :class="agGridSetting.themeAgGrid"
-    :columnDefs="columnDefs"
-    :rowData="rowData"
-    :paginationPageSize="paginationPageSize"
-    :gridOptions="gridOptions"
-    :context="context"
-    :frameworkComponents="frameworkComponents"
-    :enableCellChangeFlash="true"
-    :rowSelection="rowSelection"
-    :getContextMenuItems="getContextMenu"
-    :defaultColDef="agGridSetting.defColDef"
-    :rowGroupPanelShow="rowGroupPanelShow"
-    :suppressDragLeaveHidesColumns="true"
-    :suppressMakeColumnVisibleAfterUnGroup=" true"
-    :statusBar="statusBar"
-    @grid-ready="onGridReady"
-    @cellContextMenu="handleRowRightClicked"
-  ></ag-grid-vue>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg">
+        <div class="card h-100">
+          <div class="card-header">
+            <h3 class="card-title">
+              {{ $t('title.detail') }} {{
+              $t('commons.table.payroll.payroll.employeePayroll') }}
+            </h3>
+          </div>
+          <div class="card-body">
+            <!-- //Table -->
+            <ag-grid-vue
+              :style="agGridSetting.styleAgGridFrame0"
+              :class="agGridSetting.themeAgGrid"
+              :columnDefs="columnDefs"
+              :rowData="rowData"
+              :paginationPageSize="paginationPageSize"
+              :gridOptions="gridOptions"
+              :context="context"
+              :frameworkComponents="frameworkComponents"
+              :enableCellChangeFlash="true"
+              :rowSelection="rowSelection"
+              :getContextMenuItems="getContextMenu"
+              :defaultColDef="agGridSetting.defColDef"
+              :rowGroupPanelShow="rowGroupPanelShow"
+              :suppressDragLeaveHidesColumns="true"
+              :suppressMakeColumnVisibleAfterUnGroup=" true"
+              :statusBar="statusBar"
+              @grid-ready="onGridReady"
+              @cellContextMenu="handleRowRightClicked"
+            ></ag-grid-vue>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>

@@ -2914,6 +2914,7 @@
           "personalInformation": "Personal Information",
           "employeeName": "Employee Name",
           "name": "Name",
+          "bank": "Bank",
           "employeeInformation": "Employee Information",
           "financialInformation": "Financial Information",
           "taxAndIdentificationData": "Tax And Identification Data",
@@ -3026,7 +3027,8 @@
           "accountHolder": "Account Holder",
           "amount": "Amount",
           "reference": "Reference",
-          "totalEmployees": "Total Employees"
+          "totalEmployees": "Total Employees",
+          "employeePayroll": "Employee Payroll"
         },
         "attendance": {
           "date": "Date",

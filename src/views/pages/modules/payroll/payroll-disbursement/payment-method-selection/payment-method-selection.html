@@ -6,7 +6,7 @@
         title="Back"
         type="button"
         class="btn btn-secondary mr-1"
-        @click="$emit('back')"
+        @click="handleAction('',$global.modePayroll.back)"
       >
         <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>{{
         $t('buttons.back') }}
@@ -16,7 +16,7 @@
         title="Continue"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleContinue"
+        @click="handleAction('',$global.modePayroll.next)"
       >
         {{ $t('buttons.continue') }}
         <i class="fa fa-arrow-right ml-1" aria-hidden="true"></i>

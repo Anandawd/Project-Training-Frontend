@@ -6,7 +6,7 @@
         title="Back"
         type="button"
         class="btn btn-secondary mr-1"
-        @click="handleBack"
+        @click="handleAction('',$global.modePayroll.back)"
       >
         <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>{{
         $t('buttons.back') }}
@@ -16,7 +16,7 @@
           title="Complete Process"
           type="button"
           class="btn btn-primary"
-          @click="handleComplete"
+          @click="handleAction('',$global.modePayroll.complete)"
           :disabled="!isFormValid"
         >
           {{ $t('buttons.complete') }}
@@ -132,7 +132,7 @@
     <!-- dialog -->
     <c-dialog
       v-show="showDialog"
-      dialogTitle="Confirm"
+      :dialogTitle="dialogTitle"
       size="sm"
       @confirm="confirmAction"
       @cancel="showDialog=false"

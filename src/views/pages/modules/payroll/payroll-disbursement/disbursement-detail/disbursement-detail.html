@@ -6,7 +6,7 @@
         title="Back"
         type="button"
         class="btn btn-secondary mr-1"
-        @click="goBack"
+        @click="handleAction('', $global.modePayroll.back)"
       >
         <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>{{
         $t('buttons.back') }}
@@ -16,7 +16,7 @@
         title="Continue"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleContinue"
+        @click="handleAction('', $global.modePayroll.next)"
       >
         {{ $t('buttons.continue') }}
         <i class="fa fa-arrow-right ml-1" aria-hidden="true"></i>
@@ -140,30 +140,12 @@
           :suppressDragLeaveHidesColumns="true"
           :suppressMakeColumnVisibleAfterUnGroup=" true"
           :statusBar="statusBar"
+          :masterDetail="true"
+          :detailCellRenderer="'detailCellRenderer'"
           @grid-ready="onGridReady"
           @cellContextMenu="handleRowRightClicked"
         ></ag-grid-vue>
       </div>
     </div>
-
-    <!-- <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">{{$t('title.detailBank')}}</h3>
-      </div>
-      <div class="card-body">
-        <detail-bank />
-      </div>
-    </div> -->
-
-    <!-- dialog -->
-    <c-dialog
-      v-show="showDialog"
-      dialogTitle="Confirm"
-      size="sm"
-      @confirm="confirmAction"
-      @cancel="showDialog=false"
-    >
-      <template #body> {{dialogMessage}} </template>
-    </c-dialog>
   </div>
 </section>

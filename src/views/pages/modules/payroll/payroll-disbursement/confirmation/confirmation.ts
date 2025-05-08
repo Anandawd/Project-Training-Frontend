@@ -3,6 +3,7 @@ import CDialog from "@/components/dialog/dialog.vue";
 import CInputFile from "@/components/input-file/input-file.vue";
 import CInput from "@/components/input/input.vue";
 import { formatCurrency } from "@/utils/format";
+import $global from "@/utils/global";
 import "ag-grid-enterprise";
 import { reactive } from "vue";
 import { Options, Vue } from "vue-class-component";
@@ -55,6 +56,7 @@ export default class Confirmation extends Vue {
   public selectedMethod!: string;
   public downloadOptions: any;
 
+  public modeData: any;
   public uploadedFiles: Record<string, File> = reactive({});
 
   public confirmations = reactive({
@@ -72,14 +74,61 @@ export default class Confirmation extends Vue {
 
   // Dialog
   public showDialog: boolean = false;
-  public dialogTitle: string = "Confirm";
-  public dialogMessage: string = "";
   public dialogAction: string = "";
+  public dialogTitle: string = "";
+  public dialogMessage: string = "";
+  public dialogParams: any;
 
   public formatCurrency = formatCurrency;
 
   // LIFECYCLE HOOKS
   created(): void {}
+
+  // GENERAL FUNCTION
+  handleAction(params: any, mode: any = null, ...additonalParams: any[]) {
+    const actionMode = mode || this.modeData;
+
+    switch (actionMode) {
+      case $global.modePayroll.back:
+        this.handleBack();
+        break;
+      case $global.modePayroll.complete:
+        this.handleComplete();
+        break;
+      default:
+        console.warn("Unsupported action mode:", actionMode);
+        break;
+    }
+  }
+
+  showConfirmationDialog(
+    action: string,
+    title: string = "Confirm",
+    message: string,
+    params: any = null
+  ): void {
+    this.dialogAction = action;
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.dialogParams = params;
+    this.showDialog = true;
+  }
+
+  confirmAction() {
+    switch (this.dialogAction) {
+      case $global.dialogActions.cancel:
+        this.cancelProcess();
+        break;
+      case $global.dialogActions.complete:
+        this.completeProcess();
+        break;
+      default:
+        console.warn("Unsupported dialog action:", this.dialogAction);
+    }
+
+    this.showDialog = false;
+    this.dialogParams = null;
+  }
 
   handleFileUpload(event: any, bankName: string): void {
     const file = event.target.files[0];
@@ -87,8 +136,10 @@ export default class Confirmation extends Vue {
 
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
-      this.showErrorDialog(
-        this.$t("messages.payroll.fileSizeExceeded").toString()
+      this.showConfirmationDialog(
+        $global.dialogActions.error,
+        this.$t("title.error"),
+        this.$t("messages.payroll.fileSizeExceeded")
       );
       return;
     }
@@ -96,43 +147,23 @@ export default class Confirmation extends Vue {
     this.uploadedFiles[bankName] = file;
   }
 
-  handleBack() {
-    this.dialogTitle = this.$t("title.confirmation").toString();
-    this.dialogMessage = this.$t(
-      "messages.payroll.cancelConfirmation"
-    ).toString();
-    this.dialogAction = "cancel";
-    this.showDialog = true;
-  }
-
   handleComplete() {
     if (!this.isFormValid) {
       return;
     }
-    this.$emit("complete");
-    // this.dialogTitle = this.$t("title.confirmation").toString();
-    // this.dialogMessage = this.$t(
-    //   "messages.payroll.completeConfirmation"
-    // ).toString();
-    // this.dialogAction = "complete";
-    // this.showDialog = true;
+    this.showConfirmationDialog(
+      $global.dialogActions.complete,
+      this.$t("title.confirm"),
+      this.$t("messages.payroll.completeConfirmation")
+    );
   }
 
-  showErrorDialog(message: string) {
-    this.dialogTitle = this.$t("title.error").toString();
-    this.dialogMessage = message;
-    this.dialogAction = "error";
-    this.showDialog = true;
-  }
-
-  confirmAction() {
-    if (this.dialogAction === "complete") {
-      this.completeProcess();
-    } else if (this.dialogAction === "cancel") {
-      this.cancelProcess();
-    }
-
-    this.showDialog = false;
+  handleBack() {
+    this.showConfirmationDialog(
+      $global.dialogActions.cancel,
+      this.$t("title.confirm"),
+      this.$t("messages.payroll.cancelConfirmation")
+    );
   }
 
   completeProcess() {

@@ -503,6 +503,8 @@ export default {
     submit: "submit",
     saveAndReturn: "saveAndReturn",
     complete: "complete",
+    cancel: "cancel",
+    error: "error",
   },
   accountSubGroup: {
     cashPayment: "PYMT",

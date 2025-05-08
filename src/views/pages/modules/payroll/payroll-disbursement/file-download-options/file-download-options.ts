@@ -1,6 +1,7 @@
 import CCheckbox from "@/components/checkbox/checkbox.vue";
 import CRadio from "@/components/radio/radio.vue";
 import { formatCurrency } from "@/utils/format";
+import $global from "@/utils/global";
 import "ag-grid-enterprise";
 import { reactive } from "vue";
 import { Options, Vue } from "vue-class-component";
@@ -38,9 +39,12 @@ interface FileListItem {
   emits: ["back", "continue", "download"],
 })
 export default class FileDownloadOptions extends Vue {
+  public modeData: any;
   public fileList: any;
   public downloadOptions: any;
-  public options: any = reactive({});
+  public options: any = reactive({
+    separatePerBank: true,
+  });
   public bankData: BankData[] = [
     { bank: "BCA", amount: 40000000 },
     { bank: "Mandiri", amount: 25000000 },
@@ -55,9 +59,28 @@ export default class FileDownloadOptions extends Vue {
     Object.assign(this.options, this.downloadOptions);
   }
 
+  // GENERAL FUNCTION
+  handleAction(params: any, mode: any = null, ...additonalParams: any[]) {
+    const actionMode = mode || this.modeData;
+
+    switch (actionMode) {
+      case $global.modePayroll.back:
+        this.handleBack();
+        break;
+      case $global.modePayroll.next:
+        this.handleContinue();
+        break;
+      case $global.modePayroll.download:
+        this.handleDownload();
+        break;
+      default:
+        console.warn("Unsupported action mode:", actionMode);
+        break;
+    }
+  }
+
   selectFormat(format: string) {
     this.options.fileFormat = format;
-    console.log("options", this.options);
   }
 
   handleDownload(): void {

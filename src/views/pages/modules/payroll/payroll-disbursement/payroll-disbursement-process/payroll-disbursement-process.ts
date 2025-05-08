@@ -98,7 +98,7 @@ export default class PayrollDisbursementProcess extends Vue {
         this.handleMethodSelection(additonalParams[0]);
         break;
       case $global.modePayroll.download:
-        this.handleDownloadOptions(additonalParams[0]);
+        this.handleDownload(additonalParams[0]);
         break;
       case $global.modePayroll.downloadSelection:
         this.handleDownloadOptions(additonalParams[0]);
@@ -111,6 +111,42 @@ export default class PayrollDisbursementProcess extends Vue {
         console.warn("Unsupported action mode:", actionMode);
         break;
     }
+  }
+
+  showConfirmationDialog(
+    action: string,
+    title: string = "Confirm",
+    message: string,
+    params: any = null
+  ): void {
+    this.dialogAction = action;
+    this.dialogTitle = title;
+    this.dialogMessage = message;
+    this.dialogParams = params;
+    this.showDialog = true;
+  }
+
+  confirmAction() {
+    switch (this.dialogAction) {
+      case $global.dialogActions.save:
+        break;
+      case $global.dialogActions.delete:
+        break;
+      case $global.dialogActions.process:
+        break;
+      case $global.dialogActions.submit:
+        break;
+      case $global.dialogActions.complete:
+        this.completeDisbursement();
+        break;
+      case $global.dialogActions.saveAndReturn:
+        break;
+      default:
+        console.warn("Unsupported dialog action:", this.dialogAction);
+    }
+
+    this.showDialog = false;
+    this.dialogParams = null;
   }
 
   handleBack() {
@@ -139,6 +175,10 @@ export default class PayrollDisbursementProcess extends Vue {
     );
   }
 
+  handleDownload(options: any) {
+    getToastSuccess(this.$t("messages.disbursement.downloadSuccess"));
+  }
+
   handleMethodSelection(method: string) {
     this.selectedPaymentMethod = method;
   }
@@ -147,47 +187,11 @@ export default class PayrollDisbursementProcess extends Vue {
     Object.assign(this.downloadOptions, options);
   }
 
-  showConfirmationDialog(
-    action: string,
-    title: string = "Confirm",
-    message: string,
-    params: any = null
-  ): void {
-    this.dialogAction = action;
-    this.dialogTitle = title;
-    this.dialogMessage = message;
-    this.dialogParams = params;
-    this.showDialog = true;
-  }
-
-  confirmAction() {
-    switch (this.dialogAction) {
-      case $global.dialogActions.save:
-        break;
-      case $global.dialogActions.delete:
-        break;
-      case $global.dialogActions.process:
-        break;
-      case $global.dialogActions.submit:
-        break;
-      case $global.dialogActions.complete:
-        this.processDisbursement();
-        break;
-      case $global.dialogActions.saveAndReturn:
-        break;
-      default:
-        console.warn("Unsupported dialog action:", this.dialogAction);
-    }
-
-    this.showDialog = false;
-    this.dialogParams = null;
-  }
-
   // API
-  async processDisbursement() {
+  async completeDisbursement() {
     try {
       // In a real implementation, this would be an API call
-      // const { status2 } = await payrollAPI.ProcessDisbursement({
+      // const { status2 } = await payrollAPI.completeDisbursement({
       //   periodId: this.periodId,
       //   method: this.selectedPaymentMethod,
       //   options: this.downloadOptions
@@ -197,7 +201,7 @@ export default class PayrollDisbursementProcess extends Vue {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       getToastSuccess(
-        this.$t("messages.disbursement.processSuccess") as string
+        this.$t("messages.disbursement.completeDisbursement") as string
       );
       this.handleNext();
     } catch (error) {

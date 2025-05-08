@@ -1,13 +1,7 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
-import CDialog from "@/components/dialog/dialog.vue";
-import CModal from "@/components/modal/modal.vue";
 import { formatCurrency, formatNumber2 } from "@/utils/format";
-import {
-  generateIconContextMenuAgGrid,
-  generateTotalFooterAgGrid,
-  getError,
-} from "@/utils/general";
+import { generateTotalFooterAgGrid, getError } from "@/utils/general";
 import $global from "@/utils/global";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
@@ -18,13 +12,12 @@ import DetailBank from "./detail-bank/detail-bank.vue";
 @Options({
   components: {
     AgGridVue,
-    CModal,
-    CDialog,
     DetailBank,
   },
   emits: ["continue"],
 })
 export default class DisbursementDetail extends Vue {
+  public modeData: any;
   public periodId: string = "";
   public periodData: any = {};
   public rowData: any = [];
@@ -70,46 +63,41 @@ export default class DisbursementDetail extends Vue {
       },
       rowHeight: $global.agGrid.rowHeightDefault,
       headerHeight: $global.agGrid.headerHeight,
+      masterDetail: true,
+      detailRowAutoHeight: true,
     };
     this.columnDefs = [
       {
-        headerName: this.$t("commons.table.action"),
-        headerClass: "align-header-center",
-        field: "Code",
-        enableRowGroup: false,
-        resizable: false,
-        filter: false,
-        suppressMenu: true,
-        suppressMoveable: true,
-        lockPosition: "left",
-        sortable: false,
-        cellRenderer: "actionGrid",
-        colId: "params",
-        width: 80,
-      },
-      {
         headerName: this.$t("commons.table.payroll.payroll.bank"),
         field: "bank_name",
+        headerClass: "align-header-center",
         width: 120,
-        enableRowGroup: true,
+        enableRowGroup: false,
+        cellRenderer: "agGroupCellRenderer",
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.totalEmployees"),
         field: "total_employees",
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         width: 120,
-        enableRowGroup: true,
+        enableRowGroup: false,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.totalAmount"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
         field: "total_amount",
         width: 150,
-        enableRowGroup: true,
+        enableRowGroup: false,
         valueFormatter: formatNumber2,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.status"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "status",
-        width: 100,
+        width: 120,
         enableRowGroup: true,
       },
     ];
@@ -139,6 +127,33 @@ export default class DisbursementDetail extends Vue {
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
     params.api.sizeColumnsToFit();
+  }
+
+  // GENERAL FUNCTION
+  handleAction(params: any, mode: any = null, ...additonalParams: any[]) {
+    const actionMode = mode || this.modeData;
+
+    switch (actionMode) {
+      case $global.modePayroll.back:
+        this.handleBack();
+        break;
+      case $global.modePayroll.next:
+        this.handleContinue();
+        break;
+      default:
+        console.warn("Unsupported action mode:", actionMode);
+        break;
+    }
+  }
+
+  handleContinue() {
+    this.$emit("continue");
+  }
+
+  handleBack() {
+    this.$router.push({
+      name: "PayrollDisbursement",
+    });
   }
 
   // API METHODS
@@ -222,39 +237,6 @@ export default class DisbursementDetail extends Vue {
     ];
   }
 
-  // UI EVENT HANDLERS
-  getContextMenu(params: any) {
-    const { node } = params;
-    if (node) {
-      this.paramsData = node.data;
-    } else {
-      this.paramsData = null;
-    }
-
-    const result = [
-      {
-        name: this.$t("commons.contextMenu.detail"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("detail_icon24"),
-        action: () => this.handleShowDetail(this.paramsData),
-      },
-    ];
-    return result;
-  }
-
-  handleRowRightClicked() {
-    if (this.paramsData) {
-      const vm = this;
-      vm.gridApi.forEachNode((node: any) => {
-        if (node.data) {
-          if (node.data.id_log == vm.paramsData.id_log) {
-            node.setSelected(true, true);
-          }
-        }
-      });
-    }
-  }
-
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case "Draft":
@@ -276,35 +258,11 @@ export default class DisbursementDetail extends Vue {
     }
   }
 
-  // GENERAL FUNCTION
-  handleContinue() {
-    this.$emit("continue");
-  }
-
-  async handleShowDetail(bank: any) {
-    this.$router.push({
-      name: "BankDisbursementDetail",
-      params: {
-        periodId: this.periodId,
-        bank: bank.bank_name,
-      },
-    });
-  }
-
-  handleBack() {
-    this.$router.push({
-      name: "PayrollDisbursement",
-    });
-  }
-
-  confirmAction() {
-    this.showDialog = false;
-  }
-
   // COMPUTED PROPERTIES
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
   }
+
   get canContinue(): boolean {
     return this.periodData.status === "Ready to Payment";
   }
