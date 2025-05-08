@@ -14,17 +14,16 @@
     </div>
 
     <!-- insert form -->
-    <transition>
-      <div class="px-2">
-        <c-input-form
-          ref="inputFormElement"
-          v-show="showForm"
-          :schema="schema"
-          :modeData="modeData"
-          @save="handleSave"
-          @close="showForm=false"
-        />
-      </div>
+    <transition name="fade">
+      <c-input-form
+        class="px-2"
+        ref="inputFormElement"
+        v-show="showForm"
+        :schema="schema"
+        :modeData="modeData"
+        @save="handleSave"
+        @close="showForm=false"
+      />
     </transition>
 
     <!-- earnings component -->

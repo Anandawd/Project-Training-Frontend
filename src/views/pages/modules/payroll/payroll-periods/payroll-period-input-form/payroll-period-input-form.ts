@@ -46,12 +46,12 @@ export default class InputForm extends Vue {
   placementOptions: any = [
     {
       SubGroupName: "Placement",
-      code: "P001",
+      code: "AMORA-UBUD",
       name: "Amora Ubud",
     },
     {
       SubGroupName: "Placement",
-      code: "P001",
+      code: "AMORA-CANGGU",
       name: "Amora Canggu",
     },
   ];

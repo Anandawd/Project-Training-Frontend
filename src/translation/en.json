@@ -214,7 +214,8 @@
         "completed": "Completed",
         "completedAt": "Completed At",
         "processedBy": "Processed By",
-        "bankProcessingStatus": "Bank Processing Status"
+        "bankProcessingStatus": "Bank Processing Status",
+        "includedProrate": "Included Prorate"
       },
 
       "reimbursement": {
@@ -1670,7 +1671,7 @@
     "confirmation": "Confirmation",
     "insertComponent": "Insert Component",
     "totalPayment": "Total Payment",
-    "payrollComponent": "Payroll Component",
+    "payrollComponents": "Payroll Components",
     "earnings": "Earnings",
     "deductions": "Deductions",
     "statutoryContribution": "Statutory Contribution",
@@ -1690,6 +1691,7 @@
     "filesToBeGenerated": "Files To Be Generated",
     "confirmDisbursement": "Confirm Disbursement",
     "trackingPayment": "Tracking Payment",
+    "detailBank": "Detail Bank",
     "reimbursement": "Reimbursement",
     "reimbursementApplication": "Reimbursement Application",
     "reimbursementApproval": "Reimbursement Approval",
@@ -2911,6 +2913,7 @@
           "salaryHistory": "Salary History",
           "personalInformation": "Personal Information",
           "employeeName": "Employee Name",
+          "name": "Name",
           "employeeInformation": "Employee Information",
           "financialInformation": "Financial Information",
           "taxAndIdentificationData": "Tax And Identification Data",

@@ -12,15 +12,12 @@ import $global from "@/utils/global";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { Options, Vue } from "vue-class-component";
-// import DetailCellRender from "./detail-bank/detail-bank.vue";
-import DetailBank from "./detail-bank/detail-bank.vue";
 
 @Options({
   components: {
     AgGridVue,
     CModal,
     CDialog,
-    DetailBank,
   },
   emits: ["continue"],
 })
@@ -51,6 +48,7 @@ export default class DisbursementDetail extends Vue {
   paramsData: any;
   ColumnApi: any;
   agGridSetting: any;
+  detailCellRenderer: any;
 
   // FORMAT FUNCTION
   formatCurrency = formatCurrency;
@@ -73,51 +71,82 @@ export default class DisbursementDetail extends Vue {
     };
     this.columnDefs = [
       {
-        headerName: this.$t("commons.table.action"),
+        headerName: this.$t("commons.table.payroll.employee.id"),
         headerClass: "align-header-center",
-        field: "Code",
-        enableRowGroup: false,
-        resizable: false,
-        filter: false,
-        suppressMenu: true,
-        suppressMoveable: true,
-        lockPosition: "left",
-        sortable: false,
-        cellRenderer: "actionGrid",
-        colId: "params",
+        cellClass: "text-center",
+        field: "employee_id",
         width: 80,
+        enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.bank"),
-        field: "bank_name",
+        headerName: this.$t("commons.table.payroll.employee.name"),
+        field: "employee_name",
         width: 120,
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.totalEmployees"),
-        field: "total_employees",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.totalAmount"),
-        field: "total_amount",
-        width: 150,
-        enableRowGroup: true,
-        valueFormatter: formatNumber2,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.status"),
-        field: "status",
+        headerName: this.$t("commons.table.payroll.employee.department"),
+        field: "employee_department",
         width: 100,
         enableRowGroup: true,
       },
+      {
+        headerName: this.$t("commons.table.payroll.employee.position"),
+        field: "employee_position",
+        width: 100,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.baseSalary"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
+        field: "base_salary",
+        width: 120,
+        enableRowGroup: true,
+        valueFormatter: formatCurrency,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.earnings"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
+        field: "total_earnings",
+        width: 120,
+        enableRowGroup: true,
+        valueFormatter: formatCurrency,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.deductions"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
+        field: "total_deductions",
+        width: 120,
+        enableRowGroup: true,
+        valueFormatter: formatCurrency,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.pph21"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
+        field: "tax_amount",
+        width: 120,
+        enableRowGroup: true,
+        valueFormatter: formatCurrency,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.takeHomePay"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
+        field: "take_home_pay",
+        width: 120,
+        enableRowGroup: true,
+        valueFormatter: formatCurrency,
+      },
     ];
     this.context = { componentParent: this };
+    this.detailCellRenderer = "detailCellRenderer";
     this.frameworkComponents = {
       actionGrid: ActionGrid,
       iconLockRenderer: IconLockRenderer,
-      detailCellRenderer: DetailBank,
     };
     this.rowGroupPanelShow = "always";
     this.statusBar = {
@@ -138,7 +167,6 @@ export default class DisbursementDetail extends Vue {
   onGridReady(params: any) {
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
-    params.api.sizeColumnsToFit();
   }
 
   // API METHODS

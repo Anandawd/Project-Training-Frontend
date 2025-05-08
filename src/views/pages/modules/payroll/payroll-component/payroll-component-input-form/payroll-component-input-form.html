@@ -153,7 +153,7 @@
                   name="quantity"
                   id="quantity"
                   class="row mb-1"
-                  :label="$t('labels.payroll.payroll.quantity')"
+                  :label="$t('labels.payroll.payroll.qty')"
                   v-model="form.earningQty"
                 />
               </div>
@@ -205,6 +205,20 @@
                   keyName="code"
                   v-model="form.earningIncludedBpjsHealth"
                   :label="$t('labels.payroll.payroll.includedBpjsHealth')"
+                  :options="taxableOptions"
+                >
+                </c-select>
+              </div>
+              <div class="col-md-4">
+                <c-select
+                  required
+                  offset="right"
+                  class="row mb-1"
+                  name="includedProrate"
+                  labelName="name"
+                  keyName="code"
+                  v-model="form.earningIncludedProrate"
+                  :label="$t('labels.payroll.payroll.includedProrate')"
                   :options="taxableOptions"
                 >
                 </c-select>
@@ -412,6 +426,20 @@
                   required
                   offset="right"
                   class="row mb-1"
+                  name="includedProrate"
+                  labelName="name"
+                  keyName="code"
+                  v-model="form.deductionsIncludedProrate"
+                  :label="$t('labels.payroll.payroll.includedProrate')"
+                  :options="taxableOptions"
+                >
+                </c-select>
+              </div>
+              <div class="col-md-4">
+                <c-select
+                  required
+                  offset="right"
+                  class="row mb-1"
                   name="showInPayslip"
                   labelName="name"
                   keyName="code"
@@ -573,7 +601,20 @@
                 >
                 </c-select>
               </div>
-
+              <div class="col-md-4">
+                <c-select
+                  required
+                  offset="right"
+                  class="row mb-1"
+                  name="includedProrate"
+                  labelName="name"
+                  keyName="code"
+                  v-model="form.statutoryIncludedProrate"
+                  :label="$t('labels.payroll.payroll.includedProrate')"
+                  :options="taxableOptions"
+                >
+                </c-select>
+              </div>
               <div class="col-md-4">
                 <c-select
                   required
