@@ -177,7 +177,7 @@
                   keyName="code"
                   v-model="form.earningTaxable"
                   :label="$t('labels.payroll.payroll.taxable')"
-                  :options="taxableOptions"
+                  :options="booleanOptions"
                 >
                 </c-select>
               </div>
@@ -191,7 +191,7 @@
                   keyName="code"
                   v-model="form.earningIncludedBpjsEmplyoee"
                   :label="$t('labels.payroll.payroll.includedBpjsEmployee')"
-                  :options="taxableOptions"
+                  :options="booleanOptions"
                 >
                 </c-select>
               </div>
@@ -205,7 +205,7 @@
                   keyName="code"
                   v-model="form.earningIncludedBpjsHealth"
                   :label="$t('labels.payroll.payroll.includedBpjsHealth')"
-                  :options="taxableOptions"
+                  :options="booleanOptions"
                 >
                 </c-select>
               </div>
@@ -219,7 +219,7 @@
                   keyName="code"
                   v-model="form.earningIncludedProrate"
                   :label="$t('labels.payroll.payroll.includedProrate')"
-                  :options="taxableOptions"
+                  :options="booleanOptions"
                 >
                 </c-select>
               </div>
@@ -233,7 +233,7 @@
                   keyName="code"
                   v-model="form.earningsShowInPayslip"
                   :label="$t('labels.payroll.payroll.showInPayslip')"
-                  :options="taxableOptions"
+                  :options="booleanOptions"
                 >
                 </c-select>
               </div>
@@ -389,7 +389,7 @@
                   keyName="code"
                   v-model="form.deductionsTaxable"
                   :label="$t('labels.payroll.payroll.taxable')"
-                  :options="taxableOptions"
+                  :options="booleanOptions"
                 >
                 </c-select>
               </div>
@@ -403,7 +403,7 @@
                   keyName="code"
                   v-model="form.deductionsIncludedBpjsEmplyoee"
                   :label="$t('labels.payroll.payroll.includedBpjsEmployee')"
-                  :options="taxableOptions"
+                  :options="booleanOptions"
                 >
                 </c-select>
               </div>
@@ -417,7 +417,7 @@
                   keyName="code"
                   v-model="form.deductionsIncludedBpjsHealth"
                   :label="$t('labels.payroll.payroll.includedBpjsHealth')"
-                  :options="taxableOptions"
+                  :options="booleanOptions"
                 >
                 </c-select>
               </div>
@@ -431,7 +431,7 @@
                   keyName="code"
                   v-model="form.deductionsIncludedProrate"
                   :label="$t('labels.payroll.payroll.includedProrate')"
-                  :options="taxableOptions"
+                  :options="booleanOptions"
                 >
                 </c-select>
               </div>
@@ -445,7 +445,7 @@
                   keyName="code"
                   v-model="form.deductionsShowInPayslip"
                   :label="$t('labels.payroll.payroll.showInPayslip')"
-                  :options="taxableOptions"
+                  :options="booleanOptions"
                 >
                 </c-select>
               </div>
@@ -597,7 +597,7 @@
                   keyName="code"
                   v-model="form.statutoryTaxable"
                   :label="$t('labels.payroll.payroll.taxable')"
-                  :options="taxableOptions"
+                  :options="booleanOptions"
                 >
                 </c-select>
               </div>
@@ -611,7 +611,7 @@
                   keyName="code"
                   v-model="form.statutoryIncludedProrate"
                   :label="$t('labels.payroll.payroll.includedProrate')"
-                  :options="taxableOptions"
+                  :options="booleanOptions"
                 >
                 </c-select>
               </div>
@@ -625,7 +625,7 @@
                   keyName="code"
                   v-model="form.statutoryShowInPayslip"
                   :label="$t('labels.payroll.payroll.showInPayslip')"
-                  :options="taxableOptions"
+                  :options="booleanOptions"
                 >
                 </c-select>
               </div>

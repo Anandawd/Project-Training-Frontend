@@ -3,8 +3,9 @@ import CheckboxRenderer from "@/components/ag_grid-framework/checkbox.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import { formatNumber } from "@/utils/format";
-import { generateIconContextMenuAgGrid } from "@/utils/general";
+import { generateIconContextMenuAgGrid, getError } from "@/utils/general";
 import $global from "@/utils/global";
+import { getToastError, getToastSuccess } from "@/utils/toast";
 import { ICellRendererParams } from "ag-grid-community";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
@@ -25,6 +26,8 @@ export default class PayrollComponents extends Vue {
   public rowDeductionsData: any = [];
   public rowStatutoryData: any = [];
   public rowCategoryData: any = [];
+  public activeTabIndex: number = 0;
+  public activeTab: string = "earnings";
 
   // form
   public showForm: boolean = false;
@@ -399,8 +402,7 @@ export default class PayrollComponents extends Vue {
         name: this.$t("commons.contextMenu.delete"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("delete_icon24"),
-        action: () =>
-          this.handleDelete(this.paramsData, $global.modeData.delete),
+        action: () => this.handleDelete(this.paramsData),
       },
     ];
     return result;
@@ -436,11 +438,8 @@ export default class PayrollComponents extends Vue {
     this.showDialog = false;
 
     switch (this.dialogAction) {
-      case $global.dialogActions.save:
-        break;
       case $global.dialogActions.delete:
-        break;
-      case $global.dialogActions.saveAndReturn:
+        this.deleteData(this.paramsData);
         break;
       default:
         console.warn("Unsupported dialog action:", this.dialogAction);
@@ -449,17 +448,77 @@ export default class PayrollComponents extends Vue {
     this.dialogParams = null;
   }
 
+  handleTabChange(tabIndex: number) {
+    this.activeTabIndex = tabIndex;
+    switch (tabIndex) {
+      case 0:
+        this.activeTab = "earnings";
+        break;
+      case 1:
+        this.activeTab = "deductions";
+        break;
+      case 2:
+        this.activeTab = "statutory";
+        break;
+      case 3:
+        this.activeTab = "category";
+        break;
+      default:
+        this.activeTab = "earnings";
+    }
+  }
+
   handleShowForm(params: any, mode: any) {
     this.inputFormElement.initialize();
     this.modeData = mode;
+    if (mode === $global.modeData.edit && params) {
+      // In a real implementation, fetch complete data from API
+      // const { data } = await this.payrollComponentAPI.getPayrollComponent(params.id);
+      // this.populateForm(data);
+
+      // For mock demo, use the row data
+      this.populateForm(params);
+    }
     this.showForm = true;
   }
 
-  handleDelete(params: any, mode: any) {
-    this.modeData = mode;
+  handleSave(formData: any) {
+    if (this.modeData === $global.modeData.insert) {
+      this.saveData(formData);
+    } else if (this.modeData === $global.modeData.edit) {
+      this.updateData(formData);
+    }
+  }
+
+  handleDelete(params: any) {
+    this.showConfirmationDialog(
+      $global.dialogActions.delete,
+      "Confirm Delete",
+      "Are you sure you want to delete this component?",
+      params
+    );
   }
 
   // API FUNCTION
+  async loadData() {
+    try {
+      // In a real implementation, fetch data from API
+      // const { data: earningsData } = await this.payrollComponentAPI.getPayrollComponentList({ type: 'Earnings' });
+      // const { data: deductionsData } = await this.payrollComponentAPI.getPayrollComponentList({ type: 'Deductions' });
+      // const { data: statutoryData } = await this.payrollComponentAPI.getPayrollComponentList({ type: 'Statutory' });
+      // const { data: categoryData } = await this.payrollComponentAPI.getPayrollComponentList({ type: 'Category' });
+      // this.rowEarningsData = earningsData;
+      // this.rowDeductionsData = deductionsData;
+      // this.rowStatutoryData = statutoryData;
+      // this.rowCategoryData = categoryData;
+
+      // For demo, load mock data
+      this.loadMockData();
+    } catch (error) {
+      getError;
+    }
+  }
+
   async loadMockData() {
     this.rowEarningsData = [
       {
@@ -742,8 +801,335 @@ export default class PayrollComponents extends Vue {
     ];
   }
 
+  async loadEditData(params: any, mode: any) {
+    try {
+      if (mode === $global.modePayroll.editEarnings) {
+        // const { data } = await trainingAPI.GetLostAndFound(params);
+        // this.inputFormElement.form = data;
+        this.showForm = true;
+      } else if (mode === $global.modePayroll.editDeductions) {
+        // const { data } = await trainingAPI.GetLostAndFound(params);
+        // this.inputFormElement.form = data;
+        this.showForm = true;
+      } else if (mode === $global.modePayroll.editStatutory) {
+        // const { data } = await trainingAPI.GetLostAndFound(params);
+        // this.inputFormElement.form = data;
+        this.showForm = true;
+      } else if (mode === $global.modePayroll.editCategory) {
+        // const { data } = await trainingAPI.GetLostAndFound(params);
+        // this.inputFormElement.form = data;
+        this.showForm = true;
+      }
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async saveData(formData: any) {
+    try {
+      const processedData = this.prepareFormData(formData);
+      // In a real implementation, use the API
+      // const { data, status2 } = await this.payrollComponentAPI.insertPayrollComponent(processedData);
+      // if (status2.status === 0) {
+      //   getToastSuccess(this.$t('messages.saveSuccess'));
+      //   this.showForm = false;
+      //   this.loadData();
+      // }
+
+      // For mock demo purposes
+      getToastSuccess(
+        this.$t("messages.saveSuccess") || "Data saved successfully"
+      );
+      this.showForm = false;
+      this.refreshDataAfterSave(processedData);
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async updateData(formData: any) {
+    try {
+      const processedData = this.prepareFormData(formData);
+      // In a real implementation, use the API
+      // const { data, status2 } = await this.payrollComponentAPI.updatePayrollComponent(processedData);
+      // if (status2.status === 0) {
+      //   getToastSuccess(this.$t('messages.saveSuccess'));
+      //   this.showForm = false;
+      //   this.loadData();
+      // }
+
+      // For mock demo purposes
+      getToastSuccess(
+        this.$t("messages.saveSuccess") || "Data updated successfully"
+      );
+      this.showForm = false;
+      this.refreshDataAfterUpdate(processedData);
+    } catch (error) {}
+  }
+
+  async deleteData(params: any) {
+    try {
+      if (!params || !params.id) {
+        getToastError("Invalid component to delete");
+        return;
+      }
+
+      // In a real implementation, use the API
+      // const { status2 } = await this.payrollComponentAPI.deletePayrollComponent(params.id);
+      // if (status2.status === 0) {
+      //   getToastSuccess(this.$t('messages.deleteSuccess'));
+      //   this.loadData();
+      // }
+
+      // For mock demo purposes
+      getToastSuccess(
+        this.$t("messages.deleteSuccess") || "Data deleted successfully"
+      );
+      this.removeFromDataArray(params);
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  removeFromDataArray(params: any) {
+    // Remove from the appropriate data array based on the item's type
+    if (params.type === "Earnings" || this.activeTab === "earnings") {
+      this.rowEarningsData = this.rowEarningsData.filter(
+        (item: any) => item.id !== params.id
+      );
+    } else if (
+      params.type === "Deductions" ||
+      this.activeTab === "deductions"
+    ) {
+      this.rowDeductionsData = this.rowDeductionsData.filter(
+        (item: any) => item.id !== params.id
+      );
+    } else if (params.type === "Statutory" || this.activeTab === "statutory") {
+      this.rowStatutoryData = this.rowStatutoryData.filter(
+        (item: any) => item.id !== params.id
+      );
+    } else if (params.type === "Category" || this.activeTab === "category") {
+      this.rowCategoryData = this.rowCategoryData.filter(
+        (item: any) => item.id !== params.id
+      );
+    }
+
+    // Refresh the grid
+    if (this.gridApi) {
+      this.gridApi.refreshCells();
+    }
+  }
+
+  refreshDataAfterSave(data: any) {
+    if (data.type === "Earnings") {
+      this.rowEarningsData = [...this.rowEarningsData, data];
+    } else if (data.type === "Deductions") {
+      this.rowDeductionsData = [...this.rowDeductionsData, data];
+    } else if (data.type === "Statutory") {
+      this.rowStatutoryData = [...this.rowStatutoryData, data];
+    } else if (data.type === "Category") {
+      this.rowCategoryData = [...this.rowCategoryData, data];
+    }
+
+    if (this.gridApi) {
+      this.gridApi.refreshCells();
+    }
+  }
+
+  refreshDataAfterUpdate(data: any) {
+    if (data.type === "Earnings") {
+      const index = this.rowEarningsData.findIndex(
+        (item: any) => item.id === data.id
+      );
+      if (index !== -1) {
+        this.rowEarningsData[index] = {
+          ...this.rowEarningsData[index],
+          ...data,
+        };
+      }
+    } else if (data.type === "Deductions") {
+      const index = this.rowDeductionsData.findIndex(
+        (item: any) => item.id === data.id
+      );
+      if (index !== -1) {
+        this.rowDeductionsData[index] = {
+          ...this.rowDeductionsData[index],
+          ...data,
+        };
+      }
+    } else if (data.type === "Statutory") {
+      const index = this.rowStatutoryData.findIndex(
+        (item: any) => item.id === data.id
+      );
+      if (index !== -1) {
+        this.rowStatutoryData[index] = {
+          ...this.rowStatutoryData[index],
+          ...data,
+        };
+      }
+    } else if (data.type === "Category") {
+      const index = this.rowCategoryData.findIndex(
+        (item: any) => item.id === data.id
+      );
+      if (index !== -1) {
+        this.rowCategoryData[index] = {
+          ...this.rowCategoryData[index],
+          ...data,
+        };
+      }
+    }
+
+    if (this.gridApi) {
+      this.gridApi.refreshCells();
+    }
+  }
+
+  prepareFormData(formData: any) {
+    const result: any = { id: formData.id || null };
+    if (this.activeTab === "earnings") {
+      result.code = formData.earningsCode;
+      result.name = formData.earningsName;
+      result.description = formData.earningsDescription;
+      result.category = formData.earningCategory;
+      result.default_amount = formData.earningDefaultAmount;
+      result.quantity = formData.earningQty;
+      result.unit = formData.earningUnit;
+      result.taxable = formData.earningTaxable === "YES";
+      result.included_bpjs_health =
+        formData.earningIncludedBpjsHealth === "YES";
+      result.included_bpjs_employee =
+        formData.earningIncludedBpjsEmplyoee === "YES";
+      result.included_prorate = formData.earningIncludedProrate === "YES";
+      result.show_in_payslip = formData.earningsShowInPayslip === "YES";
+      result.active = formData.earningsStatus === "A";
+      result.type = "Earnings";
+    } else if (this.activeTab === "deductions") {
+      result.code = formData.deductionsCode;
+      result.name = formData.deductionsName;
+      result.description = formData.deductionsDescription;
+      result.category = formData.deductionsCategory;
+      result.default_amount = formData.deductionsDefaultAmount;
+      result.quantity = formData.deductionsQty;
+      result.unit = formData.deductionsUnit;
+      result.taxable = formData.deductionsTaxable === "YES";
+      result.included_bpjs_health =
+        formData.deductionsIncludedBpjsHealth === "YES";
+      result.included_bpjs_employee =
+        formData.deductionsIncludedBpjsEmplyoee === "YES";
+      result.included_prorate = formData.deductionsIncludedProrate === "YES";
+      result.show_in_payslip = formData.deductionsShowInPayslip === "YES";
+      result.active = formData.deductionsStatus === "A";
+      result.type = "Deductions";
+    } else if (this.activeTab === "statutory") {
+      result.code = formData.statutoryCode;
+      result.name = formData.statutoryName;
+      result.description = formData.statutoryDescription;
+      result.type = formData.statutoryType;
+      result.default_amount = formData.statutoryDefaultAmount;
+      result.quantity = formData.statutoryQty;
+      result.unit = formData.statutoryUnit;
+      result.taxable = formData.statutoryTaxable === "YES";
+      result.show_in_payslip = formData.statutoryShowInPayslip === "YES";
+      result.active = formData.statutoryStatus === "A";
+      result.type = "Statutory";
+    } else if (this.activeTab === "category") {
+      result.code = formData.categoryCode;
+      result.name = formData.categoryName;
+      result.description = formData.categoryDescription;
+      result.type = formData.categoryType;
+      result.active = formData.categoryStatus === "A";
+      result.type = "Category";
+    }
+
+    return result;
+  }
+
+  populateForm(data: any) {
+    if (data.type === "Earnings") {
+      this.activeTab = "earnings";
+      this.inputFormElement.form = {
+        earningsCode: data.code,
+        earningsName: data.name,
+        earningsDescription: data.description,
+        earningCategory: data.category,
+        earningDefaultAmount: data.default_amount,
+        earningQty: data.quantity,
+        earningUnit: data.unit,
+        earningTaxable: data.taxable ? "YES" : "NO",
+        earningIncludedBpjsHealth: data.included_bpjs_health ? "YES" : "NO",
+        earningIncludedBpjsEmplyoee: data.included_bpjs_employee ? "YES" : "NO",
+        earningIncludedProrate: data.included_prorate ? "YES" : "NO",
+        earningsShowInPayslip: data.show_in_payslip ? "YES" : "NO",
+        earningsStatus: data.active ? "A" : "I",
+      };
+    } else if (data.type === "Deductions") {
+      this.activeTab = "deductions";
+      this.inputFormElement.form = {
+        deductionsCode: data.code,
+        deductionsName: data.name,
+        deductionsDescription: data.description,
+        deductionsCategory: data.category,
+        deductionsDefaultAmount: data.default_amount,
+        deductionsQty: data.quantity,
+        deductionsUnit: data.unit,
+        deductionsTaxable: data.taxable ? "YES" : "NO",
+        deductionsIncludedBpjsHealth: data.included_bpjs_health ? "YES" : "NO",
+        deductionsIncludedBpjsEmplyoee: data.included_bpjs_employee
+          ? "YES"
+          : "NO",
+        deductionsIncludedProrate: data.included_prorate ? "YES" : "NO",
+        deductionsShowInPayslip: data.show_in_payslip ? "YES" : "NO",
+        deductionsStatus: data.active ? "A" : "I",
+      };
+    } else if (data.type === "Statutory") {
+      this.activeTab = "statutory";
+      this.inputFormElement.form = {
+        statutoryCode: data.code,
+        statutoryName: data.name,
+        statutoryDescription: data.description,
+        statutoryType: data.type,
+        statutoryDefaultAmount: data.default_amount,
+        statutoryQty: data.quantity,
+        statutoryUnit: data.unit,
+        statutoryTaxable: data.taxable ? "YES" : "NO",
+        statutoryShowInPayslip: data.show_in_payslip ? "YES" : "NO",
+        statutoryStatus: data.active ? "A" : "I",
+      };
+    } else if (data.type === "Category") {
+      this.activeTab = "category";
+      this.inputFormElement.form = {
+        categoryCode: data.code,
+        categoryName: data.name,
+        categoryDescription: data.description,
+        categoryType: data.type,
+        categoryStatus: data.active ? "A" : "I",
+      };
+    }
+
+    this.inputFormElement.form.id = data.id;
+
+    const tabElement = document.getElementById(`form-${this.activeTab}-tab`);
+    if (tabElement) {
+      tabElement.click();
+    }
+  }
+
   // GETTER AND SETTER
   // get pinnedBottomRowData() {
   //   return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
   // }
+  get diplayedData() {
+    switch (this.activeTab) {
+      case "earnings":
+        return this.rowEarningsData;
+      case "deductions":
+        return this.rowDeductionsData;
+      case "statutory":
+        return this.rowStatutoryData;
+      case "category":
+        return this.rowCategoryData;
+      default:
+        return this.rowEarningsData;
+    }
+  }
 }

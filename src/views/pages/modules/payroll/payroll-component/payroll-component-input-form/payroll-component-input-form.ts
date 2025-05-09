@@ -30,10 +30,9 @@ export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
   public isSave: boolean = false;
+  public activeTab: string = "earnings";
 
-  public defaultForm: any = {};
   public form: any = reactive({});
-  public formDetail: any = reactive({});
 
   // form settings
   public formats: Array<any> = [
@@ -91,6 +90,7 @@ export default class InputForm extends Vue {
       name: "Kasbon",
     },
   ];
+
   typeOptions: any = [
     {
       SubGroupName: "Type",
@@ -103,15 +103,16 @@ export default class InputForm extends Vue {
       name: "Deductions",
     },
   ];
-  taxableOptions: any = [
+
+  booleanOptions: any = [
     {
       SubGroupName: "Options",
-      code: "OP02",
+      code: "YES",
       name: "Yes",
     },
     {
       SubGroupName: "Options",
-      code: "OP02",
+      code: "NO",
       name: "No",
     },
   ];
@@ -131,41 +132,98 @@ export default class InputForm extends Vue {
     },
   ];
 
-  // actions
   async resetForm() {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      // employee information
-      employeeId: "EMP001",
-      employeeName: "John Doe",
-      gender: "Male",
-      position: "Staff",
-      department: "Marketing",
-      placement: "Amora Ubud",
-      employeeType: "Permanent",
-      maritialStatus: "TK/0",
-      bankName: "Bank BRI",
-      bankAccountNumber: "10101010",
-      bankAccountHolder: "John Doe",
+      // Earnings tab
+      earningsCode: "",
+      earningsName: "",
+      earningsDescription: "",
+      earningCategory: "",
+      earningDefaultAmount: 0,
+      earningQty: 1,
+      earningUnit: "",
+      earningTaxable: "NO",
+      earningIncludedBpjsEmplyoee: "NO",
+      earningIncludedBpjsHealth: "NO",
+      earningIncludedProrate: "NO",
+      earningsShowInPayslip: "YES",
+      earningsStatus: "A",
 
-      // financial information
-      baseSalary: "",
+      // Deductions tab
+      deductionsCode: "",
+      deductionsName: "",
+      deductionsDescription: "",
+      deductionsCategory: "",
+      deductionsDefaultAmount: 0,
+      deductionsQty: 1,
+      deductionsUnit: "",
+      deductionsTaxable: "NO",
+      deductionsIncludedBpjsEmplyoee: "NO",
+      deductionsIncludedBpjsHealth: "NO",
+      deductionsIncludedProrate: "NO",
+      deductionsShowInPayslip: "YES",
+      deductionsStatus: "A",
 
-      // tax and identification data
-      taxNumber: "",
-      identityNumber: "",
-      bpjsHealthNumber: "",
-      bpjsEmployeeNumber: "",
-      // attendance and leave data
-      workSchedule: "",
-      annualLeaveQuota: "",
-      remainingLeave: "",
+      // Statutory tab
+      statutoryCode: "",
+      statutoryName: "",
+      statutoryDescription: "",
+      statutoryType: "",
+      statutoryDefaultAmount: 0,
+      statutoryQty: 1,
+      statutoryUnit: "",
+      statutoryTaxable: "NO",
+      statutoryShowInPayslip: "YES",
+      statutoryStatus: "A",
+
+      // Category tab
+      categoryCode: "",
+      categoryName: "",
+      categoryDescription: "",
+      categoryType: "",
+      categoryStatus: "A",
     };
   }
 
   initialize() {
     this.resetForm();
+    this.detectActiveTab();
+    this.setupTabChangeListeners();
+  }
+
+  detectActiveTab() {
+    const tabElements = {
+      earnings: document.getElementById("form-earnings-tab"),
+      deductions: document.getElementById("form-deductions-tab"),
+      statutory: document.getElementById("form-statutory-tab"),
+      category: document.getElementById("form-category-tab"),
+    };
+
+    for (const [tab, element] of Object.entries(tabElements)) {
+      if (element && element.classList.contains("active")) {
+        this.activeTab = tab;
+        break;
+      }
+    }
+  }
+
+  setupTabChangeListeners() {
+    const tabElements = {
+      earnings: document.getElementById("form-earnings-tab"),
+      deductions: document.getElementById("form-deductions-tab"),
+      statutory: document.getElementById("form-statutory-tab"),
+      category: document.getElementById("form-category-tab"),
+    };
+
+    for (const [tab, element] of Object.entries(tabElements)) {
+      if (element) {
+        element.addEventListener("click", () => {
+          this.activeTab = tab;
+        });
+      }
+    }
   }
 
   onSubmit() {
@@ -176,16 +234,16 @@ export default class InputForm extends Vue {
     this.$emit("save", this.form);
   }
 
-  checkForm() {
-    console.log(this.form);
-  }
-
   onClose() {
     this.$emit("close");
   }
 
   onInvalidSubmit() {
     focusOnInvalid();
+  }
+
+  handleTabChange(tabName: string) {
+    this.activeTab = tabName;
   }
 
   private setEndDateForActiveStatus() {
@@ -197,20 +255,89 @@ export default class InputForm extends Vue {
 
   // validation
   get schema() {
-    return Yup.object().shape({});
+    return Yup.object().shape({
+      earningsCode: Yup.string().when([], {
+        is: () => this.activeTab === "earnings",
+        then: Yup.string().required("Code is required"),
+      }),
+      earningsName: Yup.string().when([], {
+        is: () => this.activeTab === "earnings",
+        then: Yup.string().required("Name is required"),
+      }),
+      earningCategory: Yup.string().when([], {
+        is: () => this.activeTab === "earnings",
+        then: Yup.string().required("Category is required"),
+      }),
+
+      // Deductions tab validations
+      deductionsCode: Yup.string().when([], {
+        is: () => this.activeTab === "deductions",
+        then: Yup.string().required("Code is required"),
+      }),
+      deductionsName: Yup.string().when([], {
+        is: () => this.activeTab === "deductions",
+        then: Yup.string().required("Name is required"),
+      }),
+      deductionsCategory: Yup.string().when([], {
+        is: () => this.activeTab === "deductions",
+        then: Yup.string().required("Category is required"),
+      }),
+
+      // Statutory tab validations
+      statutoryCode: Yup.string().when([], {
+        is: () => this.activeTab === "statutory",
+        then: Yup.string().required("Code is required"),
+      }),
+      statutoryName: Yup.string().when([], {
+        is: () => this.activeTab === "statutory",
+        then: Yup.string().required("Name is required"),
+      }),
+      statutoryType: Yup.string().when([], {
+        is: () => this.activeTab === "statutory",
+        then: Yup.string().required("Type is required"),
+      }),
+
+      // Category tab validations
+      categoryCode: Yup.string().when([], {
+        is: () => this.activeTab === "category",
+        then: Yup.string().required("Code is required"),
+      }),
+      categoryName: Yup.string().when([], {
+        is: () => this.activeTab === "category",
+        then: Yup.string().required("Name is required"),
+      }),
+      categoryType: Yup.string().when([], {
+        is: () => this.activeTab === "category",
+        then: Yup.string().required("Type is required"),
+      }),
+    });
   }
 
   get title() {
+    let componentType = "";
+    switch (this.activeTab) {
+      case "earnings":
+        componentType = "Earnings";
+        break;
+      case "deductions":
+        componentType = "Deductions";
+        break;
+      case "statutory":
+        componentType = "Statutory";
+        break;
+      case "category":
+        componentType = "Category";
+        break;
+      default:
+        componentType = "Component";
+    }
+
     if (this.modeData === $global.modeData.insert) {
       return `${this.$t("commons.insert")} ${this.$t(
         `${this.$route.meta.pageTitle}`
       )}`;
     } else if (this.modeData === $global.modeData.edit) {
       return `${this.$t("commons.update")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
-      )}`;
-    } else if (this.modeData === $global.modeData.duplicate) {
-      return `${this.$t("commons.duplicate")} ${this.$t(
         `${this.$route.meta.pageTitle}`
       )}`;
     }

@@ -80,8 +80,6 @@ export default class Training extends Vue {
     // this.showDialog2 = true;
     this.modeData = $global.modeData.edit;
     await this.loadEditData(params.id);
-    this.modeData = $global.modeData.edit;
-    await this.loadEditData(params.id);
   }
   handleDelete(params: any) {
     this.showDialog = true;
