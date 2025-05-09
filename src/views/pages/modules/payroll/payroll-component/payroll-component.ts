@@ -1,11 +1,9 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
-import CModal from "@/components/modal/modal.vue";
-import { formatNumber, formatNumber2 } from "@/utils/format";
+import { formatNumber } from "@/utils/format";
 import { generateIconContextMenuAgGrid } from "@/utils/general";
 import $global from "@/utils/global";
-import CSearchFilter from "@/views/pages/components/filter/filter.vue";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
@@ -15,14 +13,12 @@ import CInputForm from "./payroll-component-input-form/payroll-component-input-f
 @Options({
   components: {
     AgGridVue,
-    CSearchFilter,
-    CModal,
     CDialog,
     CInputForm,
   },
 })
-export default class Employee extends Vue {
-  //table
+export default class PayrollComponents extends Vue {
+  // data
   public rowEarningsData: any = [
     {
       code: "CE001",
@@ -300,14 +296,6 @@ export default class Employee extends Vue {
     },
   ];
 
-  // filter
-  public searchOptions: any;
-  searchDefault: any = {
-    index: 0,
-    text: "",
-    filter: [1],
-  };
-
   // form
   public showForm: boolean = false;
   public modeData: any;
@@ -336,61 +324,8 @@ export default class Employee extends Vue {
   ColumnApi: any;
   agGridSetting: any;
 
-  // GENERAL FUNCTION
-
-  // UI FUNCTION
-  getContextMenu(params: any) {
-    const { node } = params;
-    if (node) {
-      this.paramsData = node.data;
-    } else {
-      this.paramsData = null;
-    }
-
-    const result = [
-      {
-        name: this.$t("commons.contextMenu.insert"),
-        icon: generateIconContextMenuAgGrid("add_icon24"),
-        action: () => this.handleShowForm("", 0),
-      },
-      {
-        name: this.$t("commons.contextMenu.update"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () => this.handleShowForm(this.paramsData, 1),
-      },
-    ];
-    return result;
-  }
-
-  handleRowRightClicked() {
-    if (this.paramsData) {
-      const vm = this;
-      vm.gridApi.forEachNode((node: any) => {
-        if (node.data) {
-          if (node.data.id_log == vm.paramsData.id_log) {
-            node.setSelected(true, true);
-          }
-        }
-      });
-    }
-  }
-
-  handleShowForm(params: any, mode: any) {
-    this.inputFormElement.initialize();
-    this.modeData = mode;
-    this.showForm = true;
-  }
-
-  // API FUNCTION
-
+  // LIFECYCLE HOOKS
   beforeMount(): void {
-    this.searchOptions = [
-      { text: this.$t("commons.filter.payroll.employee.department"), value: 0 },
-      { text: this.$t("commons.filter.payroll.employee.position"), value: 1 },
-      { text: this.$t("commons.filter.payroll.employee.placement"), value: 2 },
-      { text: this.$t("commons.filter.payroll.employee.supervisor"), value: 3 },
-    ];
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
       actionGrid: {
@@ -418,43 +353,41 @@ export default class Employee extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.employee.code"),
-        headerClass: "align-header-center",
         field: "code",
         width: 80,
         enableRowGroup: false,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.name"),
-        headerClass: "align-header-center",
         field: "name",
-        width: 120,
+        width: 150,
         enableRowGroup: false,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.description"),
-        headerClass: "align-header-center",
         field: "description",
-        width: 100,
+        width: 150,
         enableRowGroup: false,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.category"),
-        headerClass: "align-header-center",
         field: "category",
-        width: 100,
+        width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.defaultAmount"),
-        headerClass: "align-header-center",
+        headerClass: "align-header-right",
+        cellClass: "text-right",
         field: "default_amount",
         width: 120,
         enableRowGroup: true,
-        valueFormatter: formatNumber2,
+        valueFormatter: formatNumber,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.qty"),
         headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "quantity",
         width: 50,
         enableRowGroup: true,
@@ -462,6 +395,7 @@ export default class Employee extends Vue {
       {
         headerName: this.$t("commons.table.payroll.payroll.unit"),
         headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "unit",
         width: 100,
         enableRowGroup: true,
@@ -469,6 +403,7 @@ export default class Employee extends Vue {
       {
         headerName: this.$t("commons.table.payroll.payroll.taxable"),
         headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "taxable",
         width: 80,
         enableRowGroup: true,
@@ -476,6 +411,7 @@ export default class Employee extends Vue {
       {
         headerName: this.$t("commons.table.payroll.payroll.includedBpjsHealth"),
         headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "included_bpjs_health",
         width: 100,
         enableRowGroup: true,
@@ -485,7 +421,16 @@ export default class Employee extends Vue {
           "commons.table.payroll.payroll.includedBpjsEmployee"
         ),
         headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "included_bpjs_employee",
+        width: 100,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.includedProrate"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "included_prorate",
         width: 100,
         enableRowGroup: true,
       },
@@ -669,8 +614,56 @@ export default class Employee extends Vue {
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
 
-    params.api.sizeColumnsToFit();
+    // params.api.sizeColumnsToFit();
   }
+
+  // GENERAL FUNCTION
+
+  // UI FUNCTION
+  getContextMenu(params: any) {
+    const { node } = params;
+    if (node) {
+      this.paramsData = node.data;
+    } else {
+      this.paramsData = null;
+    }
+
+    const result = [
+      {
+        name: this.$t("commons.contextMenu.insert"),
+        icon: generateIconContextMenuAgGrid("add_icon24"),
+        action: () => this.handleShowForm("", 0),
+      },
+      {
+        name: this.$t("commons.contextMenu.update"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("edit_icon24"),
+        action: () => this.handleShowForm(this.paramsData, 1),
+      },
+    ];
+    return result;
+  }
+
+  handleRowRightClicked() {
+    if (this.paramsData) {
+      const vm = this;
+      vm.gridApi.forEachNode((node: any) => {
+        if (node.data) {
+          if (node.data.id_log == vm.paramsData.id_log) {
+            node.setSelected(true, true);
+          }
+        }
+      });
+    }
+  }
+
+  handleShowForm(params: any, mode: any) {
+    this.inputFormElement.initialize();
+    this.modeData = mode;
+    this.showForm = true;
+  }
+
+  // API FUNCTION
 
   // GETTER AND SETTER
   // get pinnedBottomRowData() {

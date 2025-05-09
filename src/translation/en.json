@@ -3029,7 +3029,8 @@
           "amount": "Amount",
           "reference": "Reference",
           "totalEmployees": "Total Employees",
-          "employeePayroll": "Employee Payroll"
+          "employeePayroll": "Employee Payroll",
+          "includedProrate": "Included in Prorate"
         },
         "attendance": {
           "date": "Date",

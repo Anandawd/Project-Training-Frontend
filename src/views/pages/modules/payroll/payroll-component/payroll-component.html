@@ -26,119 +26,194 @@
       />
     </transition>
 
-    <!-- earnings component -->
+    <!-- payroll component -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">{{$t('title.earnings')}}</h3>
+        <h3 class="card-title">{{$t('title.payrollComponents')}}</h3>
       </div>
       <div class="card-body">
-        <ag-grid-vue
-          :style="agGridSetting.styleAgGridFrame"
-          :class="agGridSetting.themeAgGrid"
-          :columnDefs="columnDefs"
-          :rowData="rowEarningsData"
-          :paginationPageSize="paginationPageSize"
-          :gridOptions="gridOptions"
-          :context="context"
-          :frameworkComponents="frameworkComponents"
-          :enableCellChangeFlash="true"
-          :rowSelection="rowSelection"
-          :getContextMenuItems="getContextMenu"
-          :defaultColDef="agGridSetting.defColDef"
-          :rowGroupPanelShow="rowGroupPanelShow"
-          :suppressDragLeaveHidesColumns="true"
-          :suppressMakeColumnVisibleAfterUnGroup=" true"
-          :statusBar="statusBar"
-          @grid-ready="onGridReady"
-          @cellContextMenu="handleRowRightClicked"
-        ></ag-grid-vue>
-      </div>
-    </div>
+        <div class="tabs">
+          <!-- tab nav -->
+          <div>
+            <ul class="nav nav-tabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button
+                  id="earnings-tab"
+                  class="nav-link active"
+                  role="tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#table-earnings"
+                  aria-controls="table-earnings"
+                  aria-selected="true"
+                  tabindex="-1"
+                >
+                  {{$t('labels.payroll.payroll.earnings')}}
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  id="deductions-tab"
+                  class="nav-link"
+                  role="tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#table-deductions"
+                  aria-controls="table-deductions"
+                  aria-selected="false"
+                  tabindex="-1"
+                >
+                  {{$t('labels.payroll.payroll.deductions')}}
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  id="statutory-tab"
+                  class="nav-link"
+                  role="tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#table-statutory"
+                  aria-controls="table-statutory"
+                  aria-selected="false"
+                  tabindex="-1"
+                >
+                  {{$t('labels.payroll.payroll.statutory')}}
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  id="category-tab"
+                  class="nav-link"
+                  role="tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#table-category"
+                  aria-controls="table-category"
+                  aria-selected="false"
+                  tabindex="-1"
+                >
+                  {{$t('labels.payroll.payroll.category')}}
+                </button>
+              </li>
+            </ul>
+          </div>
 
-    <!-- deductions component -->
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">{{$t('title.deductions')}}</h3>
-      </div>
-      <div class="card-body">
-        <ag-grid-vue
-          :style="agGridSetting.styleAgGridFrame"
-          :class="agGridSetting.themeAgGrid"
-          :columnDefs="columnDefs"
-          :rowData="rowDeductionsData"
-          :paginationPageSize="paginationPageSize"
-          :gridOptions="gridOptions"
-          :context="context"
-          :frameworkComponents="frameworkComponents"
-          :enableCellChangeFlash="true"
-          :rowSelection="rowSelection"
-          :getContextMenuItems="getContextMenu"
-          :defaultColDef="agGridSetting.defColDef"
-          :rowGroupPanelShow="rowGroupPanelShow"
-          :suppressDragLeaveHidesColumns="true"
-          :suppressMakeColumnVisibleAfterUnGroup=" true"
-          :statusBar="statusBar"
-          @grid-ready="onGridReady"
-          @cellContextMenu="handleRowRightClicked"
-        ></ag-grid-vue>
-      </div>
-    </div>
+          <!-- tab content -->
+          <div class="tab-content mt-3">
+            <!-- table department -->
+            <div
+              id="table-earnings"
+              class="tab-pane active show fade"
+              role="tabpanel"
+              aria-labelledby="earnings-tab"
+            >
+              <ag-grid-vue
+                :style="agGridSetting.styleAgGridFrame"
+                :class="agGridSetting.themeAgGrid"
+                :columnDefs="columnDefs"
+                :rowData="rowEarningsData"
+                :paginationPageSize="paginationPageSize"
+                :gridOptions="gridOptions"
+                :context="context"
+                :frameworkComponents="frameworkComponents"
+                :enableCellChangeFlash="true"
+                :rowSelection="rowSelection"
+                :getContextMenuItems="getContextMenu"
+                :defaultColDef="agGridSetting.defColDef"
+                :rowGroupPanelShow="rowGroupPanelShow"
+                :suppressDragLeaveHidesColumns="true"
+                :suppressMakeColumnVisibleAfterUnGroup=" true"
+                :statusBar="statusBar"
+                @grid-ready="onGridReady"
+                @cellContextMenu="handleRowRightClicked"
+              ></ag-grid-vue>
+            </div>
 
-    <!-- statutory component -->
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">{{$t('title.statutoryContribution')}}</h3>
-      </div>
-      <div class="card-body">
-        <ag-grid-vue
-          :style="agGridSetting.styleAgGridFrame"
-          :class="agGridSetting.themeAgGrid"
-          :columnDefs="columnStatutoryDefs"
-          :rowData="rowStatutoryData"
-          :paginationPageSize="paginationPageSize"
-          :gridOptions="gridOptions"
-          :context="context"
-          :frameworkComponents="frameworkComponents"
-          :enableCellChangeFlash="true"
-          :rowSelection="rowSelection"
-          :getContextMenuItems="getContextMenu"
-          :defaultColDef="agGridSetting.defColDef"
-          :rowGroupPanelShow="rowGroupPanelShow"
-          :suppressDragLeaveHidesColumns="true"
-          :suppressMakeColumnVisibleAfterUnGroup=" true"
-          :statusBar="statusBar"
-          @grid-ready="onGridReady"
-          @cellContextMenu="handleRowRightClicked"
-        ></ag-grid-vue>
-      </div>
-    </div>
+            <!-- table deductions -->
+            <div
+              id="table-deductions"
+              class="tab-pane fade"
+              role="tabpanel"
+              aria-labelledby="deductions-tab"
+            >
+              <ag-grid-vue
+                :style="agGridSetting.styleAgGridFrame"
+                :class="agGridSetting.themeAgGrid"
+                :columnDefs="columnDefs"
+                :rowData="rowDeductionsData"
+                :paginationPageSize="paginationPageSize"
+                :gridOptions="gridOptions"
+                :context="context"
+                :frameworkComponents="frameworkComponents"
+                :enableCellChangeFlash="true"
+                :rowSelection="rowSelection"
+                :getContextMenuItems="getContextMenu"
+                :defaultColDef="agGridSetting.defColDef"
+                :rowGroupPanelShow="rowGroupPanelShow"
+                :suppressDragLeaveHidesColumns="true"
+                :suppressMakeColumnVisibleAfterUnGroup=" true"
+                :statusBar="statusBar"
+                @grid-ready="onGridReady"
+                @cellContextMenu="handleRowRightClicked"
+              ></ag-grid-vue>
+            </div>
 
-    <!-- category component -->
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">{{$t('title.categoryComponent')}}</h3>
-      </div>
-      <div class="card-body">
-        <ag-grid-vue
-          :style="agGridSetting.styleAgGridFrame"
-          :class="agGridSetting.themeAgGrid"
-          :columnDefs="columnCategoryDefs"
-          :rowData="rowCategoryData"
-          :paginationPageSize="paginationPageSize"
-          :gridOptions="gridOptions"
-          :context="context"
-          :frameworkComponents="frameworkComponents"
-          :enableCellChangeFlash="true"
-          :rowSelection="rowSelection"
-          :getContextMenuItems="getContextMenu"
-          :defaultColDef="agGridSetting.defColDef"
-          :rowGroupPanelShow="rowGroupPanelShow"
-          :suppressDragLeaveHidesColumns="true"
-          :suppressMakeColumnVisibleAfterUnGroup=" true"
-          :statusBar="statusBar"
-          @grid-ready="onGridReady"
-          @cellContextMenu="handleRowRightClicked"
-        ></ag-grid-vue>
+            <!-- table statutory -->
+            <div
+              id="table-statutory"
+              class="tab-pane fade"
+              role="tabpanel"
+              aria-labelledby="statutory-tab"
+            >
+              <ag-grid-vue
+                :style="agGridSetting.styleAgGridFrame"
+                :class="agGridSetting.themeAgGrid"
+                :columnDefs="columnStatutoryDefs"
+                :rowData="rowStatutoryData"
+                :paginationPageSize="paginationPageSize"
+                :gridOptions="gridOptions"
+                :context="context"
+                :frameworkComponents="frameworkComponents"
+                :enableCellChangeFlash="true"
+                :rowSelection="rowSelection"
+                :getContextMenuItems="getContextMenu"
+                :defaultColDef="agGridSetting.defColDef"
+                :rowGroupPanelShow="rowGroupPanelShow"
+                :suppressDragLeaveHidesColumns="true"
+                :suppressMakeColumnVisibleAfterUnGroup=" true"
+                :statusBar="statusBar"
+                @grid-ready="onGridReady"
+                @cellContextMenu="handleRowRightClicked"
+              ></ag-grid-vue>
+            </div>
+
+            <!-- table category -->
+            <div
+              id="table-category"
+              class="tab-pane fade"
+              role="tabpanel"
+              aria-labelledby="category-tab"
+            >
+              <ag-grid-vue
+                :style="agGridSetting.styleAgGridFrame"
+                :class="agGridSetting.themeAgGrid"
+                :columnDefs="columnCategoryDefs"
+                :rowData="rowCategoryData"
+                :paginationPageSize="paginationPageSize"
+                :gridOptions="gridOptions"
+                :context="context"
+                :frameworkComponents="frameworkComponents"
+                :enableCellChangeFlash="true"
+                :rowSelection="rowSelection"
+                :getContextMenuItems="getContextMenu"
+                :defaultColDef="agGridSetting.defColDef"
+                :rowGroupPanelShow="rowGroupPanelShow"
+                :suppressDragLeaveHidesColumns="true"
+                :suppressMakeColumnVisibleAfterUnGroup=" true"
+                :statusBar="statusBar"
+                @grid-ready="onGridReady"
+                @cellContextMenu="handleRowRightClicked"
+              ></ag-grid-vue>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -152,7 +227,5 @@
     >
       <template #body> Are you sure to delete this data? </template>
     </c-dialog>
-
-    <!-- modal -->
   </div>
 </section>
