@@ -220,12 +220,12 @@
     <!-- dialog -->
     <c-dialog
       v-show="showDialog"
-      dialogTitle="Confirm"
+      :dialogTitle="dialogTitle"
       size="sm"
-      @confirm="deleteData"
+      @confirm="confirmAction"
       @cancel="showDialog=false"
     >
-      <template #body> Are you sure to delete this data? </template>
+      <template #body> {{dialogMessage}} </template>
     </c-dialog>
   </div>
 </section>
