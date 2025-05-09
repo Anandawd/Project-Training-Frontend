@@ -1,9 +1,11 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
+import CheckboxRenderer from "@/components/ag_grid-framework/checkbox.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import { formatNumber } from "@/utils/format";
 import { generateIconContextMenuAgGrid } from "@/utils/general";
 import $global from "@/utils/global";
+import { ICellRendererParams } from "ag-grid-community";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
@@ -324,6 +326,14 @@ export default class PayrollComponents extends Vue {
   ColumnApi: any;
   agGridSetting: any;
 
+  checkBoxRenderer = (params: ICellRendererParams) => {
+    const checked = params.value === true ? "checked" : "";
+    return `<div class='d-flex justify-content-center  mt-1'>
+    <input type='checkbox' ${checked} disabled />
+    <div/>
+    `;
+  };
+
   // LIFECYCLE HOOKS
   beforeMount(): void {
     this.agGridSetting = $global.agGrid;
@@ -403,50 +413,58 @@ export default class PayrollComponents extends Vue {
       {
         headerName: this.$t("commons.table.payroll.payroll.taxable"),
         headerClass: "align-header-center",
-        cellClass: "text-center",
+        cellClass: "ag-cell-center-checkbox",
         field: "taxable",
-        width: 80,
+        width: 100,
         enableRowGroup: true,
+        cellRenderer: "checkboxRenderer",
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.includedBpjsHealth"),
+        headerName: this.$t("commons.table.payroll.payroll.bpjsKesehatan"),
         headerClass: "align-header-center",
-        cellClass: "text-center",
+        cellClass: "ag-cell-center-checkbox",
         field: "included_bpjs_health",
         width: 100,
         enableRowGroup: true,
+        cellRenderer: "checkboxRenderer",
       },
       {
-        headerName: this.$t(
-          "commons.table.payroll.payroll.includedBpjsEmployee"
-        ),
+        headerName: this.$t("commons.table.payroll.payroll.bpjsTk"),
         headerClass: "align-header-center",
-        cellClass: "text-center",
+        cellClass: "ag-cell-center-checkbox",
         field: "included_bpjs_employee",
         width: 100,
         enableRowGroup: true,
+        cellRenderer: "checkboxRenderer",
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.includedProrate"),
+        headerName: this.$t("commons.table.payroll.payroll.prorata"),
         headerClass: "align-header-center",
-        cellClass: "text-center",
+        cellClass: "ag-cell-center-checkbox",
         field: "included_prorate",
         width: 100,
         enableRowGroup: true,
+        cellRenderer: "checkboxRenderer",
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.showInPayslip"),
         headerClass: "align-header-center",
+        cellClass: "ag-cell-center-checkbox",
         field: "show_in_payslip",
         width: 100,
         enableRowGroup: true,
+        cellRenderer: "checkboxRenderer",
+        editable: false,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.active"),
         headerClass: "align-header-center",
+        cellClass: "ag-cell-center-checkbox",
         field: "active",
-        width: 50,
+        width: 80,
         enableRowGroup: true,
+        cellRenderer: "checkboxRenderer",
+        editable: false,
       },
     ];
     this.columnStatutoryDefs = [
@@ -594,6 +612,7 @@ export default class PayrollComponents extends Vue {
     this.frameworkComponents = {
       actionGrid: ActionGrid,
       iconLockRenderer: IconLockRenderer,
+      checkboxRenderer: CheckboxRenderer,
     };
     this.rowGroupPanelShow = "always";
     this.statusBar = {

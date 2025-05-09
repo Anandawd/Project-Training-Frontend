@@ -3030,7 +3030,10 @@
           "reference": "Reference",
           "totalEmployees": "Total Employees",
           "employeePayroll": "Employee Payroll",
-          "includedProrate": "Included in Prorate"
+          "includedProrate": "Included in Prorate",
+          "bpjsKesehatan": "BPJS Kesehatan",
+          "bpjsTk": "BPJS TK",
+          "prorata": "Prorata"
         },
         "attendance": {
           "date": "Date",
