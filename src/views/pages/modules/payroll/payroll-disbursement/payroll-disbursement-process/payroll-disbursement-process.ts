@@ -23,7 +23,7 @@ import PaymentMethodSelection from "../payment-method-selection/payment-method-s
 })
 export default class PayrollDisbursementProcess extends Vue {
   public modeData: any;
-  public currentStep: number = 1;
+  public currentStep: number = 5;
   public periodData: any = reactive({});
   public selectedPaymentMethod: string = "";
   public downloadOptions: any = reactive({});
@@ -56,7 +56,7 @@ export default class PayrollDisbursementProcess extends Vue {
         this.handleNext();
         break;
       case $global.modePayroll.complete:
-        this.handleComplete();
+        this.completeDisbursement();
         break;
       case $global.modePayroll.process:
         break;
@@ -133,13 +133,7 @@ export default class PayrollDisbursementProcess extends Vue {
     this.$router.push({ name: "PayrollDisbursement" });
   }
 
-  handleComplete() {
-    this.showConfirmationDialog(
-      $global.dialogActions.complete,
-      this.$t("title.confirm"),
-      this.$t("messages.payroll.completeConfirmation")
-    );
-  }
+  handleComplete() {}
 
   handleDownload(options: any) {
     getToastSuccess(this.$t("messages.disbursement.downloadSuccess"));
@@ -200,7 +194,7 @@ export default class PayrollDisbursementProcess extends Vue {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       getToastSuccess(
-        this.$t("messages.disbursement.completeDisbursement") as string
+        this.$t("messages.payroll.completeDisbursement") as string
       );
       this.handleNext();
     } catch (error) {

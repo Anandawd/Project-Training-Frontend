@@ -2141,7 +2141,8 @@
       "cancelConfirmation": "Are you sure you want to cancel this operation? Any unsaved changes will be lost",
       "completeConfirmation": "Are you sure you want to mark this payroll as complete? This action will finalize the payment process and cannot be undone",
       "disbursementCompleted": "Disbursement completed successfully!",
-      "sendEmailConfirmation": "Are you sure you want to send email confirmation to all stakeholders?"
+      "sendEmailConfirmation": "Are you sure you want to send email confirmation to all stakeholders?",
+      "completeDisbursement": "Disbursement process has been successfully completed"
     },
     "reservationForm": [
       "Reservation number changed, please save again.",

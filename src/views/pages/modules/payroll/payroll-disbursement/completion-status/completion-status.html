@@ -31,57 +31,108 @@
       </button>
     </div>
 
-    <div class="card">
+    <div class="card shadow-sm">
       <div class="card-body text-center">
         <div class="success-icon my-4">
-          <i
-            class="fa fa-check-circle text-success"
-            style="font-size: 4rem"
-          ></i>
+          <div class="success-checkmark">
+            <div class="check-icon">
+              <span class="icon-line line-tip"></span>
+              <span class="icon-line line-long"></span>
+              <div class="icon-circle"></div>
+              <div class="icon-fix"></div>
+            </div>
+          </div>
         </div>
 
-        <h4 class="mb-4">
+        <h3 class="text-success mb-4">
           {{$t('labels.payroll.payroll.disbursementCompleted')}}
-        </h4>
+        </h3>
 
         <!-- period and status information -->
-        <div class="my-2 mb-4">
-          <p>
-            <strong>{{$t('labels.payroll.payroll.period')}}:</strong>
-            {{periodData.period_name}}
-          </p>
-          <p>
-            <strong>{{$t('labels.payroll.payroll.status')}}:</strong>
-            <span class="badge bg-success px-3 py-1"
-              >{{$t('labels.payroll.payroll.completed')}}</span
-            >
-          </p>
-          <p>
-            <strong>{{$t('labels.payroll.payroll.completedAt')}}:</strong>
-            {{completionTime}}
-          </p>
-          <p>
-            <strong>{{$t('labels.payroll.payroll.processedBy')}}:</strong>
-            {{processedBy}}
-          </p>
+        <div class="status-container p-4 mb-4 mx-auto">
+          <div class="row text-start mb-3">
+            <div class="col-md-6">
+              <!-- period -->
+              <div class="status-item d-flex align-items-center mb-3">
+                <div class="status-icon me-3">
+                  <i class="fa fa-calendar text-primary"></i>
+                </div>
+                <div>
+                  <div class="text-muted small">
+                    {{$t('labels.payroll.payroll.period')}}
+                  </div>
+                  <div class="fw-bold">{{periodData.period_name}}</div>
+                </div>
+              </div>
+
+              <!-- status -->
+              <div class="status-item d-flex align-items-center mb-3">
+                <div class="status-icon me-3">
+                  <i class="fa fa-check-circle text-primary"></i>
+                </div>
+                <div>
+                  <div class="text-muted small">
+                    {{$t('labels.payroll.payroll.status')}}
+                  </div>
+                  <div class="fw-bold">
+                    <span class="badge bg-success px-3 py-2">
+                      {{$t('labels.payroll.payroll.completed')}}</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <!-- completedAt -->
+              <div class="status-item d-flex align-items-center mb-3">
+                <div class="status-icon me-3">
+                  <i class="fa fa-clock text-primary"></i>
+                </div>
+                <div>
+                  <div class="text-muted small">
+                    {{$t('labels.payroll.payroll.completedAt')}}
+                  </div>
+                  <div class="fw-bold">{{completionTime}}</div>
+                </div>
+              </div>
+
+              <!-- processBy -->
+              <div class="status-item d-flex align-items-center mb-3">
+                <div class="status-icon me-3">
+                  <i class="fa fa-user text-primary"></i>
+                </div>
+                <div>
+                  <div class="text-muted small">
+                    {{$t('labels.payroll.payroll.processedBy')}}
+                  </div>
+                  <div class="fw-bold">{{processedBy}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- bank processing status -->
         <div class="bank-status-section mb-4">
-          <h5>{{$t('labels.payroll.payroll.bankProcessingStatus')}}:</h5>
-          <table class="table table-borderless">
-            <tbody>
-              <tr v-for="bank in bankStatus" :key="bank.name">
-                <td class="text-start">
-                  <i class="fa fa-check text-success me-2"></i>
-                  {{bank.name}}
-                </td>
-                <td class="text-start">
-                  <span :class="bank.statusClass">{{bank.status}}</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <h5 class="section-title position-relative pb-2 mb-4">
+            <span> {{$t('labels.payroll.payroll.bankProcessingStatus')}}</span>
+          </h5>
+
+          <div class="bank-status-grid">
+            <div
+              v-for="bank in bankStatus"
+              :key="bank.name"
+              class="bank-status-card"
+            >
+              <div class="bank-status-icon">
+                <i class="fa fa-check-circle text-success"></i>
+              </div>
+              <div class="bank-status-name">{{bank.name}}</div>
+              <div class="bank-status-text" :class="bank.statusClass">
+                {{bank.status}}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

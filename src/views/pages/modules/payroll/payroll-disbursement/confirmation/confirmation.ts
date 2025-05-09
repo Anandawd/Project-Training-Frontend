@@ -93,6 +93,7 @@ export default class Confirmation extends Vue {
         this.handleBack();
         break;
       case $global.modePayroll.complete:
+        console.info("Button complete clicked");
         this.handleComplete();
         break;
       default:
@@ -115,6 +116,7 @@ export default class Confirmation extends Vue {
   }
 
   confirmAction() {
+    this.showDialog = false;
     switch (this.dialogAction) {
       case $global.dialogActions.cancel:
         this.cancelProcess();
@@ -126,7 +128,6 @@ export default class Confirmation extends Vue {
         console.warn("Unsupported dialog action:", this.dialogAction);
     }
 
-    this.showDialog = false;
     this.dialogParams = null;
   }
 

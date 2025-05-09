@@ -29,26 +29,31 @@ export default class CompletionStatus extends Vue {
       name: "BCA",
       status: "Completed - Receipt uploaded",
       statusClass: "text-success",
+      icon: "fa-university",
     },
     {
       name: "Mandiri",
       status: "Completed - Receipt uploaded",
       statusClass: "text-success",
+      icon: "fa-university",
     },
     {
       name: "BNI",
       status: "Completed - Receipt uploaded",
       statusClass: "text-success",
+      icon: "fa-university",
     },
     {
       name: "BRI",
       status: "Completed - Receipt uploaded",
       statusClass: "text-success",
+      icon: "fa-university",
     },
     {
       name: "Cash",
       status: "Completed - Manual processing",
       statusClass: "text-success",
+      icon: "fa-money-bill-wave",
     },
   ];
 

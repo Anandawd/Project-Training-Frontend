@@ -23,6 +23,7 @@ import {
   faPlay,
   faPuzzlePiece,
   faSave,
+  faUniversity,
   faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 // import { Gatekeeper } from "gatekeeper-client-sdk";
@@ -106,7 +107,8 @@ library.add(
   faPuzzlePiece,
   faAdjust,
   faPizzaSlice,
-  faArrowRight
+  faArrowRight,
+  faUniversity
 );
 
 // Gatekeeper.initialize("de378d9c-38c8-42c1-b961-9e4fa92d6a5e");
