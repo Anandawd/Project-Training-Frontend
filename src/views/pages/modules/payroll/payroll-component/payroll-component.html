@@ -3,19 +3,58 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
-        title="Insert"
+        title="Insert Earnings"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('', $global.modeData.insert)"
+        @click="handleShowForm('', $global.modePayroll.insertEarnings)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
-        $t('buttons.insert') }}
+        $t('buttons.insertEarnings') }}
+      </button>
+      <button
+        title="Insert Deductions"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleShowForm('', $global.modePayroll.insertDeductions)"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insertDeductions') }}
+      </button>
+      <button
+        title="Insert Statutory"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleShowForm('', $global.modePayroll.insertStatutory)"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insertStatutory') }}
+      </button>
+      <button
+        title="Insert Category"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleShowForm('', $global.modePayroll.insertCategory)"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insertCategory') }}
       </button>
     </div>
 
     <!-- insert form -->
     <transition name="fade">
       <c-input-form
+        class="px-2"
+        ref="inputFormElement"
+        v-show="showForm"
+        :schema="schema"
+        :modeData="modeData"
+        @save="handleSave"
+        @close="showForm=false"
+      />
+    </transition>
+
+    <transition name="fade">
+      <earnings-input-form
         class="px-2"
         ref="inputFormElement"
         v-show="showForm"

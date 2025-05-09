@@ -2590,7 +2590,11 @@
     "complete": "Complete",
     "upload": "Upload",
     "uploadDocument": "Upload Document",
-    "sendEmail": "Send Email"
+    "sendEmail": "Send Email",
+    "insertEarnings": "Insert Earnings",
+    "insertDeductions": "Insert Deductions",
+    "insertStatutory": "Insert Statutory",
+    "insertCategory": "Insert Category"
   },
   "languages": {
     "english": "English",

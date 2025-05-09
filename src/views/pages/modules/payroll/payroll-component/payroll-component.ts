@@ -11,6 +11,7 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
+import EarningsInputForm from "./earnings-component-input-form/earnings-component-input-form.vue";
 import CInputForm from "./payroll-component-input-form/payroll-component-input-form.vue";
 
 @Options({
@@ -18,6 +19,7 @@ import CInputForm from "./payroll-component-input-form/payroll-component-input-f
     AgGridVue,
     CDialog,
     CInputForm,
+    EarningsInputForm,
   },
 })
 export default class PayrollComponents extends Vue {
@@ -379,8 +381,6 @@ export default class PayrollComponents extends Vue {
     // params.api.sizeColumnsToFit();
   }
 
-  // GENERAL FUNCTION
-
   // UI FUNCTION
   getContextMenu(params: any) {
     const { node } = params;
@@ -471,15 +471,51 @@ export default class PayrollComponents extends Vue {
   handleShowForm(params: any, mode: any) {
     this.inputFormElement.initialize();
     this.modeData = mode;
-    if (mode === $global.modeData.edit && params) {
-      // In a real implementation, fetch complete data from API
-      // const { data } = await this.payrollComponentAPI.getPayrollComponent(params.id);
-      // this.populateForm(data);
 
-      // For mock demo, use the row data
-      this.populateForm(params);
+    if (mode === $global.modeData.edit && params) {
+      console.info("Editing component:", params); // Logging untuk debug
+
+      // 1. Tentukan tab yang harus diaktifkan berdasarkan data
+      let tabToActivate = "";
+
+      if (params.type === "Deductions") {
+        tabToActivate = "deductions";
+      } else if (params.type === "Statutory") {
+        tabToActivate = "statutory";
+      } else if (params.type === "Category") {
+        tabToActivate = "category";
+      } else {
+        tabToActivate = "earnings"; // Default
+      }
+
+      // 2. Setel tab aktif di dalam komponen form
+      this.inputFormElement.activeTab = tabToActivate;
+
+      // 3. Tunjukkan form terlebih dahulu
+      this.showForm = true;
+
+      // 4. Tunggu hingga form terlihat sebelum melakukan populasi dan mengaktifkan tab
+      this.$nextTick().then(() => {
+        // 5. Populasi data setelah form benar-benar terlihat
+        this.populateForm(params);
+
+        // 6. Aktifkan tab setelah form terisi
+        this.$nextTick().then(() => {
+          const tabElement = document.getElementById(
+            `form-${tabToActivate}-tab`
+          );
+          if (tabElement) {
+            console.log(`Activating tab: form-${tabToActivate}-tab`);
+            tabElement.click();
+          } else {
+            console.error(`Tab element not found: form-${tabToActivate}-tab`);
+          }
+        });
+      });
+    } else {
+      // Untuk item baru, cukup tampilkan form dengan tab default
+      this.showForm = true;
     }
-    this.showForm = true;
   }
 
   handleSave(formData: any) {
@@ -869,25 +905,69 @@ export default class PayrollComponents extends Vue {
 
   async deleteData(params: any) {
     try {
-      if (!params || !params.id) {
+      if (!params) {
         getToastError("Invalid component to delete");
-        return;
+        return false;
       }
 
-      // In a real implementation, use the API
-      // const { status2 } = await this.payrollComponentAPI.deletePayrollComponent(params.id);
-      // if (status2.status === 0) {
-      //   getToastSuccess(this.$t('messages.deleteSuccess'));
-      //   this.loadData();
-      // }
-
-      // For mock demo purposes
       getToastSuccess(
         this.$t("messages.deleteSuccess") || "Data deleted successfully"
       );
-      this.removeFromDataArray(params);
+
+      let deleted = false;
+
+      if (
+        params.type === "Earnings" ||
+        (!params.type && this.activeTab === "earnings")
+      ) {
+        this.rowEarningsData = this.rowEarningsData.filter(
+          (item: any) =>
+            (item.id && item.id !== params.id) || item.code !== params.code
+        );
+        deleted = true;
+      } else if (
+        params.type === "Deductions" ||
+        (!params.type && this.activeTab === "deductions")
+      ) {
+        this.rowDeductionsData = this.rowDeductionsData.filter(
+          (item: any) =>
+            (item.id && item.id !== params.id) || item.code !== params.code
+        );
+        deleted = true;
+      } else if (
+        params.type === "Statutory" ||
+        (!params.type && this.activeTab === "statutory")
+      ) {
+        this.rowStatutoryData = this.rowStatutoryData.filter(
+          (item: any) =>
+            (item.id && item.id !== params.id) || item.code !== params.code
+        );
+        deleted = true;
+      } else if (
+        params.type === "Category" ||
+        (!params.type && this.activeTab === "category")
+      ) {
+        this.rowCategoryData = this.rowCategoryData.filter(
+          (item: any) =>
+            (item.id && item.id !== params.id) || item.code !== params.code
+        );
+        deleted = true;
+      }
+
+      if (!deleted) {
+        getToastError("Could not find component to delete");
+        return false;
+      }
+
+      // Refresh the grid
+      if (this.gridApi) {
+        this.gridApi.refreshCells();
+      }
+
+      return true;
     } catch (error) {
       getError(error);
+      return false;
     }
   }
 
@@ -937,46 +1017,52 @@ export default class PayrollComponents extends Vue {
   }
 
   refreshDataAfterUpdate(data: any) {
+    let updated = false;
+
     if (data.type === "Earnings") {
       const index = this.rowEarningsData.findIndex(
-        (item: any) => item.id === data.id
+        (item: any) =>
+          (item.id && item.id === data.id) || item.code === data.code
       );
+
       if (index !== -1) {
-        this.rowEarningsData[index] = {
-          ...this.rowEarningsData[index],
-          ...data,
-        };
+        this.rowEarningsData[index] = { ...data };
+        updated = true;
       }
     } else if (data.type === "Deductions") {
       const index = this.rowDeductionsData.findIndex(
-        (item: any) => item.id === data.id
+        (item: any) =>
+          (item.id && item.id === data.id) || item.code === data.code
       );
+
       if (index !== -1) {
-        this.rowDeductionsData[index] = {
-          ...this.rowDeductionsData[index],
-          ...data,
-        };
+        this.rowDeductionsData[index] = { ...data };
+        updated = true;
       }
     } else if (data.type === "Statutory") {
       const index = this.rowStatutoryData.findIndex(
-        (item: any) => item.id === data.id
+        (item: any) =>
+          (item.id && item.id === data.id) || item.code === data.code
       );
+
       if (index !== -1) {
-        this.rowStatutoryData[index] = {
-          ...this.rowStatutoryData[index],
-          ...data,
-        };
+        this.rowStatutoryData[index] = { ...data };
+        updated = true;
       }
     } else if (data.type === "Category") {
       const index = this.rowCategoryData.findIndex(
-        (item: any) => item.id === data.id
+        (item: any) =>
+          (item.id && item.id === data.id) || item.code === data.code
       );
+
       if (index !== -1) {
-        this.rowCategoryData[index] = {
-          ...this.rowCategoryData[index],
-          ...data,
-        };
+        this.rowCategoryData[index] = { ...data };
+        updated = true;
       }
+    }
+
+    if (!updated) {
+      this.refreshDataAfterSave(data);
     }
 
     if (this.gridApi) {
@@ -1045,16 +1131,17 @@ export default class PayrollComponents extends Vue {
   }
 
   populateForm(data: any) {
-    if (data.type === "Earnings") {
-      this.activeTab = "earnings";
+    this.inputFormElement.form = {};
+
+    if (data.type === "Earnings" || !data.type) {
       this.inputFormElement.form = {
-        earningsCode: data.code,
-        earningsName: data.name,
-        earningsDescription: data.description,
-        earningCategory: data.category,
-        earningDefaultAmount: data.default_amount,
-        earningQty: data.quantity,
-        earningUnit: data.unit,
+        earningsCode: data.code || "",
+        earningsName: data.name || "",
+        earningsDescription: data.description || "",
+        earningCategory: data.category || "",
+        earningDefaultAmount: data.default_amount || 0,
+        earningQty: data.quantity || 1,
+        earningUnit: data.unit || "",
         earningTaxable: data.taxable ? "YES" : "NO",
         earningIncludedBpjsHealth: data.included_bpjs_health ? "YES" : "NO",
         earningIncludedBpjsEmplyoee: data.included_bpjs_employee ? "YES" : "NO",
@@ -1063,15 +1150,14 @@ export default class PayrollComponents extends Vue {
         earningsStatus: data.active ? "A" : "I",
       };
     } else if (data.type === "Deductions") {
-      this.activeTab = "deductions";
       this.inputFormElement.form = {
-        deductionsCode: data.code,
-        deductionsName: data.name,
-        deductionsDescription: data.description,
-        deductionsCategory: data.category,
-        deductionsDefaultAmount: data.default_amount,
-        deductionsQty: data.quantity,
-        deductionsUnit: data.unit,
+        deductionsCode: data.code || "",
+        deductionsName: data.name || "",
+        deductionsDescription: data.description || "",
+        deductionsCategory: data.category || "",
+        deductionsDefaultAmount: data.default_amount || 0,
+        deductionsQty: data.quantity || 1,
+        deductionsUnit: data.unit || "",
         deductionsTaxable: data.taxable ? "YES" : "NO",
         deductionsIncludedBpjsHealth: data.included_bpjs_health ? "YES" : "NO",
         deductionsIncludedBpjsEmplyoee: data.included_bpjs_employee
@@ -1082,36 +1168,29 @@ export default class PayrollComponents extends Vue {
         deductionsStatus: data.active ? "A" : "I",
       };
     } else if (data.type === "Statutory") {
-      this.activeTab = "statutory";
       this.inputFormElement.form = {
-        statutoryCode: data.code,
-        statutoryName: data.name,
-        statutoryDescription: data.description,
-        statutoryType: data.type,
-        statutoryDefaultAmount: data.default_amount,
-        statutoryQty: data.quantity,
-        statutoryUnit: data.unit,
+        statutoryCode: data.code || "",
+        statutoryName: data.name || "",
+        statutoryDescription: data.description || "",
+        statutoryType: data.type || "",
+        statutoryDefaultAmount: data.default_amount || 0,
+        statutoryQty: data.quantity || 1,
+        statutoryUnit: data.unit || "",
         statutoryTaxable: data.taxable ? "YES" : "NO",
         statutoryShowInPayslip: data.show_in_payslip ? "YES" : "NO",
         statutoryStatus: data.active ? "A" : "I",
       };
     } else if (data.type === "Category") {
-      this.activeTab = "category";
       this.inputFormElement.form = {
-        categoryCode: data.code,
-        categoryName: data.name,
-        categoryDescription: data.description,
-        categoryType: data.type,
+        categoryCode: data.code || "",
+        categoryName: data.name || "",
+        categoryDescription: data.description || "",
+        categoryType: data.type || "",
         categoryStatus: data.active ? "A" : "I",
       };
     }
 
     this.inputFormElement.form.id = data.id;
-
-    const tabElement = document.getElementById(`form-${this.activeTab}-tab`);
-    if (tabElement) {
-      tabElement.click();
-    }
   }
 
   // GETTER AND SETTER

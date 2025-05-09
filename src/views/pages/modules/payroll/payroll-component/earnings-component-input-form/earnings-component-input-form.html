@@ -1,0 +1,208 @@
+<c-form
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  class="input-form row"
+  v-slot="{resetForm}"
+  @invalid-submit="onInvalidSubmit"
+  @submit="onSave"
+>
+  <div class="card">
+    <div class="card-header">{{title}}</div>
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <c-input
+            required
+            type="text"
+            name="EarningsCode"
+            id="EarningsCode"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.code')"
+            v-model="form.earningsCode"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            type="text"
+            name="EarningsName"
+            id="EarningsName"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.name')"
+            v-model="form.earningsName"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            type="text"
+            name="earningDescription"
+            id="earningDescription"
+            class="row mb-1"
+            :label="$t('labels.payroll.employee.description')"
+            v-model="form.earningsDescription"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            filter
+            required
+            offset="right"
+            selectType="column"
+            class="row mb-1"
+            name="category"
+            labelName="name"
+            keyName="code"
+            v-model="form.earningCategory"
+            :label="$t('labels.payroll.payroll.category')"
+            :options="earningCategoryOptions"
+            :columnOptions="columnOptions"
+          >
+          </c-select>
+        </div>
+        <div class="col-md-4">
+          <c-input
+            showZeroNumber
+            formatted
+            type="number"
+            name="defaultAmount"
+            id="defaultAmount"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.defaultAmount')"
+            :max="9999999999"
+            :min="0"
+            v-model="form.earningDefaultAmount"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            showZeroNumber
+            type="number"
+            name="quantity"
+            id="quantity"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.qty')"
+            v-model="form.earningQty"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            type="text"
+            name="unit"
+            id="unit"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.unit')"
+            v-model="form.earningUnit"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            name="taxable"
+            labelName="name"
+            keyName="code"
+            v-model="form.earningTaxable"
+            :label="$t('labels.payroll.payroll.taxable')"
+            :options="booleanOptions"
+          >
+          </c-select>
+        </div>
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            name="includedBpjsEmployee"
+            labelName="name"
+            keyName="code"
+            v-model="form.earningIncludedBpjsEmplyoee"
+            :label="$t('labels.payroll.payroll.includedBpjsEmployee')"
+            :options="booleanOptions"
+          >
+          </c-select>
+        </div>
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            name="includedBpjsHealth"
+            labelName="name"
+            keyName="code"
+            v-model="form.earningIncludedBpjsHealth"
+            :label="$t('labels.payroll.payroll.includedBpjsHealth')"
+            :options="booleanOptions"
+          >
+          </c-select>
+        </div>
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            name="includedProrate"
+            labelName="name"
+            keyName="code"
+            v-model="form.earningIncludedProrate"
+            :label="$t('labels.payroll.payroll.includedProrate')"
+            :options="booleanOptions"
+          >
+          </c-select>
+        </div>
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            name="showInPayslip"
+            labelName="name"
+            keyName="code"
+            v-model="form.earningsShowInPayslip"
+            :label="$t('labels.payroll.payroll.showInPayslip')"
+            :options="booleanOptions"
+          >
+          </c-select>
+        </div>
+        <div class="col-md-4 mb-sm-1">
+          <div class="row">
+            <div class="col-sm-3">
+              <label
+                class="form-label"
+                style="font-size: 12px; font-weight: 700; color: red"
+                >{{$t('labels.status')}}</label
+              >
+            </div>
+            <div class="col-sm-9 d-flex align-items-center p-0">
+              <c-radio
+                class="me-3"
+                :label="$t('labels.active')"
+                v-model="form.earningsStatus"
+                :value="A"
+              ></c-radio>
+              <c-radio
+                class="me-3"
+                :label="$t('labels.inactive')"
+                v-model="form.earningsStatus"
+                value="I"
+              ></c-radio>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- buttons -->
+      <div class="d-flex justify-content-end mt-2">
+        <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.close')}}
+        </button>
+        <button type="button" class="btn btn-primary px-3" @click="onSubmit">
+          <i class="fa fa-save"></i>
+          {{$t('buttons.save')}}
+        </button>
+      </div>
+    </div>
+  </div>
+</c-form>
