@@ -42,21 +42,21 @@ export default class InputForm extends Vue {
     { code: 4, name: ",0.000;-,0.000" },
   ];
 
-  earningCategoryOptions: any = [
+  deductionsCategoryOptions: any = [
     {
-      SubGroupName: "Earning Category",
-      code: "EC01",
-      name: "Fix Allowance",
+      SubGroupName: "Deduction Category",
+      code: "DC01",
+      name: "Fix Deduction",
     },
     {
-      SubGroupName: "Earning Category",
-      code: "EC02",
-      name: "Variable Allowance",
+      SubGroupName: "Deduction Category",
+      code: "DC02",
+      name: "Variable Deduction",
     },
     {
-      SubGroupName: "Earning Category",
-      code: "EC03",
-      name: "Incentive",
+      SubGroupName: "Deduction Category",
+      code: "DC03",
+      name: "Kasbon",
     },
   ];
 
@@ -92,20 +92,20 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      // Earnings tab
-      earningsCode: "",
-      earningsName: "",
-      earningsDescription: "",
-      earningCategory: "",
-      earningDefaultAmount: 0,
-      earningQty: 1,
-      earningUnit: "",
-      earningTaxable: "NO",
-      earningIncludedBpjsEmplyoee: "NO",
-      earningIncludedBpjsHealth: "NO",
-      earningIncludedProrate: "NO",
-      earningsShowInPayslip: "YES",
-      earningsStatus: "A",
+      // Deductions tab
+      deductionsCode: "",
+      deductionsName: "",
+      deductionsDescription: "",
+      deductionsCategory: "",
+      deductionsDefaultAmount: 0,
+      deductionsQty: 1,
+      deductionsUnit: "",
+      deductionsTaxable: "NO",
+      deductionsIncludedBpjsEmplyoee: "NO",
+      deductionsIncludedBpjsHealth: "NO",
+      deductionsIncludedProrate: "NO",
+      deductionsShowInPayslip: "YES",
+      deductionsStatus: "A",
     };
   }
 
@@ -132,16 +132,17 @@ export default class InputForm extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      earningsCode: Yup.string().when([], {
-        is: () => this.activeTab === "earnings",
+      // Deductions tab validations
+      deductionsCode: Yup.string().when([], {
+        is: () => this.activeTab === "deductions",
         then: Yup.string().required("Code is required"),
       }),
-      earningsName: Yup.string().when([], {
-        is: () => this.activeTab === "earnings",
+      deductionsName: Yup.string().when([], {
+        is: () => this.activeTab === "deductions",
         then: Yup.string().required("Name is required"),
       }),
-      earningCategory: Yup.string().when([], {
-        is: () => this.activeTab === "earnings",
+      deductionsCategory: Yup.string().when([], {
+        is: () => this.activeTab === "deductions",
         then: Yup.string().required("Category is required"),
       }),
     });

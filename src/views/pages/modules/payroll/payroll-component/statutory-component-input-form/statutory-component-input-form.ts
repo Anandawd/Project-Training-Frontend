@@ -42,21 +42,16 @@ export default class InputForm extends Vue {
     { code: 4, name: ",0.000;-,0.000" },
   ];
 
-  earningCategoryOptions: any = [
+  typeOptions: any = [
     {
-      SubGroupName: "Earning Category",
-      code: "EC01",
-      name: "Fix Allowance",
+      SubGroupName: "Type",
+      code: "T01",
+      name: "Earnings",
     },
     {
-      SubGroupName: "Earning Category",
-      code: "EC02",
-      name: "Variable Allowance",
-    },
-    {
-      SubGroupName: "Earning Category",
-      code: "EC03",
-      name: "Incentive",
+      SubGroupName: "Type",
+      code: "T02",
+      name: "Deductions",
     },
   ];
 
@@ -92,20 +87,17 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      // Earnings tab
-      earningsCode: "",
-      earningsName: "",
-      earningsDescription: "",
-      earningCategory: "",
-      earningDefaultAmount: 0,
-      earningQty: 1,
-      earningUnit: "",
-      earningTaxable: "NO",
-      earningIncludedBpjsEmplyoee: "NO",
-      earningIncludedBpjsHealth: "NO",
-      earningIncludedProrate: "NO",
-      earningsShowInPayslip: "YES",
-      earningsStatus: "A",
+      // Statutory tab
+      statutoryCode: "",
+      statutoryName: "",
+      statutoryDescription: "",
+      statutoryType: "",
+      statutoryDefaultAmount: 0,
+      statutoryQty: 1,
+      statutoryUnit: "",
+      statutoryTaxable: "NO",
+      statutoryShowInPayslip: "YES",
+      statutoryStatus: "A",
     };
   }
 
@@ -132,17 +124,18 @@ export default class InputForm extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      earningsCode: Yup.string().when([], {
-        is: () => this.activeTab === "earnings",
+      // Statutory tab validations
+      statutoryCode: Yup.string().when([], {
+        is: () => this.activeTab === "statutory",
         then: Yup.string().required("Code is required"),
       }),
-      earningsName: Yup.string().when([], {
-        is: () => this.activeTab === "earnings",
+      statutoryName: Yup.string().when([], {
+        is: () => this.activeTab === "statutory",
         then: Yup.string().required("Name is required"),
       }),
-      earningCategory: Yup.string().when([], {
-        is: () => this.activeTab === "earnings",
-        then: Yup.string().required("Category is required"),
+      statutoryType: Yup.string().when([], {
+        is: () => this.activeTab === "statutory",
+        then: Yup.string().required("Type is required"),
       }),
     });
   }

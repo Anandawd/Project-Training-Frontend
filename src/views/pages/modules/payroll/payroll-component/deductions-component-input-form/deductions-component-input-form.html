@@ -1,46 +1,45 @@
 <c-form
+  @submit="onSave"
   ref="inputFormValidation"
   :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
   class="input-form row"
   v-slot="{resetForm}"
-  @invalid-submit="onInvalidSubmit"
-  @submit="onSave"
 >
   <div class="card">
     <div class="card-header">{{title}}</div>
     <div class="card-body">
-      <!-- form -->
       <div class="row mb-3">
         <div class="col-md-4">
           <c-input
             required
             type="text"
-            name="EarningsCode"
-            id="EarningsCode"
+            name="DeductionsCode"
+            id="DeductionsCode"
             class="row mb-1"
             :label="$t('labels.payroll.payroll.code')"
-            v-model="form.earningsCode"
+            v-model="form.deductionsCode"
           />
         </div>
         <div class="col-md-4">
           <c-input
             required
             type="text"
-            name="EarningsName"
-            id="EarningsName"
+            name="DeductionsName"
+            id="DeductionsName"
             class="row mb-1"
             :label="$t('labels.payroll.payroll.name')"
-            v-model="form.earningsName"
+            v-model="form.deductionsName"
           />
         </div>
         <div class="col-md-4">
           <c-input
             type="text"
-            name="earningDescription"
-            id="earningDescription"
+            name="DeductionsDescription"
+            id="DeductionsDescription"
             class="row mb-1"
             :label="$t('labels.payroll.employee.description')"
-            v-model="form.earningsDescription"
+            v-model="form.deductionsDescription"
           />
         </div>
         <div class="col-md-4">
@@ -53,9 +52,9 @@
             name="category"
             labelName="name"
             keyName="code"
-            v-model="form.earningCategory"
+            v-model="form.deductionsCategory"
             :label="$t('labels.payroll.payroll.category')"
-            :options="earningCategoryOptions"
+            :options="deductionsCategoryOptions"
             :columnOptions="columnOptions"
           >
           </c-select>
@@ -71,7 +70,7 @@
             :label="$t('labels.payroll.payroll.defaultAmount')"
             :max="9999999999"
             :min="0"
-            v-model="form.earningDefaultAmount"
+            v-model="form.deductionsDefaultAmount"
           />
         </div>
         <div class="col-md-4">
@@ -82,8 +81,8 @@
             name="quantity"
             id="quantity"
             class="row mb-1"
-            :label="$t('labels.payroll.payroll.qty')"
-            v-model="form.earningQty"
+            :label="$t('labels.payroll.payroll.quantity')"
+            v-model="form.deductionsQty"
           />
         </div>
         <div class="col-md-4">
@@ -93,7 +92,7 @@
             id="unit"
             class="row mb-1"
             :label="$t('labels.payroll.payroll.unit')"
-            v-model="form.earningUnit"
+            v-model="form.deductionsUnit"
           />
         </div>
         <div class="col-md-4">
@@ -104,7 +103,7 @@
             name="taxable"
             labelName="name"
             keyName="code"
-            v-model="form.earningTaxable"
+            v-model="form.deductionsTaxable"
             :label="$t('labels.payroll.payroll.taxable')"
             :options="booleanOptions"
           >
@@ -118,7 +117,7 @@
             name="includedBpjsEmployee"
             labelName="name"
             keyName="code"
-            v-model="form.earningIncludedBpjsEmplyoee"
+            v-model="form.deductionsIncludedBpjsEmplyoee"
             :label="$t('labels.payroll.payroll.includedBpjsEmployee')"
             :options="booleanOptions"
           >
@@ -132,7 +131,7 @@
             name="includedBpjsHealth"
             labelName="name"
             keyName="code"
-            v-model="form.earningIncludedBpjsHealth"
+            v-model="form.deductionsIncludedBpjsHealth"
             :label="$t('labels.payroll.payroll.includedBpjsHealth')"
             :options="booleanOptions"
           >
@@ -146,7 +145,7 @@
             name="includedProrate"
             labelName="name"
             keyName="code"
-            v-model="form.earningIncludedProrate"
+            v-model="form.deductionsIncludedProrate"
             :label="$t('labels.payroll.payroll.includedProrate')"
             :options="booleanOptions"
           >
@@ -160,7 +159,7 @@
             name="showInPayslip"
             labelName="name"
             keyName="code"
-            v-model="form.earningsShowInPayslip"
+            v-model="form.deductionsShowInPayslip"
             :label="$t('labels.payroll.payroll.showInPayslip')"
             :options="booleanOptions"
           >
@@ -179,20 +178,19 @@
               <c-radio
                 class="me-3"
                 :label="$t('labels.active')"
-                v-model="form.earningsStatus"
+                v-model="form.deductionsStatus"
                 :value="A"
               ></c-radio>
               <c-radio
                 class="me-3"
                 :label="$t('labels.inactive')"
-                v-model="form.earningsStatus"
+                v-model="form.deductionsStatus"
                 value="I"
               ></c-radio>
             </div>
           </div>
         </div>
       </div>
-
       <!-- buttons -->
       <div class="d-flex justify-content-end mt-2">
         <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">

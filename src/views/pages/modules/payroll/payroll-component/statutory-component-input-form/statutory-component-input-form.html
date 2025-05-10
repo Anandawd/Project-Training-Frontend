@@ -1,62 +1,58 @@
 <c-form
+  @submit="onSave"
   ref="inputFormValidation"
   :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
   class="input-form row"
   v-slot="{resetForm}"
-  @invalid-submit="onInvalidSubmit"
-  @submit="onSave"
 >
   <div class="card">
     <div class="card-header">{{title}}</div>
     <div class="card-body">
-      <!-- form -->
       <div class="row mb-3">
         <div class="col-md-4">
           <c-input
             required
             type="text"
-            name="EarningsCode"
-            id="EarningsCode"
+            name="StatutoryCode"
+            id="StatutoryCode"
             class="row mb-1"
             :label="$t('labels.payroll.payroll.code')"
-            v-model="form.earningsCode"
+            v-model="form.statutoryCode"
           />
         </div>
         <div class="col-md-4">
           <c-input
             required
             type="text"
-            name="EarningsName"
-            id="EarningsName"
+            name="StatutoryName"
+            id="StatutoryName"
             class="row mb-1"
             :label="$t('labels.payroll.payroll.name')"
-            v-model="form.earningsName"
+            v-model="form.statutoryName"
           />
         </div>
         <div class="col-md-4">
           <c-input
             type="text"
-            name="earningDescription"
-            id="earningDescription"
+            name="StatutoryDescription"
+            id="StatutoryDescription"
             class="row mb-1"
             :label="$t('labels.payroll.employee.description')"
-            v-model="form.earningsDescription"
+            v-model="form.statutoryDescription"
           />
         </div>
         <div class="col-md-4">
           <c-select
-            filter
             required
             offset="right"
-            selectType="column"
             class="row mb-1"
-            name="category"
+            name="type"
             labelName="name"
             keyName="code"
-            v-model="form.earningCategory"
-            :label="$t('labels.payroll.payroll.category')"
-            :options="earningCategoryOptions"
-            :columnOptions="columnOptions"
+            v-model="form.statutoryType"
+            :label="$t('labels.payroll.payroll.type')"
+            :options="typeOptions"
           >
           </c-select>
         </div>
@@ -71,7 +67,7 @@
             :label="$t('labels.payroll.payroll.defaultAmount')"
             :max="9999999999"
             :min="0"
-            v-model="form.earningDefaultAmount"
+            v-model="form.statutoryDefaultAmount"
           />
         </div>
         <div class="col-md-4">
@@ -82,8 +78,8 @@
             name="quantity"
             id="quantity"
             class="row mb-1"
-            :label="$t('labels.payroll.payroll.qty')"
-            v-model="form.earningQty"
+            :label="$t('labels.payroll.payroll.quantity')"
+            v-model="form.statutoryQty"
           />
         </div>
         <div class="col-md-4">
@@ -93,7 +89,7 @@
             id="unit"
             class="row mb-1"
             :label="$t('labels.payroll.payroll.unit')"
-            v-model="form.earningUnit"
+            v-model="form.statutoryUnit"
           />
         </div>
         <div class="col-md-4">
@@ -104,36 +100,8 @@
             name="taxable"
             labelName="name"
             keyName="code"
-            v-model="form.earningTaxable"
+            v-model="form.statutoryTaxable"
             :label="$t('labels.payroll.payroll.taxable')"
-            :options="booleanOptions"
-          >
-          </c-select>
-        </div>
-        <div class="col-md-4">
-          <c-select
-            required
-            offset="right"
-            class="row mb-1"
-            name="includedBpjsEmployee"
-            labelName="name"
-            keyName="code"
-            v-model="form.earningIncludedBpjsEmplyoee"
-            :label="$t('labels.payroll.payroll.includedBpjsEmployee')"
-            :options="booleanOptions"
-          >
-          </c-select>
-        </div>
-        <div class="col-md-4">
-          <c-select
-            required
-            offset="right"
-            class="row mb-1"
-            name="includedBpjsHealth"
-            labelName="name"
-            keyName="code"
-            v-model="form.earningIncludedBpjsHealth"
-            :label="$t('labels.payroll.payroll.includedBpjsHealth')"
             :options="booleanOptions"
           >
           </c-select>
@@ -146,7 +114,7 @@
             name="includedProrate"
             labelName="name"
             keyName="code"
-            v-model="form.earningIncludedProrate"
+            v-model="form.statutoryIncludedProrate"
             :label="$t('labels.payroll.payroll.includedProrate')"
             :options="booleanOptions"
           >
@@ -160,7 +128,7 @@
             name="showInPayslip"
             labelName="name"
             keyName="code"
-            v-model="form.earningsShowInPayslip"
+            v-model="form.statutoryShowInPayslip"
             :label="$t('labels.payroll.payroll.showInPayslip')"
             :options="booleanOptions"
           >
@@ -179,20 +147,19 @@
               <c-radio
                 class="me-3"
                 :label="$t('labels.active')"
-                v-model="form.earningsStatus"
+                v-model="form.statutoryStatus"
                 :value="A"
               ></c-radio>
               <c-radio
                 class="me-3"
                 :label="$t('labels.inactive')"
-                v-model="form.earningsStatus"
+                v-model="form.statutoryStatus"
                 value="I"
               ></c-radio>
             </div>
           </div>
         </div>
       </div>
-
       <!-- buttons -->
       <div class="d-flex justify-content-end mt-2">
         <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">

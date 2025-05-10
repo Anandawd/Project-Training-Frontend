@@ -1,0 +1,98 @@
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">{{title}}</div>
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <c-input
+            required
+            type="text"
+            name="CategoryCode"
+            id="CategoryCode"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.category')"
+            v-model="form.categoryCode"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            type="text"
+            name="CategoryName"
+            id="CategoryName"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.name')"
+            v-model="form.categoryName"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            type="text"
+            name="CategoryDescription"
+            id="CategoryDescription"
+            class="row mb-1"
+            :label="$t('labels.payroll.employee.description')"
+            v-model="form.categoryDescription"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            name="type"
+            labelName="name"
+            keyName="code"
+            v-model="form.categoryType"
+            :label="$t('labels.payroll.payroll.type')"
+            :options="typeOptions"
+          >
+          </c-select>
+        </div>
+        <div class="col-md-4 mb-sm-1">
+          <div class="row">
+            <div class="col-sm-3">
+              <label
+                class="form-label"
+                style="font-size: 12px; font-weight: 700; color: red"
+                >{{$t('labels.status')}}</label
+              >
+            </div>
+            <div class="col-sm-9 d-flex align-items-center p-0">
+              <c-radio
+                class="me-3"
+                :label="$t('labels.active')"
+                v-model="form.categoryStatus"
+                :value="A"
+              ></c-radio>
+              <c-radio
+                class="me-3"
+                :label="$t('labels.inactive')"
+                v-model="form.categoryStatus"
+                value="I"
+              ></c-radio>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- buttons -->
+      <div class="d-flex justify-content-end mt-2">
+        <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.close')}}
+        </button>
+        <button type="button" class="btn btn-primary px-3" @click="onSubmit">
+          <i class="fa fa-save"></i>
+          {{$t('buttons.save')}}
+        </button>
+      </div>
+    </div>
+  </div>
+</c-form>

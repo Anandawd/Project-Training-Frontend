@@ -6,7 +6,7 @@
         title="Insert Earnings"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('', $global.modePayroll.insertEarnings)"
+        @click="handleShowForm('earnings', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insertEarnings') }}
@@ -15,7 +15,7 @@
         title="Insert Deductions"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('', $global.modePayroll.insertDeductions)"
+        @click="handleShowForm('deductions', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insertDeductions') }}
@@ -24,7 +24,7 @@
         title="Insert Statutory"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('', $global.modePayroll.insertStatutory)"
+        @click="handleShowForm('statutory', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insertStatutory') }}
@@ -33,7 +33,7 @@
         title="Insert Category"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('', $global.modePayroll.insertCategory)"
+        @click="handleShowForm('category', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insertCategory') }}
@@ -42,23 +42,34 @@
 
     <!-- insert form -->
     <transition name="fade">
-      <c-input-form
+      <earnings-input-form
         class="px-2"
         ref="inputFormElement"
-        v-show="showForm"
-        :schema="schema"
+        v-if="showForm && formType === 'earnings'"
         :modeData="modeData"
         @save="handleSave"
         @close="showForm=false"
       />
-    </transition>
-
-    <transition name="fade">
-      <earnings-input-form
+      <deductions-input-form
         class="px-2"
         ref="inputFormElement"
-        v-show="showForm"
-        :schema="schema"
+        v-else-if="showForm && formType === 'deductions'"
+        :modeData="modeData"
+        @save="handleSave"
+        @close="showForm=false"
+      />
+      <statutory-input-form
+        class="px-2"
+        ref="inputFormElement"
+        v-else-if="showForm && formType === 'statutory'"
+        :modeData="modeData"
+        @save="handleSave"
+        @close="showForm=false"
+      />
+      <category-input-form
+        class="px-2"
+        ref="inputFormElement"
+        v-else-if="showForm && formType === 'category'"
         :modeData="modeData"
         @save="handleSave"
         @close="showForm=false"
