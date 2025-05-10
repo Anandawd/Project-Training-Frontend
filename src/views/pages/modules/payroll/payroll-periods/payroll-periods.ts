@@ -146,6 +146,19 @@ export default class Employee extends Vue {
         icon: generateIconContextMenuAgGrid("detail_icon24"),
         action: () => this.handleShowDetail("", $global.modePayroll.detail),
       },
+      "separator",
+      {
+        name: this.$t("commons.contextMenu.downloadBulkPayslip"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("download_icon24"),
+        // action: () => this.handleShowDetail(this.paramsData),
+      },
+      {
+        name: this.$t("commons.contextMenu.downloadBulkFormA1"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("download_icon24"),
+        // action: () => this.handleShowDetail(this.paramsData),
+      },
     ];
     return result;
   }

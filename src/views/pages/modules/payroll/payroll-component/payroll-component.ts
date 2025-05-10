@@ -1012,68 +1012,64 @@ export default class PayrollComponents extends Vue {
 
       switch (componentType) {
         case "earnings":
-          const updatedEarningsData = this.rowEarningsData.filter(
+          // Create a new array excluding the item to delete
+          this.rowEarningsData = this.rowEarningsData.filter(
             (item: any) => item.code !== params.code
           );
-          this.rowEarningsData = [...updatedEarningsData];
 
+          console.info("rowEarningsData", this.rowEarningsData);
+          console.info("earningsGridApi", this.earningsGridApi);
+
+          // Update the grid with the new data
           if (this.earningsGridApi) {
-            this.earningsGridApi.setRowData([...this.rowEarningsData]);
-            setTimeout(() => {
-              this.earningsGridApi.redrawRows();
-            }, 100);
+            this.earningsGridApi.setRowData(this.rowEarningsData);
           }
-          console.log("rowEarningsData setelah delete", this.rowEarningsData);
           deleted = true;
           break;
+
         case "deductions":
-          const updatedDeductionsData = this.rowDeductionsData.filter(
+          this.rowDeductionsData = this.rowDeductionsData.filter(
             (item: any) => item.code !== params.code
           );
-          this.rowDeductionsData = [...updatedDeductionsData];
 
           if (this.deductionsGridApi) {
             this.deductionsGridApi.setRowData(this.rowDeductionsData);
-            setTimeout(() => {
-              this.deductionsGridApi.redrawRows();
-            }, 50);
           }
           deleted = true;
           break;
 
         case "statutory":
-          const updatedStatutoryData = this.rowStatutoryData.filter(
+          this.rowStatutoryData = this.rowStatutoryData.filter(
             (item: any) => item.code !== params.code
           );
-          this.rowStatutoryData = [...updatedStatutoryData];
 
           if (this.statutoryGridApi) {
             this.statutoryGridApi.setRowData(this.rowStatutoryData);
-            setTimeout(() => {
-              this.statutoryGridApi.redrawRows();
-            }, 50);
           }
           deleted = true;
           break;
 
         case "category":
-          const updatedCategoryData = this.rowCategoryData.filter(
+          this.rowCategoryData = this.rowCategoryData.filter(
             (item: any) => item.code !== params.code
           );
-          this.rowCategoryData = [...updatedCategoryData];
 
           if (this.categoryGridApi) {
             this.categoryGridApi.setRowData(this.rowCategoryData);
-            setTimeout(() => {
-              this.categoryGridApi.redrawRows();
-            }, 50);
           }
-          deleted = true;
           break;
       }
 
       if (deleted) {
-        this.refreshGrid(componentType);
+        // Force a grid redraw after a short delay
+        setTimeout(() => {
+          const gridApi = this.getRelevantGridApi(componentType);
+          if (gridApi) {
+            gridApi.refreshCells();
+            gridApi.redrawRows();
+          }
+        }, 100);
+
         getToastSuccess(
           this.$t("messages.deleteSuccess") ||
             `${componentType} component deleted successfully`
@@ -1088,6 +1084,7 @@ export default class PayrollComponents extends Vue {
       return false;
     }
   }
+
   formatEarningsData(formData: any) {
     return {
       code: formData.earningsCode,

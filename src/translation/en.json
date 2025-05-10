@@ -7,8 +7,10 @@
         "employeeManagement": "Employee Management",
         "employeeList": "Employee List",
         "employeeDocument": "Employee Document",
+        "legalDocument": "Legal Document",
         "organization": "Organization",
         "salaryHistory": "Salary History",
+        "salaryAdjustment": "Salary  Adjustment",
         "personalInformation": "Personal Information",
         "employeeInformation": "Employee Information",
         "financialInformation": "Financial Information",
@@ -107,6 +109,9 @@
       },
       "payroll": {
         "payroll": "Payroll",
+        "periods": "Periods",
+        "approvals": "Approvals",
+        "disbursement": "Disbursement",
         "payrollPeriods": "Payroll Periods",
         "payrollComponents": "Payroll Components",
         "payrollApprovals": "Payroll Approvals",
@@ -1647,6 +1652,8 @@
     "employeeDocument": "Employee Document",
     "organization": "Organization",
     "salaryHistory": "Salary History",
+    "salaryAdjustment": "Salary Adjustment",
+    "legalDocument": "Legal Document",
     "attendanceAndLeave": "Attendance & Leave",
     "attendance": "Attendance",
     "attendanceSummary": "Attendance Summary",
@@ -1658,6 +1665,9 @@
     "week": "Week",
     "holidayCalender": "Holiday Calender",
     "payroll": "Payroll",
+    "periods": "Periods",
+    "approvals": "Approvals",
+    "disbursement": "Disbursement",
     "payrollPeriods": "Payroll Periods",
     "periodDetail": "Period Detail",
     "periodSummary": "Period Summary",
@@ -1679,6 +1689,8 @@
     "payrollApprovals": "Payroll Approvals",
     "payrollDisbursement": "Payroll Disbursement",
     "disbursementDetail": "Disbursement Detail",
+    "periodsDetail": "Periods Detail",
+    "disbursementProcess": "Disbursement Process",
     "payrollDisbursementDetail": "Payroll Disbursement Detail",
     "employeePaymentDetails": "Employee Payment Details",
     "bankSummary": "Bank Summary",
@@ -2594,7 +2606,8 @@
     "insertEarnings": "Insert Earnings",
     "insertDeductions": "Insert Deductions",
     "insertStatutory": "Insert Statutory",
-    "insertCategory": "Insert Category"
+    "insertCategory": "Insert Category",
+    "insertAdjustment": "Insert Adjustment"
   },
   "languages": {
     "english": "English",
@@ -3962,7 +3975,9 @@
       "export": "Export",
       "remark": "Remark",
       "setProcessing": "Set Processing",
-      "setCompleted": "Set Completed"
+      "setCompleted": "Set Completed",
+      "downloadBulkPayslip": "Download Bulk Payslip",
+      "downloadBulkFormA1": "Download Bulk Form 1721 A1"
     },
     "menu": {
       "trackingData": "Tracking Data",

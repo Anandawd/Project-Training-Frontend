@@ -622,10 +622,6 @@ export default class Employee extends Vue {
     }
   }
 
-  refreshData(search: any) {
-    // this.loadDataGrid(search);
-  }
-
   async handleSubmitForApproval() {
     if (this.rowData.length === 0) {
       getToastError(
