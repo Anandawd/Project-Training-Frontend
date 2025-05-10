@@ -3037,7 +3037,11 @@
           "includedProrate": "Included in Prorate",
           "bpjsKesehatan": "BPJS Kesehatan",
           "bpjsTk": "BPJS TK",
-          "prorata": "Prorata"
+          "prorata": "Prorata",
+          "earningsComponent": "Earnings Component",
+          "deductionsComponent": "Deductions Component",
+          "statutoryComponent": "Statutory Component",
+          "categoryComponent": "Category Component"
         },
         "attendance": {
           "date": "Date",

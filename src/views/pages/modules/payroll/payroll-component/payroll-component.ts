@@ -42,6 +42,11 @@ export default class PayrollComponents extends Vue {
   public inputFormElement: any = ref();
   public formType: any;
 
+  public earningsFormElement: any = ref();
+  public deductionsFormElement: any = ref();
+  public statutoryFormElement: any = ref();
+  public categoryFormElement: any = ref();
+
   // dialog
   public showDialog: boolean = false;
   public dialogAction: string = "";
@@ -386,19 +391,37 @@ export default class PayrollComponents extends Vue {
       this.paramsData = null;
     }
 
+    let componentType = "";
+    const activeTabId = document.querySelector(
+      ".nav-tabs .nav-link.active"
+    )?.id;
+
+    if (activeTabId) {
+      if (activeTabId === "earnings-tab") componentType = "earnings";
+      else if (activeTabId === "deductions-tab") componentType = "deductions";
+      else if (activeTabId === "statutory-tab") componentType = "statutory";
+      else if (activeTabId === "category-tab") componentType = "category";
+    }
+
+    console.info("componentType di Context", componentType);
+
     const result = [
       {
         name: this.$t("commons.contextMenu.update"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () =>
-          this.handleShowForm(this.paramsData, $global.modeData.edit),
+          this.handleShowForm(
+            componentType,
+            $global.modeData.edit,
+            this.paramsData
+          ),
       },
       {
         name: this.$t("commons.contextMenu.delete"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("delete_icon24"),
-        action: () => this.handleDelete(this.paramsData),
+        action: () => this.handleDelete({ ...this.paramsData, componentType }),
       },
     ];
     return result;
@@ -435,7 +458,7 @@ export default class PayrollComponents extends Vue {
 
     switch (this.dialogAction) {
       case $global.dialogActions.delete:
-        this.deleteData(this.paramsData);
+        this.deleteData(this.dialogParams);
         break;
       default:
         console.warn("Unsupported dialog action:", this.dialogAction);
@@ -448,37 +471,71 @@ export default class PayrollComponents extends Vue {
     // this.inputFormElement.initialize();
     this.modeData = mode;
     this.formType = formType;
+    this.showForm = false;
+    this.$nextTick(() => {
+      this.showForm = true;
 
-    if (mode === $global.modeData.edit && params) {
-      console.info("Editing component:", params);
-      this.$nextTick(() => {
-        this.populateForm(formType, params);
-      });
-    } else if (mode === $global.modeData.insert) {
-      this.$nextTick(() => {
-        if (this.inputFormElement && this.inputFormElement.resetForm) {
-          this.inputFormElement.resetForm();
-        }
-      });
-    }
-    this.showForm = true;
+      if (mode === $global.modeData.edit && params) {
+        console.info("Editing component:", params);
+        this.$nextTick(() => {
+          this.populateForm(formType, params);
+        });
+      } else if (mode === $global.modeData.insert) {
+        this.$nextTick(() => {
+          const formElement = this.getFormElementByType(formType);
+          if (formElement && formElement.resetForm) {
+            formElement.resetForm();
+          }
+        });
+      }
+    });
   }
 
   handleSave(formData: any) {
+    let componentType = "";
+    if (formData.earningsCode !== undefined) {
+      componentType = "earnings";
+    } else if (formData.deductionsCode !== undefined) {
+      componentType = "deductions";
+    } else if (formData.statutoryCode !== undefined) {
+      componentType = "statutory";
+    } else if (formData.categoryCode !== undefined) {
+      componentType = "category";
+    }
+
     if (this.modeData === $global.modeData.insert) {
-      this.saveData(formData);
+      this.saveData(formData, componentType);
     } else if (this.modeData === $global.modeData.edit) {
-      this.updateData(formData);
+      this.updateData(formData, componentType);
     }
   }
 
   handleDelete(params: any) {
+    const componentType = params.componentType;
+
+    console.info("componentType di handleDelete", componentType);
+
     this.showConfirmationDialog(
       $global.dialogActions.delete,
       "Confirm Delete",
-      "Are you sure you want to delete this component?",
-      params
+      `Are you sure you want to delete this ${componentType} component?`,
+      { ...params, componentType }
     );
+  }
+
+  getFormElementByType(type: string): any {
+    switch (type) {
+      case "earnings":
+        return this.earningsFormElement;
+      case "deductions":
+        return this.deductionsFormElement;
+      case "statutory":
+        return this.statutoryFormElement;
+      case "category":
+        return this.categoryFormElement;
+      default:
+        return null;
+    }
   }
 
   // API FUNCTION
@@ -807,9 +864,22 @@ export default class PayrollComponents extends Vue {
     }
   }
 
-  async saveData(formData: any) {
+  async saveData(formData: any, componentType: string) {
     try {
-      // For mock demo purposes
+      switch (componentType) {
+        case "earnings":
+          this.rowEarningsData.push(this.formatEarningsData(formData));
+          break;
+        case "deductions":
+          // this.rowDeductionsData.push(this.formatDeductionsData(formData));
+          break;
+        case "statutory":
+          // this.rowStatutoryData.push(this.formatStatutoryData(formData));
+          break;
+        case "category":
+          // this.rowCategoryData.push(this.formatCategoryData(formData));
+          break;
+      }
       getToastSuccess(
         this.$t("messages.saveSuccess") || "Data saved successfully"
       );
@@ -819,7 +889,7 @@ export default class PayrollComponents extends Vue {
     }
   }
 
-  async updateData(formData: any) {
+  async updateData(formData: any, componentType: string) {
     try {
       // For mock demo purposes
       getToastSuccess(
@@ -835,18 +905,64 @@ export default class PayrollComponents extends Vue {
         getToastError("Invalid component to delete");
         return false;
       }
-
-      getToastSuccess(
-        this.$t("messages.deleteSuccess") || "Data deleted successfully"
-      );
+      const componentType = params.componentType || "component";
+      console.info("componentType di deleteData", params.componentType);
 
       let deleted = false;
-      if (!deleted) {
-        getToastError("Could not find component to delete");
+
+      // Refresh the grid
+      if (this.gridApi) {
+        this.gridApi.refreshCells();
+      }
+
+      switch (componentType) {
+        case "earnings":
+          const earningsIndex = this.rowEarningsData.findIndex(
+            (item: any) => item.code === params.code
+          );
+          if (earningsIndex !== -1) {
+            this.rowEarningsData.splice(earningsIndex, 1);
+          }
+          break;
+        case "deductions":
+          const deductionsIndex = this.rowDeductionsData.findIndex(
+            (item: any) => item.code === params.code
+          );
+          if (deductionsIndex !== -1) {
+            this.rowDeductionsData.splice(deductionsIndex, 1);
+            deleted = true;
+          }
+          break;
+        case "statutory":
+          const statutoryIndex = this.rowStatutoryData.findIndex(
+            (item: any) => item.code === params.code
+          );
+          if (statutoryIndex !== -1) {
+            this.rowStatutoryData.splice(statutoryIndex, 1);
+            deleted = true;
+          }
+          break;
+        case "category":
+          const categoryIndex = this.rowCategoryData.findIndex(
+            (item: any) => item.code === params.code
+          );
+          if (categoryIndex !== -1) {
+            this.rowCategoryData.splice(categoryIndex, 1);
+            deleted = true;
+          }
+          break;
+      }
+
+      if (deleted) {
+        getToastSuccess(
+          this.$t("messages.deleteSuccess") ||
+            `${componentType} component deleted successfully`
+        );
+      } else {
+        getToastError(`Could not find ${componentType} component to delete`);
         return false;
       }
 
-      // Refresh the grid
       if (this.gridApi) {
         this.gridApi.refreshCells();
       }
@@ -858,12 +974,31 @@ export default class PayrollComponents extends Vue {
     }
   }
 
+  formatEarningsData(formData: any) {
+    return {
+      code: formData.earningsCode,
+      name: formData.earningsName,
+      description: formData.earningsDescription,
+      category: formData.earningCategory,
+      default_amount: formData.earningDefaultAmount,
+      quantity: formData.earningQty,
+      unit: formData.earningUnit,
+      taxable: formData.earningTaxable === "YES",
+      included_bpjs_health: formData.earningIncludedBpjsHealth === "YES",
+      included_bpjs_employee: formData.earningIncludedBpjsEmplyoee === "YES",
+      included_prorate: formData.earningIncludedProrate === "YES",
+      show_in_payslip: formData.earningsShowInPayslip === "YES",
+      active: formData.earningsStatus === "A",
+    };
+  }
+
   populateForm(formType: string, data: any) {
-    if (!this.inputFormElement) return;
+    const formElement = this.getFormElementByType(formType);
+    if (!formElement) return;
 
     switch (formType) {
       case "earnings":
-        this.inputFormElement.form = {
+        formElement.form = {
           earningsCode: data.code || "",
           earningsName: data.name || "",
           earningsDescription: data.description || "",
@@ -882,7 +1017,7 @@ export default class PayrollComponents extends Vue {
         };
         break;
       case "deductions":
-        this.inputFormElement.form = {
+        formElement.form = {
           deductionsCode: data.code || "",
           deductionsName: data.name || "",
           deductionsDescription: data.description || "",
@@ -903,7 +1038,7 @@ export default class PayrollComponents extends Vue {
         };
         break;
       case "statutory":
-        this.inputFormElement.form = {
+        formElement.form = {
           statutoryCode: data.code || "",
           statutoryName: data.name || "",
           statutoryDescription: data.description || "",
@@ -917,7 +1052,7 @@ export default class PayrollComponents extends Vue {
         };
         break;
       case "category":
-        this.inputFormElement.form = {
+        formElement.form = {
           categoryCode: data.code || "",
           categoryName: data.name || "",
           categoryDescription: data.description || "",
@@ -926,7 +1061,40 @@ export default class PayrollComponents extends Vue {
         };
         break;
     }
-    this.inputFormElement.form.id = data.id;
+    formElement.form.id = data.id;
+  }
+
+  getCurrentFormComponent() {
+    switch (this.formType) {
+      case "earnings":
+        return EarningsInputForm;
+      case "deductions":
+        return DeductionsInputForm;
+      case "statutory":
+        return StatutoryInputForm;
+      case "category":
+        return CategoryInputForm;
+      default:
+        return null;
+    }
+  }
+
+  getCurrentFormRef(el: any) {
+    if (!el) return;
+    switch (this.formType) {
+      case "earnings":
+        this.earningsFormElement = el;
+        break;
+      case "deductions":
+        this.deductionsFormElement = el;
+        break;
+      case "statutory":
+        this.statutoryFormElement = el;
+        break;
+      case "category":
+        this.categoryFormElement = el;
+        break;
+    }
   }
 
   // GETTER AND SETTER

@@ -136,11 +136,11 @@ export default class InputForm extends Vue {
   get title() {
     if (this.modeData === $global.modeData.insert) {
       return `${this.$t("commons.insert")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
+        "commons.table.payroll.payroll.categoryComponent"
       )}`;
     } else if (this.modeData === $global.modeData.edit) {
       return `${this.$t("commons.update")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
+        "commons.table.payroll.payroll.categoryComponent"
       )}`;
     }
   }

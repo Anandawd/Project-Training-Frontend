@@ -41,35 +41,12 @@
     </div>
 
     <!-- insert form -->
-    <transition name="fade">
-      <earnings-input-form
+    <transition name="fade" mode="out-in">
+      <component
         class="px-2"
-        ref="inputFormElement"
-        v-if="showForm && formType === 'earnings'"
-        :modeData="modeData"
-        @save="handleSave"
-        @close="showForm=false"
-      />
-      <deductions-input-form
-        class="px-2"
-        ref="inputFormElement"
-        v-else-if="showForm && formType === 'deductions'"
-        :modeData="modeData"
-        @save="handleSave"
-        @close="showForm=false"
-      />
-      <statutory-input-form
-        class="px-2"
-        ref="inputFormElement"
-        v-else-if="showForm && formType === 'statutory'"
-        :modeData="modeData"
-        @save="handleSave"
-        @close="showForm=false"
-      />
-      <category-input-form
-        class="px-2"
-        ref="inputFormElement"
-        v-else-if="showForm && formType === 'category'"
+        :is="getCurrentFormComponent()"
+        :ref="getCurrentFormRef"
+        v-if="showForm"
         :modeData="modeData"
         @save="handleSave"
         @close="showForm=false"
