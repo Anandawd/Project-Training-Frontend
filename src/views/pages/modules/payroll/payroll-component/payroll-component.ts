@@ -98,6 +98,7 @@ export default class PayrollComponents extends Vue {
       });
     });
   }
+
   beforeMount(): void {
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
@@ -559,7 +560,7 @@ export default class PayrollComponents extends Vue {
     }
   }
 
-  handleDelete(params: any) {
+  async handleDelete(params: any) {
     if (!params) return;
 
     console.info("componentType di handleDelete", params.componentType);
@@ -587,10 +588,13 @@ export default class PayrollComponents extends Vue {
     }
   }
 
+  refreshData(search: any) {
+    // this.loadDataGrid(search);
+  }
+
   // API FUNCTION
   async loadData() {
     try {
-      // In a real implementation, fetch data from API
       // const { data: earningsData } = await this.payrollComponentAPI.getPayrollComponentList({ type: 'Earnings' });
       // const { data: deductionsData } = await this.payrollComponentAPI.getPayrollComponentList({ type: 'Deductions' });
       // const { data: statutoryData } = await this.payrollComponentAPI.getPayrollComponentList({ type: 'Statutory' });
@@ -978,7 +982,7 @@ export default class PayrollComponents extends Vue {
               ...this.rowEarningsData.slice(earningsIndex + 1),
             ];
             if (this.earningsGridApi) {
-              this.earningsGridApi.setRowData(this.rowEarningsData);
+              this.earningsGridApi.setRowData([...this.rowEarningsData]);
             }
             updated = true;
           }
@@ -1005,56 +1009,71 @@ export default class PayrollComponents extends Vue {
 
       const componentType = params.componentType;
       let deleted = false;
-      let updatedData = [];
 
       switch (componentType) {
         case "earnings":
-          updatedData = this.rowEarningsData.filter(
+          const updatedEarningsData = this.rowEarningsData.filter(
             (item: any) => item.code !== params.code
           );
-          this.rowEarningsData = updatedData;
+          this.rowEarningsData = [...updatedEarningsData];
+
           if (this.earningsGridApi) {
-            this.earningsGridApi.setRowData(updatedData);
+            this.earningsGridApi.setRowData([...this.rowEarningsData]);
+            setTimeout(() => {
+              this.earningsGridApi.redrawRows();
+            }, 100);
           }
-          deleted = true;
           console.log("rowEarningsData setelah delete", this.rowEarningsData);
+          deleted = true;
           break;
         case "deductions":
-          updatedData = this.rowDeductionsData.filter(
+          const updatedDeductionsData = this.rowDeductionsData.filter(
             (item: any) => item.code !== params.code
           );
-          this.rowDeductionsData = updatedData;
+          this.rowDeductionsData = [...updatedDeductionsData];
 
           if (this.deductionsGridApi) {
-            this.deductionsGridApi.setRowData(updatedData);
+            this.deductionsGridApi.setRowData(this.rowDeductionsData);
+            setTimeout(() => {
+              this.deductionsGridApi.redrawRows();
+            }, 50);
           }
           deleted = true;
           break;
+
         case "statutory":
-          updatedData = this.rowStatutoryData.filter(
+          const updatedStatutoryData = this.rowStatutoryData.filter(
             (item: any) => item.code !== params.code
           );
-          this.rowStatutoryData = updatedData;
+          this.rowStatutoryData = [...updatedStatutoryData];
 
           if (this.statutoryGridApi) {
-            this.statutoryGridApi.setRowData(updatedData);
+            this.statutoryGridApi.setRowData(this.rowStatutoryData);
+            setTimeout(() => {
+              this.statutoryGridApi.redrawRows();
+            }, 50);
           }
           deleted = true;
           break;
+
         case "category":
-          updatedData = this.rowCategoryData.filter(
+          const updatedCategoryData = this.rowCategoryData.filter(
             (item: any) => item.code !== params.code
           );
-          this.rowCategoryData = updatedData;
+          this.rowCategoryData = [...updatedCategoryData];
 
           if (this.categoryGridApi) {
-            this.categoryGridApi.setRowData(updatedData);
+            this.categoryGridApi.setRowData(this.rowCategoryData);
+            setTimeout(() => {
+              this.categoryGridApi.redrawRows();
+            }, 50);
           }
           deleted = true;
           break;
       }
 
       if (deleted) {
+        this.refreshGrid(componentType);
         getToastSuccess(
           this.$t("messages.deleteSuccess") ||
             `${componentType} component deleted successfully`
@@ -1069,7 +1088,6 @@ export default class PayrollComponents extends Vue {
       return false;
     }
   }
-
   formatEarningsData(formData: any) {
     return {
       code: formData.earningsCode,
@@ -1266,43 +1284,9 @@ export default class PayrollComponents extends Vue {
     }
   }
 
-  updateActiveTab(tabId: string) {
-    if (tabId === "earnings-tab") {
-      this.gridApi = this.earningsGridApi;
-    } else if (tabId === "deductions-tab") {
-      this.gridApi = this.deductionsGridApi;
-    } else if (tabId === "statutory-tab") {
-      this.gridApi = this.statutoryGridApi;
-    } else if (tabId === "category-tab") {
-      this.gridApi = this.categoryGridApi;
-    }
-  }
-
-  validateNewComponent(componentType: string, code: string) {
-    let exists = false;
-
-    switch (componentType) {
-      case "earnings":
-        exists = this.rowEarningsData.some((item: any) => item.code === code);
-        break;
-      case "deductions":
-        exists = this.rowDeductionsData.some((item: any) => item.code === code);
-        break;
-      case "statutory":
-        exists = this.rowStatutoryData.some((item: any) => item.code === code);
-        break;
-      case "category":
-        exists = this.rowCategoryData.some((item: any) => item.code === code);
-        break;
-    }
-
-    return !exists;
-  }
-
   setActiveTab(tab: string) {
     this.activeTab = tab;
 
-    // Update relevant grid API
     this.gridApi = this.getRelevantGridApi(tab);
   }
 
