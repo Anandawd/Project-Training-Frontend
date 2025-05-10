@@ -72,6 +72,11 @@ export default class PayrollComponents extends Vue {
   ColumnApi: any;
   agGridSetting: any;
 
+  earningsGridApi: any;
+  deductionsGridApi: any;
+  statutoryGridApi: any;
+  categoryGridApi: any;
+
   // LIFECYCLE HOOKS
   created(): void {
     this.loadMockData();
@@ -376,9 +381,22 @@ export default class PayrollComponents extends Vue {
   }
 
   onGridReady(params: any) {
+    const activeTabId = document.querySelector(
+      ".nav-tabs .nav-link.active"
+    )?.id;
+
+    if (activeTabId === "earnings-tab" || !activeTabId) {
+      this.earningsGridApi = params.api;
+    } else if (activeTabId === "deductions-tab") {
+      this.deductionsGridApi = params.api;
+    } else if (activeTabId === "statutory-tab") {
+      this.statutoryGridApi = params.api;
+    } else if (activeTabId === "category-tab") {
+      this.categoryGridApi = params.api;
+    }
+
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
-
     // params.api.sizeColumnsToFit();
   }
 
@@ -868,16 +886,40 @@ export default class PayrollComponents extends Vue {
     try {
       switch (componentType) {
         case "earnings":
-          this.rowEarningsData.push(this.formatEarningsData(formData));
+          this.rowEarningsData = [
+            ...this.rowEarningsData,
+            this.formatEarningsData(formData),
+          ];
+          if (this.earningsGridApi) {
+            this.earningsGridApi.setRowData(this.rowEarningsData);
+          }
           break;
         case "deductions":
-          // this.rowDeductionsData.push(this.formatDeductionsData(formData));
+          this.rowDeductionsData = [
+            ...this.rowDeductionsData,
+            this.formatDeductionsData(formData),
+          ];
+          if (this.deductionsGridApi) {
+            this.deductionsGridApi.setRowData(this.rowDeductionsData);
+          }
           break;
         case "statutory":
-          // this.rowStatutoryData.push(this.formatStatutoryData(formData));
+          this.rowStatutoryData = [
+            ...this.rowStatutoryData,
+            this.formatStatutoryData(formData),
+          ];
+          if (this.statutoryGridApi) {
+            this.statutoryGridApi.setRowData(this.rowStatutoryData);
+          }
           break;
         case "category":
-          // this.rowCategoryData.push(this.formatCategoryData(formData));
+          this.rowCategoryData = [
+            ...this.rowCategoryData,
+            this.formatCategoryData(formData),
+          ];
+          if (this.categoryGridApi) {
+            this.categoryGridApi.setRowData(this.rowCategoryData);
+          }
           break;
       }
       getToastSuccess(
@@ -891,11 +933,37 @@ export default class PayrollComponents extends Vue {
 
   async updateData(formData: any, componentType: string) {
     try {
-      // For mock demo purposes
-      getToastSuccess(
-        this.$t("messages.saveSuccess") || "Data updated successfully"
-      );
-      this.showForm = false;
+      let updated = false;
+      switch (componentType) {
+        case "earnings":
+          const earningsIndex = this.rowEarningsData.findIndex(
+            (item: any) => item.code === formData.earningsCode
+          );
+          if (earningsIndex !== -1) {
+            const updatedData = this.formatEarningsData(formData);
+            this.rowEarningsData = [
+              ...this.rowEarningsData.slice(0, earningsIndex),
+              updatedData,
+              ...this.rowEarningsData.slice(earningsIndex + 1),
+            ];
+            if (this.earningsGridApi) {
+              this.earningsGridApi.setRowData(this.rowEarningsData);
+            }
+            updated = true;
+          }
+          break;
+        // Similarly implement for other component types
+        // ...
+      }
+
+      if (updated) {
+        getToastSuccess(`${componentType} component updated successfully`);
+        this.showForm = false;
+        return true;
+      } else {
+        getToastError(`Failed to update ${componentType} component`);
+        return false;
+      }
     } catch (error) {}
   }
 
@@ -917,7 +985,11 @@ export default class PayrollComponents extends Vue {
             (item: any) => item.code === params.code
           );
           if (earningsIndex !== -1) {
-            this.rowEarningsData.splice(earningsIndex, 1);
+            this.rowEarningsData = [
+              ...this.rowEarningsData.slice(0, earningsIndex),
+              ...this.rowEarningsData.slice(earningsIndex + 1),
+            ];
+
             deleted = true;
           }
           console.log("earnings setelah delete", this.rowEarningsData);
@@ -927,7 +999,10 @@ export default class PayrollComponents extends Vue {
             (item: any) => item.code === params.code
           );
           if (deductionsIndex !== -1) {
-            this.rowDeductionsData.splice(deductionsIndex, 1);
+            this.rowDeductionsData = [
+              ...this.rowDeductionsData.slice(0, deductionsIndex),
+              ...this.rowDeductionsData.slice(deductionsIndex + 1),
+            ];
             deleted = true;
           }
           break;
@@ -936,7 +1011,10 @@ export default class PayrollComponents extends Vue {
             (item: any) => item.code === params.code
           );
           if (statutoryIndex !== -1) {
-            this.rowStatutoryData.splice(statutoryIndex, 1);
+            this.rowStatutoryData = [
+              ...this.rowStatutoryData.slice(0, statutoryIndex),
+              ...this.rowStatutoryData.slice(statutoryIndex + 1),
+            ];
             deleted = true;
           }
           break;
@@ -945,15 +1023,19 @@ export default class PayrollComponents extends Vue {
             (item: any) => item.code === params.code
           );
           if (categoryIndex !== -1) {
-            this.rowCategoryData.splice(categoryIndex, 1);
+            this.rowCategoryData = [
+              ...this.rowCategoryData.slice(0, categoryIndex),
+              ...this.rowCategoryData.slice(categoryIndex + 1),
+            ];
             deleted = true;
           }
           break;
       }
 
       if (deleted) {
-        if (this.gridApi) {
-          this.gridApi.refreshCells();
+        const gridApiToUse = this.getRelevantGridApi(componentType);
+        if (gridApiToUse) {
+          gridApiToUse.setRowData(this.getRelevantRowData(componentType));
         }
         getToastSuccess(
           this.$t("messages.deleteSuccess") ||
@@ -985,6 +1067,49 @@ export default class PayrollComponents extends Vue {
       included_prorate: formData.earningIncludedProrate === "YES",
       show_in_payslip: formData.earningsShowInPayslip === "YES",
       active: formData.earningsStatus === "A",
+    };
+  }
+
+  formatDeductionsData(formData: any) {
+    return {
+      code: formData.deductionsCode,
+      name: formData.deductionsName,
+      description: formData.deductionsDescription,
+      category: formData.deductionsCategory,
+      default_amount: formData.deductionsDefaultAmount,
+      quantity: formData.deductionsQty,
+      unit: formData.deductionsUnit,
+      taxable: formData.deductionsTaxable === "YES",
+      included_bpjs_health: formData.deductionsIncludedBpjsHealth === "YES",
+      included_bpjs_employee: formData.deductionsIncludedBpjsEmplyoee === "YES",
+      included_prorate: formData.deductionsIncludedProrate === "YES",
+      show_in_payslip: formData.deductionsShowInPayslip === "YES",
+      active: formData.deductionsStatus === "A",
+    };
+  }
+
+  formatStatutoryData(formData: any) {
+    return {
+      code: formData.statutoryCode,
+      name: formData.statutoryName,
+      description: formData.statutoryDescription,
+      type: formData.statutoryType,
+      default_amount: formData.statutoryDefaultAmount,
+      quantity: formData.statutoryQty,
+      unit: formData.statutoryUnit,
+      taxable: formData.statutoryTaxable === "YES",
+      show_in_payslip: formData.statutoryShowInPayslip === "YES",
+      active: formData.statutoryStatus === "A",
+    };
+  }
+
+  formatCategoryData(formData: any) {
+    return {
+      code: formData.categoryCode,
+      name: formData.categoryName,
+      description: formData.categoryDescription,
+      type: formData.categoryType,
+      active: formData.categoryStatus === "A",
     };
   }
 
@@ -1090,6 +1215,36 @@ export default class PayrollComponents extends Vue {
       case "category":
         this.categoryFormElement = el;
         break;
+    }
+  }
+
+  getRelevantRowData(componentType: string) {
+    switch (componentType) {
+      case "earnings":
+        return this.rowEarningsData;
+      case "deductions":
+        return this.rowDeductionsData;
+      case "statutory":
+        return this.rowStatutoryData;
+      case "category":
+        return this.rowCategoryData;
+      default:
+        return [];
+    }
+  }
+
+  getRelevantGridApi(componentType: string) {
+    switch (componentType) {
+      case "earnings":
+        return this.earningsGridApi;
+      case "deductions":
+        return this.deductionsGridApi;
+      case "statutory":
+        return this.statutoryGridApi;
+      case "category":
+        return this.categoryGridApi;
+      default:
+        return this.gridApi;
     }
   }
 
