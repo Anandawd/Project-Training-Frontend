@@ -511,15 +511,15 @@ export default class PayrollComponents extends Vue {
   }
 
   handleDelete(params: any) {
-    const componentType = params.componentType;
+    if (!params) return;
 
-    console.info("componentType di handleDelete", componentType);
+    console.info("componentType di handleDelete", params.componentType);
 
     this.showConfirmationDialog(
       $global.dialogActions.delete,
       "Confirm Delete",
-      `Are you sure you want to delete this ${componentType} component?`,
-      { ...params, componentType }
+      `Are you sure you want to delete this ${params.componentType} component?`,
+      params
     );
   }
 
@@ -905,15 +905,11 @@ export default class PayrollComponents extends Vue {
         getToastError("Invalid component to delete");
         return false;
       }
-      const componentType = params.componentType || "component";
+
+      const componentType = params.componentType;
       console.info("componentType di deleteData", params.componentType);
 
       let deleted = false;
-
-      // Refresh the grid
-      if (this.gridApi) {
-        this.gridApi.refreshCells();
-      }
 
       switch (componentType) {
         case "earnings":
@@ -922,7 +918,9 @@ export default class PayrollComponents extends Vue {
           );
           if (earningsIndex !== -1) {
             this.rowEarningsData.splice(earningsIndex, 1);
+            deleted = true;
           }
+          console.log("earnings setelah delete", this.rowEarningsData);
           break;
         case "deductions":
           const deductionsIndex = this.rowDeductionsData.findIndex(
@@ -954,20 +952,18 @@ export default class PayrollComponents extends Vue {
       }
 
       if (deleted) {
+        if (this.gridApi) {
+          this.gridApi.refreshCells();
+        }
         getToastSuccess(
           this.$t("messages.deleteSuccess") ||
             `${componentType} component deleted successfully`
         );
+        return true;
       } else {
         getToastError(`Could not find ${componentType} component to delete`);
         return false;
       }
-
-      if (this.gridApi) {
-        this.gridApi.refreshCells();
-      }
-
-      return true;
     } catch (error) {
       getError(error);
       return false;
