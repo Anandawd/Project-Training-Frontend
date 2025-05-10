@@ -41,6 +41,7 @@ export default class PayrollComponents extends Vue {
   public form: any = {};
   public inputFormElement: any = ref();
   public formType: any;
+  public activeTab: string = "earnings";
 
   public earningsFormElement: any = ref();
   public deductionsFormElement: any = ref();
@@ -82,6 +83,21 @@ export default class PayrollComponents extends Vue {
     this.loadMockData();
   }
 
+  mounted() {
+    document.querySelectorAll(".nav-tabs .nav-link").forEach((tab) => {
+      tab.addEventListener("click", (event) => {
+        const tabId = (event.target as HTMLElement).id;
+        let tabType = "";
+
+        if (tabId === "earnings-tab") tabType = "earnings";
+        else if (tabId === "deductions-tab") tabType = "deductions";
+        else if (tabId === "statutory-tab") tabType = "statutory";
+        else if (tabId === "category-tab") tabType = "category";
+
+        this.setActiveTab(tabType);
+      });
+    });
+  }
   beforeMount(): void {
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
@@ -421,7 +437,9 @@ export default class PayrollComponents extends Vue {
       else if (activeTabId === "category-tab") componentType = "category";
     }
 
-    console.info("componentType di Context", componentType);
+    if (this.paramsData) {
+      this.paramsData.componentType = componentType;
+    }
 
     const result = [
       {
@@ -439,7 +457,7 @@ export default class PayrollComponents extends Vue {
         name: this.$t("commons.contextMenu.delete"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("delete_icon24"),
-        action: () => this.handleDelete({ ...this.paramsData, componentType }),
+        action: () => this.handleDelete(this.paramsData),
       },
     ];
     return result;
@@ -455,6 +473,19 @@ export default class PayrollComponents extends Vue {
           }
         }
       });
+    }
+  }
+
+  refreshGrid(componentType: string) {
+    const gridApi = this.getRelevantGridApi(componentType);
+    const rowData = this.getRelevantRowData(componentType);
+
+    if (gridApi) {
+      gridApi.setRowData([...rowData]);
+
+      setTimeout(() => {
+        gridApi.redrawRows();
+      }, 100);
     }
   }
 
@@ -952,8 +983,6 @@ export default class PayrollComponents extends Vue {
             updated = true;
           }
           break;
-        // Similarly implement for other component types
-        // ...
       }
 
       if (updated) {
@@ -975,68 +1004,57 @@ export default class PayrollComponents extends Vue {
       }
 
       const componentType = params.componentType;
-      console.info("componentType di deleteData", params.componentType);
-
       let deleted = false;
+      let updatedData = [];
 
       switch (componentType) {
         case "earnings":
-          const earningsIndex = this.rowEarningsData.findIndex(
-            (item: any) => item.code === params.code
+          updatedData = this.rowEarningsData.filter(
+            (item: any) => item.code !== params.code
           );
-          if (earningsIndex !== -1) {
-            this.rowEarningsData = [
-              ...this.rowEarningsData.slice(0, earningsIndex),
-              ...this.rowEarningsData.slice(earningsIndex + 1),
-            ];
-
-            deleted = true;
+          this.rowEarningsData = updatedData;
+          if (this.earningsGridApi) {
+            this.earningsGridApi.setRowData(updatedData);
           }
-          console.log("earnings setelah delete", this.rowEarningsData);
+          deleted = true;
+          console.log("rowEarningsData setelah delete", this.rowEarningsData);
           break;
         case "deductions":
-          const deductionsIndex = this.rowDeductionsData.findIndex(
-            (item: any) => item.code === params.code
+          updatedData = this.rowDeductionsData.filter(
+            (item: any) => item.code !== params.code
           );
-          if (deductionsIndex !== -1) {
-            this.rowDeductionsData = [
-              ...this.rowDeductionsData.slice(0, deductionsIndex),
-              ...this.rowDeductionsData.slice(deductionsIndex + 1),
-            ];
-            deleted = true;
+          this.rowDeductionsData = updatedData;
+
+          if (this.deductionsGridApi) {
+            this.deductionsGridApi.setRowData(updatedData);
           }
+          deleted = true;
           break;
         case "statutory":
-          const statutoryIndex = this.rowStatutoryData.findIndex(
-            (item: any) => item.code === params.code
+          updatedData = this.rowStatutoryData.filter(
+            (item: any) => item.code !== params.code
           );
-          if (statutoryIndex !== -1) {
-            this.rowStatutoryData = [
-              ...this.rowStatutoryData.slice(0, statutoryIndex),
-              ...this.rowStatutoryData.slice(statutoryIndex + 1),
-            ];
-            deleted = true;
+          this.rowStatutoryData = updatedData;
+
+          if (this.statutoryGridApi) {
+            this.statutoryGridApi.setRowData(updatedData);
           }
+          deleted = true;
           break;
         case "category":
-          const categoryIndex = this.rowCategoryData.findIndex(
-            (item: any) => item.code === params.code
+          updatedData = this.rowCategoryData.filter(
+            (item: any) => item.code !== params.code
           );
-          if (categoryIndex !== -1) {
-            this.rowCategoryData = [
-              ...this.rowCategoryData.slice(0, categoryIndex),
-              ...this.rowCategoryData.slice(categoryIndex + 1),
-            ];
-            deleted = true;
+          this.rowCategoryData = updatedData;
+
+          if (this.categoryGridApi) {
+            this.categoryGridApi.setRowData(updatedData);
           }
+          deleted = true;
           break;
       }
 
       if (deleted) {
-        const gridApiToUse = this.getRelevantGridApi(componentType);
-        if (gridApiToUse) {
-          gridApiToUse.setRowData(this.getRelevantRowData(componentType));
-        }
         getToastSuccess(
           this.$t("messages.deleteSuccess") ||
             `${componentType} component deleted successfully`
@@ -1246,6 +1264,46 @@ export default class PayrollComponents extends Vue {
       default:
         return this.gridApi;
     }
+  }
+
+  updateActiveTab(tabId: string) {
+    if (tabId === "earnings-tab") {
+      this.gridApi = this.earningsGridApi;
+    } else if (tabId === "deductions-tab") {
+      this.gridApi = this.deductionsGridApi;
+    } else if (tabId === "statutory-tab") {
+      this.gridApi = this.statutoryGridApi;
+    } else if (tabId === "category-tab") {
+      this.gridApi = this.categoryGridApi;
+    }
+  }
+
+  validateNewComponent(componentType: string, code: string) {
+    let exists = false;
+
+    switch (componentType) {
+      case "earnings":
+        exists = this.rowEarningsData.some((item: any) => item.code === code);
+        break;
+      case "deductions":
+        exists = this.rowDeductionsData.some((item: any) => item.code === code);
+        break;
+      case "statutory":
+        exists = this.rowStatutoryData.some((item: any) => item.code === code);
+        break;
+      case "category":
+        exists = this.rowCategoryData.some((item: any) => item.code === code);
+        break;
+    }
+
+    return !exists;
+  }
+
+  setActiveTab(tab: string) {
+    this.activeTab = tab;
+
+    // Update relevant grid API
+    this.gridApi = this.getRelevantGridApi(tab);
   }
 
   // GETTER AND SETTER
