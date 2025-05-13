@@ -243,73 +243,15 @@
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">{{$t('title.earnings')}}</h3>
-      </div>
-      <div class="card-body">
-        <ag-grid-vue
-          :style="agGridSetting.styleAgGridFrame"
-          :class="agGridSetting.themeAgGrid"
-          :columnDefs="columnDefs"
-          :rowData="rowEarningsData"
-          :paginationPageSize="paginationPageSize"
-          id="standalone-earnings-grid"
-          :gridOptions="Object.assign({}, gridOptions, { id: 'standalone-earnings-grid' })"
-          :context="context"
-          :frameworkComponents="frameworkComponents"
-          :enableCellChangeFlash="true"
-          :rowSelection="rowSelection"
-          :getContextMenuItems="getContextMenu"
-          :defaultColDef="agGridSetting.defColDef"
-          :rowGroupPanelShow="rowGroupPanelShow"
-          :suppressDragLeaveHidesColumns="true"
-          :suppressMakeColumnVisibleAfterUnGroup=" true"
-          :statusBar="statusBar"
-          @grid-ready="(params) => onGridReady(params, 'standalone-earnings-grid')"
-          @cellContextMenu="handleRowRightClicked"
-        ></ag-grid-vue>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">{{$t('title.deductions')}}</h3>
-      </div>
-      <div class="card-body">
-        <ag-grid-vue
-          :style="agGridSetting.styleAgGridFrame"
-          :class="agGridSetting.themeAgGrid"
-          :columnDefs="columnDefs"
-          :rowData="rowDeductionsData"
-          :paginationPageSize="paginationPageSize"
-          id="standalone-deductions-grid"
-          :gridOptions="Object.assign({}, gridOptions, { id: 'standalone-deductions-grid' })"
-          :context="context"
-          :frameworkComponents="frameworkComponents"
-          :enableCellChangeFlash="true"
-          :rowSelection="rowSelection"
-          :getContextMenuItems="getContextMenu"
-          :defaultColDef="agGridSetting.defColDef"
-          :rowGroupPanelShow="rowGroupPanelShow"
-          :suppressDragLeaveHidesColumns="true"
-          :suppressMakeColumnVisibleAfterUnGroup=" true"
-          :statusBar="statusBar"
-          @grid-ready="(params) => onGridReady(params, 'standalone-deductions-grid')"
-          @cellContextMenu="handleRowRightClicked"
-        ></ag-grid-vue>
-      </div>
-    </div>
-
     <!-- dialog -->
     <c-dialog
-      v-if="showDialog"
-      :dialogTitle="dialogTitle"
+      v-show="showDialog"
+      dialogTitle="Confirm"
       size="sm"
-      @confirm="confirmAction"
+      @confirm="deleteData"
       @cancel="showDialog=false"
     >
-      <template #body> {{dialogMessage}} </template>
+      <template #body> Are you sure to delete this data? </template>
     </c-dialog>
   </div>
 </section>
