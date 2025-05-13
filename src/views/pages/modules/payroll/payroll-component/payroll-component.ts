@@ -405,21 +405,6 @@ export default class PayrollComponents extends Vue {
     this.ColumnApi = params.columnApi;
   }
 
-  ensureCorrectGridApi(componentType: string): any {
-    // Get the relevant grid API
-    let gridApi = this.getRelevantGridApi(componentType);
-
-    // If the API isn't available, try to get it from the current gridApi
-    if (!gridApi && this.gridApi) {
-      console.info(
-        `Grid API for ${componentType} not found, using current grid API as fallback`
-      );
-      return this.gridApi;
-    }
-
-    return gridApi;
-  }
-
   // UI FUNCTION
   getContextMenu(params: any) {
     const { node } = params;
@@ -461,7 +446,7 @@ export default class PayrollComponents extends Vue {
         name: this.$t("commons.contextMenu.delete"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("delete_icon24"),
-        action: () => this.handleDelete(this.paramsData),
+        action: () => this.handleDelete(componentType, this.paramsData),
       },
     ];
     return result;
@@ -529,7 +514,6 @@ export default class PayrollComponents extends Vue {
       this.showForm = true;
 
       if (mode === $global.modeData.edit && params) {
-        console.info("Editing component:", params);
         this.$nextTick(() => {
           this.populateForm(formType, params);
         });
@@ -563,12 +547,12 @@ export default class PayrollComponents extends Vue {
     }
   }
 
-  async handleDelete(params: any) {
+  handleDelete(componentType: string, params: any) {
     this.showConfirmationDialog(
       $global.dialogActions.delete,
       "Confirm Delete",
       `Are you sure you want to delete this component?`,
-      params
+      { componentType, params }
     );
   }
 
@@ -1005,12 +989,16 @@ export default class PayrollComponents extends Vue {
     } catch (error) {}
   }
 
-  async deleteData(params: any) {
+  async deleteData(data: any) {
     try {
-      console.info("params di deleteDate", params);
-      this.rowEarningsData = this.rowEarningsData.filter(
-        (item: any) => item.code !== params.code
-      );
+      console.info("data di deleteDate", data);
+      if (data.componentType === "earnings") {
+        this.rowEarningsData = this.rowEarningsData.filter(
+          (item: any) => item.code !== data.params.code
+        );
+      } else {
+        getToastError("Component not found");
+      }
 
       getToastSuccess("Component has remove successfully");
       return true;
