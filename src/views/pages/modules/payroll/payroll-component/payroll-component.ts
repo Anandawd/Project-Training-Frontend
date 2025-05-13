@@ -87,13 +87,15 @@ export default class PayrollComponents extends Vue {
     document.querySelectorAll(".nav-tabs .nav-link").forEach((tab) => {
       tab.addEventListener("click", (event) => {
         const tabId = (event.target as HTMLElement).id;
-        let tabType = "";
+        console.log("Tab clicked:", tabId);
 
+        let tabType = "";
         if (tabId === "earnings-tab") tabType = "earnings";
         else if (tabId === "deductions-tab") tabType = "deductions";
         else if (tabId === "statutory-tab") tabType = "statutory";
         else if (tabId === "category-tab") tabType = "category";
 
+        console.log("Setting active tab to:", tabType);
         this.setActiveTab(tabType);
       });
     });
@@ -401,20 +403,43 @@ export default class PayrollComponents extends Vue {
     const activeTabId = document.querySelector(
       ".nav-tabs .nav-link.active"
     )?.id;
+    console.log("Grid ready called with active tab:", activeTabId);
 
+    // Store reference to current grid API
+    this.gridApi = params.api;
+    console.log("Setting gridApi");
+
+    // Store reference to specific grid API based on active tab
     if (activeTabId === "earnings-tab" || !activeTabId) {
+      console.log("Setting earningsGridApi");
       this.earningsGridApi = params.api;
     } else if (activeTabId === "deductions-tab") {
+      console.log("Setting deductionsGridApi");
       this.deductionsGridApi = params.api;
     } else if (activeTabId === "statutory-tab") {
+      console.log("Setting statutoryGridApi");
       this.statutoryGridApi = params.api;
     } else if (activeTabId === "category-tab") {
+      console.log("Setting categoryGridApi");
       this.categoryGridApi = params.api;
     }
 
-    this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
-    // params.api.sizeColumnsToFit();
+  }
+
+  ensureCorrectGridApi(componentType: string): any {
+    // Get the relevant grid API
+    let gridApi = this.getRelevantGridApi(componentType);
+
+    // If the API isn't available, try to get it from the current gridApi
+    if (!gridApi && this.gridApi) {
+      console.info(
+        `Grid API for ${componentType} not found, using current grid API as fallback`
+      );
+      return this.gridApi;
+    }
+
+    return gridApi;
   }
 
   // UI FUNCTION
@@ -511,7 +536,7 @@ export default class PayrollComponents extends Vue {
         this.deleteData(this.dialogParams);
         break;
       default:
-        console.warn("Unsupported dialog action:", this.dialogAction);
+        console.info("Unsupported dialog action:", this.dialogAction);
     }
 
     this.dialogParams = null;
@@ -563,12 +588,16 @@ export default class PayrollComponents extends Vue {
   async handleDelete(params: any) {
     if (!params) return;
 
-    console.info("componentType di handleDelete", params.componentType);
+    const componentType = params.componentType || this.activeTab;
+
+    if (!params.componentType) {
+      params.componentType = componentType;
+    }
 
     this.showConfirmationDialog(
       $global.dialogActions.delete,
       "Confirm Delete",
-      `Are you sure you want to delete this ${params.componentType} component?`,
+      `Are you sure you want to delete this ${componentType} component?`,
       params
     );
   }
@@ -1002,83 +1031,106 @@ export default class PayrollComponents extends Vue {
 
   async deleteData(params: any) {
     try {
-      if (!params) {
-        getToastError("Invalid component to delete");
+      if (!params || !params.componentType || !params.code) {
+        console.error("Invalid delete parameters:", params);
+        getToastError("Parameter tidak valid untuk penghapusan");
         return false;
       }
 
       const componentType = params.componentType;
-      let deleted = false;
+      console.log(`Menghapus ${componentType} dengan kode ${params.code}`);
+
+      // Tentukan array data yang relevan dan grid API
+      let dataArray;
+      let gridApi;
 
       switch (componentType) {
         case "earnings":
-          // Create a new array excluding the item to delete
-          this.rowEarningsData = this.rowEarningsData.filter(
-            (item: any) => item.code !== params.code
-          );
-
-          console.info("rowEarningsData", this.rowEarningsData);
-          console.info("earningsGridApi", this.earningsGridApi);
-
-          // Update the grid with the new data
-          if (this.earningsGridApi) {
-            this.earningsGridApi.setRowData(this.rowEarningsData);
-          }
-          deleted = true;
+          dataArray = this.rowEarningsData;
+          gridApi = this.earningsGridApi;
           break;
-
         case "deductions":
-          this.rowDeductionsData = this.rowDeductionsData.filter(
-            (item: any) => item.code !== params.code
-          );
-
-          if (this.deductionsGridApi) {
-            this.deductionsGridApi.setRowData(this.rowDeductionsData);
-          }
-          deleted = true;
+          dataArray = this.rowDeductionsData;
+          gridApi = this.deductionsGridApi;
           break;
-
         case "statutory":
-          this.rowStatutoryData = this.rowStatutoryData.filter(
-            (item: any) => item.code !== params.code
-          );
-
-          if (this.statutoryGridApi) {
-            this.statutoryGridApi.setRowData(this.rowStatutoryData);
-          }
-          deleted = true;
+          dataArray = this.rowStatutoryData;
+          gridApi = this.statutoryGridApi;
           break;
-
         case "category":
-          this.rowCategoryData = this.rowCategoryData.filter(
-            (item: any) => item.code !== params.code
-          );
-
-          if (this.categoryGridApi) {
-            this.categoryGridApi.setRowData(this.rowCategoryData);
-          }
+          dataArray = this.rowCategoryData;
+          gridApi = this.categoryGridApi;
           break;
+        default:
+          console.error("Unknown component type:", componentType);
+          getToastError(`Tipe komponen tidak dikenal: ${componentType}`);
+          return false;
       }
 
-      if (deleted) {
-        // Force a grid redraw after a short delay
-        setTimeout(() => {
-          const gridApi = this.getRelevantGridApi(componentType);
-          if (gridApi) {
-            gridApi.refreshCells();
-            gridApi.redrawRows();
-          }
-        }, 100);
-
-        getToastSuccess(
-          this.$t("messages.deleteSuccess") ||
-            `${componentType} component deleted successfully`
-        );
-        return true;
-      } else {
-        getToastError(`Could not find ${componentType} component to delete`);
+      if (!dataArray) {
+        console.error("Data array not found for type:", componentType);
+        getToastError(`Data tidak ditemukan untuk tipe: ${componentType}`);
         return false;
       }
+
+      // Filter data
+      const updatedData = dataArray.filter(
+        (item: any) => item.code !== params.code
+      );
+      console.log(
+        `Filtered from ${dataArray.length} to ${updatedData.length} items`
+      );
+
+      if (updatedData.length === dataArray.length) {
+        console.error("No items were removed with code:", params.code);
+        getToastError(
+          `Tidak ada item yang dihapus dengan kode: ${params.code}`
+        );
+        return false;
+      }
+
+      // Perbarui state
+      switch (componentType) {
+        case "earnings":
+          this.rowEarningsData = [...updatedData];
+          break;
+        case "deductions":
+          this.rowDeductionsData = [...updatedData];
+          break;
+        case "statutory":
+          this.rowStatutoryData = [...updatedData];
+          break;
+        case "category":
+          this.rowCategoryData = [...updatedData];
+          break;
+      }
+
+      // Perbarui grid
+      if (gridApi) {
+        console.log("Updating grid with", updatedData.length, "items");
+        gridApi.setRowData(updatedData);
+
+        // Mencoba pendekatan alternatif: gunakan applyTransaction
+        // gridApi.applyTransaction({ remove: [params] });
+
+        // Paksa refresh lengkap
+        setTimeout(() => {
+          try {
+            console.log("Forcing grid refresh");
+            gridApi.refreshCells({ force: true });
+            gridApi.redrawRows();
+          } catch (err) {
+            console.error("Error in grid refresh:", err);
+          }
+        }, 100);
+      } else {
+        console.warn(
+          `Grid API not available for ${componentType}, cannot update UI`
+        );
+      }
+
+      getToastSuccess(`${componentType} berhasil dihapus`);
+      return true;
     } catch (error) {
       getError(error);
       return false;
