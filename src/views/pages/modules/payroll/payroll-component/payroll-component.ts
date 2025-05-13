@@ -41,7 +41,6 @@ export default class PayrollComponents extends Vue {
   public modeData: any;
   public form: any = {};
   public inputFormElement: any = ref();
-  public formType: any;
   public activeTab: string = "earnings";
 
   public earningsFormElement: any = ref();
@@ -1107,39 +1106,6 @@ export default class PayrollComponents extends Vue {
         break;
     }
     formElement.form.id = params.id;
-  }
-
-  getCurrentFormComponent() {
-    switch (this.formType) {
-      case "earnings":
-        return EarningsInputForm;
-      case "deductions":
-        return DeductionsInputForm;
-      case "statutory":
-        return StatutoryInputForm;
-      case "category":
-        return CategoryInputForm;
-      default:
-        return null;
-    }
-  }
-
-  getCurrentFormRef(el: any) {
-    if (!el) return;
-    switch (this.formType) {
-      case "earnings":
-        this.earningsFormElement = el;
-        break;
-      case "deductions":
-        this.deductionsFormElement = el;
-        break;
-      case "statutory":
-        this.statutoryFormElement = el;
-        break;
-      case "category":
-        this.categoryFormElement = el;
-        break;
-    }
   }
 
   // GETTER AND SETTER
