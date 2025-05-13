@@ -136,7 +136,7 @@
                 :columnDefs="columnDefs"
                 :rowData="rowEarningsData"
                 :paginationPageSize="paginationPageSize"
-                :gridOptions="gridOptions"
+                :gridOptions="Object.assign({}, gridOptions, { id: 'earnings-tab-grid' })"
                 :context="context"
                 :frameworkComponents="frameworkComponents"
                 :enableCellChangeFlash="true"
@@ -147,7 +147,7 @@
                 :suppressDragLeaveHidesColumns="true"
                 :suppressMakeColumnVisibleAfterUnGroup=" true"
                 :statusBar="statusBar"
-                @grid-ready="onGridReady"
+                @grid-ready="(params) => onGridReady(params, 'earnings-tab-grid')"
                 @cellContextMenu="handleRowRightClicked"
               ></ag-grid-vue>
             </div>
@@ -165,7 +165,7 @@
                 :columnDefs="columnDefs"
                 :rowData="rowDeductionsData"
                 :paginationPageSize="paginationPageSize"
-                :gridOptions="gridOptions"
+                :gridOptions="Object.assign({}, gridOptions, { id: 'deductions-tab-grid' })"
                 :context="context"
                 :frameworkComponents="frameworkComponents"
                 :enableCellChangeFlash="true"
@@ -176,7 +176,7 @@
                 :suppressDragLeaveHidesColumns="true"
                 :suppressMakeColumnVisibleAfterUnGroup=" true"
                 :statusBar="statusBar"
-                @grid-ready="onGridReady"
+                @grid-ready="(params) => onGridReady(params, 'deductions-tab-grid')"
                 @cellContextMenu="handleRowRightClicked"
               ></ag-grid-vue>
             </div>
@@ -194,7 +194,7 @@
                 :columnDefs="columnStatutoryDefs"
                 :rowData="rowStatutoryData"
                 :paginationPageSize="paginationPageSize"
-                :gridOptions="gridOptions"
+                :gridOptions="Object.assign({}, gridOptions, { id: 'statutory-tab-grid' })"
                 :context="context"
                 :frameworkComponents="frameworkComponents"
                 :enableCellChangeFlash="true"
@@ -205,7 +205,7 @@
                 :suppressDragLeaveHidesColumns="true"
                 :suppressMakeColumnVisibleAfterUnGroup=" true"
                 :statusBar="statusBar"
-                @grid-ready="onGridReady"
+                @grid-ready="(params) => onGridReady(params, 'statutory-tab-grid')"
                 @cellContextMenu="handleRowRightClicked"
               ></ag-grid-vue>
             </div>
@@ -223,7 +223,7 @@
                 :columnDefs="columnCategoryDefs"
                 :rowData="rowCategoryData"
                 :paginationPageSize="paginationPageSize"
-                :gridOptions="gridOptions"
+                :gridOptions="Object.assign({}, gridOptions, { id: 'category-tab-grid' })"
                 :context="context"
                 :frameworkComponents="frameworkComponents"
                 :enableCellChangeFlash="true"
@@ -234,7 +234,7 @@
                 :suppressDragLeaveHidesColumns="true"
                 :suppressMakeColumnVisibleAfterUnGroup=" true"
                 :statusBar="statusBar"
-                @grid-ready="onGridReady"
+                @grid-ready="(params) => onGridReady(params, 'category-tab-grid')"
                 @cellContextMenu="handleRowRightClicked"
               ></ag-grid-vue>
             </div>
@@ -254,7 +254,8 @@
           :columnDefs="columnDefs"
           :rowData="rowEarningsData"
           :paginationPageSize="paginationPageSize"
-          :gridOptions="gridOptions"
+          id="standalone-earnings-grid"
+          :gridOptions="Object.assign({}, gridOptions, { id: 'standalone-earnings-grid' })"
           :context="context"
           :frameworkComponents="frameworkComponents"
           :enableCellChangeFlash="true"
@@ -265,7 +266,7 @@
           :suppressDragLeaveHidesColumns="true"
           :suppressMakeColumnVisibleAfterUnGroup=" true"
           :statusBar="statusBar"
-          @grid-ready="onGridReady"
+          @grid-ready="(params) => onGridReady(params, 'standalone-earnings-grid')"
           @cellContextMenu="handleRowRightClicked"
         ></ag-grid-vue>
       </div>
@@ -282,7 +283,8 @@
           :columnDefs="columnDefs"
           :rowData="rowDeductionsData"
           :paginationPageSize="paginationPageSize"
-          :gridOptions="gridOptions"
+          id="standalone-deductions-grid"
+          :gridOptions="Object.assign({}, gridOptions, { id: 'standalone-deductions-grid' })"
           :context="context"
           :frameworkComponents="frameworkComponents"
           :enableCellChangeFlash="true"
@@ -293,7 +295,7 @@
           :suppressDragLeaveHidesColumns="true"
           :suppressMakeColumnVisibleAfterUnGroup=" true"
           :statusBar="statusBar"
-          @grid-ready="onGridReady"
+          @grid-ready="(params) => onGridReady(params, 'standalone-deductions-grid')"
           @cellContextMenu="handleRowRightClicked"
         ></ag-grid-vue>
       </div>
@@ -301,7 +303,7 @@
 
     <!-- dialog -->
     <c-dialog
-      v-show="showDialog"
+      v-if="showDialog"
       :dialogTitle="dialogTitle"
       size="sm"
       @confirm="confirmAction"

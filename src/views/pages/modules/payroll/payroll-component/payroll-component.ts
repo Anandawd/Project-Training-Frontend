@@ -74,6 +74,13 @@ export default class PayrollComponents extends Vue {
   ColumnApi: any;
   agGridSetting: any;
 
+  earningsTabGridApi: any;
+  deductionsTabGridApi: any;
+  statutoryTabGridApi: any;
+  categoryTabGridApi: any;
+  standaloneEarningsGridApi: any;
+  standaloneDeductionsGridApi: any;
+
   // LIFECYCLE HOOKS
   created(): void {
     this.loadMockData();
@@ -379,7 +386,32 @@ export default class PayrollComponents extends Vue {
     this.limitPageSize = this.agGridSetting.limitDefaultPageSize;
   }
 
-  onGridReady(params: any) {
+  onGridReady(params: any, gridId?: string) {
+    const id = gridId || params.api.gridOptionsWrapper.gridOptions.id;
+    console.info("gridId", gridId);
+    // Store based on explicit ID
+    switch (id) {
+      case "earnings-tab-grid":
+        this.earningsTabGridApi = params.api;
+        break;
+      case "deductions-tab-grid":
+        this.deductionsTabGridApi = params.api;
+        break;
+      case "statutory-tab-grid":
+        this.statutoryTabGridApi = params.api;
+        break;
+      case "category-tab-grid":
+        this.categoryTabGridApi = params.api;
+        break;
+      case "standalone-earnings-grid":
+        this.standaloneEarningsGridApi = params.api;
+        break;
+      case "standalone-deductions-grid":
+        this.standaloneDeductionsGridApi = params.api;
+        break;
+    }
+
+    // Also keep the generic gridApi for other operations
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
   }
@@ -458,7 +490,16 @@ export default class PayrollComponents extends Vue {
   }
 
   confirmAction() {
+    console.log("confirmAction called");
+
+    // Add debugging to see dialog state
+    console.log("Before: showDialog =", this.showDialog);
+
+    // Try to force the dialog to close
     this.showDialog = false;
+
+    // Add debugging to confirm state change
+    console.log("After: showDialog =", this.showDialog);
 
     switch (this.dialogAction) {
       case $global.dialogActions.delete:
@@ -905,11 +946,28 @@ export default class PayrollComponents extends Vue {
         this.rowEarningsData = this.rowEarningsData.filter(
           (item: any) => item.code !== data.params.code
         );
+        // Update both earnings grids explicitly
+        if (this.earningsTabGridApi) {
+          this.earningsTabGridApi.setRowData([...this.rowEarningsData]);
+        }
+        if (this.standaloneEarningsGridApi) {
+          this.standaloneEarningsGridApi.setRowData([...this.rowEarningsData]);
+        }
         getToastSuccess("Component Earnings has remove successfully");
       } else if (data.componentType === "deductions") {
         this.rowDeductionsData = this.rowDeductionsData.filter(
           (item: any) => item.code !== data.params.code
         );
+        // Update both deductions grids explicitly
+        if (this.deductionsTabGridApi) {
+          this.deductionsTabGridApi.setRowData([...this.rowDeductionsData]);
+        }
+        if (this.standaloneDeductionsGridApi) {
+          this.standaloneDeductionsGridApi.setRowData([
+            ...this.rowDeductionsData,
+          ]);
+        }
+
         getToastSuccess("Component Deductions has remove successfully");
       } else {
         getToastError("Component not found");
@@ -919,6 +977,38 @@ export default class PayrollComponents extends Vue {
     } catch (error) {
       getError(error);
       return false;
+    }
+  }
+
+  refreshGridData(componentType: string) {
+    const gridElements = document.querySelectorAll(".ag-root-wrapper");
+    if (gridElements.length > 0) {
+      // We need to find the correct grid based on which tab is active
+      const activeTabId = document.querySelector(
+        ".nav-tabs .nav-link.active"
+      )?.id;
+
+      // Update data for all relevant grid instances
+      // This forces every grid instance to refresh with the latest data
+      gridElements.forEach((gridElement, index) => {
+        const gridApi = (gridElement as any).__agGridApi;
+        if (gridApi) {
+          switch (componentType) {
+            case "earnings":
+              gridApi.setRowData(this.rowEarningsData);
+              break;
+            case "deductions":
+              gridApi.setRowData(this.rowDeductionsData);
+              break;
+            case "statutory":
+              gridApi.setRowData(this.rowStatutoryData);
+              break;
+            case "category":
+              gridApi.setRowData(this.rowCategoryData);
+              break;
+          }
+        }
+      });
     }
   }
 
