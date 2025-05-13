@@ -74,11 +74,6 @@ export default class PayrollComponents extends Vue {
   ColumnApi: any;
   agGridSetting: any;
 
-  earningsGridApi: any;
-  deductionsGridApi: any;
-  statutoryGridApi: any;
-  categoryGridApi: any;
-
   // LIFECYCLE HOOKS
   created(): void {
     this.loadMockData();
@@ -879,44 +874,6 @@ export default class PayrollComponents extends Vue {
 
   async saveData(formData: any, componentType: string) {
     try {
-      switch (componentType) {
-        case "earnings":
-          this.rowEarningsData = [
-            ...this.rowEarningsData,
-            this.formatEarningsData(formData),
-          ];
-          if (this.earningsGridApi) {
-            this.earningsGridApi.setRowData(this.rowEarningsData);
-          }
-          break;
-        case "deductions":
-          this.rowDeductionsData = [
-            ...this.rowDeductionsData,
-            this.formatDeductionsData(formData),
-          ];
-          if (this.deductionsGridApi) {
-            this.deductionsGridApi.setRowData(this.rowDeductionsData);
-          }
-          break;
-        case "statutory":
-          this.rowStatutoryData = [
-            ...this.rowStatutoryData,
-            this.formatStatutoryData(formData),
-          ];
-          if (this.statutoryGridApi) {
-            this.statutoryGridApi.setRowData(this.rowStatutoryData);
-          }
-          break;
-        case "category":
-          this.rowCategoryData = [
-            ...this.rowCategoryData,
-            this.formatCategoryData(formData),
-          ];
-          if (this.categoryGridApi) {
-            this.categoryGridApi.setRowData(this.rowCategoryData);
-          }
-          break;
-      }
       getToastSuccess(
         this.$t("messages.saveSuccess") || "Data saved successfully"
       );
@@ -929,25 +886,6 @@ export default class PayrollComponents extends Vue {
   async updateData(formData: any, componentType: string) {
     try {
       let updated = false;
-      switch (componentType) {
-        case "earnings":
-          const earningsIndex = this.rowEarningsData.findIndex(
-            (item: any) => item.code === formData.earningsCode
-          );
-          if (earningsIndex !== -1) {
-            const updatedData = this.formatEarningsData(formData);
-            this.rowEarningsData = [
-              ...this.rowEarningsData.slice(0, earningsIndex),
-              updatedData,
-              ...this.rowEarningsData.slice(earningsIndex + 1),
-            ];
-            if (this.earningsGridApi) {
-              this.earningsGridApi.setRowData([...this.rowEarningsData]);
-            }
-            updated = true;
-          }
-          break;
-      }
 
       if (updated) {
         getToastSuccess(`${componentType} component updated successfully`);
