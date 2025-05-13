@@ -388,8 +388,6 @@ export default class PayrollComponents extends Vue {
 
   onGridReady(params: any, gridId?: string) {
     const id = gridId || params.api.gridOptionsWrapper.gridOptions.id;
-    console.info("gridId", gridId);
-    // Store based on explicit ID
     switch (id) {
       case "earnings-tab-grid":
         this.earningsTabGridApi = params.api;
@@ -411,7 +409,6 @@ export default class PayrollComponents extends Vue {
         break;
     }
 
-    // Also keep the generic gridApi for other operations
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
   }
@@ -441,6 +438,8 @@ export default class PayrollComponents extends Vue {
       this.paramsData.componentType = componentType;
     }
 
+    console.info("componentType di getContextMenu", componentType);
+
     const result = [
       {
         name: this.$t("commons.contextMenu.update"),
@@ -457,7 +456,7 @@ export default class PayrollComponents extends Vue {
         name: this.$t("commons.contextMenu.delete"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("delete_icon24"),
-        action: () => this.handleDelete(componentType, this.paramsData),
+        action: () => this.handleDelete(this.paramsData),
       },
     ];
     return result;
@@ -490,26 +489,18 @@ export default class PayrollComponents extends Vue {
   }
 
   confirmAction() {
-    console.log("confirmAction called");
-
-    // Add debugging to see dialog state
-    console.log("Before: showDialog =", this.showDialog);
-
-    // Try to force the dialog to close
+    const action = this.dialogAction;
+    const params = this.dialogParams;
+    console.info("params di confirmAction", params);
+    // Close the dialog FIRST
     this.showDialog = false;
 
-    // Add debugging to confirm state change
-    console.log("After: showDialog =", this.showDialog);
-
-    switch (this.dialogAction) {
-      case $global.dialogActions.delete:
-        this.deleteData(this.dialogParams);
-        break;
-      default:
-        console.info("Unsupported dialog action:", this.dialogAction);
-    }
-
-    this.dialogParams = null;
+    this.$nextTick(() => {
+      if (action === $global.dialogActions.delete) {
+        this.deleteData(params);
+      }
+    });
+    console.info("params after di confirmAction", params);
   }
 
   handleShowForm(formType: string, mode: any, params?: any) {
@@ -554,12 +545,13 @@ export default class PayrollComponents extends Vue {
     }
   }
 
-  handleDelete(componentType: string, params: any) {
+  handleDelete(params: any) {
+    console.info("params di handleDelete", params);
     this.showConfirmationDialog(
       $global.dialogActions.delete,
       "Confirm Delete",
       `Are you sure you want to delete this component?`,
-      { componentType, params }
+      params
     );
   }
 
@@ -939,12 +931,12 @@ export default class PayrollComponents extends Vue {
     } catch (error) {}
   }
 
-  async deleteData(data: any) {
+  async deleteData(params: any) {
     try {
-      console.info("data di deleteDate", data);
-      if (data.componentType === "earnings") {
+      console.info("data di deleteDate", params);
+      if (params.componentType === "earnings") {
         this.rowEarningsData = this.rowEarningsData.filter(
-          (item: any) => item.code !== data.params.code
+          (item: any) => item.code !== params.code
         );
         // Update both earnings grids explicitly
         if (this.earningsTabGridApi) {
@@ -954,9 +946,9 @@ export default class PayrollComponents extends Vue {
           this.standaloneEarningsGridApi.setRowData([...this.rowEarningsData]);
         }
         getToastSuccess("Component Earnings has remove successfully");
-      } else if (data.componentType === "deductions") {
+      } else if (params.componentType === "deductions") {
         this.rowDeductionsData = this.rowDeductionsData.filter(
-          (item: any) => item.code !== data.params.code
+          (item: any) => item.code !== params.code
         );
         // Update both deductions grids explicitly
         if (this.deductionsTabGridApi) {
