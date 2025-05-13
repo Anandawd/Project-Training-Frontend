@@ -30,6 +30,7 @@ import CInputForm from "./payroll-component-input-form/payroll-component-input-f
 })
 export default class PayrollComponents extends Vue {
   // data
+  public selectedRowData: any;
   public rowEarningsData: any = [];
   public rowDeductionsData: any = [];
   public rowStatutoryData: any = [];
@@ -87,7 +88,7 @@ export default class PayrollComponents extends Vue {
     document.querySelectorAll(".nav-tabs .nav-link").forEach((tab) => {
       tab.addEventListener("click", (event) => {
         const tabId = (event.target as HTMLElement).id;
-        console.log("Tab clicked:", tabId);
+        console.info("Tab clicked:", tabId);
 
         let tabType = "";
         if (tabId === "earnings-tab") tabType = "earnings";
@@ -95,7 +96,7 @@ export default class PayrollComponents extends Vue {
         else if (tabId === "statutory-tab") tabType = "statutory";
         else if (tabId === "category-tab") tabType = "category";
 
-        console.log("Setting active tab to:", tabType);
+        console.info("Setting active tab to:", tabType);
         this.setActiveTab(tabType);
       });
     });
@@ -400,30 +401,7 @@ export default class PayrollComponents extends Vue {
   }
 
   onGridReady(params: any) {
-    const activeTabId = document.querySelector(
-      ".nav-tabs .nav-link.active"
-    )?.id;
-    console.log("Grid ready called with active tab:", activeTabId);
-
-    // Store reference to current grid API
     this.gridApi = params.api;
-    console.log("Setting gridApi");
-
-    // Store reference to specific grid API based on active tab
-    if (activeTabId === "earnings-tab" || !activeTabId) {
-      console.log("Setting earningsGridApi");
-      this.earningsGridApi = params.api;
-    } else if (activeTabId === "deductions-tab") {
-      console.log("Setting deductionsGridApi");
-      this.deductionsGridApi = params.api;
-    } else if (activeTabId === "statutory-tab") {
-      console.log("Setting statutoryGridApi");
-      this.statutoryGridApi = params.api;
-    } else if (activeTabId === "category-tab") {
-      console.log("Setting categoryGridApi");
-      this.categoryGridApi = params.api;
-    }
-
     this.ColumnApi = params.columnApi;
   }
 
@@ -494,7 +472,7 @@ export default class PayrollComponents extends Vue {
       const vm = this;
       vm.gridApi.forEachNode((node: any) => {
         if (node.data) {
-          if (node.data.id_log == vm.paramsData.id_log) {
+          if (node.data.id == vm.paramsData.id) {
             node.setSelected(true, true);
           }
         }
@@ -586,18 +564,10 @@ export default class PayrollComponents extends Vue {
   }
 
   async handleDelete(params: any) {
-    if (!params) return;
-
-    const componentType = params.componentType || this.activeTab;
-
-    if (!params.componentType) {
-      params.componentType = componentType;
-    }
-
     this.showConfirmationDialog(
       $global.dialogActions.delete,
       "Confirm Delete",
-      `Are you sure you want to delete this ${componentType} component?`,
+      `Are you sure you want to delete this component?`,
       params
     );
   }
@@ -643,6 +613,7 @@ export default class PayrollComponents extends Vue {
   async loadMockData() {
     this.rowEarningsData = [
       {
+        id: 1,
         code: "CE001",
         name: "Tunjangan Transportasi",
         description: "-",
@@ -657,6 +628,7 @@ export default class PayrollComponents extends Vue {
         active: true,
       },
       {
+        id: 2,
         code: "CE002",
         name: "Tunjangan Rumah",
         description: "-",
@@ -671,6 +643,7 @@ export default class PayrollComponents extends Vue {
         active: true,
       },
       {
+        id: 3,
         code: "CE003",
         name: "Tunjangan Makan",
         description: "-",
@@ -685,8 +658,9 @@ export default class PayrollComponents extends Vue {
         active: true,
       },
       {
+        id: 4,
         code: "CE004",
-        name: "Tunjangan Makan",
+        name: "Tunjangan Fasilitas",
         description: "-",
         category: "Fix Allowance",
         default_amount: 30000,
@@ -699,6 +673,7 @@ export default class PayrollComponents extends Vue {
         active: true,
       },
       {
+        id: 5,
         code: "CE005",
         name: "Bonus",
         description: "-",
@@ -713,6 +688,7 @@ export default class PayrollComponents extends Vue {
         active: true,
       },
       {
+        id: 6,
         code: "CE006",
         name: "Uang Lembur",
         description: "-",
@@ -1031,105 +1007,12 @@ export default class PayrollComponents extends Vue {
 
   async deleteData(params: any) {
     try {
-      if (!params || !params.componentType || !params.code) {
-        console.error("Invalid delete parameters:", params);
-        getToastError("Parameter tidak valid untuk penghapusan");
-        return false;
-      }
-
-      const componentType = params.componentType;
-      console.log(`Menghapus ${componentType} dengan kode ${params.code}`);
-
-      // Tentukan array data yang relevan dan grid API
-      let dataArray;
-      let gridApi;
-
-      switch (componentType) {
-        case "earnings":
-          dataArray = this.rowEarningsData;
-          gridApi = this.earningsGridApi;
-          break;
-        case "deductions":
-          dataArray = this.rowDeductionsData;
-          gridApi = this.deductionsGridApi;
-          break;
-        case "statutory":
-          dataArray = this.rowStatutoryData;
-          gridApi = this.statutoryGridApi;
-          break;
-        case "category":
-          dataArray = this.rowCategoryData;
-          gridApi = this.categoryGridApi;
-          break;
-        default:
-          console.error("Unknown component type:", componentType);
-          getToastError(`Tipe komponen tidak dikenal: ${componentType}`);
-          return false;
-      }
-
-      if (!dataArray) {
-        console.error("Data array not found for type:", componentType);
-        getToastError(`Data tidak ditemukan untuk tipe: ${componentType}`);
-        return false;
-      }
-
-      // Filter data
-      const updatedData = dataArray.filter(
+      console.info("params di deleteDate", params);
+      this.rowEarningsData = this.rowEarningsData.filter(
         (item: any) => item.code !== params.code
       );
-      console.log(
-        `Filtered from ${dataArray.length} to ${updatedData.length} items`
-      );
 
-      if (updatedData.length === dataArray.length) {
-        console.error("No items were removed with code:", params.code);
-        getToastError(
-          `Tidak ada item yang dihapus dengan kode: ${params.code}`
-        );
-        return false;
-      }
-
-      // Perbarui state
-      switch (componentType) {
-        case "earnings":
-          this.rowEarningsData = [...updatedData];
-          break;
-        case "deductions":
-          this.rowDeductionsData = [...updatedData];
-          break;
-        case "statutory":
-          this.rowStatutoryData = [...updatedData];
-          break;
-        case "category":
-          this.rowCategoryData = [...updatedData];
-          break;
-      }
-
-      // Perbarui grid
-      if (gridApi) {
-        console.log("Updating grid with", updatedData.length, "items");
-        gridApi.setRowData(updatedData);
-
-        // Mencoba pendekatan alternatif: gunakan applyTransaction
-        // gridApi.applyTransaction({ remove: [params] });
-
-        // Paksa refresh lengkap
-        setTimeout(() => {
-          try {
-            console.log("Forcing grid refresh");
-            gridApi.refreshCells({ force: true });
-            gridApi.redrawRows();
-          } catch (err) {
-            console.error("Error in grid refresh:", err);
-          }
-        }, 100);
-      } else {
-        console.warn(
-          `Grid API not available for ${componentType}, cannot update UI`
-        );
-      }
-
-      getToastSuccess(`${componentType} berhasil dihapus`);
+      getToastSuccess("Component has remove successfully");
       return true;
     } catch (error) {
       getError(error);
@@ -1337,6 +1220,13 @@ export default class PayrollComponents extends Vue {
     this.activeTab = tab;
 
     this.gridApi = this.getRelevantGridApi(tab);
+
+    const gridApi = this.getRelevantGridApi(tab);
+    const rowData = this.getRelevantRowData(tab);
+
+    if (gridApi && rowData) {
+      gridApi.setRowData([...rowData]);
+    }
   }
 
   // GETTER AND SETTER

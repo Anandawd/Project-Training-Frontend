@@ -23,10 +23,8 @@ import { Options, Vue } from "vue-class-component";
   },
 })
 export default class PayrollApprovals extends Vue {
-  //table
+  public selectedRowData: any;
   public rowData: any = [];
-  public selectedRowData: any = null;
-
   // filter
   public searchOptions: any;
   searchDefault: any = {
@@ -281,14 +279,12 @@ export default class PayrollApprovals extends Vue {
 
   handleRowRightClicked() {
     if (this.paramsData) {
-      const rightClickedData = { ...this.paramsData };
-      this.selectedRowData = rightClickedData;
-      this.gridApi.forEachNode((node: any) => {
-        if (node.data && node.data.id === rightClickedData.id) {
-          node.setSelected(true);
-          this.gridApi.ensureNodeVisible(node);
-        } else if (node.selected) {
-          node.setSelected(false);
+      const vm = this;
+      vm.gridApi.forEachNode((node: any) => {
+        if (node.data) {
+          if (node.data.id == vm.paramsData.id) {
+            node.setSelected(true, true);
+          }
         }
       });
     }
@@ -301,9 +297,7 @@ export default class PayrollApprovals extends Vue {
   }
 
   handleShowDetail(params: any, mode: any) {
-    const rowData = params || this.selectedRowData;
-
-    if (!rowData) {
+    if (!params) {
       return;
     }
 
