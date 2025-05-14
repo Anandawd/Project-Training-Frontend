@@ -7,6 +7,7 @@ import { generateIconContextMenuAgGrid, getError } from "@/utils/general";
 import $global from "@/utils/global";
 import { getToastError, getToastSuccess } from "@/utils/toast";
 import "ag-grid-enterprise";
+import { GridApi } from "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
@@ -520,27 +521,49 @@ export default class PayrollComponents extends Vue {
   }
 
   async loadDataGrid(entityType: any = this.activeTab) {
+    // Get the correct grid API based on entity type
+    let gridApi: GridApi;
     switch (entityType) {
       case "earnings":
-        if (this.earningsTabGridApi) {
-          this.earningsTabGridApi.setRowData([...this.rowEarningsData]);
-        }
+        gridApi = this.earningsTabGridApi;
         break;
       case "deductions":
-        if (this.deductionsTabGridApi) {
-          this.deductionsTabGridApi.setRowData([...this.rowDeductionsData]);
-        }
+        gridApi = this.deductionsTabGridApi;
         break;
       case "statutory":
-        if (this.statutoryTabGridApi) {
-          this.statutoryTabGridApi.setRowData([...this.rowStatutoryData]);
-        }
+        gridApi = this.statutoryTabGridApi;
         break;
       case "category":
-        if (this.categoryTabGridApi) {
-          this.categoryTabGridApi.setRowData([...this.rowCategoryData]);
-        }
+        gridApi = this.categoryTabGridApi;
         break;
+    }
+
+    // Update the grid if the API reference exists
+    if (gridApi) {
+      // Get the correct data array based on entity type
+      let rowData;
+      switch (entityType) {
+        case "earnings":
+          rowData = [...this.rowEarningsData];
+          break;
+        case "deductions":
+          rowData = [...this.rowDeductionsData];
+          break;
+        case "statutory":
+          rowData = [...this.rowStatutoryData];
+          break;
+        case "category":
+          rowData = [...this.rowCategoryData];
+          break;
+      }
+
+      // Update the grid with a fresh copy of the data
+      gridApi.setRowData(rowData);
+
+      // Force the grid to refresh after data change
+      setTimeout(() => {
+        gridApi.refreshCells({ force: true });
+      }, 100);
     }
   }
 
@@ -898,19 +921,15 @@ export default class PayrollComponents extends Vue {
       formData.id = this.generateUniqueId(entityType);
 
       if (entityType === "earnings") {
-        this.rowEarningsData.push(formData);
-        this.loadDataGrid(entityType);
+        this.rowEarningsData = [...this.rowEarningsData, formData];
       } else if (entityType === "deductions") {
-        this.rowDeductionsData.push(formData);
-        this.loadDataGrid(entityType);
+        this.rowDeductionsData = [...this.rowDeductionsData, formData];
       } else if (entityType === "statutory") {
-        this.rowStatutoryData.push(formData);
-        this.loadDataGrid(entityType);
+        this.rowStatutoryData = [...this.rowStatutoryData, formData];
       } else if (entityType === "category") {
-        this.rowCategoryData.push(formData);
-        this.loadDataGrid(entityType);
+        this.rowCategoryData = [...this.rowCategoryData, formData];
       }
-
+      await this.loadDataGrid(entityType);
       getToastSuccess(
         this.$t("messages.insertSuccess") || "Data added successfully"
       );
@@ -924,7 +943,6 @@ export default class PayrollComponents extends Vue {
     try {
       // const { status2 } = await payrollComponentAPI.UpdatePayrollComponent(formData);
 
-      console.info("updateData called with:", formData);
       const entityType = formData.entity_type;
 
       if (entityType === "earnings") {
@@ -932,31 +950,50 @@ export default class PayrollComponents extends Vue {
           (item: any) => item.code === formData.code
         );
         if (index !== -1) {
-          this.rowEarningsData[index] = { ...formData };
+          this.rowEarningsData = [
+            ...this.rowEarningsData.slice(0, index),
+            { ...formData },
+            ...this.rowEarningsData.slice(index + 1),
+          ];
         }
       } else if (entityType === "deductions") {
         const index = this.rowDeductionsData.findIndex(
           (item: any) => item.code === formData.code
         );
         if (index !== -1) {
-          this.rowDeductionsData[index] = { ...formData };
+          this.rowDeductionsData = [
+            ...this.rowDeductionsData.slice(0, index),
+            { ...formData },
+            ...this.rowDeductionsData.slice(index + 1),
+          ];
         }
       } else if (entityType === "statutory") {
         const index = this.rowStatutoryData.findIndex(
           (item: any) => item.code === formData.code
         );
         if (index !== -1) {
-          this.rowStatutoryData[index] = { ...formData };
+          this.rowStatutoryData = [
+            ...this.rowStatutoryData.slice(0, index),
+            { ...formData },
+            ...this.rowStatutoryData.slice(index + 1),
+          ];
         }
       } else if (entityType === "category") {
         const index = this.rowCategoryData.findIndex(
           (item: any) => item.code === formData.code
         );
         if (index !== -1) {
-          this.rowCategoryData[index] = { ...formData };
+          this.rowCategoryData = [
+            ...this.rowCategoryData.slice(0, index),
+            { ...formData },
+            ...this.rowCategoryData.slice(index + 1),
+          ];
         }
       }
-      this.loadDataGrid(entityType);
+
+      // Properly refresh the grid
+      await this.loadDataGrid(entityType);
+
       getToastSuccess(
         this.$t("messages.updateSuccess") || "Data updated successfully"
       );
@@ -970,45 +1007,34 @@ export default class PayrollComponents extends Vue {
     try {
       // const { status2 } = await payrollComponentAPI.DeletePayrollComponent(params.id);
       const params = this.deleteParam;
-      if (params.entity_type === "earnings") {
+      const entityType = params.entity_type;
+
+      // Remove the data from the appropriate array
+      if (entityType === "earnings") {
         this.rowEarningsData = this.rowEarningsData.filter(
           (item: any) => item.code !== params.code
         );
-        if (this.earningsTabGridApi) {
-          this.earningsTabGridApi.setRowData([...this.rowEarningsData]);
-        }
-
-        getToastSuccess("Component Earnings has remove successfully");
-      } else if (params.entity_type === "deductions") {
+      } else if (entityType === "deductions") {
         this.rowDeductionsData = this.rowDeductionsData.filter(
           (item: any) => item.code !== params.code
         );
-        if (this.deductionsTabGridApi) {
-          this.deductionsTabGridApi.setRowData([...this.rowDeductionsData]);
-        }
-
-        getToastSuccess("Component Deductions has remove successfully");
-      } else if (params.entity_type === "statutory") {
+      } else if (entityType === "statutory") {
         this.rowStatutoryData = this.rowStatutoryData.filter(
           (item: any) => item.code !== params.code
         );
-        if (this.statutoryTabGridApi) {
-          this.statutoryTabGridApi.setRowData([...this.rowStatutoryData]);
-        }
-
-        getToastSuccess("Component Statutory has remove successfully");
-      } else if (params.entity_type === "category") {
+      } else if (entityType === "category") {
         this.rowCategoryData = this.rowCategoryData.filter(
           (item: any) => item.code !== params.code
         );
-        if (this.categoryTabGridApi) {
-          this.categoryTabGridApi.setRowData([...this.categoryTabGridApi]);
-        }
-
-        getToastSuccess("Category has remove successfully");
       } else {
         getToastError("Component not found");
+        return;
       }
+
+      // Properly refresh the grid
+      await this.loadDataGrid(entityType);
+
+      getToastSuccess(`Component ${entityType} has been removed successfully`);
     } catch (error) {
       getError(error);
     }
