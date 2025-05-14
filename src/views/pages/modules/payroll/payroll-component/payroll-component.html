@@ -45,7 +45,7 @@
       <component
         class="px-2"
         :is="getCurrentFormComponent()"
-        :ref="getCurrentFormRef"
+        ref="getCurrentFormRef()"
         v-if="showForm"
         :modeData="modeData"
         @save="handleSave"

@@ -453,21 +453,39 @@ export default class PayrollComponents extends Vue {
   }
 
   handleShowForm(params: any, mode: any) {
-    // this.inputFormElement.initialize();
     this.modeData = mode;
-    this.activeTab = params.entity_type;
+
+    // Jika params adalah string, ini adalah tipe component (untuk pembuatan baru)
+    const isNewComponent = typeof params === "string";
+    const componentType = isNewComponent ? params : params.entity_type;
+
+    this.activeTab = componentType;
     this.showForm = false;
+
+    // Tunggu DOM update sebelum menampilkan form
     this.$nextTick(() => {
       this.showForm = true;
 
+      // Tunggu form dimuat sebelum mengisi data
       this.$nextTick(() => {
-        const formElement = this.getFormElementByType(params.entity_type);
-        if (formElement) {
-          formElement.initialize();
+        const formElement = this.getFormElementByType(componentType);
 
-          if (mode === $global.modeData.edit && this.paramsData) {
-            this.populateForm(this.paramsData);
-          }
+        if (!formElement) {
+          console.error(`Form element for ${componentType} not found`);
+          return;
+        }
+
+        // Reset form terlebih dahulu
+        if (typeof formElement.resetForm === "function") {
+          formElement.resetForm();
+        } else if (typeof formElement.initialize === "function") {
+          formElement.initialize();
+        }
+
+        // Jika mode edit, isi form dengan data yang ada
+        if (mode === $global.modeData.edit && !isNewComponent) {
+          console.log("Populating form with data:", params);
+          this.populateForm(params);
         }
       });
     });
@@ -510,16 +528,19 @@ export default class PayrollComponents extends Vue {
   }
 
   getFormElementByType(type: string): any {
+    console.log(`Getting form element for type: ${type}`);
+
     switch (type) {
       case "earnings":
-        return this.earningsFormElement;
+        return this.$refs.earningsFormElement;
       case "deductions":
-        return this.deductionsFormElement;
+        return this.$refs.deductionsFormElement;
       case "statutory":
-        return this.statutoryFormElement;
+        return this.$refs.statutoryFormElement;
       case "category":
-        return this.categoryFormElement;
+        return this.$refs.categoryFormElement;
       default:
+        console.warn(`Unknown component type: ${type}`);
         return null;
     }
   }
@@ -1113,76 +1134,104 @@ export default class PayrollComponents extends Vue {
   }
 
   populateForm(params: any) {
-    const formType = params.entity_type;
-    const formElement = this.getFormElementByType(params.entity_type);
-    if (!formElement) return;
+    console.log("Populating form with data:", params);
 
-    switch (formType) {
-      case "earnings":
-        formElement.form = {
-          earningsCode: params.code || "",
-          earningsName: params.name || "",
-          earningsDescription: params.description || "",
-          earningCategory: params.category || "",
-          earningDefaultAmount: params.default_amount || 0,
-          earningQty: params.quantity || 1,
-          earningUnit: params.unit || "",
-          earningTaxable: params.taxable ? "YES" : "NO",
-          earningIncludedBpjsHealth: params.included_bpjs_health ? "YES" : "NO",
-          earningIncludedBpjsEmplyoee: params.included_bpjs_employee
-            ? "YES"
-            : "NO",
-          earningIncludedProrate: params.included_prorate ? "YES" : "NO",
-          earningsShowInPayslip: params.show_in_payslip ? "YES" : "NO",
-          earningsStatus: params.active ? "A" : "I",
-        };
-        break;
-      case "deductions":
-        formElement.form = {
-          deductionsCode: params.code || "",
-          deductionsName: params.name || "",
-          deductionsDescription: params.description || "",
-          deductionsCategory: params.category || "",
-          deductionsDefaultAmount: params.default_amount || 0,
-          deductionsQty: params.quantity || 1,
-          deductionsUnit: params.unit || "",
-          deductionsTaxable: params.taxable ? "YES" : "NO",
-          deductionsIncludedBpjsHealth: params.included_bpjs_health
-            ? "YES"
-            : "NO",
-          deductionsIncludedBpjsEmplyoee: params.included_bpjs_employee
-            ? "YES"
-            : "NO",
-          deductionsIncludedProrate: params.included_prorate ? "YES" : "NO",
-          deductionsShowInPayslip: params.show_in_payslip ? "YES" : "NO",
-          deductionsStatus: params.active ? "A" : "I",
-        };
-        break;
-      case "statutory":
-        formElement.form = {
-          statutoryCode: params.code || "",
-          statutoryName: params.name || "",
-          statutoryDescription: params.description || "",
-          statutoryType: params.type || "",
-          statutoryDefaultAmount: params.default_amount || 0,
-          statutoryQty: params.quantity || 1,
-          statutoryUnit: params.unit || "",
-          statutoryTaxable: params.taxable ? "YES" : "NO",
-          statutoryShowInPayslip: params.show_in_payslip ? "YES" : "NO",
-          statutoryStatus: params.active ? "A" : "I",
-        };
-        break;
-      case "category":
-        formElement.form = {
-          categoryCode: params.code || "",
-          categoryName: params.name || "",
-          categoryDescription: params.description || "",
-          categoryType: params.type || "",
-          categoryStatus: params.active ? "A" : "I",
-        };
-        break;
+    if (!params || !params.entity_type) {
+      console.error("Invalid data for form population:", params);
+      return;
     }
-    formElement.form.id = params.id;
+
+    const formType = params.entity_type;
+    const formElement = this.getFormElementByType(formType);
+
+    if (!formElement) {
+      console.error(`Form element for ${formType} not found during population`);
+      return;
+    }
+
+    // Tunggu form benar-benar tersedia
+    this.$nextTick(() => {
+      switch (formType) {
+        case "earnings":
+          formElement.form = {
+            earningsCode: params.code || "",
+            earningsName: params.name || "",
+            earningsDescription: params.description || "",
+            earningCategory: params.category || "",
+            earningDefaultAmount: params.default_amount || 0,
+            earningQty: params.quantity || 1,
+            earningUnit: params.unit || "",
+            earningTaxable: params.taxable ? "YES" : "NO",
+            earningIncludedBpjsHealth: params.included_bpjs_health
+              ? "YES"
+              : "NO",
+            earningIncludedBpjsEmplyoee: params.included_bpjs_employee
+              ? "YES"
+              : "NO",
+            earningIncludedProrate: params.included_prorate ? "YES" : "NO",
+            earningsShowInPayslip: params.show_in_payslip ? "YES" : "NO",
+            earningsStatus: params.active ? "A" : "I",
+            entityType: "earnings", // Tambahkan entity type untuk proses save
+          };
+          console.log("Earnings form populated:", formElement.form);
+          break;
+        case "deductions":
+          formElement.form = {
+            deductionsCode: params.code || "",
+            deductionsName: params.name || "",
+            deductionsDescription: params.description || "",
+            deductionsCategory: params.category || "",
+            deductionsDefaultAmount: params.default_amount || 0,
+            deductionsQty: params.quantity || 1,
+            deductionsUnit: params.unit || "",
+            deductionsTaxable: params.taxable ? "YES" : "NO",
+            deductionsIncludedBpjsHealth: params.included_bpjs_health
+              ? "YES"
+              : "NO",
+            deductionsIncludedBpjsEmplyoee: params.included_bpjs_employee
+              ? "YES"
+              : "NO",
+            deductionsIncludedProrate: params.included_prorate ? "YES" : "NO",
+            deductionsShowInPayslip: params.show_in_payslip ? "YES" : "NO",
+            deductionsStatus: params.active ? "A" : "I",
+            entityType: "deductions",
+          };
+          console.log("Deductions form populated:", formElement.form);
+          break;
+        case "statutory":
+          formElement.form = {
+            statutoryCode: params.code || "",
+            statutoryName: params.name || "",
+            statutoryDescription: params.description || "",
+            statutoryType: params.type || "",
+            statutoryDefaultAmount: params.default_amount || 0,
+            statutoryQty: params.quantity || 1,
+            statutoryUnit: params.unit || "",
+            statutoryTaxable: params.taxable ? "YES" : "NO",
+            statutoryShowInPayslip: params.show_in_payslip ? "YES" : "NO",
+            statutoryStatus: params.active ? "A" : "I",
+            entityType: "statutory",
+          };
+          console.log("Statutory form populated:", formElement.form);
+          break;
+        case "category":
+          formElement.form = {
+            categoryCode: params.code || "",
+            categoryName: params.name || "",
+            categoryDescription: params.description || "",
+            categoryType: params.type || "",
+            categoryStatus: params.active ? "A" : "I",
+            entityType: "category",
+          };
+          console.log("Category form populated:", formElement.form);
+          break;
+      }
+
+      // Tambahkan ID untuk edit
+      if (formElement.form) {
+        formElement.form.id = params.id;
+      }
+    });
   }
 
   getCurrentFormComponent() {
