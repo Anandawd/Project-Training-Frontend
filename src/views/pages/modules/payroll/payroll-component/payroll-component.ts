@@ -15,13 +15,10 @@ import DeductionsInputForm from "./deductions-component-input-form/deductions-co
 import EarningsInputForm from "./earnings-component-input-form/earnings-component-input-form.vue";
 import StatutoryInputForm from "./statutory-component-input-form/statutory-component-input-form.vue";
 
-import CInputForm from "./payroll-component-input-form/payroll-component-input-form.vue";
-
 @Options({
   components: {
     AgGridVue,
     CDialog,
-    CInputForm,
     EarningsInputForm,
     DeductionsInputForm,
     StatutoryInputForm,
@@ -77,8 +74,6 @@ export default class PayrollComponents extends Vue {
   deductionsTabGridApi: any;
   statutoryTabGridApi: any;
   categoryTabGridApi: any;
-  standaloneEarningsGridApi: any;
-  standaloneDeductionsGridApi: any;
 
   // LIFECYCLE HOOKS
   created(): void {
@@ -398,12 +393,6 @@ export default class PayrollComponents extends Vue {
       case "category-tab-grid":
         this.categoryTabGridApi = params.api;
         break;
-      case "standalone-earnings-grid":
-        this.standaloneEarningsGridApi = params.api;
-        break;
-      case "standalone-deductions-grid":
-        this.standaloneDeductionsGridApi = params.api;
-        break;
     }
 
     this.gridApi = params.api;
@@ -474,14 +463,16 @@ export default class PayrollComponents extends Vue {
     }
   }
 
-  async handleSave(formData: any) {
+  handleSave(formData: any) {
     const entityType = this.getCurrentEntityType(formData);
     const formattedData = this.formatComponentData(formData, entityType);
 
+    console.info("formData di handleSave", formData);
+    console.info("entityType di handleSave", entityType);
     if (this.modeData === $global.modeData.insert) {
-      await this.insertData(formattedData);
+      this.insertData(formattedData);
     } else if (this.modeData === $global.modeData.edit) {
-      await this.updateData(formattedData);
+      this.updateData(formattedData);
     }
   }
 
@@ -1072,7 +1063,7 @@ export default class PayrollComponents extends Vue {
 
   formatEarningsData(formData: any) {
     return {
-      id: formData.id || undefined,
+      id: formData.id,
       code: formData.earningsCode,
       name: formData.earningsName,
       description: formData.earningsDescription,
@@ -1086,13 +1077,13 @@ export default class PayrollComponents extends Vue {
       included_prorate: formData.earningIncludedProrate === "YES",
       show_in_payslip: formData.earningsShowInPayslip === "YES",
       active: formData.earningsStatus === "A",
-      entity_type: formData.entityType,
+      entity_type: "earnings",
     };
   }
 
   formatDeductionsData(formData: any) {
     return {
-      id: formData.id || undefined,
+      id: formData.id,
       code: formData.deductionsCode,
       name: formData.deductionsName,
       description: formData.deductionsDescription,
@@ -1106,7 +1097,7 @@ export default class PayrollComponents extends Vue {
       included_prorate: formData.deductionsIncludedProrate === "YES",
       show_in_payslip: formData.deductionsShowInPayslip === "YES",
       active: formData.deductionsStatus === "A",
-      entity_type: formData.entityType,
+      entity_type: "deductions",
     };
   }
 
@@ -1123,7 +1114,7 @@ export default class PayrollComponents extends Vue {
       taxable: formData.statutoryTaxable === "YES",
       show_in_payslip: formData.statutoryShowInPayslip === "YES",
       active: formData.statutoryStatus === "A",
-      entity_type: formData.entityType,
+      entity_type: "statutory",
     };
   }
 
@@ -1135,7 +1126,7 @@ export default class PayrollComponents extends Vue {
       description: formData.categoryDescription,
       type: formData.categoryType,
       active: formData.categoryStatus === "A",
-      entity_type: formData.entityType,
+      entity_type: "category",
     };
   }
 
@@ -1243,6 +1234,7 @@ export default class PayrollComponents extends Vue {
   }
 
   getCurrentEntityType(formData: any): string {
+    if (formData.entityType) return formData.entityType;
     if (formData.earningsCode !== undefined) return "earnings";
     if (formData.deductionsCode !== undefined) return "deductions";
     if (formData.statutoryCode !== undefined) return "statutory";
@@ -1267,18 +1259,26 @@ export default class PayrollComponents extends Vue {
   }
 
   formatComponentData(formData: any, entityType: string): any {
+    let formatted;
     switch (entityType) {
       case "earnings":
-        return this.formatEarningsData(formData);
+        formatted = this.formatEarningsData(formData);
+        break;
       case "deductions":
-        return this.formatDeductionsData(formData);
+        formatted = this.formatDeductionsData(formData);
+        break;
       case "statutory":
-        return this.formatStatutoryData(formData);
+        formatted = this.formatStatutoryData(formData);
+        break;
       case "category":
-        return this.formatCategoryData(formData);
+        formatted = this.formatCategoryData(formData);
+        break;
       default:
         throw new Error("Unknown component type");
     }
+
+    formatted.entity_type = entityType;
+    return formatted;
   }
 
   getCurrentFormComponent() {
