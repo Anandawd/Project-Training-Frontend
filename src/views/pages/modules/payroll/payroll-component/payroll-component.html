@@ -42,11 +42,48 @@
 
     <!-- insert form -->
     <transition name="fade" mode="out-in">
-      <component
+      <earnings-input-form
+        ref="earningsFormElement"
+        v-if="showForm && activeTab === 'earnings'"
+        :modeData="modeData"
+        @save="handleSave"
+        @close="showForm=false"
+      />
+      <!-- <component
         class="px-2"
         :is="getCurrentFormComponent()"
         ref="getCurrentFormRef()"
         v-if="showForm"
+        :modeData="modeData"
+        @save="handleSave"
+        @close="showForm=false"
+      /> -->
+    </transition>
+
+    <transition name="fade" mode="out-in">
+      <deductions-input-form
+        ref="deductionsFormElement"
+        v-if="showForm && activeTab === 'deductions'"
+        :modeData="modeData"
+        @save="handleSave"
+        @close="showForm=false"
+      />
+    </transition>
+
+    <transition name="fade" mode="out-in">
+      <statutory-input-form
+        ref="statutoryFormElement"
+        v-if="showForm && activeTab === 'statutory'"
+        :modeData="modeData"
+        @save="handleSave"
+        @close="showForm=false"
+      />
+    </transition>
+
+    <transition name="fade" mode="out-in">
+      <category-input-form
+        ref="categoryFormElement"
+        v-if="showForm && activeTab === 'category'"
         :modeData="modeData"
         @save="handleSave"
         @close="showForm=false"

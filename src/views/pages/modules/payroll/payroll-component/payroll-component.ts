@@ -85,8 +85,6 @@ export default class PayrollComponents extends Vue {
     this.loadMockData();
   }
 
-  mounted() {}
-
   beforeMount(): void {
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
@@ -455,61 +453,44 @@ export default class PayrollComponents extends Vue {
   handleShowForm(params: any, mode: any) {
     this.modeData = mode;
 
-    // Jika params adalah string, ini adalah tipe component (untuk pembuatan baru)
-    const isNewComponent = typeof params === "string";
-    const componentType = isNewComponent ? params : params.entity_type;
+    if (mode === $global.modeData.edit) {
+      console.info("button edit clicked");
+      const entityType = params.entity_type;
+      this.activeTab = entityType;
+      this.loadEditData(params, entityType);
+    } else {
+      console.info("button insert clicked");
+      const componentType =
+        typeof params === "string" ? params : params.entity_type;
+      this.activeTab = componentType;
 
-    this.activeTab = componentType;
-    this.showForm = false;
-
-    // Tunggu DOM update sebelum menampilkan form
-    this.$nextTick(() => {
       this.showForm = true;
-
-      // Tunggu form dimuat sebelum mengisi data
       this.$nextTick(() => {
-        const formElement = this.getFormElementByType(componentType);
-
-        if (!formElement) {
-          console.error(`Form element for ${componentType} not found`);
-          return;
-        }
-
-        // Reset form terlebih dahulu
-        if (typeof formElement.resetForm === "function") {
-          formElement.resetForm();
-        } else if (typeof formElement.initialize === "function") {
+        const formElement = this.getFormElementByType(this.activeTab);
+        if (formElement && typeof formElement.initialize === "function") {
           formElement.initialize();
         }
-
-        // Jika mode edit, isi form dengan data yang ada
-        if (mode === $global.modeData.edit && !isNewComponent) {
-          console.log("Populating form with data:", params);
-          this.populateForm(params);
-        }
       });
-    });
+    }
   }
 
-  handleSave(formData: any) {
-    try {
-      const entityType = this.getCurrentEntityType(formData);
-      const formattedData = this.formatComponentData(formData, entityType);
+  async handleSave(formData: any) {
+    const entityType = this.getCurrentEntityType(formData);
+    const formattedData = this.formatComponentData(formData, entityType);
 
-      if (this.modeData === $global.modeData.insert) {
-        this.insertData(formattedData);
-      } else if (this.modeData === $global.modeData.edit) {
-        this.updateData(formattedData);
-      }
-
-      this.refreshGridAfterSave(entityType);
-      this.showForm = false;
-      getToastSuccess(
-        this.$t("messages.saveSuccess") || "Data saved successfully"
-      );
-    } catch (error) {
-      getError(error);
+    if (this.modeData === $global.modeData.insert) {
+      await this.insertData(formattedData);
+    } else if (this.modeData === $global.modeData.edit) {
+      await this.updateData(formattedData);
     }
+  }
+
+  handleEdit(params: any) {
+    console.info("button edit clicked");
+    console.info("mode data", this.modeData);
+    const entityType = params.entity_type;
+    this.activeTab = entityType;
+    this.loadEditData(params, entityType);
   }
 
   handleDelete(params: any) {
@@ -517,47 +498,6 @@ export default class PayrollComponents extends Vue {
     this.deleteParam = params;
     this.deleteData();
     // this.showDialog = true;
-  }
-
-  getCurrentEntityType(formData: any): string {
-    if (formData.earningsCode !== undefined) return "earnings";
-    if (formData.deductionsCode !== undefined) return "deductions";
-    if (formData.statutoryCode !== undefined) return "statutory";
-    if (formData.categoryCode !== undefined) return "category";
-    return this.activeTab;
-  }
-
-  getFormElementByType(type: string): any {
-    console.log(`Getting form element for type: ${type}`);
-
-    switch (type) {
-      case "earnings":
-        return this.$refs.earningsFormElement;
-      case "deductions":
-        return this.$refs.deductionsFormElement;
-      case "statutory":
-        return this.$refs.statutoryFormElement;
-      case "category":
-        return this.$refs.categoryFormElement;
-      default:
-        console.warn(`Unknown component type: ${type}`);
-        return null;
-    }
-  }
-
-  formatComponentData(formData: any, entityType: string): any {
-    switch (entityType) {
-      case "earnings":
-        return this.formatEarningsData(formData);
-      case "deductions":
-        return this.formatDeductionsData(formData);
-      case "statutory":
-        return this.formatStatutoryData(formData);
-      case "category":
-        return this.formatCategoryData(formData);
-      default:
-        throw new Error("Unknown component type");
-    }
   }
 
   refreshData(search: any) {
@@ -896,25 +836,37 @@ export default class PayrollComponents extends Vue {
     ];
   }
 
-  async loadEditData(params: any, mode: any) {
+  async loadEditData(params: any, entityType: any) {
     try {
-      if (mode === $global.modePayroll.editEarnings) {
-        // const { data } = await trainingAPI.GetLostAndFound(params);
-        // this.inputFormElement.form = data;
-        this.showForm = true;
-      } else if (mode === $global.modePayroll.editDeductions) {
-        // const { data } = await trainingAPI.GetLostAndFound(params);
-        // this.inputFormElement.form = data;
-        this.showForm = true;
-      } else if (mode === $global.modePayroll.editStatutory) {
-        // const { data } = await trainingAPI.GetLostAndFound(params);
-        // this.inputFormElement.form = data;
-        this.showForm = true;
-      } else if (mode === $global.modePayroll.editCategory) {
-        // const { data } = await trainingAPI.GetLostAndFound(params);
-        // this.inputFormElement.form = data;
-        this.showForm = true;
+      this.showForm = true;
+
+      await this.$nextTick();
+
+      const formElement = this.getFormElementByType(entityType);
+
+      if (!formElement) {
+        console.error(`Form element for ${entityType} not found`);
+        return;
       }
+
+      this.populateForm(params);
+      // if (mode === $global.modePayroll.editEarnings) {
+      //   const { data } = await trainingAPI.GetLostAndFound(params);
+      //   this.inputFormElement.form = data;
+      //   this.showForm = true;
+      // } else if (mode === $global.modePayroll.editDeductions) {
+      //   const { data } = await trainingAPI.GetLostAndFound(params);
+      //   this.inputFormElement.form = data;
+      //   this.showForm = true;
+      // } else if (mode === $global.modePayroll.editStatutory) {
+      //   const { data } = await trainingAPI.GetLostAndFound(params);
+      //   this.inputFormElement.form = data;
+      //   this.showForm = true;
+      // } else if (mode === $global.modePayroll.editCategory) {
+      //   const { data } = await trainingAPI.GetLostAndFound(params);
+      //   this.inputFormElement.form = data;
+      //   this.showForm = true;
+      // }
     } catch (error) {
       getError(error);
     }
@@ -947,6 +899,10 @@ export default class PayrollComponents extends Vue {
           this.categoryTabGridApi.setRowData([...this.rowCategoryData]);
         }
       }
+
+      getToastSuccess(
+        this.$t("messages.insertSuccess") || "Data added successfully"
+      );
       return { status: 0 };
     } catch (error) {
       getError(error);
@@ -955,8 +911,59 @@ export default class PayrollComponents extends Vue {
 
   async updateData(formData: any) {
     try {
-      getToastSuccess(`Component updated successfully`);
+      // In a real app, you would call the API here
+      // const { status2 } = await payrollComponentAPI.UpdatePayrollComponent(formData);
+
+      console.info("updateData", formData);
+      const entityType = formData.entity_type;
+
+      if (entityType === "earnings") {
+        const index = this.rowEarningsData.findIndex(
+          (item: any) => item.code === formData.code
+        );
+        if (index !== -1) {
+          this.rowEarningsData[index] = { ...formData };
+          if (this.earningsTabGridApi) {
+            this.earningsTabGridApi.setRowData([...this.rowEarningsData]);
+          }
+        }
+      } else if (entityType === "deductions") {
+        const index = this.rowDeductionsData.findIndex(
+          (item: any) => item.code === formData.code
+        );
+        if (index !== -1) {
+          this.rowDeductionsData[index] = { ...formData };
+          if (this.deductionsTabGridApi) {
+            this.deductionsTabGridApi.setRowData([...this.rowDeductionsData]);
+          }
+        }
+      } else if (entityType === "statutory") {
+        const index = this.rowStatutoryData.findIndex(
+          (item: any) => item.code === formData.code
+        );
+        if (index !== -1) {
+          this.rowStatutoryData[index] = { ...formData };
+          if (this.statutoryTabGridApi) {
+            this.statutoryTabGridApi.setRowData([...this.rowStatutoryData]);
+          }
+        }
+      } else if (entityType === "category") {
+        const index = this.rowCategoryData.findIndex(
+          (item: any) => item.code === formData.code
+        );
+        if (index !== -1) {
+          this.rowCategoryData[index] = { ...formData };
+          if (this.categoryTabGridApi) {
+            this.categoryTabGridApi.setRowData([...this.rowCategoryData]);
+          }
+        }
+      }
+      this.refreshGridAfterSave(entityType);
       this.showForm = false;
+      getToastSuccess(
+        this.$t("messages.updateSuccess") || "Data updated successfully"
+      );
+      return { status: 0 };
     } catch (error) {
       getError(error);
     }
@@ -1036,7 +1043,6 @@ export default class PayrollComponents extends Vue {
   }
 
   generateUniqueId(entityType: string): number {
-    // Generate a simple unique ID based on entity type and current array length
     let maxId = 0;
 
     if (entityType === "earnings") {
@@ -1134,24 +1140,23 @@ export default class PayrollComponents extends Vue {
   }
 
   populateForm(params: any) {
-    console.log("Populating form with data:", params);
-
     if (!params || !params.entity_type) {
-      console.error("Invalid data for form population:", params);
+      console.info("Invalid data for form population:", params);
       return;
     }
 
-    const formType = params.entity_type;
-    const formElement = this.getFormElementByType(formType);
+    const entityType = params.entity_type;
+    const formElement = this.getFormElementByType(entityType);
 
     if (!formElement) {
-      console.error(`Form element for ${formType} not found during population`);
+      console.info(
+        `Form element for ${entityType} not found during population`
+      );
       return;
     }
 
-    // Tunggu form benar-benar tersedia
     this.$nextTick(() => {
-      switch (formType) {
+      switch (entityType) {
         case "earnings":
           formElement.form = {
             earningsCode: params.code || "",
@@ -1171,9 +1176,10 @@ export default class PayrollComponents extends Vue {
             earningIncludedProrate: params.included_prorate ? "YES" : "NO",
             earningsShowInPayslip: params.show_in_payslip ? "YES" : "NO",
             earningsStatus: params.active ? "A" : "I",
-            entityType: "earnings", // Tambahkan entity type untuk proses save
+            entityType: "earnings",
+            id: params.id,
           };
-          console.log("Earnings form populated:", formElement.form);
+
           break;
         case "deductions":
           formElement.form = {
@@ -1195,8 +1201,9 @@ export default class PayrollComponents extends Vue {
             deductionsShowInPayslip: params.show_in_payslip ? "YES" : "NO",
             deductionsStatus: params.active ? "A" : "I",
             entityType: "deductions",
+            id: params.id,
           };
-          console.log("Deductions form populated:", formElement.form);
+
           break;
         case "statutory":
           formElement.form = {
@@ -1211,8 +1218,9 @@ export default class PayrollComponents extends Vue {
             statutoryShowInPayslip: params.show_in_payslip ? "YES" : "NO",
             statutoryStatus: params.active ? "A" : "I",
             entityType: "statutory",
+            id: params.id,
           };
-          console.log("Statutory form populated:", formElement.form);
+
           break;
         case "category":
           formElement.form = {
@@ -1222,16 +1230,55 @@ export default class PayrollComponents extends Vue {
             categoryType: params.type || "",
             categoryStatus: params.active ? "A" : "I",
             entityType: "category",
+            id: params.id,
           };
-          console.log("Category form populated:", formElement.form);
+
           break;
       }
 
-      // Tambahkan ID untuk edit
       if (formElement.form) {
         formElement.form.id = params.id;
       }
     });
+  }
+
+  getCurrentEntityType(formData: any): string {
+    if (formData.earningsCode !== undefined) return "earnings";
+    if (formData.deductionsCode !== undefined) return "deductions";
+    if (formData.statutoryCode !== undefined) return "statutory";
+    if (formData.categoryCode !== undefined) return "category";
+    return this.activeTab;
+  }
+
+  getFormElementByType(type: string): any {
+    switch (type) {
+      case "earnings":
+        return this.$refs.earningsFormElement;
+      case "deductions":
+        return this.$refs.deductionsFormElement;
+      case "statutory":
+        return this.$refs.statutoryFormElement;
+      case "category":
+        return this.$refs.categoryFormElement;
+      default:
+        console.info(`Unknown component type: ${type}`);
+        return null;
+    }
+  }
+
+  formatComponentData(formData: any, entityType: string): any {
+    switch (entityType) {
+      case "earnings":
+        return this.formatEarningsData(formData);
+      case "deductions":
+        return this.formatDeductionsData(formData);
+      case "statutory":
+        return this.formatStatutoryData(formData);
+      case "category":
+        return this.formatCategoryData(formData);
+      default:
+        throw new Error("Unknown component type");
+    }
   }
 
   getCurrentFormComponent() {
