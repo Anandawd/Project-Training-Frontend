@@ -30,7 +30,7 @@ export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
   public isSave: boolean = false;
-  public activeTab: string = "earnings";
+  public activeTab: string = "category";
 
   public form: any = reactive({});
 
@@ -92,6 +92,8 @@ export default class InputForm extends Vue {
       categoryDescription: "",
       categoryType: "",
       categoryStatus: "A",
+      entityType: "category",
+      id: undefined,
     };
   }
 
@@ -118,18 +120,18 @@ export default class InputForm extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      categoryCode: Yup.string().when([], {
-        is: () => this.activeTab === "category",
-        then: Yup.string().required("Code is required"),
-      }),
-      categoryName: Yup.string().when([], {
-        is: () => this.activeTab === "category",
-        then: Yup.string().required("Name is required"),
-      }),
-      categoryType: Yup.string().when([], {
-        is: () => this.activeTab === "category",
-        then: Yup.string().required("Type is required"),
-      }),
+      // categoryCode: Yup.string().when([], {
+      //   is: () => this.activeTab === "category",
+      //   then: Yup.string().required("Code is required"),
+      // }),
+      // categoryName: Yup.string().when([], {
+      //   is: () => this.activeTab === "category",
+      //   then: Yup.string().required("Name is required"),
+      // }),
+      // categoryType: Yup.string().when([], {
+      //   is: () => this.activeTab === "category",
+      //   then: Yup.string().required("Type is required"),
+      // }),
     });
   }
 

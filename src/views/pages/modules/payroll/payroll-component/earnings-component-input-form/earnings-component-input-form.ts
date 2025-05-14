@@ -100,12 +100,14 @@ export default class InputForm extends Vue {
       earningDefaultAmount: 0,
       earningQty: 1,
       earningUnit: "",
-      earningTaxable: "NO",
-      earningIncludedBpjsEmplyoee: "NO",
-      earningIncludedBpjsHealth: "NO",
-      earningIncludedProrate: "NO",
+      earningTaxable: "YES",
+      earningIncludedBpjsEmplyoee: "YES",
+      earningIncludedBpjsHealth: "YES",
+      earningIncludedProrate: "YES",
       earningsShowInPayslip: "YES",
       earningsStatus: "A",
+      entityType: "earnings",
+      id: undefined,
     };
   }
 
@@ -132,18 +134,18 @@ export default class InputForm extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      earningsCode: Yup.string().when([], {
-        is: () => this.activeTab === "earnings",
-        then: Yup.string().required("Code is required"),
-      }),
-      earningsName: Yup.string().when([], {
-        is: () => this.activeTab === "earnings",
-        then: Yup.string().required("Name is required"),
-      }),
-      earningCategory: Yup.string().when([], {
-        is: () => this.activeTab === "earnings",
-        then: Yup.string().required("Category is required"),
-      }),
+      // earningsCode: Yup.string().when([], {
+      //   is: () => this.activeTab === "earnings",
+      //   then: Yup.string().required("Code is required"),
+      // }),
+      // earningsName: Yup.string().when([], {
+      //   is: () => this.activeTab === "earnings",
+      //   then: Yup.string().required("Name is required"),
+      // }),
+      // earningCategory: Yup.string().when([], {
+      //   is: () => this.activeTab === "earnings",
+      //   then: Yup.string().required("Category is required"),
+      // }),
     });
   }
 

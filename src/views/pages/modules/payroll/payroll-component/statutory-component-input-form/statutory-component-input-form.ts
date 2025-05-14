@@ -30,7 +30,7 @@ export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
   public isSave: boolean = false;
-  public activeTab: string = "earnings";
+  public activeTab: string = "statutory";
 
   public form: any = reactive({});
 
@@ -96,8 +96,11 @@ export default class InputForm extends Vue {
       statutoryQty: 1,
       statutoryUnit: "",
       statutoryTaxable: "NO",
+      statutoryIncludedProrate: "YES",
       statutoryShowInPayslip: "YES",
       statutoryStatus: "A",
+      entityType: "statutory",
+      id: undefined,
     };
   }
 
@@ -125,18 +128,18 @@ export default class InputForm extends Vue {
   get schema() {
     return Yup.object().shape({
       // Statutory tab validations
-      statutoryCode: Yup.string().when([], {
-        is: () => this.activeTab === "statutory",
-        then: Yup.string().required("Code is required"),
-      }),
-      statutoryName: Yup.string().when([], {
-        is: () => this.activeTab === "statutory",
-        then: Yup.string().required("Name is required"),
-      }),
-      statutoryType: Yup.string().when([], {
-        is: () => this.activeTab === "statutory",
-        then: Yup.string().required("Type is required"),
-      }),
+      // statutoryCode: Yup.string().when([], {
+      //   is: () => this.activeTab === "statutory",
+      //   then: Yup.string().required("Code is required"),
+      // }),
+      // statutoryName: Yup.string().when([], {
+      //   is: () => this.activeTab === "statutory",
+      //   then: Yup.string().required("Name is required"),
+      // }),
+      // statutoryType: Yup.string().when([], {
+      //   is: () => this.activeTab === "statutory",
+      //   then: Yup.string().required("Type is required"),
+      // }),
     });
   }
 

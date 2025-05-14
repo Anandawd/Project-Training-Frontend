@@ -30,7 +30,7 @@ export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
   public isSave: boolean = false;
-  public activeTab: string = "earnings";
+  public activeTab: string = "deductions";
 
   public form: any = reactive({});
 
@@ -106,6 +106,8 @@ export default class InputForm extends Vue {
       deductionsIncludedProrate: "NO",
       deductionsShowInPayslip: "YES",
       deductionsStatus: "A",
+      entityType: "deductions",
+      id: undefined,
     };
   }
 
@@ -133,18 +135,18 @@ export default class InputForm extends Vue {
   get schema() {
     return Yup.object().shape({
       // Deductions tab validations
-      deductionsCode: Yup.string().when([], {
-        is: () => this.activeTab === "deductions",
-        then: Yup.string().required("Code is required"),
-      }),
-      deductionsName: Yup.string().when([], {
-        is: () => this.activeTab === "deductions",
-        then: Yup.string().required("Name is required"),
-      }),
-      deductionsCategory: Yup.string().when([], {
-        is: () => this.activeTab === "deductions",
-        then: Yup.string().required("Category is required"),
-      }),
+      // deductionsCode: Yup.string().when([], {
+      //   is: () => this.activeTab === "deductions",
+      //   then: Yup.string().required("Code is required"),
+      // }),
+      // deductionsName: Yup.string().when([], {
+      //   is: () => this.activeTab === "deductions",
+      //   then: Yup.string().required("Name is required"),
+      // }),
+      // deductionsCategory: Yup.string().when([], {
+      //   is: () => this.activeTab === "deductions",
+      //   then: Yup.string().required("Category is required"),
+      // }),
     });
   }
 
