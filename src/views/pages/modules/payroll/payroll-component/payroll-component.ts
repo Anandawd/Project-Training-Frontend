@@ -443,7 +443,6 @@ export default class PayrollComponents extends Vue {
   handleShowForm(params: any, mode: any) {
     this.modeData = mode;
 
-    // Set activeTab based on parameter or current tab
     if (typeof params === "string") {
       this.activeTab = params;
     } else if (params.entity_type) {
@@ -465,9 +464,9 @@ export default class PayrollComponents extends Vue {
   }
 
   handleSave(formData: any) {
-    console.info("FormData di handleSave:", formData);
-    console.info("ModeData di handleSave:", this.modeData);
-    console.info("ActiveTab di handleSave:", this.activeTab);
+    if (!this.validateFormData(formData)) {
+      return;
+    }
     const entityType = this.getCurrentEntityType(formData);
     const formattedData = this.formatComponentData(formData, entityType);
 
@@ -483,15 +482,12 @@ export default class PayrollComponents extends Vue {
   }
 
   handleEdit(params: any) {
-    console.info("button edit clicked");
-    console.info("mode data", this.modeData);
     const entityType = params.entity_type;
     this.activeTab = entityType;
     this.loadEditData(params, entityType);
   }
 
   handleDelete(params: any) {
-    console.info("params di handleDelete", params);
     this.deleteParam = params;
     this.deleteData();
     // this.showDialog = true;
@@ -499,6 +495,60 @@ export default class PayrollComponents extends Vue {
 
   refreshData(search: any) {
     this.loadDataGrid(search);
+  }
+
+  validateFormData(formData: any): boolean {
+    const entityType = this.getCurrentEntityType(formData);
+    const formElement = this.getFormElementByType(entityType);
+
+    if (!formElement) {
+      getToastError(`Form element for ${entityType} not found`);
+      return false;
+    }
+
+    switch (entityType) {
+      case "earnings":
+        if (
+          !formData.earningsCode ||
+          !formData.earningsName ||
+          !formData.earningCategory
+        ) {
+          getToastError("Please complete all required fields");
+          return false;
+        }
+        break;
+      case "deductions":
+        if (
+          !formData.deductionsCode ||
+          !formData.deductionsName ||
+          !formData.deductionsCategory
+        ) {
+          getToastError("Please complete all required fields");
+          return false;
+        }
+        break;
+      case "statutory":
+        if (
+          !formData.statutoryCode ||
+          !formData.statutoryName ||
+          !formData.statutoryType
+        ) {
+          getToastError("Please complete all required fields");
+          return false;
+        }
+        break;
+      case "category":
+        if (
+          !formData.categoryCode ||
+          !formData.categoryName ||
+          !formData.categoryType
+        ) {
+          getToastError("Please complete all required fields");
+          return false;
+        }
+        break;
+    }
+    return true;
   }
 
   // API FUNCTION
@@ -521,7 +571,6 @@ export default class PayrollComponents extends Vue {
   }
 
   async loadDataGrid(entityType: any = this.activeTab) {
-    // Get the correct grid API based on entity type
     let gridApi: GridApi;
     switch (entityType) {
       case "earnings":
@@ -538,9 +587,7 @@ export default class PayrollComponents extends Vue {
         break;
     }
 
-    // Update the grid if the API reference exists
     if (gridApi) {
-      // Get the correct data array based on entity type
       let rowData;
       switch (entityType) {
         case "earnings":
@@ -557,12 +604,10 @@ export default class PayrollComponents extends Vue {
           break;
       }
 
-      // Update the grid with a fresh copy of the data
       gridApi.setRowData(rowData);
 
-      // Force the grid to refresh after data change
       setTimeout(() => {
-        gridApi.refreshCells({ force: true });
+        // gridApi.refreshCells({ force: true });
       }, 100);
     }
   }
@@ -1009,7 +1054,6 @@ export default class PayrollComponents extends Vue {
       const params = this.deleteParam;
       const entityType = params.entity_type;
 
-      // Remove the data from the appropriate array
       if (entityType === "earnings") {
         this.rowEarningsData = this.rowEarningsData.filter(
           (item: any) => item.code !== params.code
@@ -1031,7 +1075,6 @@ export default class PayrollComponents extends Vue {
         return;
       }
 
-      // Properly refresh the grid
       await this.loadDataGrid(entityType);
 
       getToastSuccess(`Component ${entityType} has been removed successfully`);

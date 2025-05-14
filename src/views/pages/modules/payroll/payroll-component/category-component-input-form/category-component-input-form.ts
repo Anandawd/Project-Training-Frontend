@@ -102,7 +102,8 @@ export default class InputForm extends Vue {
   }
 
   onSubmit() {
-    this.inputFormValidation.$el.requestSubmit();
+    // this.inputFormValidation.$el.requestSubmit();
+    this.onSave();
   }
 
   onSave() {
@@ -113,25 +114,18 @@ export default class InputForm extends Vue {
     this.$emit("close");
   }
 
-  onInvalidSubmit() {
+  onInvalidSubmit({ errors }: any) {
     focusOnInvalid();
+    // getToastError("onInvalidSubmit Please complete all required fields");
   }
 
   // validation
   get schema() {
     return Yup.object().shape({
-      // categoryCode: Yup.string().when([], {
-      //   is: () => this.activeTab === "category",
-      //   then: Yup.string().required("Code is required"),
-      // }),
-      // categoryName: Yup.string().when([], {
-      //   is: () => this.activeTab === "category",
-      //   then: Yup.string().required("Name is required"),
-      // }),
-      // categoryType: Yup.string().when([], {
-      //   is: () => this.activeTab === "category",
-      //   then: Yup.string().required("Type is required"),
-      // }),
+      categoryCode: Yup.string().required("Code is required"),
+      categoryName: Yup.string().required("Name is required"),
+      categoryType: Yup.string().required("Type is required"),
+      categoryStatus: Yup.string().required("Status is required"),
     });
   }
 

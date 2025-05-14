@@ -116,7 +116,8 @@ export default class InputForm extends Vue {
   }
 
   onSubmit() {
-    this.inputFormValidation.$el.requestSubmit();
+    // this.inputFormValidation.$el.requestSubmit();
+    this.onSave();
   }
 
   onSave() {
@@ -134,19 +135,26 @@ export default class InputForm extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      // Deductions tab validations
-      // deductionsCode: Yup.string().when([], {
-      //   is: () => this.activeTab === "deductions",
-      //   then: Yup.string().required("Code is required"),
-      // }),
-      // deductionsName: Yup.string().when([], {
-      //   is: () => this.activeTab === "deductions",
-      //   then: Yup.string().required("Name is required"),
-      // }),
-      // deductionsCategory: Yup.string().when([], {
-      //   is: () => this.activeTab === "deductions",
-      //   then: Yup.string().required("Category is required"),
-      // }),
+      deductionsCode: Yup.string().required("Code is required"),
+      deductionsName: Yup.string().required("Name is required"),
+      deductionsCategory: Yup.string().required("Category is required"),
+      deductionsQty: Yup.number()
+        .required("Quantity is required")
+        .min(1, "Quantity must be at least 1"),
+      deductionsTaxable: Yup.string().required("Taxable field is required"),
+      deductionsIncludedBpjsEmplyoee: Yup.string().required(
+        "BPJS Ketenagakerjaan field is required"
+      ),
+      deductionsIncludedBpjsHealth: Yup.string().required(
+        "BPJS Kesehatan field is required"
+      ),
+      deductionsIncludedProrate: Yup.string().required(
+        "Prorate field is required"
+      ),
+      deductionsShowInPayslip: Yup.string().required(
+        "Show in Payslip field is required"
+      ),
+      deductionsStatus: Yup.string().required("Status is required"),
     });
   }
 

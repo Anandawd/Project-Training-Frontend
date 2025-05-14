@@ -116,7 +116,8 @@ export default class InputForm extends Vue {
   }
 
   onSubmit() {
-    this.inputFormValidation.$el.requestSubmit();
+    // this.inputFormValidation.$el.requestSubmit();
+    this.onSave();
   }
 
   onSave() {
@@ -134,18 +135,26 @@ export default class InputForm extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      // earningsCode: Yup.string().when([], {
-      //   is: () => this.activeTab === "earnings",
-      //   then: Yup.string().required("Code is required"),
-      // }),
-      // earningsName: Yup.string().when([], {
-      //   is: () => this.activeTab === "earnings",
-      //   then: Yup.string().required("Name is required"),
-      // }),
-      // earningCategory: Yup.string().when([], {
-      //   is: () => this.activeTab === "earnings",
-      //   then: Yup.string().required("Category is required"),
-      // }),
+      earningsCode: Yup.string().required("Code is required"),
+      earningsName: Yup.string().required("Name is required"),
+      earningCategory: Yup.string().required("Category is required"),
+      earningQty: Yup.number()
+        .required("Quantity is required")
+        .min(1, "Quantity must be at least 1"),
+      earningTaxable: Yup.string().required("Taxable field is required"),
+      earningIncludedBpjsEmplyoee: Yup.string().required(
+        "BPJS Ketenagakerjaan field is required"
+      ),
+      earningIncludedBpjsHealth: Yup.string().required(
+        "BPJS Kesehatan field is required"
+      ),
+      earningIncludedProrate: Yup.string().required(
+        "Prorate field is required"
+      ),
+      earningsShowInPayslip: Yup.string().required(
+        "Show in Payslip field is required"
+      ),
+      earningsStatus: Yup.string().required("Status is required"),
     });
   }
 

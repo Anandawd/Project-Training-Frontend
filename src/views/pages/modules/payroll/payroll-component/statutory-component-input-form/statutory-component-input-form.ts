@@ -109,7 +109,8 @@ export default class InputForm extends Vue {
   }
 
   onSubmit() {
-    this.inputFormValidation.$el.requestSubmit();
+    // this.inputFormValidation.$el.requestSubmit();
+    this.onSave();
   }
 
   onSave() {
@@ -127,19 +128,20 @@ export default class InputForm extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      // Statutory tab validations
-      // statutoryCode: Yup.string().when([], {
-      //   is: () => this.activeTab === "statutory",
-      //   then: Yup.string().required("Code is required"),
-      // }),
-      // statutoryName: Yup.string().when([], {
-      //   is: () => this.activeTab === "statutory",
-      //   then: Yup.string().required("Name is required"),
-      // }),
-      // statutoryType: Yup.string().when([], {
-      //   is: () => this.activeTab === "statutory",
-      //   then: Yup.string().required("Type is required"),
-      // }),
+      statutoryCode: Yup.string().required("Code is required"),
+      statutoryName: Yup.string().required("Name is required"),
+      statutoryType: Yup.string().required("Type is required"),
+      statutoryQty: Yup.number()
+        .required("Quantity is required")
+        .min(1, "Quantity must be at least 1"),
+      statutoryTaxable: Yup.string().required("Taxable field is required"),
+      statutoryIncludedProrate: Yup.string().required(
+        "Prorate field is required"
+      ),
+      statutoryShowInPayslip: Yup.string().required(
+        "Show in Payslip field is required"
+      ),
+      statutoryStatus: Yup.string().required("Status is required"),
     });
   }
 
