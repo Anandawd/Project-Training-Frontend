@@ -28,11 +28,11 @@ import StatutoryInputForm from "./statutory-component-input-form/statutory-compo
 })
 export default class PayrollComponents extends Vue {
   // data
-  public deleteParam: any;
   public rowEarningsData: any = [];
   public rowDeductionsData: any = [];
   public rowStatutoryData: any = [];
   public rowCategoryData: any = [];
+  public deleteParam: any;
 
   // form
   public showForm: boolean = false;
@@ -76,7 +76,7 @@ export default class PayrollComponents extends Vue {
   statutoryTabGridApi: any;
   categoryTabGridApi: any;
 
-  // LIFECYCLE HOOKS
+  // RECYCLE LIFE FUNCTION =======================================================
   created(): void {
     this.loadMockData();
   }
@@ -400,7 +400,7 @@ export default class PayrollComponents extends Vue {
     this.ColumnApi = params.columnApi;
   }
 
-  // UI FUNCTION
+  // GENERAL FUNCTION =======================================================
   getContextMenu(params: any) {
     const { node } = params;
     if (node) {
@@ -551,7 +551,7 @@ export default class PayrollComponents extends Vue {
     return true;
   }
 
-  // API FUNCTION
+  // API REQUEST =======================================================
   async loadData() {
     try {
       // const { data: earningsData } = await this.payrollComponentAPI.getPayrollComponentList({ type: 'Earnings' });
@@ -1083,30 +1083,7 @@ export default class PayrollComponents extends Vue {
     }
   }
 
-  // refreshGridAfterSave(entityType: string) {
-  //   switch (entityType) {
-  //     case "earnings":
-  //       if (this.earningsTabGridApi) {
-  //         this.earningsTabGridApi.setRowData([...this.rowEarningsData]);
-  //       }
-  //       break;
-  //     case "deductions":
-  //       if (this.deductionsTabGridApi) {
-  //         this.deductionsTabGridApi.setRowData([...this.rowDeductionsData]);
-  //       }
-  //       break;
-  //     case "statutory":
-  //       if (this.statutoryTabGridApi) {
-  //         this.statutoryTabGridApi.setRowData([...this.rowStatutoryData]);
-  //       }
-  //       break;
-  //     case "category":
-  //       if (this.categoryTabGridApi) {
-  //         this.categoryTabGridApi.setRowData([...this.rowCategoryData]);
-  //       }
-  //       break;
-  //   }
-  // }
+  // HELPER FUNCTION =======================================================
 
   generateUniqueId(entityType: string): number {
     let maxId = 0;
@@ -1391,7 +1368,7 @@ export default class PayrollComponents extends Vue {
     }
   }
 
-  // GETTER AND SETTER
+  // GETTER AND SETTER =======================================================
   // get pinnedBottomRowData() {
   //   return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
   // }

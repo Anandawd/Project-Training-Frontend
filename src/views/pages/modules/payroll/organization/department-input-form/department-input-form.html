@@ -1,0 +1,130 @@
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">{{title}}</div>
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <c-input
+            required
+            type="text"
+            name="DepartmentCode"
+            id="DepartmentCode"
+            class="row mb-1"
+            :label="$t('labels.payroll.employee.code')"
+            v-model="form.departmentCode"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            type="text"
+            name="DepartmentName"
+            id="DepartmentName"
+            class="row mb-1"
+            :label="$t('labels.payroll.employee.departmentName')"
+            v-model="form.departmentName"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            type="textarea"
+            name="DepartmentDescription"
+            id="DepartmentDescription"
+            class="row mb-1"
+            :label="$t('labels.payroll.employee.description')"
+            v-model="form.departmentDescription"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            offset="right"
+            class="row mb-1"
+            selectType="column"
+            name="DepartmentPlacement"
+            labelName="name"
+            keyName="code"
+            v-model="form.departmentPlacement"
+            :label="$t('labels.payroll.employee.placement')"
+            :columnOptions="columnOptions"
+            :options="placementOptions"
+          >
+          </c-select>
+        </div>
+        <div class="col-md-4">
+          <c-select
+            offset="right"
+            class="row mb-1"
+            selectType="column"
+            name="manager"
+            labelName="name"
+            keyName="code"
+            v-model="form.departmentManager"
+            :label="$t('labels.payroll.employee.manager')"
+            :columnOptions="columnOptions"
+            :options="managerOptions"
+          >
+          </c-select>
+        </div>
+        <div class="col-md-4">
+          <c-select
+            multiple
+            offset="right"
+            class="row mb-1"
+            selectType="column"
+            name="supervisor"
+            labelName="name"
+            keyName="code"
+            v-model="form.departmentSupervisor"
+            :label="$t('labels.payroll.employee.supervisor')"
+            :columnOptions="columnOptions"
+            :options="supervisorOptions"
+          >
+          </c-select>
+        </div>
+        <div class="col-md-4 mb-sm-1">
+          <div class="row">
+            <div class="col-sm-3">
+              <label
+                class="form-label"
+                style="font-size: 12px; font-weight: 700; color: red"
+                >{{$t('labels.status')}}</label
+              >
+            </div>
+            <div class="col-sm-9 d-flex align-items-center p-0">
+              <c-radio
+                class="me-3"
+                :label="$t('labels.active')"
+                v-model="form.departmentStatus"
+                value="A"
+              ></c-radio>
+              <c-radio
+                class="me-3"
+                :label="$t('labels.inactive')"
+                v-model="form.departmentStatus"
+                value="I"
+              ></c-radio>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- buttons -->
+      <div class="d-flex justify-content-end mt-2">
+        <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.close')}}
+        </button>
+        <button type="button" class="btn btn-primary px-3" @click="onSubmit">
+          <i class="fa fa-save"></i>
+          {{$t('buttons.save')}}
+        </button>
+      </div>
+    </div>
+  </div>
+</c-form>

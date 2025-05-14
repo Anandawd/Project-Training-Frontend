@@ -3,18 +3,36 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
-        title="Insert Organization"
+        title="Insert Position"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('', $global.modeData.insert)"
+        @click="handleShowForm('position', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
-        $t('buttons.insert') }}
+        $t('buttons.insertPosition') }}
+      </button>
+      <button
+        title="Insert Department"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleShowForm('department', $global.modeData.insert)"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insertDepartment') }}
+      </button>
+      <button
+        title="Insert Placement"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleShowForm('placement', $global.modeData.insert)"
+      >
+        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
+        $t('buttons.insertPlacement') }}
       </button>
     </div>
 
     <!-- insert form -->
-    <transition class="fade">
+    <transition name="fade" mode="out-in">
       <c-input-form
         class="px-2"
         ref="inputFormElement"
@@ -38,22 +56,8 @@
             <ul class="nav nav-tabs" role="tablist">
               <li class="nav-item" role="presentation">
                 <button
-                  id="department-tab"
-                  class="nav-link active"
-                  role="tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#table-department"
-                  aria-controls="table-department"
-                  aria-selected="true"
-                  tabindex="-1"
-                >
-                  {{$t('labels.payroll.employee.department')}}
-                </button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button
                   id="position-tab"
-                  class="nav-link"
+                  class="nav-link active"
                   role="tab"
                   data-bs-toggle="tab"
                   data-bs-target="#table-position"
@@ -62,6 +66,20 @@
                   tabindex="-1"
                 >
                   {{$t('labels.payroll.employee.position')}}
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  id="department-tab"
+                  class="nav-link"
+                  role="tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#table-department"
+                  aria-controls="table-department"
+                  aria-selected="true"
+                  tabindex="-1"
+                >
+                  {{$t('labels.payroll.employee.department')}}
                 </button>
               </li>
               <li class="nav-item" role="presentation">
@@ -83,39 +101,10 @@
 
           <!-- tab content -->
           <div class="tab-content mt-3">
-            <!-- table department -->
-            <div
-              id="table-department"
-              class="tab-pane active show fade"
-              role="tabpanel"
-              aria-labelledby="department-tab"
-            >
-              <ag-grid-vue
-                :style="agGridSetting.styleAgGridFrame"
-                :class="agGridSetting.themeAgGrid"
-                :columnDefs="columnDepartmentDefs"
-                :rowData="rowDepartmentData"
-                :paginationPageSize="paginationPageSize"
-                :gridOptions="gridOptions"
-                :context="context"
-                :frameworkComponents="frameworkComponents"
-                :enableCellChangeFlash="true"
-                :rowSelection="rowSelection"
-                :getContextMenuItems="getContextMenu"
-                :defaultColDef="agGridSetting.defColDef"
-                :rowGroupPanelShow="rowGroupPanelShow"
-                :suppressDragLeaveHidesColumns="true"
-                :suppressMakeColumnVisibleAfterUnGroup=" true"
-                :statusBar="statusBar"
-                @grid-ready="onGridReady"
-                @cellContextMenu="handleRowRightClicked"
-              ></ag-grid-vue>
-            </div>
-
             <!-- table position -->
             <div
               id="table-position"
-              class="tab-pane fade"
+              class="tab-pane active show fade"
               role="tabpanel"
               aria-labelledby="position-tab"
             >
@@ -125,7 +114,7 @@
                 :columnDefs="columnPositionDefs"
                 :rowData="rowPositionData"
                 :paginationPageSize="paginationPageSize"
-                :gridOptions="gridOptions"
+                :gridOptions="Object.assign({}, gridOptions, { id: 'position-tab-grid' })"
                 :context="context"
                 :frameworkComponents="frameworkComponents"
                 :enableCellChangeFlash="true"
@@ -136,7 +125,36 @@
                 :suppressDragLeaveHidesColumns="true"
                 :suppressMakeColumnVisibleAfterUnGroup=" true"
                 :statusBar="statusBar"
-                @grid-ready="onGridReady"
+                @grid-ready="(params) => onGridReady(params, 'position-tab-grid')"
+                @cellContextMenu="handleRowRightClicked"
+              ></ag-grid-vue>
+            </div>
+
+            <!-- table department -->
+            <div
+              id="table-department"
+              class="tab-pane fade"
+              role="tabpanel"
+              aria-labelledby="department-tab"
+            >
+              <ag-grid-vue
+                :style="agGridSetting.styleAgGridFrame"
+                :class="agGridSetting.themeAgGrid"
+                :columnDefs="columnDepartmentDefs"
+                :rowData="rowDepartmentData"
+                :paginationPageSize="paginationPageSize"
+                :gridOptions="Object.assign({}, gridOptions, { id: 'department-tab-grid' })"
+                :context="context"
+                :frameworkComponents="frameworkComponents"
+                :enableCellChangeFlash="true"
+                :rowSelection="rowSelection"
+                :getContextMenuItems="getContextMenu"
+                :defaultColDef="agGridSetting.defColDef"
+                :rowGroupPanelShow="rowGroupPanelShow"
+                :suppressDragLeaveHidesColumns="true"
+                :suppressMakeColumnVisibleAfterUnGroup=" true"
+                :statusBar="statusBar"
+                @grid-ready="(params) => onGridReady(params, 'department-tab-grid')"
                 @cellContextMenu="handleRowRightClicked"
               ></ag-grid-vue>
             </div>
@@ -154,7 +172,7 @@
                 :columnDefs="columnPlacementDefs"
                 :rowData="rowPlacementData"
                 :paginationPageSize="paginationPageSize"
-                :gridOptions="gridOptions"
+                :gridOptions="Object.assign({}, gridOptions, { id: 'placement-tab-grid' })"
                 :context="context"
                 :frameworkComponents="frameworkComponents"
                 :enableCellChangeFlash="true"
@@ -165,7 +183,7 @@
                 :suppressDragLeaveHidesColumns="true"
                 :suppressMakeColumnVisibleAfterUnGroup=" true"
                 :statusBar="statusBar"
-                @grid-ready="onGridReady"
+                @grid-ready="(params) => onGridReady(params, 'placement-tab-grid')"
                 @cellContextMenu="handleRowRightClicked"
               ></ag-grid-vue>
             </div>
@@ -184,7 +202,5 @@
     >
       <template #body> Are you sure to delete this data? </template>
     </c-dialog>
-
-    <!-- modal -->
   </div>
 </section>

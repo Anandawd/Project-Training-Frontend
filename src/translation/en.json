@@ -2607,7 +2607,10 @@
     "insertDeductions": "Insert Deductions",
     "insertStatutory": "Insert Statutory",
     "insertCategory": "Insert Category",
-    "insertAdjustment": "Insert Adjustment"
+    "insertAdjustment": "Insert Adjustment",
+    "insertDepartment": "Insert Department",
+    "insertPosition": "Insert Position",
+    "insertPlacement": "Insert Placement"
   },
   "languages": {
     "english": "English",
@@ -2950,6 +2953,7 @@
           "department": "Department",
           "position": "Position",
           "placement": "Placement",
+          "country": "Country",
           "supervisor": "Supervisor",
           "baseSalary": "Base Salary",
           "benefitComponent": "Benefit Component",
@@ -2987,7 +2991,13 @@
           "expiry": "Expiry",
           "status": "Status",
           "remark": "Remark",
-          "id": "ID"
+          "id": "ID",
+          "insertDepartment": "Insert Department",
+          "insertPosition": "Insert Position",
+          "insertPlacement": "Insert Placement",
+          "updateDepartment": "Update Department",
+          "updatePosition": "Update Position",
+          "updatePlacement": "Update Placement"
         },
         "payroll": {
           "name": "Name",

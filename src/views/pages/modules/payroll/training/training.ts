@@ -62,6 +62,7 @@ export default class Training extends Vue {
   paramsData: any;
   ColumnApi: any;
   agGridSetting: any;
+
   // GENERAL FUNCTION ================================================================
   handleSave(formData: any) {
     formData.date_posting = formatDateTimeUTC(formData.date_posting);
