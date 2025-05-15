@@ -9,7 +9,9 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import CInputForm from "./organization-input-form/organization-input-form.vue";
+import DepartmentInputForm from "./department-input-form/department-input-form.vue";
+import PlacementInputForm from "./placement-input-form/placement-input-form.vue";
+import PositionInputForm from "./position-input-form/position-input-form.vue";
 
 @Options({
   components: {
@@ -17,7 +19,9 @@ import CInputForm from "./organization-input-form/organization-input-form.vue";
     CSearchFilter,
     CModal,
     CDialog,
-    CInputForm,
+    PositionInputForm,
+    DepartmentInputForm,
+    PlacementInputForm,
   },
 })
 export default class Employee extends Vue {
@@ -31,8 +35,9 @@ export default class Employee extends Vue {
   public showForm: boolean = false;
   public modeData: any;
   public form: any = {};
-  public inputFormElement: any = ref();
-  public activeTab: string = "";
+  // public inputFormElement: any = ref();
+  // public activeTab: string = "";
+  public currentFormType: string = "";
 
   public departmentFormElement: any = ref();
   public positionFormElement: any = ref();
@@ -400,7 +405,7 @@ export default class Employee extends Vue {
       const vm = this;
       vm.gridApi.forEachNode((node: any) => {
         if (node.data) {
-          if (node.data.id_log == vm.paramsData.id_log) {
+          if (node.data.id == vm.paramsData.id) {
             node.setSelected(true, true);
           }
         }
@@ -409,13 +414,44 @@ export default class Employee extends Vue {
   }
 
   handleShowForm(params: any, mode: any) {
+    console.info("handleShowForm clicked", params);
     this.modeData = mode;
+
+    if (typeof params === "string") {
+      this.currentFormType = params;
+      console.info("if string", this.currentFormType);
+    } else {
+      this.currentFormType = this.getCurrentFormType(params);
+      console.info("else", this.currentFormType);
+    }
+
     this.showForm = true;
+    console.info("showForm", this.showForm);
+
+    this.$nextTick(() => {
+      const formElement = this.getFormElementByType(this.currentFormType);
+      console.info("formElement", formElement);
+      if (formElement && typeof formElement.initialize === "function") {
+        formElement.initialize();
+
+        if (mode === $global.modeData.edit) {
+          this.populateForm(params);
+        }
+      }
+    });
   }
 
-  handleSave(formData: any) {}
+  handleSave(formData: any) {
+    if (this.modeData === $global.modeData.insert) {
+      this.insertData(formData);
+    } else {
+      this.updateData(formData);
+    }
+  }
 
-  handleEdit(formData: any) {}
+  handleEdit(formData: any) {
+    this.handleShowForm(formData, $global.modeData.edit);
+  }
 
   handleDelete(params: any) {
     this.showDialog = true;
@@ -423,13 +459,13 @@ export default class Employee extends Vue {
   }
 
   refreshData(search: any) {
-    this.loadDataGrid(search);
+    this.loadDataGrid();
   }
 
   // API REQUEST =======================================================
   async loadData() {}
 
-  async loadDataGrid(entityType: any = this.activeTab) {}
+  async loadDataGrid() {}
 
   async loadEditData(params: any, type: any) {}
 
@@ -466,14 +502,117 @@ export default class Employee extends Vue {
     ];
   }
 
-  async insertData(formData: any) {}
+  async insertData(formData: any) {
+    if (formData.position_code) {
+      // await this.insertPosition(formData);
+    } else if (formData.department_code) {
+      // await this.insertDepartment(formData);
+    } else if (formData.placement_code) {
+      // await this.insertPlacement(formData);
+    }
 
-  async updateData(formData: any) {}
+    this.showForm = false;
+    this.loadDataGrid();
+  }
 
-  async deleteData() {}
+  async updateData(formData: any) {
+    if (formData.position_code) {
+      // await this.insertPosition(formData);
+    } else if (formData.department_code) {
+      // await this.insertDepartment(formData);
+    } else if (formData.placement_code) {
+      // await this.insertPlacement(formData);
+    }
+
+    this.showForm = false;
+    this.loadDataGrid();
+  }
+
+  async deleteData() {
+    this.showDialog = false;
+  }
 
   // HELPER FUNCTION =======================================================
+  populateForm(params: any) {
+    if (!params) {
+      console.info("Invalid data for form population:", params);
+      return;
+    }
 
+    const formType = this.getCurrentFormType(params);
+    const formElement = this.getFormElementByType(formType);
+
+    if (!formElement) {
+      console.info(`Form element for ${formType} not found during population`);
+      return;
+    }
+
+    this.$nextTick(() => {
+      switch (formType) {
+        case "position":
+          formElement.form = {
+            positionCode: params.position_code || "",
+            positionName: params.position_name || "",
+            positionDescription: params.position_description || "",
+            positionLevel: params.position_level || "",
+            positionDepartment: params.position_department || "",
+            positionPlacement: params.position_placement || "",
+            positionStatus: params.position_status ? "A" : "I",
+            id: params.id,
+          };
+          break;
+        case "department":
+          formElement.form = {
+            departmentCode: params.department_code || "",
+            departmentName: params.department_name || "",
+            departmentDescription: params.department_description || "",
+            departmentPlacement: params.department_placement || "",
+            departmentManager: params.department_manager || "",
+            departmentSupervisor: params.department_supervisor || "",
+            departmentStatus: params.department_status ? "A" : "I",
+            id: params.id,
+          };
+          break;
+        case "placement":
+          formElement.form = {
+            placementCode: params.placement_code || "",
+            placementName: params.placement_name || "",
+            placementCountry: params.placement_country || "",
+            placementCity: params.placement_city || "",
+            placementAddress: params.placement_address || "",
+            placementStatus: params.placement_status ? "A" : "I",
+            id: params.id,
+          };
+          break;
+      }
+
+      if (formElement.form) {
+        formElement.form.id = params.id;
+      }
+    });
+  }
+
+  getCurrentFormType(params: any): string {
+    if (params.position_code !== undefined) return "position";
+    if (params.department_code !== undefined) return "department";
+    if (params.placement_code !== undefined) return "placement";
+    return this.currentFormType;
+  }
+
+  getFormElementByType(type: string): any {
+    console.info("getFormElementByType called");
+    switch (type) {
+      case "position":
+        return this.$refs.positionFormElement;
+      case "department":
+        return this.$refs.departmentFormElement;
+      case "placement":
+        return this.$refs.placementFormElement;
+      default:
+        console.info(`Unknown form type: ${type}`);
+        return null;
+    }
+  }
   // GETTER AND SETTER =======================================================
   // get pinnedBottomRowData() {
   //   return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
