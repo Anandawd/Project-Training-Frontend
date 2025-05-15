@@ -28,25 +28,21 @@ import * as Yup from "yup";
 })
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
-  modeData: any;
+  modeData!: any;
+  initialData!: any;
   public activeTab: string = "position";
 
-  public form: any = reactive({});
+  public form: any = reactive({
+    positionCode: "",
+    positionName: "",
+    positionDescription: "",
+    positionLevel: "",
+    positionDepartment: "",
+    positionPlacement: "",
+    positionStatus: "A",
+  });
 
   // form settings
-  Options: any = [
-    {
-      SubGroupName: "Type",
-      code: "T01",
-      name: "Earnings",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T02",
-      name: "Deductions",
-    },
-  ];
-
   positionOptions: any = [
     {
       SubGroupName: "Position",
