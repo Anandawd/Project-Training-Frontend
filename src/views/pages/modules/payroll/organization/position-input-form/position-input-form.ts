@@ -44,56 +44,26 @@ export default class InputForm extends Vue {
 
   // form settings
   positionOptions: any = [
-    {
-      SubGroupName: "Position",
-      code: "P01",
-      name: "Owner",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P02",
-      name: "Director",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P03",
-      name: "Manager",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P04",
-      name: "Supervisor",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P05",
-      name: "Senior Staff",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P06",
-      name: "Staff",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P07",
-      name: "Assistant",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P08",
-      name: "Trainee",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P09",
-      name: "Intern",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P10",
-      name: "Part-timer",
-    },
+    { code: "P001", name: "Chief Executive Officer" },
+    { code: "P002", name: "Chief Operating Officer" },
+    { code: "P003", name: "Chief Financial Officer" },
+    { code: "P004", name: "HR Director" },
+    { code: "P005", name: "IT Director" },
+    { code: "P006", name: "Marketing Director" },
+    { code: "P007", name: "Operations Manager" },
+    { code: "P008", name: "Front Office Manager" },
+    { code: "P009", name: "Housekeeping Manager" },
+    { code: "P010", name: "Executive Chef" },
+    { code: "P011", name: "HR Manager" },
+    { code: "P012", name: "IT Manager" },
+    { code: "P013", name: "Accounting Manager" },
+    { code: "P014", name: "Front Desk Supervisor" },
+    { code: "P015", name: "Restaurant Manager" },
+    { code: "P016", name: "HR Specialist" },
+    { code: "P017", name: "IT Support Specialist" },
+    { code: "P018", name: "Accountant" },
+    { code: "P019", name: "Front Desk Agent" },
+    { code: "P020", name: "Server" },
   ];
 
   departmentOptions: any = [
@@ -120,16 +90,16 @@ export default class InputForm extends Vue {
   ];
 
   placementOptions: any = [
-    {
-      SubGroupName: "Placement",
-      code: "PR01",
-      name: "Amora Ubud",
-    },
-    {
-      SubGroupName: "Placement",
-      code: "PR02",
-      name: "Amora Canggu",
-    },
+    { code: "PL001", name: "Amora Ubud" },
+    { code: "PL002", name: "Amora Canggu" },
+    { code: "PL003", name: "Amora Seminyak" },
+    { code: "PL004", name: "Amora Nusa Dua" },
+    { code: "PL005", name: "Amora Jakarta" },
+    { code: "PL006", name: "Amora Yogyakarta" },
+    { code: "PL007", name: "Amora Bandung" },
+    { code: "PL008", name: "Amora Surabaya" },
+    { code: "PL009", name: "Amora Makassar" },
+    { code: "PL010", name: "Amora Singapore" },
   ];
 
   positionLevelOptions: any = [
