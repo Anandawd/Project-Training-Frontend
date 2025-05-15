@@ -2983,6 +2983,7 @@
           "manager": "Manager",
           "level": "Level",
           "address": "Address",
+          "city": "City",
           "selectEmployee": "Select Employee",
           "totalEmployee": "Total Employee",
           "documentId": "Document ID",

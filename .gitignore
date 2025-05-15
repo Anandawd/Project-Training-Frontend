@@ -32,3 +32,24 @@ public/images/company
 public/report/export
 public/images/outlet/*
 .env.staging
+
+# custom
+vite.config.js
+tsconfig.json
+sitemap.xml
+README.md
+package.json
+package-lock.json
+newrelic_agent.log
+LICENSE
+jest.config.js
+index.html
+httpd.conf
+Dockerfile
+docker-compose.yml
+cypress.json
+build.bat
+build-staging.bat
+/tests
+/server
+/public

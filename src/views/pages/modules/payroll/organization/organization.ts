@@ -281,13 +281,19 @@ export default class Employee extends Vue {
       {
         headerName: this.$t("commons.table.payroll.employee.country"),
         field: "placement_country",
-        width: 200,
+        width: 150,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.city"),
+        field: "placement_city",
+        width: 150,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.address"),
         field: "placement_address",
-        width: 200,
+        width: 300,
         enableRowGroup: true,
       },
       {
