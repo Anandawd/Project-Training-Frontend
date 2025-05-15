@@ -32,36 +32,25 @@ export default class InputForm extends Vue {
   public form: any = reactive({});
 
   placementCountryOption: any = [
-    { code: "ID", name: "Indonesia" },
-    { code: "SG", name: "Singapore" },
-    { code: "MY", name: "Malaysia" },
-    { code: "TH", name: "Thailand" },
-    { code: "PH", name: "Philippines" },
-    { code: "VN", name: "Vietnam" },
-    { code: "HK", name: "Hong Kong" },
-    { code: "JP", name: "Japan" },
-    { code: "AU", name: "Australia" },
-    { code: "NZ", name: "New Zealand" },
+    {
+      code: "ID",
+      name: "Indonesia",
+    },
+    {
+      code: "US",
+      name: "United States",
+    },
   ];
 
   placementCityOption: any = [
-    { code: "BALI", name: "Bali" },
-    { code: "JKT", name: "Jakarta" },
-    { code: "BDG", name: "Bandung" },
-    { code: "SBY", name: "Surabaya" },
-    { code: "YOG", name: "Yogyakarta" },
-    { code: "MKS", name: "Makassar" },
-    { code: "SIN", name: "Singapore" },
-    { code: "KUL", name: "Kuala Lumpur" },
-    { code: "BKK", name: "Bangkok" },
-    { code: "PHU", name: "Phuket" },
-    { code: "MNL", name: "Manila" },
-    { code: "HCM", name: "Ho Chi Minh City" },
-    { code: "HKG", name: "Hong Kong" },
-    { code: "TYO", name: "Tokyo" },
-    { code: "SYD", name: "Sydney" },
-    { code: "MEL", name: "Melbourne" },
-    { code: "AKL", name: "Auckland" },
+    {
+      code: "PC1",
+      name: "Bali",
+    },
+    {
+      code: "PC2",
+      name: "Makassar",
+    },
   ];
 
   columnOptions = [

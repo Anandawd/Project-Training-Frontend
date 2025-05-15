@@ -33,21 +33,22 @@ export default class InputForm extends Vue {
   public form: any = reactive({});
 
   departmentOptions: any = [
-    { code: "D001", name: "Executive" },
-    { code: "D002", name: "Human Resources" },
-    { code: "D003", name: "Finance" },
-    { code: "D004", name: "Information Technology" },
-    { code: "D005", name: "Marketing" },
-    { code: "D006", name: "Sales" },
-    { code: "D007", name: "Operations" },
-    { code: "D008", name: "Front Office" },
-    { code: "D009", name: "Housekeeping" },
-    { code: "D010", name: "Food & Beverage" },
-    { code: "D011", name: "Engineering" },
-    { code: "D012", name: "Security" },
-    { code: "D013", name: "Spa & Wellness" },
-    { code: "D014", name: "Events & Conferences" },
-    { code: "D015", name: "Training & Development" },
+    {
+      code: "D01",
+      name: "Marketing",
+    },
+    {
+      code: "D02",
+      name: "Human Resource",
+    },
+    {
+      code: "D03",
+      name: "Operational",
+    },
+    {
+      code: "D04",
+      name: "IT",
+    },
   ];
 
   placementOptions: any = [
@@ -62,39 +63,25 @@ export default class InputForm extends Vue {
   ];
 
   supervisorOptions: any = [
-    { code: "SPV001", name: "Jane Doe" },
-    { code: "SPV002", name: "Michael Brown" },
-    { code: "SPV003", name: "Emily Davis" },
-    { code: "SPV004", name: "Lisa Anderson" },
-    { code: "SPV005", name: "Kevin Martinez" },
-    { code: "SPV006", name: "Patricia Hall" },
-    { code: "SPV007", name: "Nancy Young" },
-    { code: "SPV008", name: "Susan Clark" },
-    { code: "SPV009", name: "Brian Turner" },
-    { code: "SPV010", name: "Elizabeth Scott" },
-    { code: "SPV011", name: "Laura Nelson" },
-    { code: "SPV012", name: "Maria Gonzalez" },
-    { code: "SPV013", name: "Samuel Green" },
-    { code: "SPV014", name: "Rebecca White" },
-    { code: "SPV015", name: "Amanda Parker" },
+    {
+      code: "SPV01",
+      name: "Budi Santoso",
+    },
+    {
+      code: "SPV02",
+      name: "Sari Dewi",
+    },
   ];
 
   managerOptions: any = [
-    { code: "MGR001", name: "John Smith" },
-    { code: "MGR002", name: "Sarah Johnson" },
-    { code: "MGR003", name: "Robert Chen" },
-    { code: "MGR004", name: "David Wilson" },
-    { code: "MGR005", name: "Jennifer Garcia" },
-    { code: "MGR006", name: "Thomas Wright" },
-    { code: "MGR007", name: "Charles Lopez" },
-    { code: "MGR008", name: "Daniel Lee" },
-    { code: "MGR009", name: "Jessica Walker" },
-    { code: "MGR010", name: "Richard Baker" },
-    { code: "MGR011", name: "Andrew Miller" },
-    { code: "MGR012", name: "James Carter" },
-    { code: "MGR013", name: "Michelle Adams" },
-    { code: "MGR014", name: "Christopher Hill" },
-    { code: "MGR015", name: "Jonathan Evans" },
+    {
+      code: "MG01",
+      name: "Budi Darmawan",
+    },
+    {
+      code: "MG02",
+      name: "Dewi Rahayu",
+    },
   ];
 
   columnOptions = [
