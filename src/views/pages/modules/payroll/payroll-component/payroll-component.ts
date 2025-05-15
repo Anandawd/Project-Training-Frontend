@@ -497,60 +497,6 @@ export default class PayrollComponents extends Vue {
     this.loadDataGrid(search);
   }
 
-  validateFormData(formData: any): boolean {
-    const entityType = this.getCurrentEntityType(formData);
-    const formElement = this.getFormElementByType(entityType);
-
-    if (!formElement) {
-      getToastError(`Form element for ${entityType} not found`);
-      return false;
-    }
-
-    switch (entityType) {
-      case "earnings":
-        if (
-          !formData.earningsCode ||
-          !formData.earningsName ||
-          !formData.earningCategory
-        ) {
-          getToastError("Please complete all required fields");
-          return false;
-        }
-        break;
-      case "deductions":
-        if (
-          !formData.deductionsCode ||
-          !formData.deductionsName ||
-          !formData.deductionsCategory
-        ) {
-          getToastError("Please complete all required fields");
-          return false;
-        }
-        break;
-      case "statutory":
-        if (
-          !formData.statutoryCode ||
-          !formData.statutoryName ||
-          !formData.statutoryType
-        ) {
-          getToastError("Please complete all required fields");
-          return false;
-        }
-        break;
-      case "category":
-        if (
-          !formData.categoryCode ||
-          !formData.categoryName ||
-          !formData.categoryType
-        ) {
-          getToastError("Please complete all required fields");
-          return false;
-        }
-        break;
-    }
-    return true;
-  }
-
   // API REQUEST =======================================================
   async loadData() {
     try {
@@ -566,7 +512,7 @@ export default class PayrollComponents extends Vue {
       // For demo, load mock data
       this.loadMockData();
     } catch (error) {
-      getError;
+      getError(error);
     }
   }
 
@@ -1112,6 +1058,87 @@ export default class PayrollComponents extends Vue {
     return maxId + 1;
   }
 
+  validateFormData(formData: any): boolean {
+    const entityType = this.getCurrentEntityType(formData);
+    const formElement = this.getFormElementByType(entityType);
+
+    if (!formElement) {
+      getToastError(`Form element for ${entityType} not found`);
+      return false;
+    }
+
+    switch (entityType) {
+      case "earnings":
+        if (
+          !formData.earningsCode ||
+          !formData.earningsName ||
+          !formData.earningCategory
+        ) {
+          getToastError("Please complete all required fields");
+          return false;
+        }
+        break;
+      case "deductions":
+        if (
+          !formData.deductionsCode ||
+          !formData.deductionsName ||
+          !formData.deductionsCategory
+        ) {
+          getToastError("Please complete all required fields");
+          return false;
+        }
+        break;
+      case "statutory":
+        if (
+          !formData.statutoryCode ||
+          !formData.statutoryName ||
+          !formData.statutoryType
+        ) {
+          getToastError("Please complete all required fields");
+          return false;
+        }
+        break;
+      case "category":
+        if (
+          !formData.categoryCode ||
+          !formData.categoryName ||
+          !formData.categoryType
+        ) {
+          getToastError("Please complete all required fields");
+          return false;
+        }
+        break;
+    }
+    return true;
+  }
+
+  formatComponentData(formData: any, entityType: string): any {
+    let formatted;
+    switch (entityType) {
+      case "earnings":
+        formatted = this.formatEarningsData(formData);
+        break;
+      case "deductions":
+        formatted = this.formatDeductionsData(formData);
+        break;
+      case "statutory":
+        formatted = this.formatStatutoryData(formData);
+        break;
+      case "category":
+        formatted = this.formatCategoryData(formData);
+        break;
+      default:
+        throw new Error("Unknown component type");
+    }
+
+    if (formData.id) {
+      formatted.id = formData.id;
+    }
+
+    formatted.entity_type = entityType;
+    return formatted;
+  }
+
   formatEarningsData(formData: any) {
     return {
       id: formData.id,
@@ -1283,33 +1310,6 @@ export default class PayrollComponents extends Vue {
         formElement.form.id = params.id;
       }
     });
-  }
-
-  formatComponentData(formData: any, entityType: string): any {
-    let formatted;
-    switch (entityType) {
-      case "earnings":
-        formatted = this.formatEarningsData(formData);
-        break;
-      case "deductions":
-        formatted = this.formatDeductionsData(formData);
-        break;
-      case "statutory":
-        formatted = this.formatStatutoryData(formData);
-        break;
-      case "category":
-        formatted = this.formatCategoryData(formData);
-        break;
-      default:
-        throw new Error("Unknown component type");
-    }
-
-    if (formData.id) {
-      formatted.id = formData.id;
-    }
-
-    formatted.entity_type = entityType;
-    return formatted;
   }
 
   getCurrentFormComponent() {
