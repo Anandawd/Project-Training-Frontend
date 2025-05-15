@@ -1,10 +1,10 @@
 <c-form
-  @submit="onSave"
   ref="inputFormValidation"
   :validation-schema="schema"
-  @invalid-submit="onInvalidSubmit"
   class="input-form row"
   v-slot="{resetForm}"
+  @invalid-submit="onInvalidSubmit"
+  @submit="onSave"
 >
   <div class="card">
     <div class="card-header">{{title}}</div>
@@ -47,13 +47,13 @@
             required
             offset="right"
             class="row mb-1"
-            selectType="column"
             name="positionLevel"
             labelName="name"
             keyName="code"
             v-model="form.positionLevel"
             :label="$t('labels.payroll.employee.level')"
             :options="positionLevelOptions"
+            :columnOptions="columnOptions"
           >
           </c-select>
         </div>
@@ -67,8 +67,8 @@
             keyName="code"
             v-model="form.positionDepartment"
             :label="$t('labels.payroll.employee.department')"
-            :columnOptions="columnOptions"
             :options="departmentOptions"
+            :columnOptions="columnOptions"
             multiple
           >
           </c-select>
@@ -83,8 +83,8 @@
             keyName="code"
             v-model="form.positionPlacement"
             :label="$t('labels.payroll.employee.placement')"
-            :columnOptions="columnOptions"
             :options="placementOptions"
+            :columnOptions="columnOptions"
             multiple
           >
           </c-select>
@@ -115,6 +115,7 @@
           </div>
         </div>
       </div>
+
       <!-- buttons -->
       <div class="d-flex justify-content-end mt-2">
         <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">

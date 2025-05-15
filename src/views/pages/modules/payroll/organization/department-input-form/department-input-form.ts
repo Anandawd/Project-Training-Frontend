@@ -63,25 +63,39 @@ export default class InputForm extends Vue {
   ];
 
   supervisorOptions: any = [
-    {
-      code: "SPV01",
-      name: "Budi Santoso",
-    },
-    {
-      code: "SPV02",
-      name: "Sari Dewi",
-    },
+    { code: "SPV001", name: "Jane Doe" },
+    { code: "SPV002", name: "Michael Brown" },
+    { code: "SPV003", name: "Emily Davis" },
+    { code: "SPV004", name: "Lisa Anderson" },
+    { code: "SPV005", name: "Kevin Martinez" },
+    { code: "SPV006", name: "Patricia Hall" },
+    { code: "SPV007", name: "Nancy Young" },
+    { code: "SPV008", name: "Susan Clark" },
+    { code: "SPV009", name: "Brian Turner" },
+    { code: "SPV010", name: "Elizabeth Scott" },
+    { code: "SPV011", name: "Laura Nelson" },
+    { code: "SPV012", name: "Maria Gonzalez" },
+    { code: "SPV013", name: "Samuel Green" },
+    { code: "SPV014", name: "Rebecca White" },
+    { code: "SPV015", name: "Amanda Parker" },
   ];
 
   managerOptions: any = [
-    {
-      code: "MG01",
-      name: "Budi Darmawan",
-    },
-    {
-      code: "MG02",
-      name: "Dewi Rahayu",
-    },
+    { code: "MGR001", name: "John Smith" },
+    { code: "MGR002", name: "Sarah Johnson" },
+    { code: "MGR003", name: "Robert Chen" },
+    { code: "MGR004", name: "David Wilson" },
+    { code: "MGR005", name: "Jennifer Garcia" },
+    { code: "MGR006", name: "Thomas Wright" },
+    { code: "MGR007", name: "Charles Lopez" },
+    { code: "MGR008", name: "Daniel Lee" },
+    { code: "MGR009", name: "Jessica Walker" },
+    { code: "MGR010", name: "Richard Baker" },
+    { code: "MGR011", name: "Andrew Miller" },
+    { code: "MGR012", name: "James Carter" },
+    { code: "MGR013", name: "Michelle Adams" },
+    { code: "MGR014", name: "Christopher Hill" },
+    { code: "MGR015", name: "Jonathan Evans" },
   ];
 
   columnOptions = [
@@ -111,7 +125,6 @@ export default class InputForm extends Vue {
       departmentManager: "",
       departmentSupervisor: "",
       departmentStatus: "A",
-      entityType: "category",
       id: undefined,
     };
   }
@@ -146,11 +159,11 @@ export default class InputForm extends Vue {
   get title() {
     if (this.modeData === $global.modeData.insert) {
       return `${this.$t("commons.insert")} ${this.$t(
-        "commons.table.payroll.employee.insertDepartment"
+        "commons.table.payroll.employee.department"
       )}`;
     } else if (this.modeData === $global.modeData.edit) {
       return `${this.$t("commons.update")} ${this.$t(
-        "commons.table.payroll.employee.updateDepartment"
+        "commons.table.payroll.employee.department"
       )}`;
     }
   }

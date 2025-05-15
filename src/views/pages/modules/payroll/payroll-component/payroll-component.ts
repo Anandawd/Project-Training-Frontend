@@ -1285,31 +1285,6 @@ export default class PayrollComponents extends Vue {
     });
   }
 
-  getCurrentEntityType(formData: any): string {
-    if (formData.entityType) return formData.entityType;
-    if (formData.earningsCode !== undefined) return "earnings";
-    if (formData.deductionsCode !== undefined) return "deductions";
-    if (formData.statutoryCode !== undefined) return "statutory";
-    if (formData.categoryCode !== undefined) return "category";
-    return this.currentFormType;
-  }
-
-  getFormElementByType(type: string): any {
-    switch (type) {
-      case "earnings":
-        return this.$refs.earningsFormElement;
-      case "deductions":
-        return this.$refs.deductionsFormElement;
-      case "statutory":
-        return this.$refs.statutoryFormElement;
-      case "category":
-        return this.$refs.categoryFormElement;
-      default:
-        console.info(`Unknown form type: ${type}`);
-        return null;
-    }
-  }
-
   formatComponentData(formData: any, entityType: string): any {
     let formatted;
     switch (entityType) {
@@ -1352,6 +1327,31 @@ export default class PayrollComponents extends Vue {
     }
   }
 
+  getCurrentEntityType(formData: any): string {
+    if (formData.entityType) return formData.entityType;
+    if (formData.earningsCode !== undefined) return "earnings";
+    if (formData.deductionsCode !== undefined) return "deductions";
+    if (formData.statutoryCode !== undefined) return "statutory";
+    if (formData.categoryCode !== undefined) return "category";
+    return this.currentFormType;
+  }
+
+  getFormElementByType(type: string): any {
+    switch (type) {
+      case "earnings":
+        return this.$refs.earningsFormElement;
+      case "deductions":
+        return this.$refs.deductionsFormElement;
+      case "statutory":
+        return this.$refs.statutoryFormElement;
+      case "category":
+        return this.$refs.categoryFormElement;
+      default:
+        console.info(`Unknown form type: ${type}`);
+        return null;
+    }
+  }
+
   getCurrentFormRef() {
     switch (this.currentFormType) {
       case "earnings":
@@ -1363,7 +1363,7 @@ export default class PayrollComponents extends Vue {
       case "category":
         return "categoryFormElement";
       default:
-        return "inputFormElement";
+        console.info(`Unknown form ref`);
     }
   }
 

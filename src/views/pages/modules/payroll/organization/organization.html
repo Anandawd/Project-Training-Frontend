@@ -36,6 +36,7 @@
       <position-input-form
         ref="positionFormElement"
         v-if="showForm && currentFormType  === 'position'"
+        class="px-2"
         :modeData="modeData"
         @save="handleSave"
         @close="showForm=false"
@@ -46,6 +47,7 @@
       <department-input-form
         ref="departmentFormElement"
         v-if="showForm && currentFormType  === 'department'"
+        class="px-2"
         :modeData="modeData"
         @save="handleSave"
         @close="showForm=false"
@@ -56,6 +58,7 @@
       <placement-input-form
         ref="placementFormElement"
         v-if="showForm && currentFormType  === 'placement'"
+        class="px-2"
         :modeData="modeData"
         @save="handleSave"
         @close="showForm=false"

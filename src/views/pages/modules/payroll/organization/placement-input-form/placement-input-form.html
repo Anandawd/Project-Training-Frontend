@@ -36,13 +36,13 @@
           <c-select
             offset="right"
             class="row mb-1"
-            selectType="column"
             name="PlacementCountry"
             labelName="name"
             keyName="code"
             v-model="form.placementCountry"
             :label="$t('labels.payroll.employee.country')"
             :options="placementCountryOptions"
+            :columnOptions="columnOptions"
           >
           </c-select>
         </div>
@@ -50,13 +50,13 @@
           <c-select
             offset="right"
             class="row mb-1"
-            selectType="column"
             name="placementCity"
             labelName="name"
             keyName="code"
             v-model="form.placementCity"
             :label="$t('labels.payroll.employee.city')"
             :options="placementCityOptions"
+            :columnOptions="columnOptions"
           >
           </c-select>
         </div>

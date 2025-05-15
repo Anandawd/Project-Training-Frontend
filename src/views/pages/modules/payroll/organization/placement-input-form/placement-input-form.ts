@@ -32,25 +32,36 @@ export default class InputForm extends Vue {
   public form: any = reactive({});
 
   placementCountryOption: any = [
-    {
-      code: "ID",
-      name: "Indonesia",
-    },
-    {
-      code: "US",
-      name: "United States",
-    },
+    { code: "ID", name: "Indonesia" },
+    { code: "SG", name: "Singapore" },
+    { code: "MY", name: "Malaysia" },
+    { code: "TH", name: "Thailand" },
+    { code: "PH", name: "Philippines" },
+    { code: "VN", name: "Vietnam" },
+    { code: "HK", name: "Hong Kong" },
+    { code: "JP", name: "Japan" },
+    { code: "AU", name: "Australia" },
+    { code: "NZ", name: "New Zealand" },
   ];
 
   placementCityOption: any = [
-    {
-      code: "PC1",
-      name: "Bali",
-    },
-    {
-      code: "PC2",
-      name: "Makassar",
-    },
+    { code: "BALI", name: "Bali" },
+    { code: "JKT", name: "Jakarta" },
+    { code: "BDG", name: "Bandung" },
+    { code: "SBY", name: "Surabaya" },
+    { code: "YOG", name: "Yogyakarta" },
+    { code: "MKS", name: "Makassar" },
+    { code: "SIN", name: "Singapore" },
+    { code: "KUL", name: "Kuala Lumpur" },
+    { code: "BKK", name: "Bangkok" },
+    { code: "PHU", name: "Phuket" },
+    { code: "MNL", name: "Manila" },
+    { code: "HCM", name: "Ho Chi Minh City" },
+    { code: "HKG", name: "Hong Kong" },
+    { code: "TYO", name: "Tokyo" },
+    { code: "SYD", name: "Sydney" },
+    { code: "MEL", name: "Melbourne" },
+    { code: "AKL", name: "Auckland" },
   ];
 
   columnOptions = [
@@ -112,11 +123,11 @@ export default class InputForm extends Vue {
   get title() {
     if (this.modeData === $global.modeData.insert) {
       return `${this.$t("commons.insert")} ${this.$t(
-        "commons.table.payroll.employee.insertPlacement"
+        "commons.table.payroll.employee.placement"
       )}`;
     } else if (this.modeData === $global.modeData.edit) {
       return `${this.$t("commons.update")} ${this.$t(
-        "commons.table.payroll.employee.updatePlacement"
+        "commons.table.payroll.employee.placement"
       )}`;
     }
   }

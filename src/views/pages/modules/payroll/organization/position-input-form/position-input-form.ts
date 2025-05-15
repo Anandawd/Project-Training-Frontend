@@ -28,8 +28,7 @@ import * as Yup from "yup";
 })
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
-  modeData!: any;
-  initialData!: any;
+  modeData: any;
   public activeTab: string = "position";
 
   public form: any = reactive({
@@ -134,22 +133,27 @@ export default class InputForm extends Vue {
 
   positionLevelOptions: any = [
     {
+      SubGroupName: "Options",
       code: "LV1",
       name: "1",
     },
     {
+      SubGroupName: "Options",
       code: "LV2",
       name: "2",
     },
     {
+      SubGroupName: "Options",
       code: "LV3",
       name: "3",
     },
     {
+      SubGroupName: "Options",
       code: "LV4",
       name: "4",
     },
     {
+      SubGroupName: "Options",
       code: "LV5",
       name: "5",
     },
@@ -216,11 +220,11 @@ export default class InputForm extends Vue {
   get title() {
     if (this.modeData === $global.modeData.insert) {
       return `${this.$t("commons.insert")} ${this.$t(
-        "commons.table.payroll.employee.insertPosition"
+        "commons.table.payroll.employee.position"
       )}`;
     } else if (this.modeData === $global.modeData.edit) {
       return `${this.$t("commons.update")} ${this.$t(
-        "commons.table.payroll.employee.updatePosition"
+        "commons.table.payroll.employee.position"
       )}`;
     }
   }
