@@ -50,7 +50,7 @@ export default class InputForm extends Vue {
     {
       SubGroupName: "Status",
       code: "I",
-      name: "Inactive",
+      name: "Inactive   ",
     },
   ];
 
