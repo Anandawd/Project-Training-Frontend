@@ -44,7 +44,7 @@
     <transition name="fade" mode="out-in">
       <earnings-input-form
         ref="earningsFormElement"
-        v-if="showForm && currentFormType === 'earnings'"
+        v-if="showForm && activeTab === 'earnings'"
         :modeData="modeData"
         @save="handleSave"
         @close="showForm=false"
@@ -63,7 +63,7 @@
     <transition name="fade" mode="out-in">
       <deductions-input-form
         ref="deductionsFormElement"
-        v-if="showForm && currentFormType === 'deductions'"
+        v-if="showForm && activeTab === 'deductions'"
         :modeData="modeData"
         @save="handleSave"
         @close="showForm=false"
@@ -73,7 +73,7 @@
     <transition name="fade" mode="out-in">
       <statutory-input-form
         ref="statutoryFormElement"
-        v-if="showForm && currentFormType === 'statutory'"
+        v-if="showForm && activeTab === 'statutory'"
         :modeData="modeData"
         @save="handleSave"
         @close="showForm=false"
@@ -83,7 +83,7 @@
     <transition name="fade" mode="out-in">
       <category-input-form
         ref="categoryFormElement"
-        v-if="showForm && currentFormType === 'category'"
+        v-if="showForm && activeTab === 'category'"
         :modeData="modeData"
         @save="handleSave"
         @close="showForm=false"

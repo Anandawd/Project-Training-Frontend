@@ -39,7 +39,7 @@ export default class PayrollComponents extends Vue {
   public modeData: any;
   public form: any = {};
   public inputFormElement: any = ref();
-  public currentFormType: string = "earnings";
+  public activeTab: string = "earnings";
 
   public earningsFormElement: any = ref();
   public deductionsFormElement: any = ref();
@@ -444,15 +444,15 @@ export default class PayrollComponents extends Vue {
     this.modeData = mode;
 
     if (typeof params === "string") {
-      this.currentFormType = params;
+      this.activeTab = params;
     } else if (params.entity_type) {
-      this.currentFormType = params.entity_type;
+      this.activeTab = params.entity_type;
     }
 
     this.showForm = true;
 
     this.$nextTick(() => {
-      const formElement = this.getFormElementByType(this.currentFormType);
+      const formElement = this.getFormElementByType(this.activeTab);
       if (formElement && typeof formElement.initialize === "function") {
         formElement.initialize();
 
@@ -483,7 +483,7 @@ export default class PayrollComponents extends Vue {
 
   handleEdit(params: any) {
     const entityType = params.entity_type;
-    this.currentFormType = entityType;
+    this.activeTab = entityType;
     this.loadEditData(params, entityType);
   }
 
@@ -570,7 +570,7 @@ export default class PayrollComponents extends Vue {
     }
   }
 
-  async loadDataGrid(entityType: any = this.currentFormType) {
+  async loadDataGrid(entityType: any = this.activeTab) {
     let gridApi: GridApi;
     switch (entityType) {
       case "earnings":
@@ -1084,6 +1084,7 @@ export default class PayrollComponents extends Vue {
   }
 
   // HELPER FUNCTION =======================================================
+
   generateUniqueId(entityType: string): number {
     let maxId = 0;
 
@@ -1291,7 +1292,7 @@ export default class PayrollComponents extends Vue {
     if (formData.deductionsCode !== undefined) return "deductions";
     if (formData.statutoryCode !== undefined) return "statutory";
     if (formData.categoryCode !== undefined) return "category";
-    return this.currentFormType;
+    return this.activeTab;
   }
 
   getFormElementByType(type: string): any {
@@ -1305,7 +1306,7 @@ export default class PayrollComponents extends Vue {
       case "category":
         return this.$refs.categoryFormElement;
       default:
-        console.info(`Unknown form type: ${type}`);
+        console.info(`Unknown component type: ${type}`);
         return null;
     }
   }
@@ -1338,7 +1339,7 @@ export default class PayrollComponents extends Vue {
   }
 
   getCurrentFormComponent() {
-    switch (this.currentFormType) {
+    switch (this.activeTab) {
       case "earnings":
         return "earnings-input-form";
       case "deductions":
@@ -1353,7 +1354,7 @@ export default class PayrollComponents extends Vue {
   }
 
   getCurrentFormRef() {
-    switch (this.currentFormType) {
+    switch (this.activeTab) {
       case "earnings":
         return "earningsFormElement";
       case "deductions":

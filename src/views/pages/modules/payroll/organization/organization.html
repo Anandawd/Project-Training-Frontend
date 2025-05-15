@@ -33,29 +33,11 @@
 
     <!-- insert form -->
     <transition name="fade" mode="out-in">
-      <position-input-form
-        ref="positionFormElement"
-        v-if="showForm && currentFormType  === 'position'"
-        :modeData="modeData"
-        @save="handleSave"
-        @close="showForm=false"
-      />
-    </transition>
-
-    <transition name="fade" mode="out-in">
-      <department-input-form
-        ref="departmentFormElement"
-        v-if="showForm && currentFormType  === 'department'"
-        :modeData="modeData"
-        @save="handleSave"
-        @close="showForm=false"
-      />
-    </transition>
-
-    <transition name="fade" mode="out-in">
-      <placement-input-form
-        ref="placementFormElement"
-        v-if="showForm && currentFormType  === 'placement'"
+      <c-input-form
+        class="px-2"
+        ref="inputFormElement"
+        v-show="showForm"
+        :schema="schema"
         :modeData="modeData"
         @save="handleSave"
         @close="showForm=false"

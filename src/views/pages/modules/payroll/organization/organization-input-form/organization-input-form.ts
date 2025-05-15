@@ -1,4 +1,3 @@
-import CDatepicker from "@/components/datepicker/datepicker.vue";
 import CInput from "@/components/input/input.vue";
 import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
@@ -15,7 +14,6 @@ import * as Yup from "yup";
     CForm,
     CInput,
     CSelect,
-    CDatepicker,
     CRadio,
   },
   props: {
@@ -29,21 +27,53 @@ import * as Yup from "yup";
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
-  public activeTab: string = "position";
+  public isSave: boolean = false;
 
+  public defaultForm: any = {};
   public form: any = reactive({});
+  public formDetail: any = reactive({});
 
   // form settings
-  Options: any = [
+  public formats: Array<any> = [
+    { code: 1, name: ",0.;-,0." },
+    { code: 2, name: ",0.0;-,0.0" },
+    { code: 3, name: ",0.00;-,0.00" },
+    { code: 4, name: ",0.000;-,0.000" },
+  ];
+
+  statusOptions: any = [
     {
-      SubGroupName: "Type",
-      code: "T01",
-      name: "Earnings",
+      SubGroupName: "Status",
+      code: "A",
+      name: "Active",
     },
     {
-      SubGroupName: "Type",
-      code: "T02",
-      name: "Deductions",
+      SubGroupName: "Status",
+      code: "I",
+      name: "Inactive   ",
+    },
+  ];
+
+  departmentOptions: any = [
+    {
+      SubGroupName: "Department",
+      code: "D01",
+      name: "Marketing",
+    },
+    {
+      SubGroupName: "Department",
+      code: "D02",
+      name: "Human Resource",
+    },
+    {
+      SubGroupName: "Department",
+      code: "D03",
+      name: "Operational",
+    },
+    {
+      SubGroupName: "Department",
+      code: "D04",
+      name: "IT",
     },
   ];
 
@@ -99,30 +129,6 @@ export default class InputForm extends Vue {
       name: "Part-timer",
     },
   ];
-
-  departmentOptions: any = [
-    {
-      SubGroupName: "Department",
-      code: "D01",
-      name: "Marketing",
-    },
-    {
-      SubGroupName: "Department",
-      code: "D02",
-      name: "Human Resource",
-    },
-    {
-      SubGroupName: "Department",
-      code: "D03",
-      name: "Operational",
-    },
-    {
-      SubGroupName: "Department",
-      code: "D04",
-      name: "IT",
-    },
-  ];
-
   placementOptions: any = [
     {
       SubGroupName: "Placement",
@@ -135,7 +141,18 @@ export default class InputForm extends Vue {
       name: "Amora Canggu",
     },
   ];
-
+  supervisorOptions: any = [
+    {
+      SubGroupName: "Supervisor",
+      code: "SPV01",
+      name: "Budi Santoso",
+    },
+    {
+      SubGroupName: "Supervisor",
+      code: "SPV02",
+      name: "Sari Dewi",
+    },
+  ];
   positionLevelOptions: any = [
     {
       code: "LV1",
@@ -174,19 +191,12 @@ export default class InputForm extends Vue {
     },
   ];
 
+  // actions
   async resetForm() {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      // Category tab
-      positionCode: "",
-      positionName: "",
-      positionDescription: "",
-      positionLevel: "",
-      positionDepartment: "",
-      positionPlacement: "",
-      positionStatus: "A",
-      id: undefined,
+      // reset data
     };
   }
 
@@ -195,21 +205,23 @@ export default class InputForm extends Vue {
   }
 
   onSubmit() {
-    // this.inputFormValidation.$el.requestSubmit();
-    this.onSave();
+    this.inputFormValidation.$el.requestSubmit();
   }
 
   onSave() {
     this.$emit("save", this.form);
   }
 
+  checkForm() {
+    console.log(this.form);
+  }
+
   onClose() {
     this.$emit("close");
   }
 
-  onInvalidSubmit({ errors }: any) {
+  onInvalidSubmit() {
     focusOnInvalid();
-    // getToastError("onInvalidSubmit Please complete all required fields");
   }
 
   // validation
@@ -220,11 +232,15 @@ export default class InputForm extends Vue {
   get title() {
     if (this.modeData === $global.modeData.insert) {
       return `${this.$t("commons.insert")} ${this.$t(
-        "commons.table.payroll.employee.insertPosition"
+        `${this.$route.meta.pageTitle}`
       )}`;
     } else if (this.modeData === $global.modeData.edit) {
       return `${this.$t("commons.update")} ${this.$t(
-        "commons.table.payroll.employee.updatePosition"
+        `${this.$route.meta.pageTitle}`
+      )}`;
+    } else if (this.modeData === $global.modeData.duplicate) {
+      return `${this.$t("commons.duplicate")} ${this.$t(
+        `${this.$route.meta.pageTitle}`
       )}`;
     }
   }
