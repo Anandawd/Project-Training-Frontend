@@ -38,6 +38,9 @@
         v-if="showForm && currentFormType  === 'position'"
         class="px-2"
         :modeData="modeData"
+        :levelOptions="positionLevelOptions"
+        :departmentOptions="departmentOptions"
+        :placementOptions="placementOptions"
         @save="handleSave"
         @close="showForm=false"
       />
@@ -49,6 +52,9 @@
         v-if="showForm && currentFormType  === 'department'"
         class="px-2"
         :modeData="modeData"
+        :placementOptions="placementOptions"
+        :managerOptions="managerOptions"
+        :supervisorOptions="supervisorOptions"
         @save="handleSave"
         @close="showForm=false"
       />
@@ -60,6 +66,8 @@
         v-if="showForm && currentFormType  === 'placement'"
         class="px-2"
         :modeData="modeData"
+        :countryOptions="countryOptions"
+        :cityOptions="cityOptions"
         @save="handleSave"
         @close="showForm=false"
       />
@@ -216,8 +224,8 @@
     <!-- dialog -->
     <c-dialog
       v-show="showDialog"
-      dialogTitle="Confirm"
-      size="sm"
+      title="Confirm"
+      size="lg"
       @confirm="deleteData"
       @cancel="showDialog=false"
     >

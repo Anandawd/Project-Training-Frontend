@@ -44,6 +44,8 @@
         </div>
         <div class="col-md-4">
           <c-select
+            filter
+            multiple
             offset="right"
             class="row mb-1"
             selectType="column"
@@ -53,12 +55,13 @@
             v-model="form.departmentPlacement"
             :label="$t('labels.payroll.employee.placement')"
             :columnOptions="columnOptions"
-            :options="placementOptions"
+            :options="departmentPlacementOptions"
           >
           </c-select>
         </div>
         <div class="col-md-4">
           <c-select
+            filter
             offset="right"
             class="row mb-1"
             selectType="column"
@@ -68,12 +71,13 @@
             v-model="form.departmentManager"
             :label="$t('labels.payroll.employee.manager')"
             :columnOptions="columnOptions"
-            :options="managerOptions"
+            :options="departmentManagerOptions"
           >
           </c-select>
         </div>
         <div class="col-md-4">
           <c-select
+            filter
             multiple
             offset="right"
             class="row mb-1"
@@ -84,7 +88,7 @@
             v-model="form.departmentSupervisor"
             :label="$t('labels.payroll.employee.supervisor')"
             :columnOptions="columnOptions"
-            :options="supervisorOptions"
+            :options="departmentSupervisorOptions"
           >
           </c-select>
         </div>

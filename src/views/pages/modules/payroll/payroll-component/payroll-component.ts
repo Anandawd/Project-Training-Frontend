@@ -464,9 +464,9 @@ export default class PayrollComponents extends Vue {
   }
 
   handleSave(formData: any) {
-    if (!this.validateFormData(formData)) {
-      return;
-    }
+    // if (!this.validateFormData(formData)) {
+    //   return;
+    // }
     const entityType = this.getCurrentEntityType(formData);
     const formattedData = this.formatComponentData(formData, entityType);
 

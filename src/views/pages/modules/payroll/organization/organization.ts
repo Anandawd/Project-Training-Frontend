@@ -2,6 +2,7 @@ import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import Checklist from "@/components/ag_grid-framework/checklist.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
+import OrganizationAPI from "@/services/api/payroll/organization/organization";
 import { generateIconContextMenuAgGrid, getError } from "@/utils/general";
 import $global from "@/utils/global";
 import { getToastError, getToastSuccess } from "@/utils/toast";
@@ -15,6 +16,8 @@ import EarningsInputForm from "../payroll-component/earnings-component-input-for
 import DepartmentInputForm from "./department-input-form/department-input-form.vue";
 import PlacementInputForm from "./placement-input-form/placement-input-form.vue";
 import PositionInputForm from "./position-input-form/position-input-form.vue";
+
+const organizationAPI = new OrganizationAPI();
 
 @Options({
   components: {
@@ -39,7 +42,7 @@ export default class Employee extends Vue {
   public showForm: boolean = false;
   public modeData: any;
   public form: any = {};
-  // public activeTab: string = "";
+  public showDialog: boolean = false;
   // public inputFormElement: any = ref();
   public currentFormType: string = "";
 
@@ -47,8 +50,13 @@ export default class Employee extends Vue {
   public positionFormElement: any = ref();
   public placementFormElement: any = ref();
 
-  // dialog
-  public showDialog: boolean = false;
+  public positionLevelOptions: any[];
+  public departmentOptions: any[];
+  public placementOptions: any[];
+  public managerOptions: any[];
+  public supervisorOptions: any[];
+  public countryOptions: any[];
+  public cityOptions: any = ref([]);
 
   // AG GRID VARIABLE
   gridOptions: any = {};
@@ -73,7 +81,8 @@ export default class Employee extends Vue {
   placementTabGridApi: any;
 
   // RECYCLE LIFE FUNCTION =======================================================
-  created(): void {
+  created() {
+    this.loadDropdown();
     this.loadMockData();
   }
 
@@ -417,10 +426,13 @@ export default class Employee extends Vue {
     }
   }
 
-  handleShowForm(params: any, mode: any) {
-    console.info("handleShowForm clicked", params);
-    this.modeData = mode;
+  async handleShowForm(params: any, mode: any) {
+    this.showForm = false;
+    await this.$nextTick();
 
+    this.modeData = mode;
+    console.log("modeData", this.modeData);
+    console.log("mode", mode);
     if (typeof params === "string") {
       this.currentFormType = params;
     } else {
@@ -434,7 +446,7 @@ export default class Employee extends Vue {
       if (formElement && typeof formElement.initialize === "function") {
         formElement.initialize();
 
-        if (mode === $global.modeData.edit) {
+        if (mode === $global.modeData.edit && typeof params !== "string") {
           this.populateForm(params);
         }
       }
@@ -461,12 +473,14 @@ export default class Employee extends Vue {
   handleEdit(formData: any) {
     const formType = this.getCurrentFormType(formData);
     this.currentFormType = formType;
-    this.loadEditData(formData, formType);
+    this.handleShowForm(formData, $global.modeData.edit);
+    // this.loadEditData(formData, formType);
   }
 
   handleDelete(params: any) {
+    console.log("handleDelete called");
+    this.showDialog = true;
     this.deleteParam = params;
-    this.deleteData();
   }
 
   refreshData(search: any) {
@@ -476,6 +490,11 @@ export default class Employee extends Vue {
   // API REQUEST =======================================================
   async loadData() {
     try {
+      await Promise.all([
+        this.loadPositionData(),
+        this.loadDepartmentData(),
+        this.loadPlacementData(),
+      ]);
     } catch (error) {
       getError(error);
     }
@@ -517,7 +536,38 @@ export default class Employee extends Vue {
     }
   }
 
-  async loadEditData(params: any, type: any) {}
+  async loadEditData(params: any, type: any) {
+    try {
+      this.showForm = true;
+      await this.$nextTick();
+
+      // for real implementation
+      // if (type === "position") {
+      //   const { data } = await organizationAPI.GetPosition(params.id);
+      //   await this.$nextTick();
+      //   this.populateForm(data);
+      // } else if (type === "department") {
+      //   const { data } = await organizationAPI.GetDepartment(params.id);
+      //   await this.$nextTick();
+      //   this.populateForm(data);
+      // } else if (type === "placement") {
+      //   const { data } = await organizationAPI.GetPlacement(params.id);
+      //   await this.$nextTick();
+      //   this.populateForm(data);
+      // }
+
+      // for demo
+      const formElement = this.getFormElementByType(type);
+      if (!formElement) {
+        console.error(`Form element for ${type} not found`);
+        return;
+      }
+
+      this.populateForm(params);
+    } catch (error) {
+      getError(error);
+    }
+  }
 
   async loadMockData() {
     this.rowDepartmentData = [
@@ -1360,16 +1410,192 @@ export default class Employee extends Vue {
     ];
   }
 
+  async loadDropdown() {
+    try {
+      // for real implementation
+      // const { data: levelData } = await organizationAPI.GetPositionLevelOptions();
+      // this.positionLevelOptions = levelData;
+
+      // for demo
+      this.positionLevelOptions = [
+        { code: "LV1", name: "1", SubGroupName: "Level" },
+        { code: "LV2", name: "2", SubGroupName: "Level" },
+        { code: "LV3", name: "3", SubGroupName: "Level" },
+        { code: "LV4", name: "4", SubGroupName: "Level" },
+        { code: "LV5", name: "5", SubGroupName: "Level" },
+      ];
+
+      this.departmentOptions = [
+        { code: "D001", name: "Executive", SubGroupName: "Department" },
+        { code: "D002", name: "Human Resources", SubGroupName: "Department" },
+        { code: "D003", name: "Finance", SubGroupName: "Department" },
+        // Add more departments as needed
+      ];
+
+      this.placementOptions = [
+        { code: "PL001", name: "Amora Ubud", SubGroupName: "Placement" },
+        { code: "PL002", name: "Amora Canggu", SubGroupName: "Placement" },
+        { code: "PL003", name: "Amora Kendari", SubGroupName: "Placement" },
+        // Add more placements as needed
+      ];
+
+      this.managerOptions = [
+        { code: "MGR001", name: "John Smith" },
+        { code: "MGR002", name: "Sarah Johnson" },
+        { code: "MGR003", name: "Robert Chen" },
+        { code: "MGR004", name: "David Wilson" },
+        { code: "MGR005", name: "Jennifer Garcia" },
+        { code: "MGR006", name: "Thomas Wright" },
+        { code: "MGR007", name: "Charles Lopez" },
+        { code: "MGR008", name: "Daniel Lee" },
+        { code: "MGR009", name: "Jessica Walker" },
+        { code: "MGR010", name: "Richard Baker" },
+        { code: "MGR011", name: "Andrew Miller" },
+        { code: "MGR012", name: "James Carter" },
+        { code: "MGR013", name: "Michelle Adams" },
+        { code: "MGR014", name: "Christopher Hill" },
+        { code: "MGR015", name: "Jonathan Evans" },
+        // Add more managers as needed
+      ];
+
+      this.supervisorOptions = [
+        { code: "SPV001", name: "Jane Doe" },
+        { code: "SPV002", name: "Michael Brown" },
+        { code: "SPV003", name: "Emily Davis" },
+        { code: "SPV004", name: "Lisa Anderson" },
+        { code: "SPV005", name: "Kevin Martinez" },
+        { code: "SPV006", name: "Patricia Hall" },
+        { code: "SPV007", name: "Nancy Young" },
+        { code: "SPV008", name: "Susan Clark" },
+        { code: "SPV009", name: "Brian Turner" },
+        { code: "SPV010", name: "Elizabeth Scott" },
+        { code: "SPV011", name: "Laura Nelson" },
+        { code: "SPV012", name: "Maria Gonzalez" },
+        { code: "SPV013", name: "Samuel Green" },
+        { code: "SPV014", name: "Rebecca White" },
+        { code: "SPV015", name: "Amanda Parker" },
+        // Add more supervisors as needed
+      ];
+
+      this.countryOptions = [
+        { code: "ID", name: "Indonesia" },
+        { code: "SG", name: "Singapore" },
+        { code: "MY", name: "Malaysia" },
+        { code: "TH", name: "Thailand" },
+        { code: "PH", name: "Philippines" },
+        { code: "VN", name: "Vietnam" },
+        { code: "HK", name: "Hong Kong" },
+        { code: "JP", name: "Japan" },
+        { code: "AU", name: "Australia" },
+        { code: "NZ", name: "New Zealand" },
+        // Add more countries as needed
+      ];
+
+      this.cityOptions = [
+        { code: "BALI", name: "Bali" },
+        { code: "JKT", name: "Jakarta" },
+        { code: "BDG", name: "Bandung" },
+        { code: "SBY", name: "Surabaya" },
+        { code: "YOG", name: "Yogyakarta" },
+        { code: "MKS", name: "Makassar" },
+        { code: "KUL", name: "Kuala Lumpur" },
+        { code: "BKK", name: "Bangkok" },
+        { code: "PHU", name: "Phuket" },
+        { code: "MNL", name: "Manila" },
+        { code: "HCM", name: "Ho Chi Minh City" },
+        { code: "HKG", name: "Hong Kong" },
+        { code: "TYO", name: "Tokyo" },
+        { code: "SYD", name: "Sydney" },
+        { code: "MEL", name: "Melbourne" },
+        { code: "AKL", name: "Auckland" },
+      ];
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadPositionData() {
+    try {
+      const { data } = await organizationAPI.GetPositionList({
+        Index: 0,
+        Text: "",
+        IndexCheckbox: 1,
+      });
+      if (data) {
+        this.rowPositionData = data;
+      }
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadDepartmentData() {
+    try {
+      const { data } = await organizationAPI.GetDepartmentList({
+        Index: 0,
+        Text: "",
+        IndexCheckBox: 1,
+      });
+      this.rowDepartmentData = data;
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadPlacementData() {
+    try {
+      const { data } = await organizationAPI.GetPlacementList({
+        Index: 0,
+        Text: "",
+        IndexCheckBox: 1,
+      });
+      this.rowPlacementData = data;
+    } catch (error) {
+      getError(error);
+    }
+  }
+
   async insertData(formData: any) {
     try {
       const formType = this.getCurrentFormType(formData);
+
       formData.id = this.generateUniqueId(formType);
+
+      // for real implementation
+      // if (formType === "position") {
+      //   const { status2 } = await organizationAPI.InsertPosition(formData);
+      //   if (status2.status === 0) {
+      //     await this.loadPositionData();
+      //     getToastSuccess(
+      //       this.$t("messages.insertSuccess") || "Data added successfully"
+      //     );
+      //     return { status: 0 };
+      //   }
+      // } else if (formType === "department") {
+      //   const { status2 } = await organizationAPI.InsertDepartment(formData);
+      //   if (status2.status === 0) {
+      //     await this.loadDepartmentData();
+      //     getToastSuccess(
+      //       this.$t("messages.insertSuccess") || "Data added successfully"
+      //     );
+      //     return { status: 0 };
+      //   }
+      // } else if (formType === "placement") {
+      //   const { status2 } = await organizationAPI.InsertPlacement(formData);
+      //   if (status2.status === 0) {
+      //     await this.loadPlacementData();
+      //     getToastSuccess(
+      //       this.$t("messages.insertSuccess") || "Data added successfully"
+      //     );
+      //     return { status: 0 };
+      //   }
+      // }
+
+      // for demo
       if (formType === "position") {
         this.rowPositionData = [...this.rowPositionData, formData];
-        console.log("new position data", this.rowPositionData);
       } else if (formType === "department") {
         this.rowDepartmentData = [...this.rowDepartmentData, formData];
-        console.log("new department data", this.rowDepartmentData);
       } else if (formType === "placement") {
         this.rowPlacementData = [...this.rowPlacementData, formData];
       }
@@ -1378,7 +1604,6 @@ export default class Employee extends Vue {
       getToastSuccess(
         this.$t("messages.insertSuccess") || "Data added successfully"
       );
-      return { status: 0 };
     } catch (error) {
       getError(error);
     }
@@ -1387,9 +1612,45 @@ export default class Employee extends Vue {
   async updateData(formData: any) {
     try {
       const formType = this.getCurrentFormType(formData);
+
+      // for real implementation
+      // if (formType === "position") {
+      //   const { status2 } = await organizationAPI.UpdatePosition(formData);
+      //   if (status2.status === 0) {
+      //     await this.loadPositionData();
+      //     getToastSuccess(
+      //       this.$t("messages.updateSuccess") || "Data updated successfully"
+      //     );
+      //     return { status: 0 };
+      //   }
+      // } else if (formType === "department") {
+      //   const { status2 } = await organizationAPI.UpdateDepartment(formData);
+      //   if (status2.status === 0) {
+      //     await this.loadDepartmentData();
+      //     getToastSuccess(
+      //       this.$t("messages.updateSuccess") || "Data updated successfully"
+      //     );
+      //     return { status: 0 };
+      //   }
+      // } else if (formType === "placement") {
+      //   const { status2 } = await organizationAPI.UpdatePlacement(formData);
+      //   if (status2.status === 0) {
+      //     await this.loadPlacementData();
+      //     getToastSuccess(
+      //       this.$t("messages.updateSuccess") || "Data updated successfully"
+      //     );
+      //     return { status: 0 };
+      //   }
+      // }
+
+      // for demo
       if (formType === "position") {
         const index = this.rowPositionData.findIndex(
           (item: any) => item.id === formData.id
+        );
+        console.log(
+          "data yang akan diupdate",
+          this.rowPositionData.find((item: any) => item.id === formData.id)
         );
         if (index !== -1) {
           this.rowPositionData = [
@@ -1399,8 +1660,8 @@ export default class Employee extends Vue {
           ];
         }
         console.log(
-          "new data",
-          this.rowPositionData.findIndex((item: any) => item.id === formData.id)
+          "data setelah update",
+          this.rowPositionData.find((item: any) => item.id === formData.id)
         );
       } else if (formType === "department") {
         const index = this.rowDepartmentData.findIndex(
@@ -1431,7 +1692,6 @@ export default class Employee extends Vue {
       getToastSuccess(
         this.$t("messages.updateSuccess") || "Data updated successfully"
       );
-      return { status: 0 };
     } catch (error) {
       getError(error);
     }
@@ -1442,6 +1702,28 @@ export default class Employee extends Vue {
       const params = this.deleteParam;
       const type = this.getCurrentFormType(params);
 
+      // for real implementation
+      // if (type === "position") {
+      //   const { status2 } = await organizationAPI.DeletePosition(params.id);
+      //   if (status2.status === 0) {
+      //     await this.loadPositionData();
+      //     getToastSuccess(`Position has been removed successfully`);
+      //   }
+      // } else if (type === "department") {
+      //   const { status2 } = await organizationAPI.DeleteDepartment(params.id);
+      //   if (status2.status === 0) {
+      //     await this.loadDepartmentData();
+      //     getToastSuccess(`Department has been removed successfully`);
+      //   }
+      // } else if (type === "placement") {
+      //   const { status2 } = await organizationAPI.DeletePlacement(params.id);
+      //   if (status2.status === 0) {
+      //     await this.loadPlacementData();
+      //     getToastSuccess(`Placement has been removed successfully`);
+      //   }
+      // }
+
+      // for demo
       if (type === "position") {
         this.rowPositionData = this.rowPositionData.filter(
           (item: any) => item.id !== params.id
@@ -1460,12 +1742,13 @@ export default class Employee extends Vue {
       }
 
       await this.loadDataGrid(type);
-
       getToastSuccess(`Item ${type} has been removed successfully`);
     } catch (error) {
       getError(error);
+    } finally {
+      this.showDialog = false;
+      console.log("showDialog", this.showDialog);
     }
-    this.showDialog = false;
   }
 
   // HELPER FUNCTION =======================================================
@@ -1572,50 +1855,91 @@ export default class Employee extends Vue {
   formatPositionData(params: any) {
     return {
       id: params.id,
-      code: params.positionCode,
-      name: params.positionName,
-      description: params.positionDescription,
-      level: params.positionLevel,
-      department: params.positionDepartment,
-      placement: params.positionPlacement,
-      status: params.positionStatus,
+      position_code: params.positionCode,
+      position_name: params.positionName,
+      position_description: params.positionDescription,
+      position_level: params.positionLevel,
+      position_department: params.positionDepartment,
+      position_placement: params.positionPlacement,
+      position_status: params.positionStatus === "A",
+      position_created_at: params.id
+        ? undefined
+        : new Date().toISOString().split("T")[0] +
+          " " +
+          new Date().toTimeString().split(" ")[0],
+      position_created_by: params.id ? undefined : "Current User",
+      position_updated_at:
+        new Date().toISOString().split("T")[0] +
+        " " +
+        new Date().toTimeString().split(" ")[0],
+      position_updated_by: "Current User",
     };
   }
 
   formatDepartmentData(params: any) {
     return {
       id: params.id,
-      code: params.departmentCode,
-      name: params.departmentName,
-      description: params.departmentDescription,
-      placement: params.departmentPlacement,
-      manager: params.departmentManager,
-      supervisor: params.departmentSupervisor,
-      status: params.departmentStatus,
+      department_code: params.departmentCode,
+      department_name: params.departmentName,
+      department_description: params.departmentDescription,
+      department_placement: params.departmentPlacement,
+      department_manager: params.departmentManager,
+      department_supervisor: params.departmentSupervisor,
+      department_status: params.departmentStatus === "A",
+      department_created_at: params.id
+        ? undefined
+        : new Date().toISOString().split("T")[0] +
+          " " +
+          new Date().toTimeString().split(" ")[0],
+      department_created_by: params.id ? undefined : "Current User",
+      department_updated_at:
+        new Date().toISOString().split("T")[0] +
+        " " +
+        new Date().toTimeString().split(" ")[0],
+      department_updated_by: "Current User",
     };
   }
 
   formatPlacement(params: any) {
     return {
       id: params.id,
-      code: params.placementCode,
-      name: params.placementName,
-      country: params.placementCountry,
-      city: params.placementCity,
-      address: params.placementAddress,
-      status: params.placementStatus,
+      placement_code: params.placementCode,
+      placement_name: params.placementName,
+      placement_country: params.placementCountry,
+      placement_city: params.placementCity,
+      placement_address: params.placementAddress,
+      placement_status: params.placementStatus === "A",
+      placement_created_at: params.id
+        ? undefined
+        : new Date().toISOString().split("T")[0] +
+          " " +
+          new Date().toTimeString().split(" ")[0],
+      placement_created_by: params.id ? undefined : "Current User",
+      placement_updated_at:
+        new Date().toISOString().split("T")[0] +
+        " " +
+        new Date().toTimeString().split(" ")[0],
+      placement_updated_by: "Current User",
     };
   }
 
   getCurrentFormType(params: any): string {
+    if (typeof params === "string") return params;
+
+    // for grid row data
     if (params.position_code !== undefined) return "position";
     if (params.department_code !== undefined) return "department";
     if (params.placement_code !== undefined) return "placement";
+
+    // for form data
+    if (params.positionCode !== undefined) return "position";
+    if (params.departmentCode !== undefined) return "department";
+    if (params.placementCode !== undefined) return "placement";
+
     return this.currentFormType;
   }
 
   getFormElementByType(type: string): any {
-    console.info("getFormElementByType called");
     switch (type) {
       case "position":
         return this.$refs.positionFormElement;

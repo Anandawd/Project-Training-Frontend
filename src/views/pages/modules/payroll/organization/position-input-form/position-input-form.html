@@ -47,7 +47,7 @@
             required
             offset="right"
             class="row mb-1"
-            name="positionLevel"
+            name="PositionLevel"
             labelName="name"
             keyName="code"
             v-model="form.positionLevel"
@@ -67,9 +67,10 @@
             keyName="code"
             v-model="form.positionDepartment"
             :label="$t('labels.payroll.employee.department')"
-            :options="departmentOptions"
+            :options="positionDepartmentOptions"
             :columnOptions="columnOptions"
             multiple
+            filter
           >
           </c-select>
         </div>
@@ -83,9 +84,10 @@
             keyName="code"
             v-model="form.positionPlacement"
             :label="$t('labels.payroll.employee.placement')"
-            :options="placementOptions"
+            :options="positionPlacementOptions"
             :columnOptions="columnOptions"
             multiple
+            filter
           >
           </c-select>
         </div>

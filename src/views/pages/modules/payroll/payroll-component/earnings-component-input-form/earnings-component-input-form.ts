@@ -96,14 +96,14 @@ export default class InputForm extends Vue {
       earningsCode: "",
       earningsName: "",
       earningsDescription: "",
-      earningCategory: "",
-      earningDefaultAmount: 0,
-      earningQty: 1,
-      earningUnit: "",
-      earningTaxable: "YES",
-      earningIncludedBpjsEmplyoee: "YES",
-      earningIncludedBpjsHealth: "YES",
-      earningIncludedProrate: "YES",
+      earningsCategory: "",
+      earningsDefaultAmount: 0,
+      earningsQty: 1,
+      earningsUnit: "",
+      earningsTaxable: "YES",
+      earningsIncludedBpjsEmplyoee: "YES",
+      earningsIncludedBpjsHealth: "YES",
+      earningsIncludedProrate: "YES",
       earningsShowInPayslip: "YES",
       earningsStatus: "A",
       entityType: "earnings",
@@ -116,8 +116,8 @@ export default class InputForm extends Vue {
   }
 
   onSubmit() {
-    // this.inputFormValidation.$el.requestSubmit();
-    this.onSave();
+    this.inputFormValidation.$el.requestSubmit();
+    // this.onSave();
   }
 
   onSave() {
@@ -135,26 +135,24 @@ export default class InputForm extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      earningsCode: Yup.string().required("Code is required"),
-      earningsName: Yup.string().required("Name is required"),
-      earningCategory: Yup.string().required("Category is required"),
-      earningQty: Yup.number()
-        .required("Quantity is required")
-        .min(1, "Quantity must be at least 1"),
-      earningTaxable: Yup.string().required("Taxable field is required"),
-      earningIncludedBpjsEmplyoee: Yup.string().required(
-        "BPJS Ketenagakerjaan field is required"
-      ),
-      earningIncludedBpjsHealth: Yup.string().required(
-        "BPJS Kesehatan field is required"
-      ),
-      earningIncludedProrate: Yup.string().required(
-        "Prorate field is required"
-      ),
-      earningsShowInPayslip: Yup.string().required(
-        "Show in Payslip field is required"
-      ),
-      earningsStatus: Yup.string().required("Status is required"),
+      EarningsCode: Yup.string().required(),
+      EarningsName: Yup.string().required(),
+      EarningsCategory: Yup.string().required(),
+      EarningsQty: Yup.number().required().min(1),
+      // earningTaxable: Yup.string().required("Taxable field is required"),
+      // earningIncludedBpjsEmplyoee: Yup.string().required(
+      //   "BPJS Ketenagakerjaan field is required"
+      // ),
+      // earningIncludedBpjsHealth: Yup.string().required(
+      //   "BPJS Kesehatan field is required"
+      // ),
+      // earningIncludedProrate: Yup.string().required(
+      //   "Prorate field is required"
+      // ),
+      // earningsShowInPayslip: Yup.string().required(
+      //   "Show in Payslip field is required"
+      // ),
+      // earningsStatus: Yup.string().required("Status is required"),
     });
   }
 

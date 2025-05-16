@@ -36,8 +36,8 @@
         <div class="col-md-4">
           <c-input
             type="text"
-            name="earningDescription"
-            id="earningDescription"
+            name="EarningsDescription"
+            id="EarningsDescription"
             class="row mb-1"
             :label="$t('labels.payroll.employee.description')"
             v-model="form.earningsDescription"
@@ -50,10 +50,10 @@
             offset="right"
             selectType="column"
             class="row mb-1"
-            name="category"
+            name="EarningsCategory"
             labelName="name"
             keyName="code"
-            v-model="form.earningCategory"
+            v-model="form.earningsCategory"
             :label="$t('labels.payroll.payroll.category')"
             :options="earningCategoryOptions"
             :columnOptions="columnOptions"
@@ -65,13 +65,13 @@
             showZeroNumber
             formatted
             type="number"
-            name="defaultAmount"
-            id="defaultAmount"
+            name="EarningsDefaultAmount"
+            id="EarningsDefaultAmount"
             class="row mb-1"
             :label="$t('labels.payroll.payroll.defaultAmount')"
             :max="9999999999"
             :min="0"
-            v-model="form.earningDefaultAmount"
+            v-model="form.earningsDefaultAmount"
           />
         </div>
         <div class="col-md-4">
@@ -79,21 +79,21 @@
             required
             showZeroNumber
             type="number"
-            name="quantity"
-            id="quantity"
+            name="EarningsQty"
+            id="EarningsQty"
             class="row mb-1"
             :label="$t('labels.payroll.payroll.qty')"
-            v-model="form.earningQty"
+            v-model="form.earningsQty"
           />
         </div>
         <div class="col-md-4">
           <c-input
             type="text"
-            name="unit"
-            id="unit"
+            name="EarningsUnit"
+            id="EarningsUnit"
             class="row mb-1"
             :label="$t('labels.payroll.payroll.unit')"
-            v-model="form.earningUnit"
+            v-model="form.earningsUnit"
           />
         </div>
         <div class="col-md-4">
@@ -101,10 +101,10 @@
             required
             offset="right"
             class="row mb-1"
-            name="taxable"
+            name="EarningsTaxable"
             labelName="name"
             keyName="code"
-            v-model="form.earningTaxable"
+            v-model="form.earningsTaxable"
             :label="$t('labels.payroll.payroll.taxable')"
             :options="booleanOptions"
           >
@@ -115,10 +115,10 @@
             required
             offset="right"
             class="row mb-1"
-            name="includedBpjsEmployee"
+            name="EarningsIncludedBpjsEmployee"
             labelName="name"
             keyName="code"
-            v-model="form.earningIncludedBpjsEmplyoee"
+            v-model="form.earningsIncludedBpjsEmplyoee"
             :label="$t('labels.payroll.payroll.includedBpjsEmployee')"
             :options="booleanOptions"
           >
@@ -129,10 +129,10 @@
             required
             offset="right"
             class="row mb-1"
-            name="includedBpjsHealth"
+            name="EarningsIncludedBpjsHealth"
             labelName="name"
             keyName="code"
-            v-model="form.earningIncludedBpjsHealth"
+            v-model="form.earningsIncludedBpjsHealth"
             :label="$t('labels.payroll.payroll.includedBpjsHealth')"
             :options="booleanOptions"
           >
@@ -143,10 +143,10 @@
             required
             offset="right"
             class="row mb-1"
-            name="includedProrate"
+            name="EarningsIncludedProrate"
             labelName="name"
             keyName="code"
-            v-model="form.earningIncludedProrate"
+            v-model="form.earningsIncludedProrate"
             :label="$t('labels.payroll.payroll.includedProrate')"
             :options="booleanOptions"
           >
@@ -157,7 +157,7 @@
             required
             offset="right"
             class="row mb-1"
-            name="showInPayslip"
+            name="EarningShowInPayslip"
             labelName="name"
             keyName="code"
             v-model="form.earningsShowInPayslip"

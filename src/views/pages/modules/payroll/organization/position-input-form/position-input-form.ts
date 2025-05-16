@@ -23,141 +23,29 @@ import * as Yup from "yup";
       type: Number,
       require: true,
     },
+    levelOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    departmentOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    placementOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
   },
   emits: ["save", "close"],
 })
 export default class InputForm extends Vue {
+  levelOptions!: any[];
+  departmentOptions!: any[];
+  placementOptions!: any[];
+
   inputFormValidation: any = ref();
   modeData: any;
-  public activeTab: string = "position";
-
-  public form: any = reactive({
-    positionCode: "",
-    positionName: "",
-    positionDescription: "",
-    positionLevel: "",
-    positionDepartment: "",
-    positionPlacement: "",
-    positionStatus: "A",
-  });
-
-  // form settings
-  positionOptions: any = [
-    {
-      SubGroupName: "Position",
-      code: "P01",
-      name: "Owner",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P02",
-      name: "Director",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P03",
-      name: "Manager",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P04",
-      name: "Supervisor",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P05",
-      name: "Senior Staff",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P06",
-      name: "Staff",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P07",
-      name: "Assistant",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P08",
-      name: "Trainee",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P09",
-      name: "Intern",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P10",
-      name: "Part-timer",
-    },
-  ];
-
-  departmentOptions: any = [
-    {
-      SubGroupName: "Department",
-      code: "D01",
-      name: "Marketing",
-    },
-    {
-      SubGroupName: "Department",
-      code: "D02",
-      name: "Human Resource",
-    },
-    {
-      SubGroupName: "Department",
-      code: "D03",
-      name: "Operational",
-    },
-    {
-      SubGroupName: "Department",
-      code: "D04",
-      name: "IT",
-    },
-  ];
-
-  placementOptions: any = [
-    {
-      SubGroupName: "Placement",
-      code: "PR01",
-      name: "Amora Ubud",
-    },
-    {
-      SubGroupName: "Placement",
-      code: "PR02",
-      name: "Amora Canggu",
-    },
-  ];
-
-  positionLevelOptions: any = [
-    {
-      SubGroupName: "Options",
-      code: "LV1",
-      name: "1",
-    },
-    {
-      SubGroupName: "Options",
-      code: "LV2",
-      name: "2",
-    },
-    {
-      SubGroupName: "Options",
-      code: "LV3",
-      name: "3",
-    },
-    {
-      SubGroupName: "Options",
-      code: "LV4",
-      name: "4",
-    },
-    {
-      SubGroupName: "Options",
-      code: "LV5",
-      name: "5",
-    },
-  ];
+  public form: any = reactive({});
 
   columnOptions = [
     {
@@ -195,8 +83,8 @@ export default class InputForm extends Vue {
   }
 
   onSubmit() {
-    // this.inputFormValidation.$el.requestSubmit();
-    this.onSave();
+    this.inputFormValidation.$el.requestSubmit();
+    // this.onSave();
   }
 
   onSave() {
@@ -214,7 +102,11 @@ export default class InputForm extends Vue {
 
   // validation
   get schema() {
-    return Yup.object().shape({});
+    return Yup.object().shape({
+      PositionCode: Yup.string().required(),
+      PositionName: Yup.string().required(),
+      PositionLevel: Yup.string().required(),
+    });
   }
 
   get title() {
@@ -227,5 +119,17 @@ export default class InputForm extends Vue {
         "commons.table.payroll.employee.position"
       )}`;
     }
+  }
+
+  get positionLevelOptions() {
+    return this.levelOptions || [];
+  }
+
+  get positionDepartmentOptions() {
+    return this.departmentOptions || [];
+  }
+
+  get positionPlacementOptions() {
+    return this.placementOptions || [];
   }
 }

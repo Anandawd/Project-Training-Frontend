@@ -21,82 +21,30 @@ import * as Yup from "yup";
       type: Number,
       require: true,
     },
+    placementOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    managerOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    supervisorOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
   },
   emits: ["save", "close"],
 })
 export default class InputForm extends Vue {
+  placementOptions!: any[];
+  managerOptions!: any[];
+  supervisorOptions!: any[];
+
   inputFormValidation: any = ref();
   modeData: any;
-  public isSave: boolean = false;
-  public activeTab: string = "category";
 
   public form: any = reactive({});
-
-  departmentOptions: any = [
-    {
-      code: "D01",
-      name: "Marketing",
-    },
-    {
-      code: "D02",
-      name: "Human Resource",
-    },
-    {
-      code: "D03",
-      name: "Operational",
-    },
-    {
-      code: "D04",
-      name: "IT",
-    },
-  ];
-
-  placementOptions: any = [
-    {
-      code: "PR01",
-      name: "Amora Ubud",
-    },
-    {
-      code: "PR02",
-      name: "Amora Canggu",
-    },
-  ];
-
-  supervisorOptions: any = [
-    { code: "SPV001", name: "Jane Doe" },
-    { code: "SPV002", name: "Michael Brown" },
-    { code: "SPV003", name: "Emily Davis" },
-    { code: "SPV004", name: "Lisa Anderson" },
-    { code: "SPV005", name: "Kevin Martinez" },
-    { code: "SPV006", name: "Patricia Hall" },
-    { code: "SPV007", name: "Nancy Young" },
-    { code: "SPV008", name: "Susan Clark" },
-    { code: "SPV009", name: "Brian Turner" },
-    { code: "SPV010", name: "Elizabeth Scott" },
-    { code: "SPV011", name: "Laura Nelson" },
-    { code: "SPV012", name: "Maria Gonzalez" },
-    { code: "SPV013", name: "Samuel Green" },
-    { code: "SPV014", name: "Rebecca White" },
-    { code: "SPV015", name: "Amanda Parker" },
-  ];
-
-  managerOptions: any = [
-    { code: "MGR001", name: "John Smith" },
-    { code: "MGR002", name: "Sarah Johnson" },
-    { code: "MGR003", name: "Robert Chen" },
-    { code: "MGR004", name: "David Wilson" },
-    { code: "MGR005", name: "Jennifer Garcia" },
-    { code: "MGR006", name: "Thomas Wright" },
-    { code: "MGR007", name: "Charles Lopez" },
-    { code: "MGR008", name: "Daniel Lee" },
-    { code: "MGR009", name: "Jessica Walker" },
-    { code: "MGR010", name: "Richard Baker" },
-    { code: "MGR011", name: "Andrew Miller" },
-    { code: "MGR012", name: "James Carter" },
-    { code: "MGR013", name: "Michelle Adams" },
-    { code: "MGR014", name: "Christopher Hill" },
-    { code: "MGR015", name: "Jonathan Evans" },
-  ];
 
   columnOptions = [
     {
@@ -134,8 +82,8 @@ export default class InputForm extends Vue {
   }
 
   onSubmit() {
-    // this.inputFormValidation.$el.requestSubmit();
-    this.onSave();
+    this.inputFormValidation.$el.requestSubmit();
+    // this.onSave();
   }
 
   onSave() {
@@ -146,14 +94,16 @@ export default class InputForm extends Vue {
     this.$emit("close");
   }
 
-  onInvalidSubmit({ errors }: any) {
+  onInvalidSubmit() {
     focusOnInvalid();
-    // getToastError("onInvalidSubmit Please complete all required fields");
   }
 
   // validation
   get schema() {
-    return Yup.object().shape({});
+    return Yup.object().shape({
+      DepartmentCode: Yup.string().required(),
+      DepartmentName: Yup.string().required(),
+    });
   }
 
   get title() {
@@ -166,5 +116,17 @@ export default class InputForm extends Vue {
         "commons.table.payroll.employee.department"
       )}`;
     }
+  }
+
+  get departmentPlacementOptions() {
+    return this.placementOptions;
+  }
+
+  get departmentManagerOptions() {
+    return this.managerOptions;
+  }
+
+  get departmentSupervisorOptions() {
+    return this.supervisorOptions;
   }
 }
