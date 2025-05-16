@@ -1,10 +1,12 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
+import Checklist from "@/components/ag_grid-framework/checklist.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
+  getError,
 } from "@/utils/general";
 import $global from "@/utils/global";
 import CSearchFilter from "@/views/pages/components/filter/filter.vue";
@@ -25,53 +27,8 @@ import CInputForm from "./employee-input-form/employee-input-form.vue";
 })
 export default class Employee extends Vue {
   //table
-  public rowData: any = [
-    {
-      employee_id: "EMP001",
-      employee_name: "Andi Pratama",
-      department: "IT",
-      position: "Frontend Developer",
-      placement: "Jakarta",
-      supervisor: "Budi Santoso",
-      employee_type: "Full-Time",
-    },
-    {
-      employee_id: "EMP002",
-      employee_name: "Rina Kusuma",
-      department: "Finance",
-      position: "Accountant",
-      placement: "Bandung",
-      supervisor: "Sari Dewi",
-      employee_type: "Contract",
-    },
-    {
-      employee_id: "EMP003",
-      employee_name: "Dewi Lestari",
-      department: "HR",
-      position: "HR Officer",
-      placement: "Jakarta",
-      supervisor: "Tono Rahmat",
-      employee_type: "Full-Time",
-    },
-    {
-      employee_id: "EMP004",
-      employee_name: "Yoga Saputra",
-      department: "IT",
-      position: "Backend Developer",
-      placement: "Surabaya",
-      supervisor: "Budi Santoso",
-      employee_type: "Part-Time",
-    },
-    {
-      employee_id: "EMP005",
-      employee_name: "Fajar Nugroho",
-      department: "Marketing",
-      position: "Marketing Specialist",
-      placement: "Jakarta",
-      supervisor: "Rina Kusuma",
-      employee_type: "Full-Time",
-    },
-  ];
+  public rowData: any = [];
+  public deleteParam: any;
 
   // filter
   public searchOptions: any;
@@ -86,9 +43,6 @@ export default class Employee extends Vue {
   public modeData: any;
   public form: any = {};
   public inputFormElement: any = ref();
-  public formType: any;
-
-  // dialog
   public showDialog: boolean = false;
 
   // AG GRID VARIABLE
@@ -107,53 +61,10 @@ export default class Employee extends Vue {
   ColumnApi: any;
   agGridSetting: any;
 
-  // GENERAL FUNCTION
-
-  // UI FUNCTION
-  getContextMenu(params: any) {
-    const { node } = params;
-    if (node) {
-      this.paramsData = node.data;
-    } else {
-      this.paramsData = null;
-    }
-
-    const result = [
-      {
-        name: this.$t("commons.contextMenu.insert"),
-        icon: generateIconContextMenuAgGrid("add_icon24"),
-        action: () => this.handleShowForm("", 0),
-      },
-      {
-        name: this.$t("commons.contextMenu.update"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () => this.handleShowForm(this.paramsData, 1),
-      },
-    ];
-    return result;
+  // RECYCLE LIFE FUNCTION =======================================================
+  created(): void {
+    this.loadMockData();
   }
-
-  handleRowRightClicked() {
-    if (this.paramsData) {
-      const vm = this;
-      vm.gridApi.forEachNode((node: any) => {
-        if (node.data) {
-          if (node.data.id_log == vm.paramsData.id_log) {
-            node.setSelected(true, true);
-          }
-        }
-      });
-    }
-  }
-
-  handleShowForm(params: any, mode: any) {
-    this.inputFormElement.initialize();
-    this.modeData = mode;
-    this.showForm = true;
-  }
-
-  // API FUNCTION
 
   beforeMount(): void {
     this.searchOptions = [
@@ -174,7 +85,8 @@ export default class Employee extends Vue {
     this.columnDefs = [
       {
         headerName: this.$t("commons.table.action"),
-        field: "Code",
+        headerClass: "align-header-center",
+        field: "id",
         enableRowGroup: false,
         resizable: false,
         filter: false,
@@ -188,51 +100,85 @@ export default class Employee extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.employee.employeeId"),
-        headerClass: "align-header-center",
         field: "employee_id",
         width: 100,
-        enableRowGroup: true,
+        enableRowGroup: false,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.employeeName"),
-        headerClass: "align-header-center",
         field: "employee_name",
         width: 200,
-        enableRowGroup: true,
+        enableRowGroup: false,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.department"),
-        headerClass: "align-header-center",
-        field: "department",
-        width: 100,
+        field: "employee_department",
+        width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.position"),
-        headerClass: "align-header-center",
-        field: "position",
-        width: 100,
+        field: "employee_position",
+        width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.placement"),
-        headerClass: "align-header-center",
-        field: "placement",
-        width: 100,
+        field: "employee_placement",
+        width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.supervisor"),
-        headerClass: "align-header-center",
-        field: "supervisor",
+        field: "employee_supervisor",
         width: 200,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.employeeType"),
-        headerClass: "align-header-center",
         field: "employee_type",
         width: 100,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.status"),
+        headerClass: "align-header-center",
+        cellClass: "ag-cell-center-checkbox",
+        field: "employee_status",
+        width: 100,
+        enableRowGroup: true,
+        cellRenderer: "checklistRenderer",
+      },
+      {
+        headerName: this.$t("commons.table.updatedAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "employee_updated_at",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.updatedBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "employee_updated_by",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.createdAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "employee_created_at",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.createdBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "employee_created_by",
+        width: 120,
         enableRowGroup: true,
       },
     ];
@@ -240,6 +186,7 @@ export default class Employee extends Vue {
     this.frameworkComponents = {
       actionGrid: ActionGrid,
       iconLockRenderer: IconLockRenderer,
+      checklistRenderer: Checklist,
     };
     this.rowGroupPanelShow = "always";
     this.statusBar = {
@@ -256,11 +203,167 @@ export default class Employee extends Vue {
     this.rowModelType = "serverSide";
     this.limitPageSize = this.agGridSetting.limitDefaultPageSize;
   }
+
   onGridReady(params: any) {
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
 
-    params.api.sizeColumnsToFit();
+    // params.api.sizeColumnsToFit();
+  }
+
+  // GENERAL FUNCTION =======================================================
+  getContextMenu(params: any) {
+    const { node } = params;
+    if (node) {
+      this.paramsData = node.data;
+    } else {
+      this.paramsData = null;
+    }
+
+    const result = [
+      {
+        name: this.$t("commons.contextMenu.insert"),
+        icon: generateIconContextMenuAgGrid("add_icon24"),
+        action: () => this.handleShowForm("", $global.modeData.insert),
+      },
+      {
+        name: this.$t("commons.contextMenu.update"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("edit_icon24"),
+        action: () =>
+          this.handleShowForm(this.paramsData, $global.modeData.edit),
+      },
+    ];
+    return result;
+  }
+
+  handleRowRightClicked() {
+    if (this.paramsData) {
+      const vm = this;
+      vm.gridApi.forEachNode((node: any) => {
+        if (node.data) {
+          if (node.data.id == vm.paramsData.id) {
+            node.setSelected(true, true);
+          }
+        }
+      });
+    }
+  }
+
+  handleShowForm(params: any, mode: any) {
+    this.inputFormElement.initialize();
+    this.modeData = mode;
+    this.showForm = true;
+  }
+
+  handleSave(formData: any) {}
+
+  handleEdit(formData: any) {}
+
+  handleDelete(params: any) {}
+
+  refreshData(search: any) {
+    this.loadDataGrid();
+  }
+
+  // API REQUEST =======================================================
+  async loadData() {
+    try {
+      await Promise.all([
+        // this.loadPositionData(),
+        // this.loadDepartmentData(),
+        // this.loadPlacementData(),
+      ]);
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadDataGrid() {}
+
+  async loadMockData() {
+    this.rowData = [
+      {
+        employee_id: "EMP001",
+        employee_name: "Andi Pratama",
+        department: "IT",
+        position: "Frontend Developer",
+        placement: "Jakarta",
+        supervisor: "Budi Santoso",
+        employee_type: "Full-Time",
+      },
+      {
+        employee_id: "EMP002",
+        employee_name: "Rina Kusuma",
+        department: "Finance",
+        position: "Accountant",
+        placement: "Bandung",
+        supervisor: "Sari Dewi",
+        employee_type: "Contract",
+      },
+      {
+        employee_id: "EMP003",
+        employee_name: "Dewi Lestari",
+        department: "HR",
+        position: "HR Officer",
+        placement: "Jakarta",
+        supervisor: "Tono Rahmat",
+        employee_type: "Full-Time",
+      },
+      {
+        employee_id: "EMP004",
+        employee_name: "Yoga Saputra",
+        department: "IT",
+        position: "Backend Developer",
+        placement: "Surabaya",
+        supervisor: "Budi Santoso",
+        employee_type: "Part-Time",
+      },
+      {
+        employee_id: "EMP005",
+        employee_name: "Fajar Nugroho",
+        department: "Marketing",
+        position: "Marketing Specialist",
+        placement: "Jakarta",
+        supervisor: "Rina Kusuma",
+        employee_type: "Full-Time",
+      },
+    ];
+  }
+
+  async loadDropdown() {
+    try {
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async insertData(formData: any) {
+    try {
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async updateData(formData: any) {
+    try {
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async deleteData() {
+    try {
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  populateForm(params: any) {
+    if (!params) {
+      console.info("Invalid data for form population:", params);
+      return;
+    }
   }
 
   // GETTER AND SETTER

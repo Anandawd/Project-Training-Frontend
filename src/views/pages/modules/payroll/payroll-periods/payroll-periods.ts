@@ -317,12 +317,16 @@ export default class Employee extends Vue {
       },
       {
         headerName: this.$t("commons.table.createdAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "created_at",
         width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.createdBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "created_by",
         width: 120,
         enableRowGroup: true,

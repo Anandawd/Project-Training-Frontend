@@ -38,6 +38,8 @@
         "bankName": "Bank Bank",
         "bankAccountNumber": "Bank Account Number",
         "bankAccountHolder": "Bank Account Holder",
+        "accountNumber": "Account Number",
+        "accountHolder": "Account Holder",
         "taxNumber": "Tax Number",
         "maritialStatus": "Maritial Status",
         "identityNumber": "Identity Number",

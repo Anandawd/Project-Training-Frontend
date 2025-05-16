@@ -41,6 +41,7 @@ export default class Employee extends Vue {
   public modeData: any;
   public form: any = {};
   public showDialog: boolean = false;
+  public dialogMessage: string = "";
   // public inputFormElement: any = ref();
   public currentFormType: string = "";
 
@@ -157,6 +158,8 @@ export default class Employee extends Vue {
       },
       {
         headerName: this.$t("commons.table.updatedAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "position_updated_at",
         width: 120,
         enableRowGroup: true,
@@ -169,12 +172,16 @@ export default class Employee extends Vue {
       },
       {
         headerName: this.$t("commons.table.createdAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "position_created_at",
         width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.createdBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "position_created_by",
         width: 120,
         enableRowGroup: true,
@@ -243,24 +250,32 @@ export default class Employee extends Vue {
       },
       {
         headerName: this.$t("commons.table.updatedAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "department_updated_at",
         width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.updatedBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "department_updated_by",
         width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.createdAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "department_created_at",
         width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.createdBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "department_created_by",
         width: 120,
         enableRowGroup: true,
@@ -323,24 +338,32 @@ export default class Employee extends Vue {
       },
       {
         headerName: this.$t("commons.table.updatedAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "placement_updated_at",
         width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.updatedBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "placement_updated_by",
         width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.createdAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "placement_created_at",
         width: 120,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.createdBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "placement_created_by",
         width: 120,
         enableRowGroup: true,
@@ -476,9 +499,9 @@ export default class Employee extends Vue {
   }
 
   handleDelete(params: any) {
-    console.log("handleDelete called");
-    this.showDialog = true;
+    // this.showDialog = true;
     this.deleteParam = params;
+    this.deleteData();
   }
 
   refreshData(search: any) {
@@ -1699,8 +1722,9 @@ export default class Employee extends Vue {
     try {
       const params = this.deleteParam;
       const type = this.getCurrentFormType(params);
-      this.showDialog = false;
-      await this.$nextTick();
+      // this.showDialog = false;
+      // await this.$nextTick()
+
       // for real implementation
       // if (type === "position") {
       //   const { status2 } = await organizationAPI.DeletePosition(params.id);
@@ -1746,8 +1770,6 @@ export default class Employee extends Vue {
       await this.loadDataGrid(type);
     } catch (error) {
       getError(error);
-    } finally {
-      console.log("showDialog", this.showDialog);
     }
   }
 
