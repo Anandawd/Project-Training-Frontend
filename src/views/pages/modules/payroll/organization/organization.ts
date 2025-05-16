@@ -1,7 +1,6 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import Checklist from "@/components/ag_grid-framework/checklist.vue";
 import CDialog from "@/components/dialog/dialog.vue";
-import CModal from "@/components/modal/modal.vue";
 import OrganizationAPI from "@/services/api/payroll/organization/organization";
 import { generateIconContextMenuAgGrid, getError } from "@/utils/general";
 import $global from "@/utils/global";
@@ -23,7 +22,6 @@ const organizationAPI = new OrganizationAPI();
   components: {
     AgGridVue,
     CSearchFilter,
-    CModal,
     CDialog,
     PositionInputForm,
     DepartmentInputForm,
@@ -1701,7 +1699,8 @@ export default class Employee extends Vue {
     try {
       const params = this.deleteParam;
       const type = this.getCurrentFormType(params);
-
+      this.showDialog = false;
+      await this.$nextTick();
       // for real implementation
       // if (type === "position") {
       //   const { status2 } = await organizationAPI.DeletePosition(params.id);
@@ -1728,25 +1727,26 @@ export default class Employee extends Vue {
         this.rowPositionData = this.rowPositionData.filter(
           (item: any) => item.id !== params.id
         );
-      } else if (type === "deparment") {
+        getToastSuccess(`Item ${type} has been removed successfully`);
+      } else if (type === "department") {
         this.rowDepartmentData = this.rowDepartmentData.filter(
           (item: any) => item.id !== params.id
         );
+        getToastSuccess(`Item ${type} has been removed successfully`);
       } else if (type === "placement") {
         this.rowPlacementData = this.rowPlacementData.filter(
           (item: any) => item.id !== params.id
         );
+        getToastSuccess(`Item ${type} has been removed successfully`);
       } else {
         getToastError("Type not found");
         return;
       }
 
       await this.loadDataGrid(type);
-      getToastSuccess(`Item ${type} has been removed successfully`);
     } catch (error) {
       getError(error);
     } finally {
-      this.showDialog = false;
       console.log("showDialog", this.showDialog);
     }
   }
