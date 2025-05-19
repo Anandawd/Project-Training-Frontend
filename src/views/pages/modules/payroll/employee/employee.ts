@@ -84,8 +84,7 @@ export default class Employee extends Vue {
 
   // RECYCLE LIFE FUNCTION =======================================================
   created(): void {
-    this.loadMockData();
-    this.loadDropdown();
+    this.loadData();
   }
 
   beforeMount(): void {
@@ -369,8 +368,7 @@ export default class Employee extends Vue {
   }
 
   handleEdit(formData: any) {
-    this.modeData = $global.modeData.edit;
-    this.loadEditData(formData.id);
+    this.handleShowForm(formData, $global.modeData.edit);
   }
 
   handleDelete(params: any) {
@@ -389,7 +387,7 @@ export default class Employee extends Vue {
   }
 
   refreshData(search: any) {
-    this.loadDataGrid();
+    this.loadDataGrid(search);
   }
 
   confirmAction() {
@@ -406,11 +404,8 @@ export default class Employee extends Vue {
   // API REQUEST =======================================================
   async loadData() {
     try {
-      await Promise.all([
-        // this.loadPositionData(),
-        // this.loadDepartmentData(),
-        // this.loadPlacementData(),
-      ]);
+      this.loadMockData();
+      this.loadDropdown();
     } catch (error) {
       getError(error);
     }
@@ -418,8 +413,7 @@ export default class Employee extends Vue {
 
   async loadDataGrid(search: any = this.searchDefault) {
     try {
-      /* 
-      // for real implementation
+      /*
       let params = {
         Index: search.index,
         Text: search.text,
@@ -427,7 +421,6 @@ export default class Employee extends Vue {
       };
       const { data } = await employeeAPI.GetEmployeeList(params);
       this.rowData = data;
-      this.loadDataToGrid(data);
       */
 
       // for demo
@@ -458,21 +451,18 @@ export default class Employee extends Vue {
         });
       }
 
-      if (search.filter && search.filter[0]) {
-        const filterValue = parseInt(search.filter[0]);
-
-        if (filterValue === 1) {
-          filteredData = filteredData.filter(
-            (item: any) => item.status === true
-          );
-        } else if (filterValue === 2) {
-          filteredData = filteredData.filter(
-            (item: any) => item.status === false
-          );
-        }
+      if (search.filter && search.filter[0] !== 0) {
+        const statusFilter = search.filter[0];
+        filteredData = filteredData.filter((item) => {
+          if (statusFilter === 1) return item.status === true;
+          if (statusFilter === 2) return item.status === false;
+          return true;
+        });
       }
 
-      this.gridApi.setRowData(filteredData);
+      if (this.gridApi) {
+        this.gridApi.setRowData(filteredData);
+      }
     } catch (error) {
       getError(error);
     }
@@ -527,7 +517,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 300000,
         base_salary: 9000000,
-        status: "A",
+        status: true,
         tax_number: "123456789012345",
         identity_number: "1234567890",
         marital_status: "K2",
@@ -568,7 +558,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 450000,
         base_salary: 13500000,
-        status: "A",
+        status: true,
         tax_number: "234567890123456",
         identity_number: "2345678901",
         marital_status: "TK0",
@@ -609,7 +599,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 600000,
         base_salary: 18000000,
-        status: "A",
+        status: true,
         tax_number: "345678901234567",
         identity_number: "3456789012",
         marital_status: "K1",
@@ -650,7 +640,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 250000,
         base_salary: 7500000,
-        status: "A",
+        status: true,
         tax_number: "456789012345678",
         identity_number: "4567890123",
         marital_status: "TK0",
@@ -691,7 +681,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 500000,
         base_salary: 15000000,
-        status: "A",
+        status: true,
         tax_number: "567890123456789",
         identity_number: "5678901234",
         marital_status: "K3",
@@ -732,7 +722,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 350000,
         base_salary: 10500000,
-        status: "A",
+        status: true,
         tax_number: "678901234567890",
         identity_number: "6789012345",
         marital_status: "K0",
@@ -773,7 +763,7 @@ export default class Employee extends Vue {
         payment_frequency: "Bi-Weekly",
         daily_rate: 200000,
         base_salary: 6000000,
-        status: "A",
+        status: true,
         tax_number: "789012345678901",
         identity_number: "7890123456",
         marital_status: "TK0",
@@ -814,7 +804,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 300000,
         base_salary: 9000000,
-        status: "A",
+        status: true,
         tax_number: "890123456789012",
         identity_number: "8901234567",
         marital_status: "K1",
@@ -1261,8 +1251,6 @@ export default class Employee extends Vue {
 
       // for demo
       const newId = Math.max(...this.rowData.map((emp: any) => emp.id)) + 1;
-      const employeeCount = this.rowData.length + 1;
-
       const newEmployee = {
         id: newId,
         ...formData,
@@ -1274,6 +1262,9 @@ export default class Employee extends Vue {
 
       this.rowData = [...this.rowData, newEmployee];
       this.loadDataGrid();
+      setTimeout(() => {
+        // gridApi.refreshCells({ force: true });
+      }, 100);
       // this.rowData.push(newEmployee);
 
       getToastSuccess(
@@ -1291,7 +1282,6 @@ export default class Employee extends Vue {
   async updateData(formData: any) {
     try {
       /*
-
       const { status2 } = await employeeAPI.UpdateEmployee(formData);
       if (status2.status == 0) {
         this.loadDataGrid(this.searchDefault);
@@ -1388,7 +1378,7 @@ export default class Employee extends Vue {
       // employment information
       hire_date: params.hire_date,
       end_date: params.end_date,
-      status: params.status,
+      status: params.status ? "A" : "I",
       employee_type: params.employee_type,
       placement_code: params.placement_code,
       position_code: params.position_code,
@@ -1411,6 +1401,52 @@ export default class Employee extends Vue {
       health_insurance_number: params.health_insurance_number,
       social_security_number: params.social_security_number,
     };
+  }
+
+  populateForm(params: any) {
+    this.$nextTick(() => {
+      if (this.inputFormElement) {
+        this.inputFormElement.form = {
+          id: params.id,
+
+          // personal information
+          employee_id: params.employee_id,
+          first_name: params.first_name,
+          last_name: params.last_name,
+          gender: params.gender,
+          birth_date: params.birth_date,
+          address: params.address,
+          phone: params.phone,
+          email: params.email,
+
+          // employment information
+          hire_date: params.hire_date,
+          end_date: params.end_date,
+          status: params.status ? "A" : "I",
+          employee_type: params.employee_type,
+          placement_code: params.placement_code,
+          position_code: params.position_code,
+          department_code: params.department_code,
+          supervisor_id: params.supervisor_id,
+
+          // salary & payment information
+          payment_frequency: params.payment_frequency,
+          base_salary: params.base_salary,
+          daily_rate: params.daily_rate,
+          payment_method: params.payment_method,
+          bank_name: params.bank_name,
+          bank_account_number: params.bank_account_number,
+          bank_account_name: params.bank_account_name,
+
+          // identity information
+          tax_number: params.tax_number,
+          identity_number: params.identity_number,
+          marital_status: params.marital_status,
+          health_insurance_number: params.health_insurance_number,
+          social_security_number: params.social_security_number,
+        };
+      }
+    });
   }
 
   mapFormToApi(params: any) {

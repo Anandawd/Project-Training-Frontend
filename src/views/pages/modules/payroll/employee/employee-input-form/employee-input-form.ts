@@ -140,7 +140,7 @@ export default class InputForm extends Vue {
       // employment information
       hire_date: formatDateTimeUTC(new Date()),
       end_date: null,
-      status: "A",
+      status: true,
       employee_type: "Permanent",
       position_code: "",
       department_code: "",
@@ -200,30 +200,29 @@ export default class InputForm extends Vue {
   get schema() {
     return Yup.object().shape({
       // personal information
-      employee_id: Yup.string().required(),
-      first_name: Yup.string().required(),
-      last_name: Yup.string().required(),
-      gender: Yup.string().required(),
-      email: Yup.string().email().required(),
+      EmployeeId: Yup.string().required(),
+      Firstname: Yup.string().required(),
+      Lastname: Yup.string().required(),
+      Gender: Yup.string().required(),
+      Email: Yup.string().email().required(),
 
       // employment information
-
-      status: Yup.string().required(),
-      employee_type: Yup.string().required(),
-      placement_code: Yup.string().required(),
-      department_code: Yup.string().required(),
-      position_code: Yup.string().required(),
+      Status: Yup.string().required(),
+      EmployeeType: Yup.string().required(),
+      PlacementCode: Yup.string().required(),
+      DepartmentCode: Yup.string().required(),
+      PositionCode: Yup.string().required(),
 
       // salary & payment information
-      payment_frequency: Yup.string().required(),
-      base_salary: Yup.number().min(0).required(),
-      payment_method: Yup.string().required(),
-      bank_name: Yup.string().required(),
-      bank_account_number: Yup.string().required(),
-      bank_account_name: Yup.string().required(),
+      PaymentFrequency: Yup.string().required(),
+      BaseSalary: Yup.number().min(0).required(),
+      PaymentMethod: Yup.string().required(),
+      BankName: Yup.string().required(),
+      BankAccountNumber: Yup.string().required(),
+      BankAccountName: Yup.string().required(),
 
       // tax & identification data
-      marital_status: Yup.string().required(),
+      MaritalStatus: Yup.string().required(),
     });
   }
 
