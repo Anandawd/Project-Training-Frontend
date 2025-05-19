@@ -6,7 +6,7 @@ import { formatDateTimeUTC } from "@/utils/format";
 import $global from "@/utils/global";
 import { focusOnInvalid } from "@/utils/validation";
 import { Form as CForm } from "vee-validate";
-import { nextTick, reactive, ref, watch } from "vue";
+import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import * as Yup from "yup";
 
@@ -100,21 +100,13 @@ export default class InputForm extends Vue {
   ];
 
   created(): void {
-    watch(
-      () => this.form.status,
-      async (newStatus) => {
-        const status =
-          typeof newStatus === "string" ? parseInt(newStatus) : newStatus;
-
-        await nextTick();
-
-        if (status === true) {
-          this.setEndDateForActiveStatus();
-        } else {
-          this.form.end_date = "";
+    this.$watch(
+      () => [this.form.status, this.form.employee_type],
+      () => {
+        if (this.isEndDateDisabled) {
+          this.form.end_date = formatDateTimeUTC(new Date());
         }
-      },
-      { immediate: true }
+      }
     );
   }
 
@@ -140,7 +132,7 @@ export default class InputForm extends Vue {
       // employment information
       hire_date: formatDateTimeUTC(new Date()),
       end_date: null,
-      status: true,
+      status: "A",
       employee_type: "Permanent",
       position_code: "",
       department_code: "",
@@ -168,6 +160,11 @@ export default class InputForm extends Vue {
       // annualLeaveQuota: "",
       // remainingLeave: "",
     };
+
+    await this.$nextTick();
+    if (this.isEndDateDisabled) {
+      this.form.end_date = formatDateTimeUTC(new Date());
+    }
   }
 
   initialize() {
@@ -182,7 +179,6 @@ export default class InputForm extends Vue {
   }
 
   onSave() {
-    console.log("Saving form data:", this.form);
     this.$emit("save", this.form);
   }
 
@@ -207,18 +203,18 @@ export default class InputForm extends Vue {
       EmployeeId: Yup.string().required(),
       Firstname: Yup.string().required(),
       Lastname: Yup.string().required(),
-      Gender: Yup.string().required(),
+      // Gender: Yup.string().required(),
       Email: Yup.string().email().required(),
 
       // employment information
-      Status: Yup.string().required(),
+      // Status: Yup.string().required(),
       EmployeeType: Yup.string().required(),
-      PlacementCode: Yup.string().required(),
-      DepartmentCode: Yup.string().required(),
-      PositionCode: Yup.string().required(),
+      Placement: Yup.string().required(),
+      Department: Yup.string().required(),
+      Position: Yup.string().required(),
 
       // salary & payment information
-      PaymentFrequency: Yup.string().required(),
+      // PaymentFrequency: Yup.string().required(),
       BaseSalary: Yup.number().min(0).required(),
       PaymentMethod: Yup.string().required(),
       BankName: Yup.string().required(),
@@ -244,6 +240,13 @@ export default class InputForm extends Vue {
 
   get isEndDateDisabled() {
     return this.form.status === "A" && this.form.employee_type === "Permanent";
+  }
+
+  get defaultEndDate(): string {
+    if (this.isEndDateDisabled) {
+      return formatDateTimeUTC(new Date());
+    }
+    return this.form.end_date || "";
   }
 
   // Filtered position options based on selected department

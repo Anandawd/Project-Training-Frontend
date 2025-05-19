@@ -314,25 +314,26 @@ export default class Employee extends Vue {
     }
   }
 
-  handleShowForm(params: any, mode: any) {
+  async handleShowForm(params: any, mode: any) {
     this.showForm = false;
-    this.$nextTick(() => {
-      this.modeData = mode;
-      this.showForm = true;
+    await this.$nextTick();
 
-      this.$nextTick(() => {
+    this.modeData = mode;
+
+    this.$nextTick(() => {
+      if (mode === $global.modeData.insert) {
         if (
           this.inputFormElement &&
           typeof this.inputFormElement.initialize === "function"
         ) {
-          this.inputFormElement.initialize;
-
-          if (mode === $global.modeData.edit && params) {
-            this.loadEditData(params.id);
-          }
+          this.inputFormElement.initialize();
         }
-      });
+      } else if (mode === $global.modeData.edit && params) {
+        this.loadEditData(params.id);
+      }
     });
+
+    this.showForm = true;
   }
 
   handleShowDetail(params: any) {
@@ -378,9 +379,7 @@ export default class Employee extends Vue {
 
   handleDelete(params: any) {
     this.deleteParam = params.id;
-    this.dialogMessage =
-      this.$t("messages.confirmDelete") ||
-      "Are you sure you want to delete this employee?";
+    this.dialogMessage = this.$t("messages.employee.confirmDeleteEmployee");
     this.dialogAction = "delete";
     this.showDialog = true;
   }
@@ -1015,7 +1014,7 @@ export default class Employee extends Vue {
         { code: "Daily", name: "Daily", SubGroupName: "Payment Frequency" },
         { code: "Weekly", name: "Weekly", SubGroupName: "Payment Frequency" },
         {
-          code: "Bi-Weekly",
+          code: "BiWeekly",
           name: "Bi-Weekly",
           SubGroupName: "Payment Frequency",
         },
@@ -1267,20 +1266,12 @@ export default class Employee extends Vue {
       };
 
       this.rowData.push(newEmployee);
-      this.loadDataGrid();
-      setTimeout(() => {
-        // gridApi.refreshCells({ force: true });
-      }, 100);
+      await this.loadDataGrid();
 
-      getToastSuccess(
-        this.$t("messages.saveSuccess") || "Employee added successfully"
-      );
+      getToastSuccess(this.$t("messages.employee.saveEmployeeSuccess"));
       this.showForm = false;
-
-      return { status: 0 };
     } catch (error) {
       getError(error);
-      return { status: 1 };
     }
   }
 
@@ -1302,13 +1293,9 @@ export default class Employee extends Vue {
       );
       if (index !== -1) {
         this.rowData[index] = { ...formData };
-        this.loadDataGrid();
-        setTimeout(() => {
-          this.gridApi.refreshCells({ force: true });
-        }, 100);
-        getToastSuccess(
-          this.$t("messages.updateSuccess") || "Employee updated successfully"
-        );
+        await this.loadDataGrid();
+
+        getToastSuccess(this.$t("messages.employee.updateEmployeeSuccess"));
         return { status: 0 };
       } else {
         getToastError("Employee not found");
@@ -1331,18 +1318,13 @@ export default class Employee extends Vue {
       */
 
       // for demo
-      const index = this.rowData.findIndex(
-        (item: any) => item.id === this.deleteParam.id
+      this.rowData = this.rowData.filter(
+        (item: any) => item.id !== this.deleteParam
       );
-      if (index !== -1) {
-        this.rowData.splice(index, 1);
-        this.loadDataGrid();
-        getToastSuccess(
-          this.$t("messages.deleteSuccess") || "Employee deleted successfully"
-        );
-      } else {
-        getToastError("Employee not found");
-      }
+
+      await this.loadDataGrid();
+
+      getToastSuccess(this.$t("messages.employee.deleteEmployeeSuccess"));
     } catch (error) {
       getError(error);
       return false;
