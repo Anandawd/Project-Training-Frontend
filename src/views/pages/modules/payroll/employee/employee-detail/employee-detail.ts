@@ -29,7 +29,7 @@ const employeeAPI = new EmployeeAPI();
 })
 export default class EmployeeDetail extends Vue {
   // data
-  employeeId: string = "EMP001";
+  employeeId: string = "EMP002";
   employeeData: any = [];
   rowSalaryData: any = [];
   rowDocumentData: any = [];

@@ -107,6 +107,7 @@
                 </div>
                 <div class="col-md-4">
                   <c-input
+                    required
                     name="Email"
                     id="Email"
                     type="email"
@@ -199,17 +200,16 @@
                       class="col-sm-9 col-md-9 d-flex align-items-center p-0"
                     >
                       <c-radio
-                        :active="form.status === true"
                         class="me-3"
                         :label="$t('labels.active')"
                         v-model="form.status"
-                        :value="true"
+                        value="A"
                       ></c-radio>
                       <c-radio
                         class="me-3"
                         :label="$t('labels.inactive')"
-                        v-model="form.employeeStatus"
-                        value="false"
+                        v-model="form.status"
+                        value="I"
                       ></c-radio>
                     </div>
                   </div>
@@ -219,7 +219,6 @@
                     required
                     offset="right"
                     class="row mb-1"
-                    selectType="column"
                     name="EmployeeType"
                     labelName="name"
                     keyName="code"
@@ -232,6 +231,7 @@
                 </div>
                 <div class="col-md-4">
                   <c-select
+                    required
                     offset="right"
                     class="row mb-1"
                     selectType="column"
@@ -247,6 +247,7 @@
                 </div>
                 <div class="col-md-4">
                   <c-select
+                    required
                     offset="right"
                     class="row mb-1"
                     selectType="column"
@@ -262,6 +263,7 @@
                 </div>
                 <div class="col-md-4">
                   <c-select
+                    required
                     offset="right"
                     class="row mb-1"
                     selectType="column"
@@ -284,7 +286,7 @@
                     name="supervisor"
                     labelName="name"
                     keyName="code"
-                    v-model="form.supervisor"
+                    v-model="form.supervisor_id"
                     :label="$t('labels.payroll.employee.supervisor')"
                     :columnOptions="columnOptions"
                     :options="filteredSupervisorOptions"
@@ -325,7 +327,6 @@
                     required
                     offset="right"
                     class="row mb-1"
-                    selectType="column"
                     name="PaymentType"
                     labelName="name"
                     keyName="code"
@@ -350,23 +351,6 @@
                     :label="$t('labels.payroll.employee.baseSalary')"
                     v-model="form.base_salary"
                   />
-                </div>
-                <div class="col-md-4">
-                  <c-select
-                    required
-                    multiple
-                    offset="right"
-                    class="row mb-1"
-                    selectType="column"
-                    name="benefitComponent"
-                    labelName="name"
-                    keyName="code"
-                    v-model="form.benefitComponent"
-                    :label="$t('labels.payroll.employee.benefitComponent')"
-                    :columnOptions="columnOptions"
-                    :options="benefitComponentOptions"
-                  >
-                  </c-select>
                 </div>
                 <div class="col-md-4">
                   <c-select
@@ -403,7 +387,7 @@
                 <div class="col-md-4">
                   <c-input
                     required
-                    type="number"
+                    type="text"
                     name="BankAccountNumber"
                     id="BankAccountNumber"
                     class="row mb-1"
@@ -414,7 +398,7 @@
                 <div class="col-md-4">
                   <c-input
                     required
-                    type="number"
+                    type="text"
                     name="BankAccountName"
                     id="BankAccountName"
                     class="row mb-1"
@@ -490,7 +474,7 @@
                     name="HealthInsuranceNumber"
                     id="HealthInsuranceNumber"
                     class="row mb-1"
-                    :label="$t('labels.payroll.employee.bpjsKesehatanNumber')"
+                    :label="$t('labels.payroll.employee.healthInsuranceNumber')"
                     v-model="form.health_insurance_number"
                   />
                 </div>
@@ -500,7 +484,7 @@
                     name="SocialSecurityNumber"
                     id="SocialSecurityNumber"
                     class="row mb-1"
-                    :label="$t('labels.payroll.employee.bpjsKetenagakerjaanNumber')"
+                    :label="$t('labels.payroll.employee.socialInsuranceNumber')"
                     v-model="form.social_security_number"
                   />
                 </div>
@@ -586,7 +570,7 @@
         </div> -->
 
         <!-- Attendance and Leave Data -->
-        <div class="accordion-item">
+        <!-- <div class="accordion-item">
           <h6 class="accordion-header" id="itemAttendanceAndLeaveDataHeader">
             <button
               type="button"
@@ -648,7 +632,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <!-- buttons -->

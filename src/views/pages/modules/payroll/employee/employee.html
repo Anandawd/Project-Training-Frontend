@@ -14,7 +14,7 @@
     </div>
 
     <!-- insert form -->
-    <transition name="fade"">
+    <transition name="fade">
       <c-input-form
         ref="inputFormElement"
         class="px-2"
@@ -125,9 +125,7 @@
       @confirm="confirmAction"
       @cancel="showDialog=false"
     >
-      <template #body>{{dialogMessage }}</template>
+      <template #body>{{dialogMessage}}</template>
     </c-dialog>
-
-    <!-- modal -->
   </div>
 </section>

@@ -3,7 +3,8 @@ import Checklist from "@/components/ag_grid-framework/checklist.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
-import { formatDateTimeUTC, formatNumber2 } from "@/utils/format";
+import EmployeeAPI from "@/services/api/payroll/employee/employee";
+import { formatDate, formatDateTimeUTC, formatNumber2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -17,6 +18,8 @@ import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import CInputForm from "./employee-input-form/employee-input-form.vue";
+
+const employeeAPI = new EmployeeAPI();
 
 @Options({
   components: {
@@ -130,6 +133,13 @@ export default class Employee extends Vue {
         field: "full_name",
         width: 200,
         enableRowGroup: false,
+        valueGetter: (params: any) => {
+          return params.data
+            ? `${params.data.first_name || ""} ${
+                params.data.last_name || ""
+              }`.trim()
+            : "";
+        },
       },
       {
         headerName: this.$t("commons.table.payroll.employee.department"),
@@ -171,6 +181,10 @@ export default class Employee extends Vue {
         field: "hire_date",
         width: 100,
         enableRowGroup: true,
+        valueFormatter: formatDate,
+        filterParams: {
+          valueFormatter: formatDate,
+        },
       },
       {
         headerName: this.$t("commons.table.payroll.employee.email"),
@@ -282,26 +296,7 @@ export default class Employee extends Vue {
         name: this.$t("commons.contextMenu.detail"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("detail_icon24"),
-        action: () => this.handleShowDetail(this.paramsData),
-      },
-      {
-        name: this.$t("commons.contextMenu.salary"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("salary_icon24"),
-        action: () => this.handleSalaryHistory(this.paramsData.id),
-      },
-      "separator",
-      {
-        name: this.$t("commons.contextMenu.downloadPayslip"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("download_icon24"),
-        action: () => this.handleDownloadPayslip(this.paramsData.id),
-      },
-      {
-        name: this.$t("commons.contextMenu.printPayslip"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("print_icon24"),
-        action: () => this.handlePrintPayslip(this.paramsData.id),
+        action: () => this.handleShowDetail(this.paramsData.employee_id),
       },
     ];
     return result;
@@ -320,16 +315,24 @@ export default class Employee extends Vue {
     }
   }
 
-  handleShowForm(params: any, mode: any) {
+  async handleShowForm(params: any, mode: any) {
+    this.showForm = false;
+    await this.$nextTick();
+
     this.inputFormElement.initialize();
     this.modeData = mode;
+
+    if (mode === $global.modeData.edit && params) {
+      this.loadEditData(params.id);
+    }
+
     this.showForm = true;
   }
 
-  handleShowDetail(paramsId: string) {
+  handleShowDetail(params: string) {
     this.$router.push({
       name: "EmployeeDetail",
-      params: { paramsId },
+      params: { id: params },
     });
   }
 
@@ -349,10 +352,12 @@ export default class Employee extends Vue {
   handleMenu() {}
 
   handleSave(formData: any) {
+    const formattedData = this.formatData(formData);
+
     if (this.modeData === $global.modeData.insert) {
-      this.insertData(formData);
+      this.insertData(formattedData);
     } else if (this.modeData === $global.modeData.edit) {
-      this.updateData(formData);
+      this.updateData(formattedData);
     }
   }
 
@@ -362,10 +367,12 @@ export default class Employee extends Vue {
   }
 
   handleDelete(params: any) {
-    this.showDialog = true;
     this.deleteParam = params.id;
-    this.dialogMessage = "Are you sure to delte this employee?";
+    this.dialogMessage =
+      this.$t("messages.confirmDelete") ||
+      "Are you sure you want to delete this employee?";
     this.dialogAction = "delete";
+    this.showDialog = true;
   }
 
   handleBack() {
@@ -439,6 +446,10 @@ export default class Employee extends Vue {
               return true;
           }
         }
+
+        if (this.gridApi) {
+          this.gridApi.setRowData(this.rowData);
+        }
         return true;
       });
     } catch (error) {
@@ -449,16 +460,15 @@ export default class Employee extends Vue {
   async loadEditData(params: any) {
     try {
       // for real implementation
-      // const { data } = await employeeAPI.GetEmployee(employeeId);
-      // this.inputFormElement.
-      // (data);
-      // this.showForm = true;
+      // const { data } = await employeeAPI.GetEmployee(params);
 
       // for demo
       const employee = this.rowData.find((emp: any) => emp.id === params);
+
       if (employee) {
-        this.inputFormElement.populateForm(employee);
-        this.showForm = true;
+        this.$nextTick(() => {
+          this.inputFormElement.form = this.formatData(employee);
+        });
       } else {
         getToastError("Employee not found");
       }
@@ -475,7 +485,7 @@ export default class Employee extends Vue {
         first_name: "John",
         last_name: "Doe",
         full_name: "John Doe",
-        gender: "Male",
+        gender: "M",
         birth_date: "1985-05-15",
         address: "Jl. Raya Ubud No. 123, Ubud, Bali",
         phone: "+62812345678",
@@ -494,7 +504,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 300000,
         base_salary: 9000000,
-        status: true,
+        status: "A",
         tax_number: "123456789012345",
         identity_number: "1234567890",
         marital_status: "K2",
@@ -516,7 +526,7 @@ export default class Employee extends Vue {
         first_name: "Jane",
         last_name: "Smith",
         full_name: "Jane Smith",
-        gender: "Female",
+        gender: "F",
         birth_date: "1990-08-22",
         address: "Jl. Sunset Road No. 45, Kuta, Bali",
         phone: "+62823456789",
@@ -535,7 +545,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 450000,
         base_salary: 13500000,
-        status: true,
+        status: "A",
         tax_number: "234567890123456",
         identity_number: "2345678901",
         marital_status: "TK0",
@@ -557,7 +567,7 @@ export default class Employee extends Vue {
         first_name: "Robert",
         last_name: "Johnson",
         full_name: "Robert Johnson",
-        gender: "Male",
+        gender: "M",
         birth_date: "1982-12-10",
         address: "Jl. Raya Kuta No. 78, Kuta, Bali",
         phone: "+62834567890",
@@ -576,7 +586,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 600000,
         base_salary: 18000000,
-        status: true,
+        status: "A",
         tax_number: "345678901234567",
         identity_number: "3456789012",
         marital_status: "K1",
@@ -598,7 +608,7 @@ export default class Employee extends Vue {
         first_name: "Emily",
         last_name: "Davis",
         full_name: "Emily Davis",
-        gender: "Female",
+        gender: "F",
         birth_date: "1988-04-30",
         address: "Jl. Legian No. 56, Kuta, Bali",
         phone: "+62845678901",
@@ -617,7 +627,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 250000,
         base_salary: 7500000,
-        status: true,
+        status: "A",
         tax_number: "456789012345678",
         identity_number: "4567890123",
         marital_status: "TK0",
@@ -639,7 +649,7 @@ export default class Employee extends Vue {
         first_name: "Michael",
         last_name: "Wilson",
         full_name: "Michael Wilson",
-        gender: "Male",
+        gender: "M",
         birth_date: "1980-11-18",
         address: "Jl. Pantai Kuta No. 34, Kuta, Bali",
         phone: "+62856789012",
@@ -658,7 +668,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 500000,
         base_salary: 15000000,
-        status: true,
+        status: "A",
         tax_number: "567890123456789",
         identity_number: "5678901234",
         marital_status: "K3",
@@ -680,7 +690,7 @@ export default class Employee extends Vue {
         first_name: "Sarah",
         last_name: "Johnson",
         full_name: "Sarah Johnson",
-        gender: "Female",
+        gender: "F",
         birth_date: "1992-07-25",
         address: "Jl. Raya Seminyak No. 67, Seminyak, Bali",
         phone: "+62867890123",
@@ -699,7 +709,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 350000,
         base_salary: 10500000,
-        status: true,
+        status: "A",
         tax_number: "678901234567890",
         identity_number: "6789012345",
         marital_status: "K0",
@@ -721,26 +731,26 @@ export default class Employee extends Vue {
         first_name: "James",
         last_name: "Carter",
         full_name: "James Carter",
-        gender: "Male",
+        gender: "M",
         birth_date: "1987-09-14",
         address: "Jl. Double Six No. 23, Seminyak, Bali",
         phone: "+62878901234",
         email: "james.carter@amorahotel.com",
         hire_date: "2021-05-17",
         end_date: null,
-        position_code: "P024",
+        position: "P024",
         position_name: "Security Officer",
-        department_code: "D012",
+        department: "D012",
         department_name: "Security",
-        placement_code: "PL002",
+        placement: "PL002",
         placement_name: "Amora Canggu",
-        supervisor_id: "EMP011",
+        supervisor: "EMP011",
         supervisor_name: "Thomas Wright",
         employee_type: "Contract",
         payment_frequency: "Bi-Weekly",
         daily_rate: 200000,
         base_salary: 6000000,
-        status: true,
+        status: "A",
         tax_number: "789012345678901",
         identity_number: "7890123456",
         marital_status: "TK0",
@@ -762,7 +772,7 @@ export default class Employee extends Vue {
         first_name: "Jessica",
         last_name: "Walker",
         full_name: "Jessica Walker",
-        gender: "Female",
+        gender: "F",
         birth_date: "1991-02-28",
         address: "Jl. Monkey Forest No. 55, Ubud, Bali",
         phone: "+62889012345",
@@ -781,7 +791,7 @@ export default class Employee extends Vue {
         payment_frequency: "Monthly",
         daily_rate: 300000,
         base_salary: 9000000,
-        status: true,
+        status: "A",
         tax_number: "890123456789012",
         identity_number: "8901234567",
         marital_status: "K1",
@@ -803,17 +813,15 @@ export default class Employee extends Vue {
   async loadDropdown() {
     try {
       // for real implementation
-      // const [typeData, genderData, paymentFreqData, maritalData, paymentMethodData, bankData, docTypeData, deptData, posData, placeData] = await Promise.all([
-      //   employeeAPI.GetEmployeeTypeOptions(),
-      //   employeeAPI.GetEmployeeGenderOptions(),
-      //   employeeAPI.GetEmployeePaymentFrequencyOptions(),
-      //   employeeAPI.GetEmployeeMaritalStatusOptions(),
-      //   employeeAPI.GetEmployeePaymentMethodOptions(),
-      //   employeeAPI.GetBankOptions(),
-      //   employeeAPI.GetDocumentTypeOptions(),
-      //   organizationAPI.GetDepartmentOptions(),
-      //   organizationAPI.GetPositionOptions(),
-      //   organizationAPI.GetPlacementOptions(),
+      // await Promise.all([
+      //   this.loadDepartments(),
+      //   this.loadPositions(),
+      //   this.loadPlacements(),
+      //   this.loadEmployeeTypes(),
+      //   this.loadPaymentFrequencies(),
+      //   this.loadMaritalStatuses(),
+      //   this.loadPaymentMethods(),
+      //   this.loadBanks(),
       // ]);
 
       // for demo
@@ -1193,6 +1201,86 @@ export default class Employee extends Vue {
     }
   }
 
+  async loadPositions() {
+    try {
+      // for real implementation
+      // const { data } = await employeeAPI.GetPositionOptions();
+      // this.positionOptions = data;
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadDepartments() {
+    try {
+      // for real implementation
+      // const { data } = await employeeAPI.GetDepartmentOptions();
+      // this.departmentOptions = data;
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadPlacements() {
+    try {
+      // for real implementation
+      // const { data } = await employeeAPI.GetPositionOptions();
+      // this.positionOptions = data;
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadEmployeeTypes() {
+    try {
+      // for real implementation
+      // const { data } = await employeeAPI.GetEmployeeTypeOptions();
+      // this.employeeTypeOptions = data;
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadPaymentFrequencies() {
+    try {
+      // for real implementation
+      // const { data } = await employeeAPI.GetPaymentFrequencyOptions();
+      // this.paymentFrequencyOptions = data;
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadMaritalStatuses() {
+    try {
+      // for real implementation
+      // const { data } = await employeeAPI.GetMaritalStatusOptions();
+      // this.maritalStatusOptions = data;
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadPaymentMethods() {
+    try {
+      // for real implementation
+      // const { data } = await employeeAPI.GetPaymentMethodOptions();
+      // this.paymentMethodOptions = data;
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadBanks() {
+    try {
+      // for real implementation
+      // const { data } = await employeeAPI.GetBankOptions();
+      // this.bankOptions = data;
+    } catch (error) {
+      getError(error);
+    }
+  }
+
   async insertData(formData: any) {
     try {
       // for real implementation
@@ -1273,11 +1361,10 @@ export default class Employee extends Vue {
       // const { status2 } = await employeeAPI.DeleteEmployee(this.deleteParam);
       // if (status2.status === 0) {
       //   getToastSuccess(this.$t("messages.deleteSuccess"));
-      //   this.showDialog = false;
       //   this.loadDataGrid();
       // }
-      // for demo
 
+      // for demo
       const index = this.rowData.findIndex(
         (emp: any) => emp.id === this.deleteParam.id
       );
@@ -1291,14 +1378,85 @@ export default class Employee extends Vue {
       }
     } catch (error) {
       getError(error);
+    } finally {
+      this.showDialog = false;
     }
   }
 
-  populateForm(params: any) {
-    if (!params) {
-      console.info("Invalid data for form population:", params);
-      return;
-    }
+  // HELPER =======================================================
+  formatData(params: any) {
+    return {
+      id: params.id,
+
+      // personal information
+      employee_id: params.employee_id,
+      first_name: params.first_name,
+      last_name: params.last_name,
+      gender: params.gender,
+      birth_date: params.birth_date,
+      address: params.address,
+      phone: params.phone,
+      email: params.email,
+
+      // employment information
+      hire_date: params.hire_date,
+      end_date: params.end_date,
+      status: params.status,
+      employee_type: params.employee_type,
+      placement_code: params.placement_code,
+      position_code: params.position_code,
+      department_code: params.department_code,
+      supervisor_id: params.supervisor_id,
+
+      // salary & payment information
+      payment_frequency: params.payment_frequency,
+      base_salary: params.base_salary,
+      daily_rate: params.daily_rate,
+      payment_method: params.payment_method,
+      bank_name: params.bank_name,
+      bank_account_number: params.bank_account_number,
+      bank_account_name: params.bank_account_name,
+
+      // identity information
+      tax_number: params.tax_number,
+      identity_number: params.identity_number,
+      marital_status: params.marital_status,
+      health_insurance_number: params.health_insurance_number,
+      social_security_number: params.social_security_number,
+    };
+  }
+
+  mapFormToApi(params: any) {
+    return {
+      id: params.id,
+      employee_id: params.employeeId,
+      first_name: params.firstName,
+      last_name: params.lastName,
+      gender: params.gender,
+      birth_date: params.birthDate,
+      address: params.address,
+      phone: params.phone,
+      email: params.email,
+      hire_date: params.hireDate,
+      end_date: params.endDate,
+      position_code: params.position,
+      department_code: params.department,
+      placement_code: params.placement,
+      supervisor_id: params.supervisor,
+      employee_type: params.employeeType,
+      payment_frequency: params.paymentFrequency,
+      daily_rate: params.dailyRate,
+      tax_number: params.taxNumber,
+      identity_number: params.identityNumber,
+      marital_status: params.maritalStatus,
+      health_insurance_number: params.healthInsuranceNumber,
+      social_security_number: params.socialSecurityNumber,
+      bank_name: params.bankName,
+      bank_account_number: params.bankAccountNumber,
+      bank_account_name: params.bankAccountName,
+      payment_method: params.paymentMethod,
+      status: params.status === "A",
+    };
   }
 
   // GETTER AND SETTER =======================================================

@@ -127,10 +127,11 @@ export default class InputForm extends Vue {
     await this.$nextTick();
     this.form = {
       // personal information
+      id: undefined,
       employee_id: "",
       first_name: "",
       last_name: "",
-      gender: "",
+      gender: "M",
       birth_date: "",
       phone: "",
       email: "",
@@ -139,8 +140,8 @@ export default class InputForm extends Vue {
       // employment information
       hire_date: formatDateTimeUTC(new Date()),
       end_date: null,
-      status: true,
-      employee_type: "",
+      status: "A",
+      employee_type: "Permanent",
       position_code: "",
       department_code: "",
       placement_code: "",
@@ -150,7 +151,6 @@ export default class InputForm extends Vue {
       payment_frequency: "Monthly",
       daily_rate: 0,
       base_salary: 0,
-      benefitComponent: "",
       payment_method: "Bank Transfer",
       bank_name: "",
       bank_account_number: "",
@@ -164,9 +164,9 @@ export default class InputForm extends Vue {
       social_security_number: "",
 
       // attendance and leave data
-      workSchedule: "",
-      annualLeaveQuota: "",
-      remainingLeave: "",
+      // workSchedule: "",
+      // annualLeaveQuota: "",
+      // remainingLeave: "",
     };
   }
 
@@ -191,7 +191,7 @@ export default class InputForm extends Vue {
   }
 
   private setEndDateForActiveStatus() {
-    if (this.form.status === true) {
+    if (this.form.status === "A" && this.form.employee_type === "Permanent") {
       const today = new Date().toISOString().split("T")[0];
       this.form.end_date = today;
     }
@@ -199,29 +199,31 @@ export default class InputForm extends Vue {
 
   get schema() {
     return Yup.object().shape({
-      first_name: Yup.string().required("First name is required"),
-      last_name: Yup.string().required("Last name is required"),
-      gender: Yup.string().required("Gender is required"),
-      email: Yup.string()
-        .email("Invalid email format")
-        .required("Email is required"),
-      phone: Yup.string().required("Phone number is required"),
-      hire_date: Yup.string().required("Hire date is required"),
-      position_code: Yup.string().required("Position is required"),
-      department_code: Yup.string().required("Department is required"),
-      placement_code: Yup.string().required("Placement is required"),
-      employee_type: Yup.string().required("Employee type is required"),
-      payment_frequency: Yup.string().required("Payment frequency is required"),
-      base_salary: Yup.number()
-        .typeError("Base salary must be a number")
-        .min(0, "Base salary cannot be negative")
-        .required("Base salary is required"),
-      bank_name: Yup.string().required("Bank name is required"),
-      bank_account_number: Yup.string().required(
-        "Bank account number is required"
-      ),
-      bank_account_name: Yup.string().required("Bank account name is required"),
-      payment_method: Yup.string().required("Payment method is required"),
+      // personal information
+      employee_id: Yup.string().required(),
+      first_name: Yup.string().required(),
+      last_name: Yup.string().required(),
+      gender: Yup.string().required(),
+      email: Yup.string().email().required(),
+
+      // employment information
+
+      status: Yup.string().required(),
+      employee_type: Yup.string().required(),
+      placement_code: Yup.string().required(),
+      department_code: Yup.string().required(),
+      position_code: Yup.string().required(),
+
+      // salary & payment information
+      payment_frequency: Yup.string().required(),
+      base_salary: Yup.number().min(0).required(),
+      payment_method: Yup.string().required(),
+      bank_name: Yup.string().required(),
+      bank_account_number: Yup.string().required(),
+      bank_account_name: Yup.string().required(),
+
+      // tax & identification data
+      marital_status: Yup.string().required(),
     });
   }
 
@@ -238,7 +240,7 @@ export default class InputForm extends Vue {
   }
 
   get isEndDateDisabled() {
-    return this.form.status === true;
+    return this.form.status === "A" && this.form.employee_type === "Permanent";
   }
 
   // Filtered position options based on selected department

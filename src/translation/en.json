@@ -50,6 +50,8 @@
         "maritialStatus": "Maritial Status",
         "maritalStatus": "Marital Status",
         "identityNumber": "Identity Number",
+        "healthInsuranceNumber": "Health Insurance Number",
+        "socialInsuranceNumber": "Social Insurance Number",
         "bpjsKesehatanNumber": "BPJS Kesehatan Number",
         "bpjsKetenagakerjaanNumber": "BPJS Ketenagakerjaan Number",
         "identityCardFile": "Identity Card File",
@@ -83,7 +85,10 @@
         "typeCode": "Type Code",
         "typeName": "Type Name",
         "required": "Required",
-        "allowExpiry": "Allow Expiry"
+        "allowExpiry": "Allow Expiry",
+        "profile": "Profile",
+        "documents": "Documents",
+        "salaryComponent": "Salary Component"
       },
       "attendance": {
         "attendanceAndLeave": "Attendance & Leave",
@@ -1656,6 +1661,7 @@
   "title": {
     "t11": "t11",
     "employee": "Employee",
+    "employeeProfile": "Employee Profile",
     "employeeDetail": "Employee Detail",
     "employeeManagement": "Employee Management",
     "employeeList": "Employee List",
