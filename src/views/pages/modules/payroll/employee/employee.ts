@@ -314,24 +314,24 @@ export default class Employee extends Vue {
     }
   }
 
-  async handleShowForm(params: any, mode: any) {
+  handleShowForm(params: any, mode: any) {
     this.showForm = false;
-    await this.$nextTick();
-
-    this.modeData = mode;
-    this.showForm = true;
-
     this.$nextTick(() => {
-      if (
-        this.inputFormElement &&
-        typeof this.inputFormElement.initialize === "function"
-      ) {
-        this.inputFormElement.initialize;
+      this.modeData = mode;
+      this.showForm = true;
 
-        if (mode === $global.modeData.edit && params) {
-          this.loadEditData(params.id);
+      this.$nextTick(() => {
+        if (
+          this.inputFormElement &&
+          typeof this.inputFormElement.initialize === "function"
+        ) {
+          this.inputFormElement.initialize;
+
+          if (mode === $global.modeData.edit && params) {
+            this.loadEditData(params.id);
+          }
         }
-      }
+      });
     });
   }
 
@@ -358,12 +358,17 @@ export default class Employee extends Vue {
   handleMenu() {}
 
   handleSave(formData: any) {
+    console.log("Handling save with data:", formData);
     const formattedData = this.formatData(formData);
 
     if (this.modeData === $global.modeData.insert) {
-      this.insertData(formattedData);
+      this.insertData(formattedData).then(() => {
+        this.showForm = false;
+      });
     } else if (this.modeData === $global.modeData.edit) {
-      this.updateData(formattedData);
+      this.updateData(formattedData).then(() => {
+        this.showForm = false;
+      });
     }
   }
 
@@ -480,7 +485,7 @@ export default class Employee extends Vue {
 
       if (employee) {
         this.$nextTick(() => {
-          this.inputFormElement.form = this.formatData(employee);
+          this.inputFormElement.form = this.populateForm(employee);
         });
       } else {
         getToastError("Employee not found");
@@ -1250,6 +1255,7 @@ export default class Employee extends Vue {
       */
 
       // for demo
+      console.log("Inserting new employee data:", formData);
       const newId = Math.max(...this.rowData.map((emp: any) => emp.id)) + 1;
       const newEmployee = {
         id: newId,
@@ -1260,22 +1266,21 @@ export default class Employee extends Vue {
         updated_by: "Current User",
       };
 
-      this.rowData = [...this.rowData, newEmployee];
+      this.rowData.push(newEmployee);
       this.loadDataGrid();
       setTimeout(() => {
         // gridApi.refreshCells({ force: true });
       }, 100);
-      // this.rowData.push(newEmployee);
 
       getToastSuccess(
         this.$t("messages.saveSuccess") || "Employee added successfully"
       );
       this.showForm = false;
 
-      return true;
+      return { status: 0 };
     } catch (error) {
       getError(error);
-      return false;
+      return { status: 1 };
     }
   }
 
@@ -1291,31 +1296,24 @@ export default class Employee extends Vue {
       */
 
       // for demo
+      console.log("Updating employee data:", formData);
       const index = this.rowData.findIndex(
         (emp: any) => emp.id === formData.id
       );
       if (index !== -1) {
-        const updatedEmployee = {
-          ...this.rowData[index],
-          ...formData,
-          updated_at: formatDateTimeUTC(new Date()),
-          updated_by: "Current User",
-        };
-
-        this.rowData = [
-          ...this.rowData.slice(0, index),
-          updatedEmployee,
-          ...this.rowData.slice(index + 1),
-        ];
-
+        this.rowData[index] = { ...formData };
         this.loadDataGrid();
-        getToastSuccess(this.$t("messages.updateSuccess"));
-        this.showForm = false;
+        setTimeout(() => {
+          this.gridApi.refreshCells({ force: true });
+        }, 100);
+        getToastSuccess(
+          this.$t("messages.updateSuccess") || "Employee updated successfully"
+        );
+        return { status: 0 };
       } else {
         getToastError("Employee not found");
+        return { status: 1 };
       }
-
-      return true;
     } catch (error) {
       getError(error);
       return false;
@@ -1333,25 +1331,18 @@ export default class Employee extends Vue {
       */
 
       // for demo
-      const id = this.deleteParam.id;
-      this.rowData = this.rowData.filter((item: any) => item.id !== id);
-      this.loadDataGrid(this.searchDefault);
-
-      getToastSuccess(this.$t("messages.deleteSuccess"));
-
-      // const index = this.rowData.findIndex(
-      //   (emp: any) => emp.id === this.deleteParam.id
-      // );
-      // if (index !== -1) {
-      //   this.rowData.splice(index, 1);
-      //   getToastSuccess(
-      //     this.$t("messages.deleteSuccess") || "Employee deleted successfully"
-      //   );
-      // } else {
-      //   getToastError("Employee not found");
-      // }
-
-      return true;
+      const index = this.rowData.findIndex(
+        (item: any) => item.id === this.deleteParam.id
+      );
+      if (index !== -1) {
+        this.rowData.splice(index, 1);
+        this.loadDataGrid();
+        getToastSuccess(
+          this.$t("messages.deleteSuccess") || "Employee deleted successfully"
+        );
+      } else {
+        getToastError("Employee not found");
+      }
     } catch (error) {
       getError(error);
       return false;
@@ -1378,7 +1369,7 @@ export default class Employee extends Vue {
       // employment information
       hire_date: params.hire_date,
       end_date: params.end_date,
-      status: params.status ? "A" : "I",
+      status: params.status === "A" ? true : false,
       employee_type: params.employee_type,
       placement_code: params.placement_code,
       position_code: params.position_code,
@@ -1404,82 +1395,52 @@ export default class Employee extends Vue {
   }
 
   populateForm(params: any) {
+    if (!params) {
+      console.error("Invalid data for form population:", params);
+      return;
+    }
+
     this.$nextTick(() => {
-      if (this.inputFormElement) {
-        this.inputFormElement.form = {
-          id: params.id,
+      this.inputFormElement.form = {
+        id: params.id,
 
-          // personal information
-          employee_id: params.employee_id,
-          first_name: params.first_name,
-          last_name: params.last_name,
-          gender: params.gender,
-          birth_date: params.birth_date,
-          address: params.address,
-          phone: params.phone,
-          email: params.email,
+        // personal information
+        employee_id: params.employee_id,
+        first_name: params.first_name,
+        last_name: params.last_name,
+        gender: params.gender,
+        birth_date: params.birth_date,
+        address: params.address,
+        phone: params.phone,
+        email: params.email,
 
-          // employment information
-          hire_date: params.hire_date,
-          end_date: params.end_date,
-          status: params.status ? "A" : "I",
-          employee_type: params.employee_type,
-          placement_code: params.placement_code,
-          position_code: params.position_code,
-          department_code: params.department_code,
-          supervisor_id: params.supervisor_id,
+        // employment information
+        hire_date: params.hire_date,
+        end_date: params.end_date,
+        status: params.status ? "A" : "I",
+        employee_type: params.employee_type,
+        placement_code: params.placement_code,
+        position_code: params.position_code,
+        department_code: params.department_code,
+        supervisor_id: params.supervisor_id,
 
-          // salary & payment information
-          payment_frequency: params.payment_frequency,
-          base_salary: params.base_salary,
-          daily_rate: params.daily_rate,
-          payment_method: params.payment_method,
-          bank_name: params.bank_name,
-          bank_account_number: params.bank_account_number,
-          bank_account_name: params.bank_account_name,
+        // salary & payment information
+        payment_frequency: params.payment_frequency,
+        base_salary: params.base_salary,
+        daily_rate: params.daily_rate,
+        payment_method: params.payment_method,
+        bank_name: params.bank_name,
+        bank_account_number: params.bank_account_number,
+        bank_account_name: params.bank_account_name,
 
-          // identity information
-          tax_number: params.tax_number,
-          identity_number: params.identity_number,
-          marital_status: params.marital_status,
-          health_insurance_number: params.health_insurance_number,
-          social_security_number: params.social_security_number,
-        };
-      }
+        // identity information
+        tax_number: params.tax_number,
+        identity_number: params.identity_number,
+        marital_status: params.marital_status,
+        health_insurance_number: params.health_insurance_number,
+        social_security_number: params.social_security_number,
+      };
     });
-  }
-
-  mapFormToApi(params: any) {
-    return {
-      id: params.id,
-      employee_id: params.employeeId,
-      first_name: params.firstName,
-      last_name: params.lastName,
-      gender: params.gender,
-      birth_date: params.birthDate,
-      address: params.address,
-      phone: params.phone,
-      email: params.email,
-      hire_date: params.hireDate,
-      end_date: params.endDate,
-      position_code: params.position,
-      department_code: params.department,
-      placement_code: params.placement,
-      supervisor_id: params.supervisor,
-      employee_type: params.employeeType,
-      payment_frequency: params.paymentFrequency,
-      daily_rate: params.dailyRate,
-      tax_number: params.taxNumber,
-      identity_number: params.identityNumber,
-      marital_status: params.maritalStatus,
-      health_insurance_number: params.healthInsuranceNumber,
-      social_security_number: params.socialSecurityNumber,
-      bank_name: params.bankName,
-      bank_account_number: params.bankAccountNumber,
-      bank_account_name: params.bankAccountName,
-      payment_method: params.paymentMethod,
-      status: params.status === "A",
-    };
   }
 
   // GETTER AND SETTER =======================================================
