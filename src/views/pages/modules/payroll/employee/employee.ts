@@ -296,7 +296,7 @@ export default class Employee extends Vue {
         name: this.$t("commons.contextMenu.detail"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("detail_icon24"),
-        action: () => this.handleShowDetail(this.paramsData.employee_id),
+        action: () => this.handleShowDetail(this.paramsData),
       },
     ];
     return result;
@@ -319,20 +319,27 @@ export default class Employee extends Vue {
     this.showForm = false;
     await this.$nextTick();
 
-    this.inputFormElement.initialize();
     this.modeData = mode;
-
-    if (mode === $global.modeData.edit && params) {
-      this.loadEditData(params.id);
-    }
-
     this.showForm = true;
+
+    this.$nextTick(() => {
+      if (
+        this.inputFormElement &&
+        typeof this.inputFormElement.initialize === "function"
+      ) {
+        this.inputFormElement.initialize;
+
+        if (mode === $global.modeData.edit && params) {
+          this.loadEditData(params.id);
+        }
+      }
+    });
   }
 
-  handleShowDetail(params: string) {
+  handleShowDetail(params: any) {
     this.$router.push({
       name: "EmployeeDetail",
-      params: { id: params },
+      params: { id: params.id },
     });
   }
 
@@ -411,47 +418,61 @@ export default class Employee extends Vue {
 
   async loadDataGrid(search: any = this.searchDefault) {
     try {
+      /* 
       // for real implementation
-      // let params = {
-      //   Index: search.index,
-      //   Text: search.text,
-      //   IndexCheckBox: search.filter[0],
-      // };
-      // const { data } = await employeeAPI.GetEmployeeList(params);
-      // this.rowData = data;
+      let params = {
+        Index: search.index,
+        Text: search.text,
+        IndexCheckBox: search.filter[0],
+      };
+      const { data } = await employeeAPI.GetEmployeeList(params);
+      this.rowData = data;
+      this.loadDataToGrid(data);
+      */
 
       // for demo
-      this.rowData = this.rowData.filter((emp: any) => {
-        if (search.filter[0] == "1" && !emp.status) {
-          return false;
-        }
-        if (search.filter[0] == "2" && emp.status) {
-          return false;
-        }
 
-        if (search.text) {
-          let searchValue = search.text.toLowerCase();
-          switch (search.index) {
-            case 0:
-              return emp.employee_id.toLowerCase().includes(searchValue);
-            case 1:
-              return emp.employee_name.toLowerCase().includes(searchValue);
-            case 2:
-              return emp.department_name.toLowerCase().includes(searchValue);
-            case 3:
-              return emp.position_name.toLowerCase().includes(searchValue);
-            case 4:
-              return emp.placement_name.toLowerCase().includes(searchValue);
+      let filteredData = [...this.rowData];
+
+      if (search.text) {
+        let searchText = search.text.toLowerCase();
+        let searchIndex = search.index;
+
+        filteredData = filteredData.filter((item: any) => {
+          switch (searchIndex) {
+            case 0: // Employee ID
+              return item.employee_id.toLowerCase().includes(searchText);
+            case 1: // Name (first + last)
+              return `${item.first_name} ${item.last_name}`
+                .toLowerCase()
+                .includes(searchText);
+            case 2: // Department
+              return item.department_name.toLowerCase().includes(searchText);
+            case 3: // Position
+              return item.position_name.toLowerCase().includes(searchText);
+            case 4: // Placement
+              return item.placement_name.toLowerCase().includes(searchText);
             default:
               return true;
           }
-        }
+        });
+      }
 
-        if (this.gridApi) {
-          this.gridApi.setRowData(this.rowData);
+      if (search.filter && search.filter[0]) {
+        const filterValue = parseInt(search.filter[0]);
+
+        if (filterValue === 1) {
+          filteredData = filteredData.filter(
+            (item: any) => item.status === true
+          );
+        } else if (filterValue === 2) {
+          filteredData = filteredData.filter(
+            (item: any) => item.status === false
+          );
         }
-        return true;
-      });
+      }
+
+      this.gridApi.setRowData(filteredData);
     } catch (error) {
       getError(error);
     }
@@ -459,8 +480,10 @@ export default class Employee extends Vue {
 
   async loadEditData(params: any) {
     try {
-      // for real implementation
-      // const { data } = await employeeAPI.GetEmployee(params);
+      /*
+      const { data } = await employeeAPI.GetEmployee(params.id);
+      this.populateForm(data);
+      */
 
       // for demo
       const employee = this.rowData.find((emp: any) => emp.id === params);
@@ -812,17 +835,41 @@ export default class Employee extends Vue {
 
   async loadDropdown() {
     try {
-      // for real implementation
-      // await Promise.all([
-      //   this.loadDepartments(),
-      //   this.loadPositions(),
-      //   this.loadPlacements(),
-      //   this.loadEmployeeTypes(),
-      //   this.loadPaymentFrequencies(),
-      //   this.loadMaritalStatuses(),
-      //   this.loadPaymentMethods(),
-      //   this.loadBanks(),
-      // ]);
+      /*
+      const promises = [
+        employeeAPI.GetEmployeeTypeOptions().then(response => {
+          this.employeeTypeOptions = response.data;
+        }),
+        employeeAPI.GetPaymentFrequencyOptions().then(response => {
+          this.paymentFrequencyOptions = response.data;
+        }),
+        employeeAPI.GetMaritalStatusOptions().then(response => {
+          this.maritalStatusOptions = response.data;
+        }),
+        employeeAPI.GetPaymentMethodOptions().then(response => {
+          this.paymentMethodOptions = response.data;
+        }),
+        employeeAPI.GetBankOptions().then(response => {
+          this.bankOptions = response.data;
+        })
+      ];
+
+      // Load organization data from organization API
+      const organizationAPI = new OrganizationAPI();
+      promises.push(
+        organizationAPI.GetDepartmentOptions().then(response => {
+          this.departmentOptions = response.data;
+        }),
+        organizationAPI.GetPositionOptions().then(response => {
+          this.positionOptions = response.data;
+        }),
+        organizationAPI.GetPlacementOptions().then(response => {
+          this.placementOptions = response.data;
+        })
+      );
+
+      await Promise.all(promises);
+      */
 
       // for demo
       this.departmentOptions = [
@@ -1201,107 +1248,23 @@ export default class Employee extends Vue {
     }
   }
 
-  async loadPositions() {
-    try {
-      // for real implementation
-      // const { data } = await employeeAPI.GetPositionOptions();
-      // this.positionOptions = data;
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadDepartments() {
-    try {
-      // for real implementation
-      // const { data } = await employeeAPI.GetDepartmentOptions();
-      // this.departmentOptions = data;
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadPlacements() {
-    try {
-      // for real implementation
-      // const { data } = await employeeAPI.GetPositionOptions();
-      // this.positionOptions = data;
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadEmployeeTypes() {
-    try {
-      // for real implementation
-      // const { data } = await employeeAPI.GetEmployeeTypeOptions();
-      // this.employeeTypeOptions = data;
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadPaymentFrequencies() {
-    try {
-      // for real implementation
-      // const { data } = await employeeAPI.GetPaymentFrequencyOptions();
-      // this.paymentFrequencyOptions = data;
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadMaritalStatuses() {
-    try {
-      // for real implementation
-      // const { data } = await employeeAPI.GetMaritalStatusOptions();
-      // this.maritalStatusOptions = data;
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadPaymentMethods() {
-    try {
-      // for real implementation
-      // const { data } = await employeeAPI.GetPaymentMethodOptions();
-      // this.paymentMethodOptions = data;
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadBanks() {
-    try {
-      // for real implementation
-      // const { data } = await employeeAPI.GetBankOptions();
-      // this.bankOptions = data;
-    } catch (error) {
-      getError(error);
-    }
-  }
-
   async insertData(formData: any) {
     try {
-      // for real implementation
-      // const { status2 } = await employeeAPI.InsertEmployee(formData);
-      // if (status2.status === 0) {
-      //   getToastSuccess(this.$t("messages.saveSuccess"));
-      //   this.showForm = false;
-      //   this.loadDataGrid();
-      // }
+      /*
+      const { status2 } = await employeeAPI.InsertEmployee(formData);
+      if (status2.status == 0) {
+        getToastSuccess(this.$t("messages.saveSuccess"));
+        this.showForm = false;
+        this.loadDataGrid(this.searchDefault);
+      }
+      */
 
       // for demo
       const newId = Math.max(...this.rowData.map((emp: any) => emp.id)) + 1;
       const employeeCount = this.rowData.length + 1;
-      const employeeId = `EMP${String(employeeCount).padStart(3, "0")}`;
 
       const newEmployee = {
         id: newId,
-        employee_id: formData.employee_id || employeeId,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        full_name: `${formData.first_name} ${formData.last_name}`,
         ...formData,
         created_at: formatDateTimeUTC(new Date()),
         created_by: "Current User",
@@ -1309,75 +1272,99 @@ export default class Employee extends Vue {
         updated_by: "Current User",
       };
 
-      this.rowData.push(newEmployee);
+      this.rowData = [...this.rowData, newEmployee];
+      this.loadDataGrid();
+      // this.rowData.push(newEmployee);
 
       getToastSuccess(
         this.$t("messages.saveSuccess") || "Employee added successfully"
       );
       this.showForm = false;
+
+      return true;
     } catch (error) {
       getError(error);
+      return false;
     }
   }
 
   async updateData(formData: any) {
     try {
-      // for real implementation
-      // const { status2 } = await employeeAPI.UpdateEmployee(formData);
-      // if (status2.status === 0) {
-      //   getToastSuccess(this.$t("messages.updateSuccess"));
-      //   this.showForm = false;
-      //   this.loadDataGrid();
-      // }
+      /*
+
+      const { status2 } = await employeeAPI.UpdateEmployee(formData);
+      if (status2.status == 0) {
+        this.loadDataGrid(this.searchDefault);
+        this.showForm = false;
+        getToastSuccess(this.$t("messages.saveSuccess"));
+      }
+      */
 
       // for demo
       const index = this.rowData.findIndex(
         (emp: any) => emp.id === formData.id
       );
       if (index !== -1) {
-        this.rowData[index] = {
-          ...this.rowData,
+        const updatedEmployee = {
+          ...this.rowData[index],
           ...formData,
-          full_name: `${formData.first_name} ${formData.last_name}`,
           updated_at: formatDateTimeUTC(new Date()),
           updated_by: "Current User",
         };
 
-        getToastSuccess(
-          this.$t("messages.updateSuccess") || "Employee updated successfully"
-        );
+        this.rowData = [
+          ...this.rowData.slice(0, index),
+          updatedEmployee,
+          ...this.rowData.slice(index + 1),
+        ];
+
+        this.loadDataGrid();
+        getToastSuccess(this.$t("messages.updateSuccess"));
         this.showForm = false;
       } else {
         getToastError("Employee not found");
       }
+
+      return true;
     } catch (error) {
       getError(error);
+      return false;
     }
   }
 
   async deleteData() {
     try {
-      // for real implementation
-      // const { status2 } = await employeeAPI.DeleteEmployee(this.deleteParam);
-      // if (status2.status === 0) {
-      //   getToastSuccess(this.$t("messages.deleteSuccess"));
-      //   this.loadDataGrid();
-      // }
+      /*
+      const { status2 } = await employeeAPI.DeleteEmployee(this.deleteParam.id);
+      if (status2.status == 0) {
+        this.loadDataGrid(this.searchDefault);
+        getToastSuccess(this.$t("messages.deleteSuccess"));
+      }
+      */
 
       // for demo
-      const index = this.rowData.findIndex(
-        (emp: any) => emp.id === this.deleteParam.id
-      );
-      if (index !== -1) {
-        this.rowData.splice(index, 1);
-        getToastSuccess(
-          this.$t("messages.deleteSuccess") || "Employee deleted successfully"
-        );
-      } else {
-        getToastError("Employee not found");
-      }
+      const id = this.deleteParam.id;
+      this.rowData = this.rowData.filter((item: any) => item.id !== id);
+      this.loadDataGrid(this.searchDefault);
+
+      getToastSuccess(this.$t("messages.deleteSuccess"));
+
+      // const index = this.rowData.findIndex(
+      //   (emp: any) => emp.id === this.deleteParam.id
+      // );
+      // if (index !== -1) {
+      //   this.rowData.splice(index, 1);
+      //   getToastSuccess(
+      //     this.$t("messages.deleteSuccess") || "Employee deleted successfully"
+      //   );
+      // } else {
+      //   getToastError("Employee not found");
+      // }
+
+      return true;
     } catch (error) {
       getError(error);
+      return false;
     } finally {
       this.showDialog = false;
     }
