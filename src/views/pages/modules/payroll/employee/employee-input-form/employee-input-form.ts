@@ -214,8 +214,7 @@ export default class InputForm extends Vue {
       Position: Yup.string().required(),
 
       // salary & payment information
-      // PaymentFrequency: Yup.string().required(),
-      BaseSalary: Yup.number().min(0).required(),
+      PaymentFrequency: Yup.string().required(),
       PaymentMethod: Yup.string().required(),
       BankName: Yup.string().required(),
       BankAccountNumber: Yup.string().required(),
