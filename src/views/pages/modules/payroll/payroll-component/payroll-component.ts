@@ -440,7 +440,10 @@ export default class PayrollComponents extends Vue {
     }
   }
 
-  handleShowForm(params: any, mode: any) {
+  async handleShowForm(params: any, mode: any) {
+    this.showForm = false;
+    await this.$nextTick();
+
     this.modeData = mode;
 
     if (typeof params === "string") {

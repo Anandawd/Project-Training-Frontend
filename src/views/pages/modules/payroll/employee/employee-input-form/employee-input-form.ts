@@ -2,6 +2,7 @@ import CDatepicker from "@/components/datepicker/datepicker.vue";
 import CInput from "@/components/input/input.vue";
 import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
+import { formatDateTimeUTC } from "@/utils/format";
 import $global from "@/utils/global";
 import { focusOnInvalid } from "@/utils/validation";
 import { Form as CForm } from "vee-validate";
@@ -23,407 +24,66 @@ import * as Yup from "yup";
       type: Number,
       require: true,
     },
+    employeeTypeOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    genderOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    paymentFrequencyOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    maritalStatusOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    paymentMethodOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    bankOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    documentTypeOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    departmentOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    positionOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    placementOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
   },
   emits: ["save", "close"],
 })
 export default class InputForm extends Vue {
-  inputFormValidation: any = ref();
-  modeData: any;
-  public isSave: boolean = false;
+  modeData!: number;
+  employeeTypeOptions!: any[];
+  genderOptions!: any[];
+  paymentFrequencyOptions!: any[];
+  maritalStatusOptions!: any[];
+  paymentMethodOptions!: any[];
+  bankOptions!: any[];
+  documentTypeOptions!: any[];
+  departmentOptions!: any[];
+  positionOptions!: any[];
+  placementOptions!: any[];
 
+  inputFormValidation: any = ref();
   public defaultForm: any = {};
   public form: any = reactive({});
-  public formDetail: any = reactive({});
 
-  // form settings
-  public formats: Array<any> = [
-    { code: 1, name: ",0.;-,0." },
-    { code: 2, name: ",0.0;-,0.0" },
-    { code: 3, name: ",0.00;-,0.00" },
-    { code: 4, name: ",0.000;-,0.000" },
-  ];
-
-  genderOptions: any = [
-    {
-      SubGroupName: "Gender",
-      code: "M",
-      name: "Male",
-    },
-    {
-      SubGroupName: "Gender",
-      code: "F",
-      name: "Female",
-    },
-  ];
-  employeeStatusOptions: any = [
-    {
-      SubGroupName: "Status",
-      code: "A",
-      name: "Active",
-    },
-    {
-      SubGroupName: "Status",
-      code: "I",
-      name: "Inactive",
-    },
-  ];
-  employeeTypeOptions: any = [
-    {
-      SubGroupName: "Permanent Employees",
-      code: "PE01",
-      name: "Full-time",
-    },
-    {
-      SubGroupName: "Permanent Employees",
-      code: "PE02",
-      name: "Permanent",
-    },
-    {
-      SubGroupName: "Non-Permanent Employees",
-      code: "NPE01",
-      name: "Contact",
-    },
-    {
-      SubGroupName: "Non-Permanent Employees",
-      code: "NPE02",
-      name: "Part-time",
-    },
-    {
-      SubGroupName: "Non-Permanent Employees",
-      code: "NPE03",
-      name: "Seasonal",
-    },
-    {
-      SubGroupName: "Non-Permanent Employees",
-      code: "NPE04",
-      name: "Casual",
-    },
-    {
-      SubGroupName: "Non-Permanent Employees",
-      code: "NPE05",
-      name: "Intern",
-    },
-    {
-      SubGroupName: "Non-Permanent Employees",
-      code: "NPE06",
-      name: "Probationary",
-    },
-    {
-      SubGroupName: "Non-Employees",
-      code: "NE01",
-      name: "Freelancer",
-    },
-    {
-      SubGroupName: "Non-Employees",
-      code: "NE02",
-      name: "Contractor",
-    },
-    {
-      SubGroupName: "Non-Employees",
-      code: "NE03",
-      name: "Consultant",
-    },
-    {
-      SubGroupName: "Non-Employees",
-      code: "NE04",
-      name: "Vendor",
-    },
-    {
-      SubGroupName: "Former Employees",
-      code: "FE01",
-      name: "Resigned",
-    },
-    {
-      SubGroupName: "Former Employees",
-      code: "FE02",
-      name: "Retired",
-    },
-    {
-      SubGroupName: "Former Employees",
-      code: "FE03",
-      name: "Terminated",
-    },
-    {
-      SubGroupName: "Former Employees",
-      code: "FE04",
-      name: "Expired-contract",
-    },
-  ];
-  departmentOptions: any = [
-    {
-      SubGroupName: "Department",
-      code: "D01",
-      name: "Marketing",
-    },
-    {
-      SubGroupName: "Department",
-      code: "D02",
-      name: "Human Resource",
-    },
-    {
-      SubGroupName: "Department",
-      code: "D03",
-      name: "Operational",
-    },
-    {
-      SubGroupName: "Department",
-      code: "D04",
-      name: "IT",
-    },
-  ];
-  positionOptions: any = [
-    {
-      SubGroupName: "Position",
-      code: "P01",
-      name: "Owner",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P02",
-      name: "Director",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P03",
-      name: "Manager",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P04",
-      name: "Supervisor",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P05",
-      name: "Senior Staff",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P06",
-      name: "Staff",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P07",
-      name: "Assistant",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P08",
-      name: "Trainee",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P09",
-      name: "Intern",
-    },
-    {
-      SubGroupName: "Position",
-      code: "P10",
-      name: "Part-timer",
-    },
-  ];
-  placementOptions: any = [
-    {
-      SubGroupName: "Placement",
-      code: "PR01",
-      name: "Amora Ubud",
-    },
-    {
-      SubGroupName: "Placement",
-      code: "PR02",
-      name: "Amora Canggu",
-    },
-  ];
-  supervisorOptions: any = [
-    {
-      SubGroupName: "Supervisor",
-      code: "SPV01",
-      name: "Budi Santoso",
-    },
-    {
-      SubGroupName: "Supervisor",
-      code: "SPV02",
-      name: "Sari Dewi",
-    },
-  ];
-  benefitComponentOptions: any = [
-    {
-      SubGroupName: "Benefit Component",
-      code: "BC01",
-      name: "Tunjangan Makan",
-    },
-    {
-      SubGroupName: "Benefit Component",
-      code: "BC02",
-      name: "Tunjangan Transportasi",
-    },
-    {
-      SubGroupName: "Benefit Component",
-      code: "BC03",
-      name: "Tunjangan Jabatan",
-    },
-  ];
-  salaryTypeOptions: any = [
-    {
-      SubGroupName: "Salary Type",
-      code: "ST01",
-      name: "Daily",
-    },
-    {
-      SubGroupName: "Salary Type",
-      code: "ST02",
-      name: "Weekly",
-    },
-    {
-      SubGroupName: "Salary Type",
-      code: "ST03",
-      name: "Bi-weekly",
-    },
-    {
-      SubGroupName: "Salary Type",
-      code: "ST04",
-      name: "Monthly",
-    },
-  ];
-  paymentMethodOptions: any = [
-    {
-      SubGroupName: "Payment Method",
-      code: "PM01",
-      name: "Cash",
-    },
-    {
-      SubGroupName: "Payment Method",
-      code: "PM02",
-      name: "Bank Transfer",
-    },
-    {
-      SubGroupName: "Payment Method",
-      code: "PM03",
-      name: "E-wallet Transfer",
-    },
-    {
-      SubGroupName: "Payment Method",
-      code: "PM04",
-      name: "Virtual Account",
-    },
-  ];
-  bankNameOptions: any = [
-    {
-      SubGroupName: "Bank Name",
-      code: "BN01",
-      name: "Bank BCA",
-    },
-    {
-      SubGroupName: "Bank Name",
-      code: "BN01",
-      name: "Bank BRI",
-    },
-    {
-      SubGroupName: "Bank Name",
-      code: "BN01",
-      name: "Bank BNI",
-    },
-    {
-      SubGroupName: "Bank Name",
-      code: "BN01",
-      name: "Bank Mandiri",
-    },
-  ];
-  maritialStatusOptions: any = [
-    {
-      SubGroupName: "Maritial Status",
-      code: "TK0",
-      name: "Tidak Kawin, Tanpa Tanggungan",
-    },
-    {
-      SubGroupName: "Maritial Status",
-      code: "TK1",
-      name: "Tidak Kawin, Tanggungan 1",
-    },
-    {
-      SubGroupName: "Maritial Status",
-      code: "TK2",
-      name: "Tidak Kawin, Tanggungan 2",
-    },
-    {
-      SubGroupName: "Maritial Status",
-      code: "TK3",
-      name: "Tidak Kawin, Tanggungan 3",
-    },
-    {
-      SubGroupName: "Maritial Status",
-      code: "K0",
-      name: "Kawin, Tanpa Tanggungan",
-    },
-    {
-      SubGroupName: "Maritial Status",
-      code: "K1",
-      name: "Kawin, Tanggungan 1",
-    },
-    {
-      SubGroupName: "Maritial Status",
-      code: "K2",
-      name: "Kawin, Tanggungan 2",
-    },
-    {
-      SubGroupName: "Maritial Status",
-      code: "K3",
-      name: "Kawin, Tanggungan 3",
-    },
-    {
-      SubGroupName: "Maritial Status",
-      code: "KI0",
-      name: "Kawin, Istri Bekerja, Tanpa Tanggungan",
-    },
-    {
-      SubGroupName: "Maritial Status",
-      code: "KI1",
-      name: "Kawin, Istri Bekerja, Tanggungan 1",
-    },
-    {
-      SubGroupName: "Maritial Status",
-      code: "KI2",
-      name: "Kawin, Istri Bekerja, Tanggungan 2",
-    },
-    {
-      SubGroupName: "Maritial Status",
-      code: "KI3",
-      name: "Kawin, Istri Bekerja, Tanggungan 3",
-    },
-  ];
-  workScheduleOptions: any = [
-    {
-      SubGroupName: "Work Schedule",
-      code: "WS01",
-      name: "Fixed Schedule",
-    },
-    {
-      SubGroupName: "Work Schedule",
-      code: "WS02",
-      name: "Shift Schedule",
-    },
-    {
-      SubGroupName: "Work Schedule",
-      code: "WS03",
-      name: "Rotating Schedule",
-    },
-    {
-      SubGroupName: "Work Schedule",
-      code: "WS04",
-      name: "Split Shift",
-    },
-    {
-      SubGroupName: "Work Schedule",
-      code: "WS05",
-      name: "On-call Schedule",
-    },
-    {
-      SubGroupName: "Work Schedule",
-      code: "WS06",
-      name: "Flexible Schedule",
-    },
-  ];
   columnOptions = [
     {
       label: "name",
@@ -439,43 +99,70 @@ export default class InputForm extends Vue {
     },
   ];
 
-  // actions
+  created(): void {
+    watch(
+      () => this.form.status,
+      async (newStatus) => {
+        const status =
+          typeof newStatus === "string" ? parseInt(newStatus) : newStatus;
+
+        await nextTick();
+
+        if (status === true) {
+          this.setEndDateForActiveStatus();
+        } else {
+          this.form.end_date = "";
+        }
+      },
+      { immediate: true }
+    );
+  }
+
+  mounted(): void {
+    this.setEndDateForActiveStatus();
+  }
+
   async resetForm() {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
       // personal information
-      employeeId: "",
-      firstname: "",
-      lastname: "",
-      gender: "M",
-      birthdate: "",
+      employee_id: "",
+      first_name: "",
+      last_name: "",
+      gender: "",
+      birth_date: "",
+      phone: "",
       email: "",
-      phoneNumber: "",
       address: "",
-      // employee information
-      hireDate: "",
-      endDate: new Date().toISOString().split("T")[0],
-      employeeStatus: 1,
-      employeeType: "",
-      department: "",
-      position: "",
-      placement: "",
-      supervisor: "",
-      // financial information
-      baseSalary: "",
+
+      // employment information
+      hire_date: formatDateTimeUTC(new Date()),
+      end_date: null,
+      status: true,
+      employee_type: "",
+      position_code: "",
+      department_code: "",
+      placement_code: "",
+      supervisor_id: "",
+
+      // salary & payment information
+      payment_frequency: "Monthly",
+      daily_rate: 0,
+      base_salary: 0,
       benefitComponent: "",
-      salaryType: "",
-      paymentMethod: "",
-      bankName: "",
-      bankAccountNumber: "",
-      bankAccountHolder: "",
+      payment_method: "Bank Transfer",
+      bank_name: "",
+      bank_account_number: "",
+      bank_account_name: "",
+
       // tax and identification data
-      taxNumber: "",
-      maritialStatus: "",
-      identityNumber: "",
-      bpjsHealthNumber: "",
-      bpjsEmployeeNumber: "",
+      tax_number: "",
+      identity_number: "",
+      marital_status: "TK0",
+      health_insurance_number: "",
+      social_security_number: "",
+
       // attendance and leave data
       workSchedule: "",
       annualLeaveQuota: "",
@@ -495,10 +182,6 @@ export default class InputForm extends Vue {
     this.$emit("save", this.form);
   }
 
-  checkForm() {
-    console.log(this.form);
-  }
-
   onClose() {
     this.$emit("close");
   }
@@ -508,15 +191,38 @@ export default class InputForm extends Vue {
   }
 
   private setEndDateForActiveStatus() {
-    if (this.form.employeeStatus === 1 || this.form.employeeStatus === "1") {
+    if (this.form.status === true) {
       const today = new Date().toISOString().split("T")[0];
-      this.form.endDate = today;
+      this.form.end_date = today;
     }
   }
 
-  // validation
   get schema() {
-    return Yup.object().shape({});
+    return Yup.object().shape({
+      first_name: Yup.string().required("First name is required"),
+      last_name: Yup.string().required("Last name is required"),
+      gender: Yup.string().required("Gender is required"),
+      email: Yup.string()
+        .email("Invalid email format")
+        .required("Email is required"),
+      phone: Yup.string().required("Phone number is required"),
+      hire_date: Yup.string().required("Hire date is required"),
+      position_code: Yup.string().required("Position is required"),
+      department_code: Yup.string().required("Department is required"),
+      placement_code: Yup.string().required("Placement is required"),
+      employee_type: Yup.string().required("Employee type is required"),
+      payment_frequency: Yup.string().required("Payment frequency is required"),
+      base_salary: Yup.number()
+        .typeError("Base salary must be a number")
+        .min(0, "Base salary cannot be negative")
+        .required("Base salary is required"),
+      bank_name: Yup.string().required("Bank name is required"),
+      bank_account_number: Yup.string().required(
+        "Bank account number is required"
+      ),
+      bank_account_name: Yup.string().required("Bank account name is required"),
+      payment_method: Yup.string().required("Payment method is required"),
+    });
   }
 
   get title() {
@@ -528,37 +234,40 @@ export default class InputForm extends Vue {
       return `${this.$t("commons.update")} ${this.$t(
         `${this.$route.meta.pageTitle}`
       )}`;
-    } else if (this.modeData === $global.modeData.duplicate) {
-      return `${this.$t("commons.duplicate")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
-      )}`;
     }
   }
 
   get isEndDateDisabled() {
-    return this.form.employeeStatus === 1 || this.form.employeeStatus === "1";
+    return this.form.status === true;
   }
 
-  created(): void {
-    watch(
-      () => this.form.employeeStatus,
-      async (newStatus) => {
-        const status =
-          typeof newStatus === "string" ? parseInt(newStatus) : newStatus;
+  // Filtered position options based on selected department
+  get filteredPositionOptions() {
+    if (!this.form.department_code) {
+      return this.positionOptions;
+    }
 
-        await nextTick();
-
-        if (status === 1) {
-          this.setEndDateForActiveStatus();
-        } else {
-          this.form.endDate = "";
-        }
-      },
-      { immediate: true }
-    );
+    // In a real implementation, you would filter positions by department
+    return this.positionOptions;
   }
 
-  mounted(): void {
-    this.setEndDateForActiveStatus();
+  // Filtered supervisor options based on selected department and placement
+  get filteredSupervisorOptions() {
+    if (!this.form.department_code || !this.form.placement_code) {
+      return [];
+    }
+
+    // In a real implementation, you would filter supervisors by department and placement
+    return [
+      { code: "EMP001", name: "John Doe", SubGroupName: "Supervisor" },
+      { code: "EMP002", name: "Jane Smith", SubGroupName: "Supervisor" },
+      { code: "EMP003", name: "Robert Johnson", SubGroupName: "Supervisor" },
+      { code: "EMP005", name: "Michael Wilson", SubGroupName: "Supervisor" },
+      { code: "EMP006", name: "Sarah Johnson", SubGroupName: "Supervisor" },
+      { code: "EMP008", name: "Jessica Walker", SubGroupName: "Supervisor" },
+      { code: "EMP009", name: "Daniel Lee", SubGroupName: "Supervisor" },
+      { code: "EMP011", name: "Thomas Wright", SubGroupName: "Supervisor" },
+      { code: "EMP012", name: "David Wilson", SubGroupName: "Supervisor" },
+    ];
   }
 }

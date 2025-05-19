@@ -3,12 +3,14 @@ import Checklist from "@/components/ag_grid-framework/checklist.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
+import { formatDateTimeUTC, formatNumber2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
   getError,
 } from "@/utils/general";
 import $global from "@/utils/global";
+import { getToastError, getToastSuccess } from "@/utils/toast";
 import CSearchFilter from "@/views/pages/components/filter/filter.vue";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
@@ -26,9 +28,21 @@ import CInputForm from "./employee-input-form/employee-input-form.vue";
   },
 })
 export default class Employee extends Vue {
-  //table
+  // data
   public rowData: any = [];
   public deleteParam: any;
+
+  // options data
+  public employeeTypeOptions: any = [];
+  public genderOptions: any = [];
+  public paymentFrequencyOptions: any = [];
+  public maritalStatusOptions: any = [];
+  public paymentMethodOptions: any = [];
+  public bankOptions: any = [];
+  public documentTypeOptions: any = [];
+  public departmentOptions: any = [];
+  public positionOptions: any = [];
+  public placementOptions: any = [];
 
   // filter
   public searchOptions: any;
@@ -43,7 +57,11 @@ export default class Employee extends Vue {
   public modeData: any;
   public form: any = {};
   public inputFormElement: any = ref();
+
+  // dialog
   public showDialog: boolean = false;
+  public dialogMessage: string = "";
+  public dialogAction: string = "";
 
   // AG GRID VARIABLE
   gridOptions: any = {};
@@ -64,18 +82,21 @@ export default class Employee extends Vue {
   // RECYCLE LIFE FUNCTION =======================================================
   created(): void {
     this.loadMockData();
+    this.loadDropdown();
   }
 
   beforeMount(): void {
     this.searchOptions = [
-      { text: this.$t("commons.filter.payroll.employee.department"), value: 0 },
-      { text: this.$t("commons.filter.payroll.employee.position"), value: 1 },
-      { text: this.$t("commons.filter.payroll.employee.placement"), value: 2 },
-      { text: this.$t("commons.filter.payroll.employee.supervisor"), value: 3 },
+      { text: this.$t("commons.filter.payroll.employee.employeeId"), value: 0 },
+      { text: this.$t("commons.filter.payroll.employee.name"), value: 1 },
+      { text: this.$t("commons.filter.payroll.employee.department"), value: 2 },
+      { text: this.$t("commons.filter.payroll.employee.position"), value: 3 },
+      { text: this.$t("commons.filter.payroll.employee.placement"), value: 4 },
     ];
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
       actionGrid: {
+        menu: true,
         delete: true,
         edit: true,
       },
@@ -96,56 +117,79 @@ export default class Employee extends Vue {
         sortable: false,
         cellRenderer: "actionGrid",
         colId: "params",
-        width: 80,
+        width: 100,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.employeeId"),
+        headerName: this.$t("commons.table.payroll.employee.id"),
         field: "employee_id",
         width: 100,
         enableRowGroup: false,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.employeeName"),
-        field: "employee_name",
+        headerName: this.$t("commons.table.payroll.employee.name"),
+        field: "full_name",
         width: 200,
         enableRowGroup: false,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.department"),
-        field: "employee_department",
-        width: 120,
+        field: "department_name",
+        width: 150,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.position"),
-        field: "employee_position",
-        width: 120,
+        field: "position_name",
+        width: 150,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.placement"),
-        field: "employee_placement",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.supervisor"),
-        field: "employee_supervisor",
-        width: 200,
+        field: "placement_name",
+        width: 150,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.employeeType"),
         field: "employee_type",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.baseSalary"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
+        field: "base_salary",
+        width: 120,
+        enableRowGroup: true,
+        valueFormatter: formatNumber2,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.hireDate"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "hire_date",
         width: 100,
         enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.email"),
+        field: "email",
+        width: 180,
+        enableRowGroup: false,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.phone"),
+        field: "phone",
+        width: 120,
+        enableRowGroup: false,
       },
       {
         headerName: this.$t("commons.table.status"),
         headerClass: "align-header-center",
         cellClass: "ag-cell-center-checkbox",
-        field: "employee_status",
-        width: 100,
+        field: "status",
+        width: 80,
         enableRowGroup: true,
         cellRenderer: "checklistRenderer",
       },
@@ -153,7 +197,7 @@ export default class Employee extends Vue {
         headerName: this.$t("commons.table.updatedAt"),
         headerClass: "align-header-center",
         cellClass: "text-center",
-        field: "employee_updated_at",
+        field: "updated_at",
         width: 120,
         enableRowGroup: true,
       },
@@ -161,7 +205,7 @@ export default class Employee extends Vue {
         headerName: this.$t("commons.table.updatedBy"),
         headerClass: "align-header-center",
         cellClass: "text-center",
-        field: "employee_updated_by",
+        field: "updated_by",
         width: 120,
         enableRowGroup: true,
       },
@@ -169,7 +213,7 @@ export default class Employee extends Vue {
         headerName: this.$t("commons.table.createdAt"),
         headerClass: "align-header-center",
         cellClass: "text-center",
-        field: "employee_created_at",
+        field: "created_at",
         width: 120,
         enableRowGroup: true,
       },
@@ -177,7 +221,7 @@ export default class Employee extends Vue {
         headerName: this.$t("commons.table.createdBy"),
         headerClass: "align-header-center",
         cellClass: "text-center",
-        field: "employee_created_by",
+        field: "created_by",
         width: 120,
         enableRowGroup: true,
       },
@@ -222,16 +266,42 @@ export default class Employee extends Vue {
 
     const result = [
       {
-        name: this.$t("commons.contextMenu.insert"),
-        icon: generateIconContextMenuAgGrid("add_icon24"),
-        action: () => this.handleShowForm("", $global.modeData.insert),
-      },
-      {
         name: this.$t("commons.contextMenu.update"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () =>
           this.handleShowForm(this.paramsData, $global.modeData.edit),
+      },
+      {
+        name: this.$t("commons.contextMenu.delete"),
+        icon: generateIconContextMenuAgGrid("delete_icon24"),
+        action: () => this.handleDelete(this.paramsData),
+      },
+      "separator",
+      {
+        name: this.$t("commons.contextMenu.detail"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("detail_icon24"),
+        action: () => this.handleShowDetail(this.paramsData),
+      },
+      {
+        name: this.$t("commons.contextMenu.salary"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("salary_icon24"),
+        action: () => this.handleSalaryHistory(this.paramsData.id),
+      },
+      "separator",
+      {
+        name: this.$t("commons.contextMenu.downloadPayslip"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("download_icon24"),
+        action: () => this.handleDownloadPayslip(this.paramsData.id),
+      },
+      {
+        name: this.$t("commons.contextMenu.printPayslip"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("print_icon24"),
+        action: () => this.handlePrintPayslip(this.paramsData.id),
       },
     ];
     return result;
@@ -256,15 +326,68 @@ export default class Employee extends Vue {
     this.showForm = true;
   }
 
-  handleSave(formData: any) {}
+  handleShowDetail(paramsId: string) {
+    this.$router.push({
+      name: "EmployeeDetail",
+      params: { paramsId },
+    });
+  }
 
-  handleEdit(formData: any) {}
+  handleSalaryHistory(paramsId: string) {
+    console.log(`Viewing salary history for employee ${paramsId}`);
+  }
 
-  handleDelete(params: any) {}
+  handleDownloadPayslip(paramsId: string) {
+    console.log(`Downloading payslip for employee ${paramsId}`);
+    getToastSuccess("Payslip download started");
+  }
+
+  handlePrintPayslip(paramsId: string) {
+    getToastSuccess("Payslip print started");
+  }
+
+  handleMenu() {}
+
+  handleSave(formData: any) {
+    if (this.modeData === $global.modeData.insert) {
+      this.insertData(formData);
+    } else if (this.modeData === $global.modeData.edit) {
+      this.updateData(formData);
+    }
+  }
+
+  handleEdit(formData: any) {
+    this.modeData = $global.modeData.edit;
+    this.loadEditData(formData.id);
+  }
+
+  handleDelete(params: any) {
+    this.showDialog = true;
+    this.deleteParam = params.id;
+    this.dialogMessage = "Are you sure to delte this employee?";
+    this.dialogAction = "delete";
+  }
+
+  handleBack() {
+    this.$router.push({
+      name: "Employee",
+    });
+  }
 
   refreshData(search: any) {
     this.loadDataGrid();
   }
+
+  confirmAction() {
+    if (this.dialogAction === $global.dialogActions.delete) {
+      this.deleteData();
+    } else {
+      console.log("Unknown action");
+    }
+    this.showDialog = false;
+  }
+
+  onRefresh() {}
 
   // API REQUEST =======================================================
   async loadData() {
@@ -279,60 +402,792 @@ export default class Employee extends Vue {
     }
   }
 
-  async loadDataGrid() {}
+  async loadDataGrid(search: any = this.searchDefault) {
+    try {
+      // for real implementation
+      // let params = {
+      //   Index: search.index,
+      //   Text: search.text,
+      //   IndexCheckBox: search.filter[0],
+      // };
+      // const { data } = await employeeAPI.GetEmployeeList(params);
+      // this.rowData = data;
+
+      // for demo
+      this.rowData = this.rowData.filter((emp: any) => {
+        if (search.filter[0] == "1" && !emp.status) {
+          return false;
+        }
+        if (search.filter[0] == "2" && emp.status) {
+          return false;
+        }
+
+        if (search.text) {
+          let searchValue = search.text.toLowerCase();
+          switch (search.index) {
+            case 0:
+              return emp.employee_id.toLowerCase().includes(searchValue);
+            case 1:
+              return emp.employee_name.toLowerCase().includes(searchValue);
+            case 2:
+              return emp.department_name.toLowerCase().includes(searchValue);
+            case 3:
+              return emp.position_name.toLowerCase().includes(searchValue);
+            case 4:
+              return emp.placement_name.toLowerCase().includes(searchValue);
+            default:
+              return true;
+          }
+        }
+        return true;
+      });
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadEditData(params: any) {
+    try {
+      // for real implementation
+      // const { data } = await employeeAPI.GetEmployee(employeeId);
+      // this.inputFormElement.
+      // (data);
+      // this.showForm = true;
+
+      // for demo
+      const employee = this.rowData.find((emp: any) => emp.id === params);
+      if (employee) {
+        this.inputFormElement.populateForm(employee);
+        this.showForm = true;
+      } else {
+        getToastError("Employee not found");
+      }
+    } catch (error) {
+      getError(error);
+    }
+  }
 
   async loadMockData() {
     this.rowData = [
       {
+        id: 1,
         employee_id: "EMP001",
-        employee_name: "Andi Pratama",
-        department: "IT",
-        position: "Frontend Developer",
-        placement: "Jakarta",
-        supervisor: "Budi Santoso",
-        employee_type: "Full-Time",
+        first_name: "John",
+        last_name: "Doe",
+        full_name: "John Doe",
+        gender: "Male",
+        birth_date: "1985-05-15",
+        address: "Jl. Raya Ubud No. 123, Ubud, Bali",
+        phone: "+62812345678",
+        email: "john.doe@amorahotel.com",
+        hire_date: "2020-01-10",
+        end_date: null,
+        position_code: "P007",
+        position_name: "Operations Manager",
+        department_code: "D007",
+        department_name: "Operations",
+        placement_code: "PL002",
+        placement_name: "Amora Canggu",
+        supervisor_id: "EMP005",
+        supervisor_name: "Michael Wilson",
+        employee_type: "Permanent",
+        payment_frequency: "Monthly",
+        daily_rate: 300000,
+        base_salary: 9000000,
+        status: true,
+        tax_number: "123456789012345",
+        identity_number: "1234567890",
+        marital_status: "K2",
+        health_insurance_number: "HI12345678",
+        social_security_number: "SS12345678",
+        bank_name: "BCA",
+        bank_account_number: "1234567890",
+        bank_account_name: "John Doe",
+        payment_method: "Bank Transfer",
+        profile_photo: "profile_photos/emp001.jpg",
+        created_at: formatDateTimeUTC(new Date(2020, 0, 10, 8, 0, 0)),
+        created_by: "Admin System",
+        updated_at: formatDateTimeUTC(new Date(2023, 6, 15, 14, 30, 0)),
+        updated_by: "HR Manager",
       },
       {
+        id: 2,
         employee_id: "EMP002",
-        employee_name: "Rina Kusuma",
-        department: "Finance",
-        position: "Accountant",
-        placement: "Bandung",
-        supervisor: "Sari Dewi",
-        employee_type: "Contract",
+        first_name: "Jane",
+        last_name: "Smith",
+        full_name: "Jane Smith",
+        gender: "Female",
+        birth_date: "1990-08-22",
+        address: "Jl. Sunset Road No. 45, Kuta, Bali",
+        phone: "+62823456789",
+        email: "jane.smith@amorahotel.com",
+        hire_date: "2021-03-15",
+        end_date: null,
+        position_code: "P004",
+        position_name: "HR Director",
+        department_code: "D002",
+        department_name: "Human Resources",
+        placement_code: "PL001",
+        placement_name: "Amora Ubud",
+        supervisor_id: "EMP003",
+        supervisor_name: "Robert Johnson",
+        employee_type: "Permanent",
+        payment_frequency: "Monthly",
+        daily_rate: 450000,
+        base_salary: 13500000,
+        status: true,
+        tax_number: "234567890123456",
+        identity_number: "2345678901",
+        marital_status: "TK0",
+        health_insurance_number: "HI23456789",
+        social_security_number: "SS23456789",
+        bank_name: "BNI",
+        bank_account_number: "2345678901",
+        bank_account_name: "Jane Smith",
+        payment_method: "Bank Transfer",
+        profile_photo: "profile_photos/emp002.jpg",
+        created_at: formatDateTimeUTC(new Date(2021, 2, 15, 9, 0, 0)),
+        created_by: "Admin System",
+        updated_at: formatDateTimeUTC(new Date(2023, 5, 22, 11, 45, 0)),
+        updated_by: "HR Manager",
       },
       {
+        id: 3,
         employee_id: "EMP003",
-        employee_name: "Dewi Lestari",
-        department: "HR",
-        position: "HR Officer",
-        placement: "Jakarta",
-        supervisor: "Tono Rahmat",
-        employee_type: "Full-Time",
+        first_name: "Robert",
+        last_name: "Johnson",
+        full_name: "Robert Johnson",
+        gender: "Male",
+        birth_date: "1982-12-10",
+        address: "Jl. Raya Kuta No. 78, Kuta, Bali",
+        phone: "+62834567890",
+        email: "robert.johnson@amorahotel.com",
+        hire_date: "2019-06-20",
+        end_date: null,
+        position_code: "P003",
+        position_name: "Chief Financial Officer",
+        department_code: "D003",
+        department_name: "Finance",
+        placement_code: "PL001",
+        placement_name: "Amora Ubud",
+        supervisor_id: null,
+        supervisor_name: null,
+        employee_type: "Permanent",
+        payment_frequency: "Monthly",
+        daily_rate: 600000,
+        base_salary: 18000000,
+        status: true,
+        tax_number: "345678901234567",
+        identity_number: "3456789012",
+        marital_status: "K1",
+        health_insurance_number: "HI34567890",
+        social_security_number: "SS34567890",
+        bank_name: "Mandiri",
+        bank_account_number: "3456789012",
+        bank_account_name: "Robert Johnson",
+        payment_method: "Bank Transfer",
+        profile_photo: "profile_photos/emp003.jpg",
+        created_at: formatDateTimeUTC(new Date(2019, 5, 20, 10, 0, 0)),
+        created_by: "Admin System",
+        updated_at: formatDateTimeUTC(new Date(2023, 4, 5, 9, 15, 0)),
+        updated_by: "Operations Director",
       },
       {
+        id: 4,
         employee_id: "EMP004",
-        employee_name: "Yoga Saputra",
-        department: "IT",
-        position: "Backend Developer",
-        placement: "Surabaya",
-        supervisor: "Budi Santoso",
-        employee_type: "Part-Time",
+        first_name: "Emily",
+        last_name: "Davis",
+        full_name: "Emily Davis",
+        gender: "Female",
+        birth_date: "1988-04-30",
+        address: "Jl. Legian No. 56, Kuta, Bali",
+        phone: "+62845678901",
+        email: "emily.davis@amorahotel.com",
+        hire_date: "2022-01-05",
+        end_date: null,
+        position_code: "P017",
+        position_name: "IT Support Specialist",
+        department_code: "D004",
+        department_name: "Information Technology",
+        placement_code: "PL002",
+        placement_name: "Amora Canggu",
+        supervisor_id: "EMP012",
+        supervisor_name: "David Wilson",
+        employee_type: "Contract",
+        payment_frequency: "Monthly",
+        daily_rate: 250000,
+        base_salary: 7500000,
+        status: true,
+        tax_number: "456789012345678",
+        identity_number: "4567890123",
+        marital_status: "TK0",
+        health_insurance_number: "HI45678901",
+        social_security_number: "SS45678901",
+        bank_name: "BRI",
+        bank_account_number: "4567890123",
+        bank_account_name: "Emily Davis",
+        payment_method: "Bank Transfer",
+        profile_photo: "profile_photos/emp004.jpg",
+        created_at: formatDateTimeUTC(new Date(2022, 0, 5, 8, 30, 0)),
+        created_by: "Admin System",
+        updated_at: formatDateTimeUTC(new Date(2023, 3, 12, 14, 0, 0)),
+        updated_by: "HR Manager",
       },
       {
+        id: 5,
         employee_id: "EMP005",
-        employee_name: "Fajar Nugroho",
-        department: "Marketing",
-        position: "Marketing Specialist",
-        placement: "Jakarta",
-        supervisor: "Rina Kusuma",
-        employee_type: "Full-Time",
+        first_name: "Michael",
+        last_name: "Wilson",
+        full_name: "Michael Wilson",
+        gender: "Male",
+        birth_date: "1980-11-18",
+        address: "Jl. Pantai Kuta No. 34, Kuta, Bali",
+        phone: "+62856789012",
+        email: "michael.wilson@amorahotel.com",
+        hire_date: "2018-08-12",
+        end_date: null,
+        position_code: "P005",
+        position_name: "IT Director",
+        department_code: "D004",
+        department_name: "Information Technology",
+        placement_code: "PL001",
+        placement_name: "Amora Ubud",
+        supervisor_id: null,
+        supervisor_name: null,
+        employee_type: "Permanent",
+        payment_frequency: "Monthly",
+        daily_rate: 500000,
+        base_salary: 15000000,
+        status: true,
+        tax_number: "567890123456789",
+        identity_number: "5678901234",
+        marital_status: "K3",
+        health_insurance_number: "HI56789012",
+        social_security_number: "SS56789012",
+        bank_name: "CIMB Niaga",
+        bank_account_number: "5678901234",
+        bank_account_name: "Michael Wilson",
+        payment_method: "Bank Transfer",
+        profile_photo: "profile_photos/emp005.jpg",
+        created_at: formatDateTimeUTC(new Date(2018, 7, 12, 9, 0, 0)),
+        created_by: "Admin System",
+        updated_at: formatDateTimeUTC(new Date(2023, 2, 8, 10, 30, 0)),
+        updated_by: "Operations Director",
+      },
+      {
+        id: 6,
+        employee_id: "EMP006",
+        first_name: "Sarah",
+        last_name: "Johnson",
+        full_name: "Sarah Johnson",
+        gender: "Female",
+        birth_date: "1992-07-25",
+        address: "Jl. Raya Seminyak No. 67, Seminyak, Bali",
+        phone: "+62867890123",
+        email: "sarah.johnson@amorahotel.com",
+        hire_date: "2020-10-03",
+        end_date: null,
+        position_code: "P011",
+        position_name: "HR Manager",
+        department_code: "D002",
+        department_name: "Human Resources",
+        placement_code: "PL002",
+        placement_name: "Amora Canggu",
+        supervisor_id: "EMP002",
+        supervisor_name: "Jane Smith",
+        employee_type: "Permanent",
+        payment_frequency: "Monthly",
+        daily_rate: 350000,
+        base_salary: 10500000,
+        status: true,
+        tax_number: "678901234567890",
+        identity_number: "6789012345",
+        marital_status: "K0",
+        health_insurance_number: "HI67890123",
+        social_security_number: "SS67890123",
+        bank_name: "BCA",
+        bank_account_number: "6789012345",
+        bank_account_name: "Sarah Johnson",
+        payment_method: "Bank Transfer",
+        profile_photo: "profile_photos/emp006.jpg",
+        created_at: formatDateTimeUTC(new Date(2020, 9, 3, 8, 30, 0)),
+        created_by: "Admin System",
+        updated_at: formatDateTimeUTC(new Date(2023, 1, 20, 11, 0, 0)),
+        updated_by: "HR Director",
+      },
+      {
+        id: 7,
+        employee_id: "EMP007",
+        first_name: "James",
+        last_name: "Carter",
+        full_name: "James Carter",
+        gender: "Male",
+        birth_date: "1987-09-14",
+        address: "Jl. Double Six No. 23, Seminyak, Bali",
+        phone: "+62878901234",
+        email: "james.carter@amorahotel.com",
+        hire_date: "2021-05-17",
+        end_date: null,
+        position_code: "P024",
+        position_name: "Security Officer",
+        department_code: "D012",
+        department_name: "Security",
+        placement_code: "PL002",
+        placement_name: "Amora Canggu",
+        supervisor_id: "EMP011",
+        supervisor_name: "Thomas Wright",
+        employee_type: "Contract",
+        payment_frequency: "Bi-Weekly",
+        daily_rate: 200000,
+        base_salary: 6000000,
+        status: true,
+        tax_number: "789012345678901",
+        identity_number: "7890123456",
+        marital_status: "TK0",
+        health_insurance_number: "HI78901234",
+        social_security_number: "SS78901234",
+        bank_name: "BNI",
+        bank_account_number: "7890123456",
+        bank_account_name: "James Carter",
+        payment_method: "Bank Transfer",
+        profile_photo: "profile_photos/emp007.jpg",
+        created_at: formatDateTimeUTC(new Date(2021, 4, 17, 9, 15, 0)),
+        created_by: "Admin System",
+        updated_at: formatDateTimeUTC(new Date(2023, 0, 30, 13, 45, 0)),
+        updated_by: "HR Manager",
+      },
+      {
+        id: 8,
+        employee_id: "EMP008",
+        first_name: "Jessica",
+        last_name: "Walker",
+        full_name: "Jessica Walker",
+        gender: "Female",
+        birth_date: "1991-02-28",
+        address: "Jl. Monkey Forest No. 55, Ubud, Bali",
+        phone: "+62889012345",
+        email: "jessica.walker@amorahotel.com",
+        hire_date: "2019-11-12",
+        end_date: null,
+        position_code: "P009",
+        position_name: "Housekeeping Manager",
+        department_code: "D009",
+        department_name: "Housekeeping",
+        placement_code: "PL001",
+        placement_name: "Amora Ubud",
+        supervisor_id: "EMP001",
+        supervisor_name: "John Doe",
+        employee_type: "Permanent",
+        payment_frequency: "Monthly",
+        daily_rate: 300000,
+        base_salary: 9000000,
+        status: true,
+        tax_number: "890123456789012",
+        identity_number: "8901234567",
+        marital_status: "K1",
+        health_insurance_number: "HI89012345",
+        social_security_number: "SS89012345",
+        bank_name: "BCA",
+        bank_account_number: "8901234567",
+        bank_account_name: "Jessica Walker",
+        payment_method: "Bank Transfer",
+        profile_photo: "profile_photos/emp008.jpg",
+        created_at: formatDateTimeUTC(new Date(2019, 10, 12, 8, 0, 0)),
+        created_by: "Admin System",
+        updated_at: formatDateTimeUTC(new Date(2022, 11, 15, 10, 20, 0)),
+        updated_by: "Operations Manager",
       },
     ];
   }
 
   async loadDropdown() {
     try {
+      // for real implementation
+      // const [typeData, genderData, paymentFreqData, maritalData, paymentMethodData, bankData, docTypeData, deptData, posData, placeData] = await Promise.all([
+      //   employeeAPI.GetEmployeeTypeOptions(),
+      //   employeeAPI.GetEmployeeGenderOptions(),
+      //   employeeAPI.GetEmployeePaymentFrequencyOptions(),
+      //   employeeAPI.GetEmployeeMaritalStatusOptions(),
+      //   employeeAPI.GetEmployeePaymentMethodOptions(),
+      //   employeeAPI.GetBankOptions(),
+      //   employeeAPI.GetDocumentTypeOptions(),
+      //   organizationAPI.GetDepartmentOptions(),
+      //   organizationAPI.GetPositionOptions(),
+      //   organizationAPI.GetPlacementOptions(),
+      // ]);
+
+      // for demo
+      this.departmentOptions = [
+        { code: "D001", name: "Executive", SubGroupName: "Department" },
+        { code: "D002", name: "Human Resources", SubGroupName: "Department" },
+        { code: "D003", name: "Finance", SubGroupName: "Department" },
+        {
+          code: "D004",
+          name: "Information Technology",
+          SubGroupName: "Department",
+        },
+        { code: "D005", name: "Marketing", SubGroupName: "Department" },
+        { code: "D006", name: "Sales", SubGroupName: "Department" },
+        { code: "D007", name: "Operations", SubGroupName: "Department" },
+        { code: "D008", name: "Front Office", SubGroupName: "Department" },
+        { code: "D009", name: "Housekeeping", SubGroupName: "Department" },
+        { code: "D010", name: "Food & Beverage", SubGroupName: "Department" },
+        { code: "D011", name: "Engineering", SubGroupName: "Department" },
+        { code: "D012", name: "Security", SubGroupName: "Department" },
+        { code: "D013", name: "Spa & Wellness", SubGroupName: "Department" },
+        {
+          code: "D014",
+          name: "Events & Conferences",
+          SubGroupName: "Department",
+        },
+        {
+          code: "D015",
+          name: "Training & Development",
+          SubGroupName: "Department",
+        },
+      ];
+
+      this.positionOptions = [
+        {
+          code: "P001",
+          name: "Chief Executive Officer",
+          SubGroupName: "Position",
+        },
+        {
+          code: "P002",
+          name: "Chief Operating Officer",
+          SubGroupName: "Position",
+        },
+        {
+          code: "P003",
+          name: "Chief Financial Officer",
+          SubGroupName: "Position",
+        },
+        { code: "P004", name: "HR Director", SubGroupName: "Position" },
+        { code: "P005", name: "IT Director", SubGroupName: "Position" },
+        { code: "P006", name: "Marketing Director", SubGroupName: "Position" },
+        { code: "P007", name: "Operations Manager", SubGroupName: "Position" },
+        {
+          code: "P008",
+          name: "Front Office Manager",
+          SubGroupName: "Position",
+        },
+        {
+          code: "P009",
+          name: "Housekeeping Manager",
+          SubGroupName: "Position",
+        },
+        { code: "P010", name: "Executive Chef", SubGroupName: "Position" },
+        { code: "P011", name: "HR Manager", SubGroupName: "Position" },
+        { code: "P012", name: "IT Manager", SubGroupName: "Position" },
+        { code: "P013", name: "Accounting Manager", SubGroupName: "Position" },
+        {
+          code: "P014",
+          name: "Front Desk Supervisor",
+          SubGroupName: "Position",
+        },
+        { code: "P015", name: "Restaurant Manager", SubGroupName: "Position" },
+        { code: "P016", name: "HR Specialist", SubGroupName: "Position" },
+        {
+          code: "P017",
+          name: "IT Support Specialist",
+          SubGroupName: "Position",
+        },
+        { code: "P018", name: "Accountant", SubGroupName: "Position" },
+        { code: "P019", name: "Front Desk Agent", SubGroupName: "Position" },
+        { code: "P020", name: "Server", SubGroupName: "Position" },
+        { code: "P021", name: "Housekeeper", SubGroupName: "Position" },
+        {
+          code: "P022",
+          name: "Marketing Coordinator",
+          SubGroupName: "Position",
+        },
+        { code: "P023", name: "Sales Executive", SubGroupName: "Position" },
+        { code: "P024", name: "Security Officer", SubGroupName: "Position" },
+        {
+          code: "P025",
+          name: "Maintenance Technician",
+          SubGroupName: "Position",
+        },
+      ];
+
+      this.placementOptions = [
+        { code: "PL001", name: "Amora Ubud", SubGroupName: "Placement" },
+        { code: "PL002", name: "Amora Canggu", SubGroupName: "Placement" },
+        { code: "PL003", name: "Amora Seminyak", SubGroupName: "Placement" },
+        { code: "PL004", name: "Amora Nusa Dua", SubGroupName: "Placement" },
+        { code: "PL005", name: "Amora Jakarta", SubGroupName: "Placement" },
+        { code: "PL006", name: "Amora Yogyakarta", SubGroupName: "Placement" },
+        { code: "PL007", name: "Amora Bandung", SubGroupName: "Placement" },
+        { code: "PL008", name: "Amora Surabaya", SubGroupName: "Placement" },
+        { code: "PL009", name: "Amora Makassar", SubGroupName: "Placement" },
+        { code: "PL010", name: "Amora Singapore", SubGroupName: "Placement" },
+      ];
+
+      this.employeeTypeOptions = [
+        { code: "Permanent", name: "Permanent", SubGroupName: "Employee Type" },
+        { code: "Contract", name: "Contract", SubGroupName: "Employee Type" },
+        { code: "Part-time", name: "Part-time", SubGroupName: "Employee Type" },
+        { code: "Seasonal", name: "Seasonal", SubGroupName: "Employee Type" },
+        { code: "Casual", name: "Casual", SubGroupName: "Employee Type" },
+        { code: "Intern", name: "Intern", SubGroupName: "Employee Type" },
+        {
+          code: "Freelancer",
+          name: "Freelancer",
+          SubGroupName: "Employee Type",
+        },
+        {
+          code: "Contractor",
+          name: "Contractor",
+          SubGroupName: "Employee Type",
+        },
+        {
+          code: "Consultant",
+          name: "Consultant",
+          SubGroupName: "Employee Type",
+        },
+        { code: "Vendor", name: "Vendor", SubGroupName: "Employee Type" },
+        { code: "Resigned", name: "Resigned", SubGroupName: "Employee Type" },
+        { code: "Retired", name: "Retired", SubGroupName: "Employee Type" },
+        {
+          code: "Terminated",
+          name: "Terminated",
+          SubGroupName: "Employee Type",
+        },
+      ];
+
+      this.genderOptions = [
+        { code: "M", name: "Male", SubGroupName: "Gender" },
+        { code: "F", name: "Female", SubGroupName: "Gender" },
+      ];
+
+      this.paymentFrequencyOptions = [
+        { code: "Daily", name: "Daily", SubGroupName: "Payment Frequency" },
+        { code: "Weekly", name: "Weekly", SubGroupName: "Payment Frequency" },
+        {
+          code: "Bi-Weekly",
+          name: "Bi-Weekly",
+          SubGroupName: "Payment Frequency",
+        },
+        { code: "Monthly", name: "Monthly", SubGroupName: "Payment Frequency" },
+      ];
+
+      this.maritalStatusOptions = [
+        {
+          code: "TK0",
+          name: "TK0 - Single, no dependent",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "TK1",
+          name: "TK1 - Single, 1 dependent",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "TK2",
+          name: "TK2 - Single, 2 dependents",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "TK3",
+          name: "TK3 - Single, 3 dependents",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "K0",
+          name: "K0 - Married, no dependent",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "K1",
+          name: "K1 - Married, 1 dependent",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "K2",
+          name: "K2 - Married, 2 dependents",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "K3",
+          name: "K3 - Married, 3 dependents",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "KI0",
+          name: "KI0 - Married (combined income), no dependent",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "KI1",
+          name: "KI1 - Married (combined income), 1 dependent",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "KI2",
+          name: "KI2 - Married (combined income), 2 dependents",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "KI3",
+          name: "KI3 - Married (combined income), 3 dependents",
+          SubGroupName: "Marital Status",
+        },
+      ];
+
+      this.paymentMethodOptions = [
+        { code: "Cash", name: "Cash", SubGroupName: "Payment Method" },
+        {
+          code: "Transfer",
+          name: "Bank Transfer",
+          SubGroupName: "Payment Method",
+        },
+        {
+          code: "E-wallet",
+          name: "E-wallet Transfer",
+          SubGroupName: "Payment Method",
+        },
+        {
+          code: "Virtual Account",
+          name: "Virtual Account",
+          SubGroupName: "Payment Method",
+        },
+      ];
+
+      this.bankOptions = [
+        { code: "BCA", name: "Bank Central Asia (BCA)", SubGroupName: "Bank" },
+        {
+          code: "BNI",
+          name: "Bank Negara Indonesia (BNI)",
+          SubGroupName: "Bank",
+        },
+        {
+          code: "BRI",
+          name: "Bank Rakyat Indonesia (BRI)",
+          SubGroupName: "Bank",
+        },
+        { code: "Mandiri", name: "Bank Mandiri", SubGroupName: "Bank" },
+        { code: "CIMB Niaga", name: "CIMB Niaga", SubGroupName: "Bank" },
+        { code: "Danamon", name: "Bank Danamon", SubGroupName: "Bank" },
+        { code: "Permata", name: "Bank Permata", SubGroupName: "Bank" },
+        {
+          code: "BTN",
+          name: "Bank Tabungan Negara (BTN)",
+          SubGroupName: "Bank",
+        },
+        { code: "Maybank", name: "Maybank Indonesia", SubGroupName: "Bank" },
+        { code: "OCBC NISP", name: "OCBC NISP", SubGroupName: "Bank" },
+        { code: "Panin Bank", name: "Panin Bank", SubGroupName: "Bank" },
+        { code: "BTPN", name: "Bank BTPN", SubGroupName: "Bank" },
+      ];
+
+      this.documentTypeOptions = [
+        {
+          code: "DT001",
+          name: "ID Card",
+          is_required: true,
+          is_allow_expiry: true,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT002",
+          name: "Passport",
+          is_required: false,
+          is_allow_expiry: true,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT003",
+          name: "Tax ID",
+          is_required: true,
+          is_allow_expiry: false,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT004",
+          name: "Driver License",
+          is_required: false,
+          is_allow_expiry: true,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT005",
+          name: "CV/Resume",
+          is_required: true,
+          is_allow_expiry: false,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT006",
+          name: "Education Certificate",
+          is_required: true,
+          is_allow_expiry: false,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT007",
+          name: "Professional Certificate",
+          is_required: false,
+          is_allow_expiry: true,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT008",
+          name: "Employment Contract",
+          is_required: true,
+          is_allow_expiry: true,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT009",
+          name: "Bank Account Information",
+          is_required: true,
+          is_allow_expiry: false,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT010",
+          name: "Health Insurance Card",
+          is_required: false,
+          is_allow_expiry: true,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT011",
+          name: "Social Security Card",
+          is_required: false,
+          is_allow_expiry: true,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT012",
+          name: "Family Card",
+          is_required: false,
+          is_allow_expiry: true,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT013",
+          name: "Marriage Certificate",
+          is_required: false,
+          is_allow_expiry: false,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT014",
+          name: "Birth Certificate",
+          is_required: false,
+          is_allow_expiry: false,
+          SubGroupName: "Document Type",
+        },
+        {
+          code: "DT015",
+          name: "Reference Letter",
+          is_required: false,
+          is_allow_expiry: false,
+          SubGroupName: "Document Type",
+        },
+      ];
     } catch (error) {
       getError(error);
     }
@@ -340,6 +1195,38 @@ export default class Employee extends Vue {
 
   async insertData(formData: any) {
     try {
+      // for real implementation
+      // const { status2 } = await employeeAPI.InsertEmployee(formData);
+      // if (status2.status === 0) {
+      //   getToastSuccess(this.$t("messages.saveSuccess"));
+      //   this.showForm = false;
+      //   this.loadDataGrid();
+      // }
+
+      // for demo
+      const newId = Math.max(...this.rowData.map((emp: any) => emp.id)) + 1;
+      const employeeCount = this.rowData.length + 1;
+      const employeeId = `EMP${String(employeeCount).padStart(3, "0")}`;
+
+      const newEmployee = {
+        id: newId,
+        employee_id: formData.employee_id || employeeId,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        full_name: `${formData.first_name} ${formData.last_name}`,
+        ...formData,
+        created_at: formatDateTimeUTC(new Date()),
+        created_by: "Current User",
+        updated_at: formatDateTimeUTC(new Date()),
+        updated_by: "Current User",
+      };
+
+      this.rowData.push(newEmployee);
+
+      getToastSuccess(
+        this.$t("messages.saveSuccess") || "Employee added successfully"
+      );
+      this.showForm = false;
     } catch (error) {
       getError(error);
     }
@@ -347,6 +1234,34 @@ export default class Employee extends Vue {
 
   async updateData(formData: any) {
     try {
+      // for real implementation
+      // const { status2 } = await employeeAPI.UpdateEmployee(formData);
+      // if (status2.status === 0) {
+      //   getToastSuccess(this.$t("messages.updateSuccess"));
+      //   this.showForm = false;
+      //   this.loadDataGrid();
+      // }
+
+      // for demo
+      const index = this.rowData.findIndex(
+        (emp: any) => emp.id === formData.id
+      );
+      if (index !== -1) {
+        this.rowData[index] = {
+          ...this.rowData,
+          ...formData,
+          full_name: `${formData.first_name} ${formData.last_name}`,
+          updated_at: formatDateTimeUTC(new Date()),
+          updated_by: "Current User",
+        };
+
+        getToastSuccess(
+          this.$t("messages.updateSuccess") || "Employee updated successfully"
+        );
+        this.showForm = false;
+      } else {
+        getToastError("Employee not found");
+      }
     } catch (error) {
       getError(error);
     }
@@ -354,6 +1269,26 @@ export default class Employee extends Vue {
 
   async deleteData() {
     try {
+      // for real implementation
+      // const { status2 } = await employeeAPI.DeleteEmployee(this.deleteParam);
+      // if (status2.status === 0) {
+      //   getToastSuccess(this.$t("messages.deleteSuccess"));
+      //   this.showDialog = false;
+      //   this.loadDataGrid();
+      // }
+      // for demo
+
+      const index = this.rowData.findIndex(
+        (emp: any) => emp.id === this.deleteParam.id
+      );
+      if (index !== -1) {
+        this.rowData.splice(index, 1);
+        getToastSuccess(
+          this.$t("messages.deleteSuccess") || "Employee deleted successfully"
+        );
+      } else {
+        getToastError("Employee not found");
+      }
     } catch (error) {
       getError(error);
     }
@@ -366,7 +1301,7 @@ export default class Employee extends Vue {
     }
   }
 
-  // GETTER AND SETTER
+  // GETTER AND SETTER =======================================================
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
   }

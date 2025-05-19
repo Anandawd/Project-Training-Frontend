@@ -39,6 +39,25 @@ export default [
     },
   },
   {
+    path: "employee/detail/:id?",
+    name: "EmployeeDetail",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/employee/employee-detail/employee-detail.vue"
+      ),
+    meta: {
+      pageTitle: "title.employeeDetail",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.management" },
+        { title: "title.employee", url: "/employee" },
+        { title: "title.detail", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
     path: "salary-adjustment",
     name: "SalaryAdjustment",
     component: () =>

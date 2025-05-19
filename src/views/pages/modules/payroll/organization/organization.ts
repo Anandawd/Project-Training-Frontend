@@ -452,8 +452,7 @@ export default class Employee extends Vue {
     await this.$nextTick();
 
     this.modeData = mode;
-    console.log("modeData", this.modeData);
-    console.log("mode", mode);
+
     if (typeof params === "string") {
       this.currentFormType = params;
     } else {

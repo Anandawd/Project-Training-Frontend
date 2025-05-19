@@ -14,17 +14,26 @@
     </div>
 
     <!-- insert form -->
-    <transition>
-      <div class="px-2">
-        <c-input-form
-          ref="inputFormElement"
-          v-show="showForm"
-          :schema="schema"
-          :modeData="modeData"
-          @save="handleSave"
-          @close="showForm=false"
-        />
-      </div>
+    <transition name="fade"">
+      <c-input-form
+        ref="inputFormElement"
+        class="px-2"
+        v-show="showForm"
+        :schema="schema"
+        :modeData="modeData"
+        :employeeTypeOptions="employeeTypeOptions"
+        :genderOptions="genderOptions"
+        :paymentFrequencyOptions="paymentFrequencyOptions"
+        :paymentMethodOptions="paymentMethodOptions"
+        :maritalStatusOptions="maritalStatusOptions"
+        :bankOptions="bankOptions"
+        :documentTypeOptions="documentTypeOptions"
+        :departmentOptions="departmentOptions"
+        :positionOptions="positionOptions"
+        :placementOptions="placementOptions"
+        @save="handleSave"
+        @close="showForm=false"
+      />
     </transition>
 
     <!-- filter -->
@@ -113,10 +122,10 @@
       v-show="showDialog"
       dialogTitle="Confirm"
       size="sm"
-      @confirm="deleteData"
+      @confirm="confirmAction"
       @cancel="showDialog=false"
     >
-      <template #body> Are you sure to delete this data? </template>
+      <template #body>{{dialogMessage }}</template>
     </c-dialog>
 
     <!-- modal -->

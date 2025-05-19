@@ -1,0 +1,275 @@
+<section class="content">
+  <div class="container-fluid">
+    <!-- button insert -->
+    <div class="d-flex justify-content-between mb-2">
+      <button
+        title="Back"
+        type="button"
+        class="btn btn-secondary mr-1"
+        @click="handleBack"
+      >
+        <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>{{
+        $t('buttons.back') }}
+      </button>
+      <div>
+        <button
+          title="Update Employee"
+          type="button"
+          class="btn btn-warning mr-1"
+          @click="handleShowModal"
+        >
+          <i class="fa fa-edit mr-1" aria-hidden="true"></i>{{
+          $t('buttons.update') }}
+        </button>
+      </div>
+    </div>
+
+    <!-- employee detail -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{$t('title.employeeDetail')}}</h3>
+      </div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <!-- personal information -->
+          <div class="col-md-6">
+            <h5 class="mb-3">Personal Information</h5>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.payroll.employee.employeeId')}}</strong>
+              </div>
+              <div class="col-7">: {{employeeData.employee_id}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.payroll.employee.name')}}</strong>
+              </div>
+              <div class="col-7">: {{employeeData.full_name}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.payroll.employee.gender')}}</strong>
+              </div>
+              <div class="col-7">: {{employeeData.gender}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.payroll.employee.birthDate')}}</strong>
+              </div>
+              <div class="col-7">: {{employeeData.birth_date}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.payroll.employee.phone')}}</strong>
+              </div>
+              <div class="col-7">: {{employeeData.phone}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.payroll.employee.email')}}</strong>
+              </div>
+              <div class="col-7">: {{employeeData.email}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.payroll.employee.address')}}</strong>
+              </div>
+              <div class="col-7">: {{employeeData.address}}</div>
+            </div>
+          </div>
+
+          <!-- employment information -->
+          <div class="col-md-6">
+            <h5 class="mb-3">Employment Information</h5>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.payroll.employee.employeeType')}}</strong>
+              </div>
+              <div class="col-7">: {{employeeData.employee_type}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.payroll.employee.placement')}}</strong>
+              </div>
+              <div class="col-7">: {{employeeData.placement_name}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.payroll.employee.department')}}</strong>
+              </div>
+              <div class="col-7">: {{employeeData.department_name}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.payroll.employee.position')}}</strong>
+              </div>
+              <div class="col-7">: {{employeeData.position_name}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.payroll.employee.hireDate')}}</strong>
+              </div>
+              <div class="col-7">: {{employeeData.hire_date}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.payroll.employee.baseSalary')}}</strong>
+              </div>
+              <div class="col-7">
+                : Rp {{employeeData.base_salary?.toLocaleString()}}
+              </div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-5 text-muted">
+                <strong>{{$t('labels.status')}}</strong>
+              </div>
+              <div class="col-7">
+                :
+                <span
+                  :class="employeeData.status ? 'badge bg-success' : 'badge bg-danger'"
+                  class="px-3"
+                  >{{employeeData.status ? 'Active' : 'Inactive'}}</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- employee document -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{$t('title.employeeDocument')}}</h3>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <ag-grid-vue
+            :style="agGridSetting.styleAgGridFrame"
+            :class="agGridSetting.themeAgGrid"
+            :columnDefs="columnDocumentDefs"
+            :rowData="rowDocumentData"
+            :paginationPageSize="paginationPageSize"
+            :gridOptions="gridOptions"
+            :context="context"
+            :frameworkComponents="frameworkComponents"
+            :enableCellChangeFlash="true"
+            :rowSelection="rowSelection"
+            :getContextMenuItems="getContextMenu"
+            :defaultColDef="agGridSetting.defColDef"
+            :rowGroupPanelShow="rowGroupPanelShow"
+            :suppressDragLeaveHidesColumns="true"
+            :suppressMakeColumnVisibleAfterUnGroup=" true"
+            :statusBar="statusBar"
+            @grid-ready="onGridReady"
+            @cellContextMenu="handleRowRightClicked"
+          ></ag-grid-vue>
+        </div>
+      </div>
+    </div>
+
+    <!-- salary history -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{$t('title.salaryHistory')}}</h3>
+      </div>
+      <div class="card-body">
+        <ag-grid-vue
+          :style="agGridSetting.styleAgGridFrame"
+          :class="agGridSetting.themeAgGrid"
+          :columnDefs="columnSalaryDefs"
+          :rowData="rowSalaryData"
+          :paginationPageSize="paginationPageSize"
+          :gridOptions="gridOptions"
+          :context="context"
+          :frameworkComponents="frameworkComponents"
+          :enableCellChangeFlash="true"
+          :rowSelection="rowSelection"
+          :getContextMenuItems="getContextMenu"
+          :defaultColDef="agGridSetting.defColDef"
+          :rowGroupPanelShow="rowGroupPanelShow"
+          :suppressDragLeaveHidesColumns="true"
+          :suppressMakeColumnVisibleAfterUnGroup=" true"
+          :statusBar="statusBar"
+          @grid-ready="onGridReady"
+          @cellContextMenu="handleRowRightClicked"
+        ></ag-grid-vue>
+      </div>
+    </div>
+
+    <!-- salary component -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{$t('title.salaryComponent')}}</h3>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <ag-grid-vue
+            :style="agGridSetting.styleAgGridFrame"
+            :class="agGridSetting.themeAgGrid"
+            :columnDefs="columnComponentDefs"
+            :rowData="rowComponentData"
+            :paginationPageSize="paginationPageSize"
+            :gridOptions="gridOptions"
+            :context="context"
+            :frameworkComponents="frameworkComponents"
+            :enableCellChangeFlash="true"
+            :rowSelection="rowSelection"
+            :getContextMenuItems="getContextMenu"
+            :defaultColDef="agGridSetting.defColDef"
+            :rowGroupPanelShow="rowGroupPanelShow"
+            :suppressDragLeaveHidesColumns="true"
+            :suppressMakeColumnVisibleAfterUnGroup=" true"
+            :statusBar="statusBar"
+            @grid-ready="onGridReady"
+            @cellContextMenu="handleRowRightClicked"
+          ></ag-grid-vue>
+        </div>
+      </div>
+    </div>
+
+    <!-- modal -->
+    <c-modal
+      v-show="showGenerateModal"
+      :title="$t('buttons.generatePayroll')"
+      size="lg"
+      @close="showGenerateModal = false"
+      @save="handleSaveModal"
+      :isSaving="isGenerating"
+    >
+      <div @click.stop>
+        <div class="row"></div>
+        <!-- button -->
+        <div class="d-flex justify-content-end mt-2">
+          <button
+            type="button"
+            class="btn btn-danger mr-1 px-3"
+            @click="showGenerateModal = false"
+          >
+            <i class="fa fa-times" aria-hidden="true"></i>
+            {{$t('buttons.cancel')}}
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary px-3"
+            @click="handleSaveModal"
+          >
+            <i class="fa fa-play"></i>
+            {{$t('buttons.generate')}}
+          </button>
+        </div>
+      </div>
+    </c-modal>
+
+    <!-- dialog -->
+    <c-dialog
+      v-show="showDialog"
+      dialogTitle="Confirm"
+      size="sm"
+      @confirm="confirmAction"
+      @cancel="showDialog=false"
+    >
+      <template #body> {{dialogMessage}} </template>
+    </c-dialog>
+  </div>
+</section>
