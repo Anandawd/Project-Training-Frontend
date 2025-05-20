@@ -16,7 +16,7 @@
           title="Update Employee"
           type="button"
           class="btn btn-warning mr-1"
-          @click="handleShowModal"
+          @click="handleShowForm('', $global.modeData.edit)"
         >
           <i class="fa fa-edit mr-1" aria-hidden="true"></i>{{
           $t('buttons.update') }}
@@ -24,15 +24,42 @@
       </div>
     </div>
 
+    <!-- update form -->
+    <transition name="fade" mode="out-in">
+      <employee-input-form
+        ref="inputFormElement"
+        v-show="showForm"
+        :schema="schema"
+        :modeData="modeData"
+        :employeeTypeOptions="employeeTypeOptions"
+        :genderOptions="genderOptions"
+        :paymentFrequencyOptions="paymentFrequencyOptions"
+        :paymentMethodOptions="paymentMethodOptions"
+        :maritalStatusOptions="maritalStatusOptions"
+        :bankOptions="bankOptions"
+        :documentTypeOptions="documentTypeOptions"
+        :departmentOptions="departmentOptions"
+        :positionOptions="positionOptions"
+        :placementOptions="placementOptions"
+        @save="handleSave"
+        @close="showForm=false"
+      />
+    </transition>
+
     <!-- employee profile -->
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">{{$t('title.employeeProfile')}}</h3>
       </div>
       <div class="card-body">
-        <div class="row mb-3 text-sm-center text-md-left">
-          <div class="employee-avatar">
-            <div class="bg-blue" style="width: 120px; height: 120px"></div>
+        <div class="row mb-3">
+          <div class="col-md-4 mb-sm-3 mb-md-0">
+            <div
+              class="border w-100 h-100 p-4 text-center align-content-center"
+            >
+              <h5 class="mb-3">Photo Profile</h5>
+              <p>1080 x 1080 pixel</p>
+            </div>
             <!-- <img
               :src="employeeData.profile_photo || '/path/to/default-avatar.png'"
               alt="Employee Photo"
@@ -40,119 +67,96 @@
               style="width: 120px; height: 120px; object-fit: cover"
             /> -->
           </div>
+          <div class="col-md-8">
+            <!-- personal information -->
+            <div class="border p-4">
+              <h5 class="text-bold mb-1">
+                {{employeeData.full_name}} | {{employeeData.employee_id}}
+              </h5>
+              <p class="mb-2 text-gray">{{employeeData.position}}</p>
+              <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong>{{$t('labels.payroll.employee.gender')}}</strong>
+                </div>
+                <div class="col-9">: {{employeeData.gender}}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong>{{$t('labels.payroll.employee.birthDate')}}</strong>
+                </div>
+                <div class="col-9">: {{employeeData.birth_date}}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong>{{$t('labels.payroll.employee.phone')}}</strong>
+                </div>
+                <div class="col-9">: {{employeeData.phone}}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong>{{$t('labels.payroll.employee.email')}}</strong>
+                </div>
+                <div class="col-9">: {{employeeData.email}}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong>{{$t('labels.payroll.employee.address')}}</strong>
+                </div>
+                <div class="col-9">: {{employeeData.address}}</div>
+              </div>
+            </div>
+          </div>
         </div>
-
         <div class="row">
-          <div class="col-md-10">
-            <div class="row">
-              <!-- personal information -->
-              <div class="col-md-6">
-                <h5 class="mb-3">Personal Information</h5>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong
-                      >{{$t('labels.payroll.employee.employeeId')}}</strong
-                    >
-                  </div>
-                  <div class="col-7">: {{employeeData.employee_id}}</div>
+          <div class="col-12">
+            <!-- employment information -->
+            <div class="border p-4">
+              <h5 class="mb-3">Employment Information</h5>
+              <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong
+                    >{{$t('labels.payroll.employee.employeeType')}}</strong
+                  >
                 </div>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong>{{$t('labels.payroll.employee.name')}}</strong>
-                  </div>
-                  <div class="col-7">: {{employeeData.full_name}}</div>
+                <div class="col-7">: {{employeeData.employee_type}}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong>{{$t('labels.payroll.employee.placement')}}</strong>
                 </div>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong>{{$t('labels.payroll.employee.gender')}}</strong>
-                  </div>
-                  <div class="col-7">: {{employeeData.gender}}</div>
+                <div class="col-7">: {{employeeData.placement_name}}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong>{{$t('labels.payroll.employee.department')}}</strong>
                 </div>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong>{{$t('labels.payroll.employee.birthDate')}}</strong>
-                  </div>
-                  <div class="col-7">: {{employeeData.birth_date}}</div>
+                <div class="col-7">: {{employeeData.department_name}}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong>{{$t('labels.payroll.employee.hireDate')}}</strong>
                 </div>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong>{{$t('labels.payroll.employee.phone')}}</strong>
-                  </div>
-                  <div class="col-7">: {{employeeData.phone}}</div>
+                <div class="col-7">: {{employeeData.hire_date}}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong>{{$t('labels.payroll.employee.baseSalary')}}</strong>
                 </div>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong>{{$t('labels.payroll.employee.email')}}</strong>
-                  </div>
-                  <div class="col-7">: {{employeeData.email}}</div>
-                </div>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong>{{$t('labels.payroll.employee.address')}}</strong>
-                  </div>
-                  <div class="col-7">: {{employeeData.address}}</div>
+                <div class="col-7">
+                  : Rp {{employeeData.base_salary?.toLocaleString()}}
                 </div>
               </div>
-
-              <!-- employment information -->
-              <div class="col-md-6">
-                <h5 class="mb-3">Employment Information</h5>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong
-                      >{{$t('labels.payroll.employee.employeeType')}}</strong
-                    >
-                  </div>
-                  <div class="col-7">: {{employeeData.employee_type}}</div>
+              <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong>{{$t('labels.status')}}</strong>
                 </div>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong>{{$t('labels.payroll.employee.placement')}}</strong>
-                  </div>
-                  <div class="col-7">: {{employeeData.placement_name}}</div>
-                </div>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong
-                      >{{$t('labels.payroll.employee.department')}}</strong
-                    >
-                  </div>
-                  <div class="col-7">: {{employeeData.department_name}}</div>
-                </div>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong>{{$t('labels.payroll.employee.position')}}</strong>
-                  </div>
-                  <div class="col-7">: {{employeeData.position_name}}</div>
-                </div>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong>{{$t('labels.payroll.employee.hireDate')}}</strong>
-                  </div>
-                  <div class="col-7">: {{employeeData.hire_date}}</div>
-                </div>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong
-                      >{{$t('labels.payroll.employee.baseSalary')}}</strong
-                    >
-                  </div>
-                  <div class="col-7">
-                    : Rp {{employeeData.base_salary?.toLocaleString()}}
-                  </div>
-                </div>
-                <div class="row mb-2">
-                  <div class="col-5 text-muted">
-                    <strong>{{$t('labels.status')}}</strong>
-                  </div>
-                  <div class="col-7">
-                    :
-                    <span
-                      :class="employeeData.status ? 'badge bg-success' : 'badge bg-danger'"
-                      class="px-3"
-                      >{{employeeData.status ? 'Active' : 'Inactive'}}</span
-                    >
-                  </div>
+                <div class="col-7">
+                  :
+                  <span
+                    :class="employeeData.status ? 'badge bg-success' : 'badge bg-danger'"
+                    class="px-3"
+                    >{{employeeData.status ? 'Active' : 'Inactive'}}</span
+                  >
                 </div>
               </div>
             </div>

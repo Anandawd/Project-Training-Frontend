@@ -337,9 +337,10 @@ export default class Employee extends Vue {
   }
 
   handleShowDetail(params: any) {
+    console.log("handleShowDetail", params.id);
     this.$router.push({
       name: "EmployeeDetail",
-      params: { id: params.id },
+      params: { id: params.employee_id },
     });
   }
 
@@ -359,7 +360,6 @@ export default class Employee extends Vue {
   handleMenu() {}
 
   handleSave(formData: any) {
-    console.log("Handling save with data:", formData);
     const formattedData = this.formatData(formData);
 
     if (this.modeData === $global.modeData.insert) {
@@ -487,7 +487,7 @@ export default class Employee extends Vue {
           this.inputFormElement.form = this.populateForm(employee);
         });
       } else {
-        getToastError("Employee not found");
+        getToastError(this.$t("messages.employee.error.notFound"));
       }
     } catch (error) {
       getError(error);
@@ -1259,7 +1259,6 @@ export default class Employee extends Vue {
       */
 
       // for demo
-      console.log("Updating employee data:", formData);
       const index = this.rowData.findIndex(
         (emp: any) => emp.id === formData.id
       );

@@ -16,6 +16,7 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
+import EmployeeInputForm from "../employee-input-form/employee-input-form.vue";
 
 const employeeAPI = new EmployeeAPI();
 
@@ -25,11 +26,12 @@ const employeeAPI = new EmployeeAPI();
     CModal,
     CDialog,
     CSelect,
+    EmployeeInputForm,
   },
 })
 export default class EmployeeDetail extends Vue {
   // data
-  employeeId: string = "EMP002";
+  employeeId: any;
   employeeData: any = [];
   rowSalaryData: any = [];
   rowDocumentData: any = [];
@@ -104,6 +106,7 @@ export default class EmployeeDetail extends Vue {
 
   // RECYCLE LIFE FUNCTION =======================================================
   created() {
+    this.employeeId = this.$route.params.id;
     this.loadMockData();
     this.loadDropdown();
     this.loadEmployeeData();
@@ -397,7 +400,42 @@ export default class EmployeeDetail extends Vue {
     }
   }
 
-  handleSave() {}
+  async handleShowForm(params: any, mode: any) {
+    this.showForm = false;
+    await this.$nextTick();
+
+    console.log("handleShowForm clicked", mode);
+    this.modeData = mode;
+
+    this.$nextTick(() => {
+      if (mode === $global.modeData.insert) {
+        if (
+          this.inputFormElement &&
+          typeof this.inputFormElement.initialize === "function"
+        ) {
+          this.inputFormElement.initialize();
+        }
+      } else if (mode === $global.modeData.edit) {
+        this.loadEditData(params.id);
+      }
+    });
+
+    this.showForm = true;
+  }
+
+  handleSave(formData: any) {
+    const formattedData = this.formatData(formData);
+
+    if (this.modeData === $global.modeData.insert) {
+      // this.insertData(formattedData).then(() => {
+      //   this.showForm = false;
+      // });
+    } else if (this.modeData === $global.modeData.edit) {
+      this.updateData(formattedData).then(() => {
+        this.showForm = false;
+      });
+    }
+  }
 
   handleBack() {
     this.$router.push({
@@ -474,21 +512,17 @@ export default class EmployeeDetail extends Vue {
         first_name: "John",
         last_name: "Doe",
         full_name: "John Doe",
-        gender: "Male",
+        gender: "M",
         birth_date: "1985-05-15",
         address: "Jl. Raya Ubud No. 123, Ubud, Bali",
         phone: "+62812345678",
         email: "john.doe@amorahotel.com",
         hire_date: "2020-01-10",
         end_date: null,
-        position_code: "P007",
-        position_name: "Operations Manager",
-        department_code: "D007",
-        department_name: "Operations",
-        placement_code: "PL002",
-        placement_name: "Amora Canggu",
-        supervisor_id: "EMP005",
-        supervisor_name: "Michael Wilson",
+        position: "P007",
+        department: "D007",
+        placement: "PL002",
+        supervisor: "EMP005",
         employee_type: "Permanent",
         payment_frequency: "Monthly",
         daily_rate: 300000,
@@ -515,21 +549,17 @@ export default class EmployeeDetail extends Vue {
         first_name: "Jane",
         last_name: "Smith",
         full_name: "Jane Smith",
-        gender: "Female",
+        gender: "F",
         birth_date: "1990-08-22",
         address: "Jl. Sunset Road No. 45, Kuta, Bali",
         phone: "+62823456789",
         email: "jane.smith@amorahotel.com",
         hire_date: "2021-03-15",
         end_date: null,
-        position_code: "P004",
-        position_name: "HR Director",
-        department_code: "D002",
-        department_name: "Human Resources",
-        placement_code: "PL001",
-        placement_name: "Amora Ubud",
-        supervisor_id: "EMP003",
-        supervisor_name: "Robert Johnson",
+        position: "P004",
+        department: "D002",
+        placement: "PL001",
+        supervisor: "EMP003",
         employee_type: "Permanent",
         payment_frequency: "Monthly",
         daily_rate: 450000,
@@ -556,21 +586,17 @@ export default class EmployeeDetail extends Vue {
         first_name: "Robert",
         last_name: "Johnson",
         full_name: "Robert Johnson",
-        gender: "Male",
+        gender: "M",
         birth_date: "1982-12-10",
         address: "Jl. Raya Kuta No. 78, Kuta, Bali",
         phone: "+62834567890",
         email: "robert.johnson@amorahotel.com",
         hire_date: "2019-06-20",
         end_date: null,
-        position_code: "P003",
-        position_name: "Chief Financial Officer",
-        department_code: "D003",
-        department_name: "Finance",
-        placement_code: "PL001",
-        placement_name: "Amora Ubud",
-        supervisor_id: null,
-        supervisor_name: null,
+        position: "P003",
+        department: "D003",
+        placement: "PL001",
+        supervisor: null,
         employee_type: "Permanent",
         payment_frequency: "Monthly",
         daily_rate: 600000,
@@ -597,21 +623,17 @@ export default class EmployeeDetail extends Vue {
         first_name: "Emily",
         last_name: "Davis",
         full_name: "Emily Davis",
-        gender: "Female",
+        gender: "F",
         birth_date: "1988-04-30",
         address: "Jl. Legian No. 56, Kuta, Bali",
         phone: "+62845678901",
         email: "emily.davis@amorahotel.com",
         hire_date: "2022-01-05",
         end_date: null,
-        position_code: "P017",
-        position_name: "IT Support Specialist",
-        department_code: "D004",
-        department_name: "Information Technology",
-        placement_code: "PL002",
-        placement_name: "Amora Canggu",
-        supervisor_id: "EMP012",
-        supervisor_name: "David Wilson",
+        position: "P017",
+        department: "D004",
+        placement: "PL002",
+        supervisor: "EMP012",
         employee_type: "Contract",
         payment_frequency: "Monthly",
         daily_rate: 250000,
@@ -638,21 +660,17 @@ export default class EmployeeDetail extends Vue {
         first_name: "Michael",
         last_name: "Wilson",
         full_name: "Michael Wilson",
-        gender: "Male",
+        gender: "M",
         birth_date: "1980-11-18",
         address: "Jl. Pantai Kuta No. 34, Kuta, Bali",
         phone: "+62856789012",
         email: "michael.wilson@amorahotel.com",
         hire_date: "2018-08-12",
         end_date: null,
-        position_code: "P005",
-        position_name: "IT Director",
-        department_code: "D004",
-        department_name: "Information Technology",
-        placement_code: "PL001",
-        placement_name: "Amora Ubud",
-        supervisor_id: null,
-        supervisor_name: null,
+        position: "P005",
+        department: "D004",
+        placement: "PL001",
+        supervisor: null,
         employee_type: "Permanent",
         payment_frequency: "Monthly",
         daily_rate: 500000,
@@ -679,21 +697,17 @@ export default class EmployeeDetail extends Vue {
         first_name: "Sarah",
         last_name: "Johnson",
         full_name: "Sarah Johnson",
-        gender: "Female",
+        gender: "F",
         birth_date: "1992-07-25",
         address: "Jl. Raya Seminyak No. 67, Seminyak, Bali",
         phone: "+62867890123",
         email: "sarah.johnson@amorahotel.com",
         hire_date: "2020-10-03",
         end_date: null,
-        position_code: "P011",
-        position_name: "HR Manager",
-        department_code: "D002",
-        department_name: "Human Resources",
-        placement_code: "PL002",
-        placement_name: "Amora Canggu",
-        supervisor_id: "EMP002",
-        supervisor_name: "Jane Smith",
+        position: "P011",
+        department: "D002",
+        placement: "PL002",
+        supervisor: "EMP002",
         employee_type: "Permanent",
         payment_frequency: "Monthly",
         daily_rate: 350000,
@@ -720,21 +734,17 @@ export default class EmployeeDetail extends Vue {
         first_name: "James",
         last_name: "Carter",
         full_name: "James Carter",
-        gender: "Male",
+        gender: "M",
         birth_date: "1987-09-14",
         address: "Jl. Double Six No. 23, Seminyak, Bali",
         phone: "+62878901234",
         email: "james.carter@amorahotel.com",
         hire_date: "2021-05-17",
         end_date: null,
-        position_code: "P024",
-        position_name: "Security Officer",
-        department_code: "D012",
-        department_name: "Security",
-        placement_code: "PL002",
-        placement_name: "Amora Canggu",
-        supervisor_id: "EMP011",
-        supervisor_name: "Thomas Wright",
+        position: "P024",
+        department: "D012",
+        placement: "PL002",
+        supervisor: "EMP011",
         employee_type: "Contract",
         payment_frequency: "Bi-Weekly",
         daily_rate: 200000,
@@ -761,21 +771,17 @@ export default class EmployeeDetail extends Vue {
         first_name: "Jessica",
         last_name: "Walker",
         full_name: "Jessica Walker",
-        gender: "Female",
+        gender: "F",
         birth_date: "1991-02-28",
         address: "Jl. Monkey Forest No. 55, Ubud, Bali",
         phone: "+62889012345",
         email: "jessica.walker@amorahotel.com",
         hire_date: "2019-11-12",
         end_date: null,
-        position_code: "P009",
-        position_name: "Housekeeping Manager",
-        department_code: "D009",
-        department_name: "Housekeeping",
-        placement_code: "PL001",
-        placement_name: "Amora Ubud",
-        supervisor_id: "EMP001",
-        supervisor_name: "John Doe",
+        position: "P009",
+        department: "D009",
+        placement: "PL001",
+        supervisor: "EMP001",
         employee_type: "Permanent",
         payment_frequency: "Monthly",
         daily_rate: 300000,
@@ -1284,6 +1290,24 @@ export default class EmployeeDetail extends Vue {
 
   async loadEditData(params: any) {
     try {
+      /*
+      const { data } = await employeeAPI.GetEmployee(params.id);
+      this.populateForm(data);
+      */
+
+      // for demo
+      console.log("employeeData di loadEditData", this.employeeData);
+      if (this.employeeData) {
+        this.$nextTick(() => {
+          this.inputFormElement.form = this.populateForm(this.employeeData);
+          console.log(
+            "inputFormElement di loadEditData",
+            this.inputFormElement
+          );
+        });
+      } else {
+        getToastError(this.$t("messages.employee.error.notFound"));
+      }
     } catch (error) {
       getError(error);
     }
@@ -1305,7 +1329,6 @@ export default class EmployeeDetail extends Vue {
         (emp: any) => emp.employee_id === this.employeeId
       );
       if (employee) {
-        console.log("rowSalaryData before", this.rowSalaryData);
         this.employeeData = employee;
         this.rowDocumentData = this.documentsListData.filter(
           (d: any) => d.employee_id === this.employeeId
@@ -1313,7 +1336,7 @@ export default class EmployeeDetail extends Vue {
         this.rowSalaryData = this.salaryListData.filter(
           (s: any) => s.employee_id === this.employeeId
         );
-        console.log("rowSalaryData after", this.rowSalaryData);
+
         this.rowComponentData = this.componentsListData.filter(
           (p: any) => p.employee_id === this.employeeId
         );
@@ -1360,9 +1383,129 @@ export default class EmployeeDetail extends Vue {
 
   async updateData(formData: any) {
     try {
+      /*
+      const { status2 } = await employeeAPI.UpdateEmployee(formData);
+      if (status2.status == 0) {
+        this.loadDataGrid(this.searchDefault);
+        this.showForm = false;
+        getToastSuccess(this.$t("messages.saveSuccess"));
+      }
+      */
+
+      // for demo
+      this.employeeData = {
+        ...formData,
+        updated_at: formatDateTimeUTC(new Date()),
+        updated_by: "Current User",
+      };
+
+      getToastSuccess(this.$t("messages.employee.success.update"));
     } catch (error) {
-      getError;
+      getError(error);
+      return false;
     }
+  }
+
+  // HELPER =======================================================
+  formatData(params: any) {
+    return {
+      id: params.id,
+
+      // personal information
+      employee_id: params.employee_id,
+      first_name: params.first_name,
+      last_name: params.last_name,
+      gender: params.gender,
+      birth_date: params.birth_date,
+      address: params.address,
+      phone: params.phone,
+      email: params.email,
+
+      // employment information
+      hire_date: params.hire_date,
+      end_date: params.end_date,
+      status: params.status === "A" ? true : false,
+      employee_type: params.employee_type,
+      placement: params.placement,
+      position: params.position,
+      department: params.department,
+      supervisor: params.supervisor,
+
+      // salary & payment information
+      payment_frequency: params.payment_frequency,
+      base_salary: params.base_salary,
+      daily_rate: params.daily_rate,
+      payment_method: params.payment_method,
+      bank_name: params.bank_name,
+      bank_account_number: params.bank_account_number,
+      bank_account_name: params.bank_account_name,
+
+      // identity information
+      tax_number: params.tax_number,
+      identity_number: params.identity_number,
+      marital_status: params.marital_status,
+      health_insurance_number: params.health_insurance_number,
+      social_security_number: params.social_security_number,
+      created_at: formatDateTimeUTC(params.created_at),
+      created_by: formatDateTimeUTC(params.created_by),
+      updated_at: formatDateTimeUTC(params.updated_at),
+      updated_by: formatDateTimeUTC(params.updated_by),
+    };
+  }
+
+  populateForm(params: any) {
+    if (!params) {
+      console.error("Invalid data for form population:", params);
+      return;
+    }
+
+    this.$nextTick(() => {
+      this.inputFormElement.form = {
+        id: params.id,
+
+        // personal information
+        employee_id: params.employee_id,
+        first_name: params.first_name,
+        last_name: params.last_name,
+        gender: params.gender,
+        birth_date: params.birth_date,
+        address: params.address,
+        phone: params.phone,
+        email: params.email,
+
+        // employment information
+        hire_date: params.hire_date,
+        end_date: params.end_date,
+        status: params.status ? "A" : "I",
+        employee_type: params.employee_type,
+        placement: params.placement,
+        position: params.position,
+        department: params.department,
+        supervisor: params.supervisor,
+
+        // salary & payment information
+        payment_frequency: params.payment_frequency,
+        base_salary: params.base_salary,
+        daily_rate: params.daily_rate,
+        payment_method: params.payment_method,
+        bank_name: params.bank_name,
+        bank_account_number: params.bank_account_number,
+        bank_account_name: params.bank_account_name,
+
+        // identity information
+        tax_number: params.tax_number,
+        identity_number: params.identity_number,
+        marital_status: params.marital_status,
+        health_insurance_number: params.health_insurance_number,
+        social_security_number: params.social_security_number,
+
+        // modified
+        created_at: params.created_at,
+        created_by: params.created_by,
+        updated_at: params.updated_at,
+        updated_by: params.updated_by,
+      };
+    });
   }
 
   // GETTER AND SETTER =======================================================
