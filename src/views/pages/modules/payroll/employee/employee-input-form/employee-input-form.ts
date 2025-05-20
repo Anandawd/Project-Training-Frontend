@@ -134,10 +134,10 @@ export default class InputForm extends Vue {
       end_date: null,
       status: "A",
       employee_type: "Permanent",
-      position_code: "",
-      department_code: "",
-      placement_code: "",
-      supervisor_id: "",
+      position: "",
+      department: "",
+      placement: "",
+      supervisor: "",
 
       // salary & payment information
       payment_frequency: "Monthly",
@@ -154,6 +154,11 @@ export default class InputForm extends Vue {
       marital_status: "TK0",
       health_insurance_number: "",
       social_security_number: "",
+
+      created_at: "",
+      created_by: "",
+      updated_at: "",
+      updated_by: "",
 
       // attendance and leave data
       // workSchedule: "",
@@ -200,7 +205,7 @@ export default class InputForm extends Vue {
   get schema() {
     return Yup.object().shape({
       // personal information
-      EmployeeId: Yup.string().required(),
+      EmployeeId: Yup.string().required("Employee ID must be fill"),
       Firstname: Yup.string().required(),
       Lastname: Yup.string().required(),
       // Gender: Yup.string().required(),
@@ -214,6 +219,7 @@ export default class InputForm extends Vue {
       Position: Yup.string().required(),
 
       // salary & payment information
+      BaseSalary: Yup.number().required().min(0),
       PaymentFrequency: Yup.string().required(),
       PaymentMethod: Yup.string().required(),
       BankName: Yup.string().required(),

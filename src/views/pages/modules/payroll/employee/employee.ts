@@ -142,19 +142,19 @@ export default class Employee extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.employee.department"),
-        field: "department_name",
+        field: "department",
         width: 150,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.position"),
-        field: "position_name",
+        field: "position",
         width: 150,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.placement"),
-        field: "placement_name",
+        field: "placement",
         width: 150,
         enableRowGroup: true,
       },
@@ -379,7 +379,7 @@ export default class Employee extends Vue {
 
   handleDelete(params: any) {
     this.deleteParam = params.id;
-    this.dialogMessage = this.$t("messages.employee.confirmDeleteEmployee");
+    this.dialogMessage = this.$t("messages.employee.confirm.delete");
     this.dialogAction = "delete";
     this.showDialog = true;
   }
@@ -509,14 +509,10 @@ export default class Employee extends Vue {
         email: "john.doe@amorahotel.com",
         hire_date: "2020-01-10",
         end_date: null,
-        position_code: "P007",
-        position_name: "Operations Manager",
-        department_code: "D007",
-        department_name: "Operations",
-        placement_code: "PL002",
-        placement_name: "Amora Canggu",
-        supervisor_id: "EMP005",
-        supervisor_name: "Michael Wilson",
+        position: "P007",
+        department: "D007",
+        placement: "PL002",
+        supervisor: "EMP005",
         employee_type: "Permanent",
         payment_frequency: "Monthly",
         daily_rate: 300000,
@@ -550,14 +546,10 @@ export default class Employee extends Vue {
         email: "jane.smith@amorahotel.com",
         hire_date: "2021-03-15",
         end_date: null,
-        position_code: "P004",
-        position_name: "HR Director",
-        department_code: "D002",
-        department_name: "Human Resources",
-        placement_code: "PL001",
-        placement_name: "Amora Ubud",
-        supervisor_id: "EMP003",
-        supervisor_name: "Robert Johnson",
+        position: "P004",
+        department: "D002",
+        placement: "PL001",
+        supervisor: "EMP003",
         employee_type: "Permanent",
         payment_frequency: "Monthly",
         daily_rate: 450000,
@@ -591,14 +583,10 @@ export default class Employee extends Vue {
         email: "robert.johnson@amorahotel.com",
         hire_date: "2019-06-20",
         end_date: null,
-        position_code: "P003",
-        position_name: "Chief Financial Officer",
-        department_code: "D003",
-        department_name: "Finance",
-        placement_code: "PL001",
-        placement_name: "Amora Ubud",
-        supervisor_id: null,
-        supervisor_name: null,
+        position: "P003",
+        department: "D003",
+        placement: "PL001",
+        supervisor: null,
         employee_type: "Permanent",
         payment_frequency: "Monthly",
         daily_rate: 600000,
@@ -632,14 +620,10 @@ export default class Employee extends Vue {
         email: "emily.davis@amorahotel.com",
         hire_date: "2022-01-05",
         end_date: null,
-        position_code: "P017",
-        position_name: "IT Support Specialist",
-        department_code: "D004",
-        department_name: "Information Technology",
-        placement_code: "PL002",
-        placement_name: "Amora Canggu",
-        supervisor_id: "EMP012",
-        supervisor_name: "David Wilson",
+        position: "P017",
+        department: "D004",
+        placement: "PL002",
+        supervisor: "EMP012",
         employee_type: "Contract",
         payment_frequency: "Monthly",
         daily_rate: 250000,
@@ -673,14 +657,10 @@ export default class Employee extends Vue {
         email: "michael.wilson@amorahotel.com",
         hire_date: "2018-08-12",
         end_date: null,
-        position_code: "P005",
-        position_name: "IT Director",
-        department_code: "D004",
-        department_name: "Information Technology",
-        placement_code: "PL001",
-        placement_name: "Amora Ubud",
-        supervisor_id: null,
-        supervisor_name: null,
+        position: "P005",
+        department: "D004",
+        placement: "PL001",
+        supervisor: null,
         employee_type: "Permanent",
         payment_frequency: "Monthly",
         daily_rate: 500000,
@@ -714,14 +694,10 @@ export default class Employee extends Vue {
         email: "sarah.johnson@amorahotel.com",
         hire_date: "2020-10-03",
         end_date: null,
-        position_code: "P011",
-        position_name: "HR Manager",
-        department_code: "D002",
-        department_name: "Human Resources",
-        placement_code: "PL002",
-        placement_name: "Amora Canggu",
-        supervisor_id: "EMP002",
-        supervisor_name: "Jane Smith",
+        position: "P011",
+        department: "D002",
+        placement: "PL002",
+        supervisor: "EMP002",
         employee_type: "Permanent",
         payment_frequency: "Monthly",
         daily_rate: 350000,
@@ -756,13 +732,9 @@ export default class Employee extends Vue {
         hire_date: "2021-05-17",
         end_date: null,
         position: "P024",
-        position_name: "Security Officer",
         department: "D012",
-        department_name: "Security",
         placement: "PL002",
-        placement_name: "Amora Canggu",
         supervisor: "EMP011",
-        supervisor_name: "Thomas Wright",
         employee_type: "Contract",
         payment_frequency: "Bi-Weekly",
         daily_rate: 200000,
@@ -796,14 +768,10 @@ export default class Employee extends Vue {
         email: "jessica.walker@amorahotel.com",
         hire_date: "2019-11-12",
         end_date: null,
-        position_code: "P009",
-        position_name: "Housekeeping Manager",
-        department_code: "D009",
-        department_name: "Housekeeping",
-        placement_code: "PL001",
-        placement_name: "Amora Ubud",
-        supervisor_id: "EMP001",
-        supervisor_name: "John Doe",
+        position: "P009",
+        department: "D009",
+        placement: "PL001",
+        supervisor: "EMP001",
         employee_type: "Permanent",
         payment_frequency: "Monthly",
         daily_rate: 300000,
@@ -1266,10 +1234,14 @@ export default class Employee extends Vue {
       };
 
       this.rowData.push(newEmployee);
-      await this.loadDataGrid();
+      setTimeout(() => {
+        if (this.gridApi) {
+          this.gridApi.setRowData([...this.rowData]);
+          // this.gridApi.refreshCells({ force: true });
+        }
 
-      getToastSuccess(this.$t("messages.employee.saveEmployeeSuccess"));
-      this.showForm = false;
+        getToastSuccess(this.$t("messages.employee.success.save"));
+      }, 50);
     } catch (error) {
       getError(error);
     }
@@ -1292,13 +1264,21 @@ export default class Employee extends Vue {
         (emp: any) => emp.id === formData.id
       );
       if (index !== -1) {
-        this.rowData[index] = { ...formData };
-        await this.loadDataGrid();
+        this.rowData[index] = {
+          ...formData,
+          updated_at: formatDateTimeUTC(new Date()),
+          updated_by: "Current User",
+        };
+        setTimeout(() => {
+          if (this.gridApi) {
+            this.gridApi.setRowData([...this.rowData]);
+            // this.gridApi.refreshCells({ force: true });
+          }
 
-        getToastSuccess(this.$t("messages.employee.updateEmployeeSuccess"));
-        return { status: 0 };
+          getToastSuccess(this.$t("messages.employee.success.update"));
+        }, 50);
       } else {
-        getToastError("Employee not found");
+        getToastError(this.$t("messages.employee.error.notFound"));
         return { status: 1 };
       }
     } catch (error) {
@@ -1324,7 +1304,7 @@ export default class Employee extends Vue {
 
       await this.loadDataGrid();
 
-      getToastSuccess(this.$t("messages.employee.deleteEmployeeSuccess"));
+      getToastSuccess(this.$t("messages.employee.success.delete"));
     } catch (error) {
       getError(error);
       return false;
@@ -1353,10 +1333,10 @@ export default class Employee extends Vue {
       end_date: params.end_date,
       status: params.status === "A" ? true : false,
       employee_type: params.employee_type,
-      placement_code: params.placement_code,
-      position_code: params.position_code,
-      department_code: params.department_code,
-      supervisor_id: params.supervisor_id,
+      placement: params.placement,
+      position: params.position,
+      department: params.department,
+      supervisor: params.supervisor,
 
       // salary & payment information
       payment_frequency: params.payment_frequency,
@@ -1373,6 +1353,10 @@ export default class Employee extends Vue {
       marital_status: params.marital_status,
       health_insurance_number: params.health_insurance_number,
       social_security_number: params.social_security_number,
+      created_at: formatDateTimeUTC(params.created_at),
+      created_by: formatDateTimeUTC(params.created_by),
+      updated_at: formatDateTimeUTC(params.updated_at),
+      updated_by: formatDateTimeUTC(params.updated_by),
     };
   }
 
@@ -1401,10 +1385,10 @@ export default class Employee extends Vue {
         end_date: params.end_date,
         status: params.status ? "A" : "I",
         employee_type: params.employee_type,
-        placement_code: params.placement_code,
-        position_code: params.position_code,
-        department_code: params.department_code,
-        supervisor_id: params.supervisor_id,
+        placement: params.placement,
+        position: params.position,
+        department: params.department,
+        supervisor: params.supervisor,
 
         // salary & payment information
         payment_frequency: params.payment_frequency,
@@ -1421,6 +1405,12 @@ export default class Employee extends Vue {
         marital_status: params.marital_status,
         health_insurance_number: params.health_insurance_number,
         social_security_number: params.social_security_number,
+
+        // modified
+        created_at: params.created_at,
+        created_by: params.created_by,
+        updated_at: params.updated_at,
+        updated_by: params.updated_by,
       };
     });
   }
