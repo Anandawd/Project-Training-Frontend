@@ -264,7 +264,7 @@
                 :columnDefs="columnSalaryDefs"
                 :rowData="rowSalaryData"
                 :paginationPageSize="paginationPageSize"
-                :gridOptions="Object.assign({}, gridOptions, { id: 'salaries-tab-grid' })"
+                :gridOptions="Object.assign({}, salaryGridOptions, { id: 'salaries-tab-grid' })"
                 :context="context"
                 :frameworkComponents="frameworkComponents"
                 :enableCellChangeFlash="true"
@@ -398,6 +398,7 @@
               id="BaseSalary"
               class="row mb-1"
               :label="$t('labels.payroll.employee.baseSalary')"
+              :disabled="modeData === $global.modeData.edit"
               v-model="currentForm.base_salary"
             />
           </div>
@@ -407,10 +408,11 @@
               name="EffectiveDate"
               id="EffectiveDate"
               customLabelClass="col-3  mb-1"
-              :label="$t('labels.payroll.employee.effectiveDate')"
               type="date"
               valueType="YYYY-MM-DD"
               format="DD/MM/YYYY"
+              :label="$t('labels.payroll.employee.effectiveDate')"
+              :disabled="modeData === $global.modeData.edit"
               v-model="currentForm.effective_date"
             />
           </div>
@@ -423,6 +425,7 @@
               labelName="name"
               keyName="code"
               v-model="currentForm.adjustment_reason"
+              :disabled="modeData === $global.modeData.edit"
               :label="$t('labels.payroll.employee.adjustmentReason')"
               :options="adjustmentReasonOptions"
             />

@@ -21,6 +21,7 @@ import {
 import $global from "@/utils/global";
 import { getToastError, getToastSuccess } from "@/utils/toast";
 import "ag-grid-enterprise";
+import { GridApi } from "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
@@ -144,7 +145,6 @@ export default class EmployeeDetail extends Vue {
       actionGrid: {
         insert: true,
         edit: true,
-        delete: true,
       },
       rowHeight: $global.agGrid.rowHeightDefault,
       headerHeight: $global.agGrid.headerHeight,
@@ -519,13 +519,17 @@ export default class EmployeeDetail extends Vue {
       },
       {
         name: this.$t("commons.contextMenu.update"),
-        disabled: !this.paramsData || !this.paramsData.is_current,
+        disabled:
+          !this.paramsData ||
+          (!this.paramsData.is_current && this.paramsData.base_salary),
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () => this.handleEdit(this.paramsData),
       },
       {
         name: this.$t("commons.contextMenu.delete"),
-        disabled: !this.paramsData || !this.paramsData.is_current,
+        disabled:
+          !this.paramsData ||
+          (!this.paramsData.is_current && this.paramsData.base_salary),
         icon: generateIconContextMenuAgGrid("delete_icon24"),
         action: () => this.handleDelete(this.paramsData),
       },
@@ -578,6 +582,8 @@ export default class EmployeeDetail extends Vue {
     console.log("handleShowModal type clicked", type);
     this.modalMode = mode;
     this.modalType = type;
+    this.currentForm = this.formatModalData(params, this.modalType);
+    console.log("currentForm di handleSHowModal", this.currentForm);
 
     this.$nextTick(() => {
       if (mode === $global.modeData.insert) {
@@ -607,9 +613,9 @@ export default class EmployeeDetail extends Vue {
                 base_salary: currentSalary
                   ? currentSalary.base_salary
                   : this.employeeData.base_salary || 0,
-                effective_date: currentSalary.effective_date,
-                adjustment_reason: currentSalary.adjustment_reason,
-                remark: currentSalary.remark,
+                effective_date: "",
+                adjustment_reason: "",
+                remark: "",
                 employee_id: this.employeeId,
               };
             case "BENEFIT":
@@ -640,8 +646,15 @@ export default class EmployeeDetail extends Vue {
               status: params.status,
               employee_id: this.employeeId,
             };
-
           case "SALARY":
+            this.currentForm = {
+              id: params.id,
+              base_salary: params.base_salary,
+              effective_date: params.effective_date,
+              adjustment_reason: params.adjustment_reason,
+              remark: params.remark,
+              employee_id: this.employeeId,
+            };
             break;
           case "BEENFIT":
             this.currentForm = {
@@ -663,41 +676,50 @@ export default class EmployeeDetail extends Vue {
 
   async handleSaveModal() {
     console.log("handleSaveModal clicked");
+    console.log("currentForm sebelum diformat", this.currentForm);
 
     const formattedData = this.formatModalData(
       this.currentForm,
       this.modalType
     );
 
+    console.log("currentForm setelah diformat", formattedData);
+
     if (this.modalMode === $global.modeData.insert) {
       switch (this.modalType) {
         case "DOCUMENT":
-          this.saveDocument(formattedData).then(() => {
+          this.insertDocument(formattedData).then(() => {
             this.closeModal;
           });
+          break;
         case "SALARY":
           this.insertSalary(formattedData).then(() => {
             this.closeModal;
           });
+          break;
         case "BENEFIT":
           this.insertBenefit(formattedData).then(() => {
             this.closeModal;
           });
+          break;
       }
     } else if (this.modalMode === $global.modeData.edit) {
       switch (this.modalType) {
         case "DOCUMENT":
-          this.saveDocument(formattedData).then(() => {
+          this.updateDocument(formattedData).then(() => {
             this.closeModal;
           });
+          break;
         case "SALARY":
           this.updateSalary(formattedData).then(() => {
             this.closeModal;
           });
+          break;
         case "BENEFIT":
           this.updateBenefit(formattedData).then(() => {
             this.closeModal;
           });
+          break;
       }
     }
   }
@@ -727,7 +749,7 @@ export default class EmployeeDetail extends Vue {
   }
 
   handleEdit(params: any) {
-    if (!params || !params.is_current) return;
+    if (!params || (!params.is_current && params.base_salary)) return;
 
     this.dataType = this.getDataType(params);
 
@@ -735,7 +757,7 @@ export default class EmployeeDetail extends Vue {
   }
 
   handleDelete(params: any) {
-    if (!params || !params.is_current) return;
+    if (!params) return;
 
     this.dataType = this.getDataType(params);
 
@@ -744,14 +766,36 @@ export default class EmployeeDetail extends Vue {
 
     switch (this.dataType) {
       case "DOCUMENT":
-        this.dialogMessage = this.$t("messages.confirmDeleteDocument");
+        this.dialogMessage = this.$t(
+          "messages.employee.confirm.documentDelete"
+        );
+        break;
+      case "SALARY":
+        this.dialogMessage = this.$t("messages.employee.confirm.salaryDelete");
         break;
       case "BENEFIT":
-        this.dialogMessage = this.$t("messages.confirmDeleteSalaryComponent");
+        this.dialogMessage = this.$t("messages.employee.confirm.benefitDelete");
         break;
     }
 
     this.showDialog = true;
+  }
+
+  confirmAction() {
+    this.showDialog = false;
+
+    if (!this.deleteParam) return;
+
+    switch (this.dataType) {
+      case "DOCUMENT":
+        this.deleteDocument();
+        break;
+      case "BENEFIT":
+        this.deleteBenefit();
+        break;
+    }
+
+    this.deleteParam = null;
   }
 
   handleBack() {
@@ -765,24 +809,6 @@ export default class EmployeeDetail extends Vue {
       this.currentForm.file = event.target.files[0];
       this.currentForm.file_name = event.target.files[0].name;
     }
-  }
-
-  confirmAction() {
-    // if (this.dialogAction === "submit") {
-    //   this.handleSubmit();
-    // } else if (this.dialogAction === "delete") {
-    //   this.handleDelete(this.paramsData);
-    // } else if (this.dialogAction === "saveAndhandleBack") {
-    //   this.handleSave().then((success) => {
-    //     if (success) {
-    //       this.$router.push({
-    //         name: "PayrollPeriods",
-    //       });
-    //     }
-    //   });
-    // }
-
-    this.showDialog = false;
   }
 
   refreshData(search: any) {
@@ -804,6 +830,42 @@ export default class EmployeeDetail extends Vue {
       ]);
     } catch (error) {
       getError(error);
+    }
+  }
+
+  async loadDataGrid(type: any = this.dataType) {
+    let gridApi: GridApi;
+    switch (type) {
+      case "DOCUMENT":
+        gridApi = this.documentGridApi;
+        break;
+      case "SALARY":
+        gridApi = this.salaryGridApi;
+        break;
+      case "BENEFIT":
+        gridApi = this.benefitGridApi;
+        break;
+    }
+
+    if (gridApi) {
+      let rowData;
+      switch (type) {
+        case "DOCUMENT":
+          rowData = [...this.rowDocumentData];
+          break;
+        case "SALARY":
+          rowData = [...this.rowSalaryData];
+          break;
+        case "BENEFIT":
+          rowData = [...this.rowBenefitData];
+          break;
+      }
+
+      gridApi.setRowData(rowData);
+
+      setTimeout(() => {
+        // gridApi.refreshCells({ force: true });
+      }, 100);
     }
   }
 
@@ -1623,90 +1685,59 @@ export default class EmployeeDetail extends Vue {
     }
   }
 
-  async saveDocument(formData: any) {
+  async insertDocument(formData: any) {
     try {
       this.isSaving = true;
 
-      if (!this.currentForm.document_type || !this.currentForm.issue_date) {
+      console.log("insertDocument", formData);
+      if (!formData.document_type || !formData.issue_date) {
         getToastError(this.$t("messages.employee.error.fillRequired"));
         this.isSaving = false;
         return;
       }
 
-      if (this.modalMode === $global.modeData.edit) {
-        // const formData = new FormData();
-        // formData.append('id', this.currentForm.id);
-        // formData.append('employeeId', this.employeeId);
-        // formData.append('documentType', this.currentForm.document_type);
-        // formData.append('issueDate', this.currentForm.issue_date);
-        // formData.append('expiryDate', this.currentForm.expiry_date || '');
-        // formData.append('remark', this.currentForm.remark || '');
-        // if (this.currentForm.file) {
-        //   formData.append('file', this.currentForm.file);
-        // }
-        // const { status2 } = await employeeAPI.UpdateEmployeeDocument(formData);
+      // const formData = new FormData();
+      // const formDataToSend = new FormData();
+      // formDataToSend.append('employeeId', this.employeeId);
+      // formDataToSend.append('documentType', formData.document_type);
+      // formDataToSend.append('issueDate', formData.issue_date);
+      // formDataToSend.append('expiryDate', formData.expiry_date || '');
+      // formDataToSend.append('remark', formData.remark || '');
+      // if (formData.file) {
+      //   formDataToSend.append('file', formData.file);
+      // }
 
-        // Mock implementation
-        const index = this.documentData.findIndex(
-          (item) => item.id === this.currentForm.id
-        );
-        if (index !== -1) {
-          this.documentData[index] = {
-            ...this.documentData[index],
-            document_type: this.currentForm.document_type,
-            file_name: this.currentForm.file
-              ? this.currentForm.file.name
-              : this.documentData[index].file_name,
-            file_path: this.currentForm.file
-              ? `/uploads/${this.currentForm.file.name}`
-              : this.documentData[index].file_path,
-            issue_date: this.currentForm.issue_date,
-            expiry_date: this.currentForm.expiry_date,
-            remark: this.currentForm.remark,
-            status: this.currentForm.status,
-          };
-        }
+      // const { status2 } = await employeeAPI.InsertEmployeeDocument(formDataToSend);
 
-        getToastSuccess(this.$t("messages.employee.success.documentUpdated"));
-      } else {
-        // const formData = new FormData();
-        // formData.append('employeeId', this.employeeId);
-        // formData.append('documentType', this.currentForm.document_type);
-        // formData.append('issueDate', this.currentForm.issue_date);
-        // formData.append('expiryDate', this.currentForm.expiry_date || '');
-        // formData.append('remark', this.currentForm.remark || '');
-        // if (this.currentForm.file) {
-        //   formData.append('file', this.currentForm.file);
-        // }
-        // const { status2 } = await employeeAPI.InsertEmployeeDocument(formData);
+      // Mock implementation
+      const newId =
+        Math.max(...this.rowDocumentData.map((doc: any) => doc.id || 0), 0) + 1;
+      const newDocument = {
+        id: newId,
+        employee_id: this.employeeId,
+        document_type: formData.document_type,
+        file_name: formData.file ? formData.file.name : `document_${newId}.pdf`,
+        file_path: formData.file
+          ? `/uploads/${formData.file.name}`
+          : `/uploads/document_${newId}.pdf`,
+        file_type: formData.file ? formData.file.type : "application/pdf",
+        file_size: formData.file ? formData.file.size : 1024000,
+        issue_date: formData.issue_date,
+        expiry_date: formData.expiry_date,
+        remark: formData.remark,
+        status: this.calculateDocumentStatus(formData.expiry_date),
+        created_at: formatDateTimeUTC(new Date()),
+        created_by: "Current User",
+        updated_at: formatDateTimeUTC(new Date()),
+        updated_by: "Current User",
+      };
 
-        // Mock implementation
-        const newId =
-          Math.max(...this.documentData.map((doc) => doc.id), 0) + 1;
-        const newDocument = {
-          id: newId,
-          document_type: this.currentForm.document_type,
-          file_name: this.currentForm.file
-            ? this.currentForm.file.name
-            : "document.pdf",
-          file_path: this.currentForm.file
-            ? `/uploads/${this.currentForm.file.name}`
-            : "/uploads/document.pdf",
-          issue_date: this.currentForm.issue_date,
-          expiry_date: this.currentForm.expiry_date,
-          remark: this.currentForm.remark,
-          status: "Valid",
-          employee_id: this.employeeId,
-        };
-
-        this.documentData.push(newDocument);
-
-        getToastSuccess(this.$t("messages.employee.success.documentUpload"));
-      }
+      this.rowDocumentData.push(newDocument);
+      getToastSuccess(this.$t("messages.employee.success.documentUpload"));
 
       // Refresh data grid
       if (this.documentGridApi) {
-        this.documentGridApi.setRowData(this.documentData);
+        this.documentGridApi.setRowData(this.rowDocumentData);
       }
     } catch (error) {
       getError(error);
@@ -1717,55 +1748,322 @@ export default class EmployeeDetail extends Vue {
 
   async updateDocument(formData: any) {
     try {
+      this.isSaving = true;
+
+      console.log("updateDocument", formData);
+      // Basic validation
+      if (!formData.document_type || !formData.issue_date) {
+        getToastError(this.$t("messages.employee.error.fillRequired"));
+        this.isSaving = false;
+        return;
+      }
+
+      // For real implementation with API
+      // const formDataToSend = new FormData();
+      // formDataToSend.append('employeeId', this.employeeId);
+      // formDataToSend.append('documentType', formData.document_type);
+      // formDataToSend.append('issueDate', formData.issue_date);
+      // formDataToSend.append('expiryDate', formData.expiry_date || '');
+      // formDataToSend.append('remark', formData.remark || '');
+      // if (formData.file) {
+      //   formDataToSend.append('file', formData.file);
+      // }
+
+      // const { status2 } = await employeeAPI.UpdateEmployeeDocument(formDataToSend);
+
+      // Mock implementation
+      const index = this.rowDocumentData.findIndex(
+        (item: any) => item.id === formData.id
+      );
+      if (index !== -1) {
+        this.rowDocumentData[index] = {
+          ...this.rowDocumentData[index],
+          document_type: formData.document_type,
+          file_name: formData.file
+            ? formData.file.name
+            : this.rowDocumentData[index].file_name,
+          file_path: formData.file
+            ? `/uploads/${formData.file.name}`
+            : this.rowDocumentData[index].file_path,
+          issue_date: formData.issue_date,
+          expiry_date: formData.expiry_date,
+          remark: formData.remark,
+          status: this.calculateDocumentStatus(formData.expiry_date),
+          updated_at: formatDateTimeUTC(new Date()),
+          updated_by: "Current User",
+        };
+      }
+
+      getToastSuccess(this.$t("messages.employee.success.documentUpdated"));
+
+      // Refresh data grid
+      if (this.documentGridApi) {
+        this.documentGridApi.setRowData(this.rowDocumentData);
+      }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
-  async deleteDocument(formData: any) {
+  async deleteDocument() {
     try {
+      // const { status2 } = await employeeAPI.DeleteEmployeeDocument(this.deleteParam.id);
+
+      this.rowDocumentData = this.rowDocumentData.filter(
+        (item: any) => item.id !== this.deleteParam.id
+      );
+
+      // Refresh grid
+      if (this.documentGridApi) {
+        this.documentGridApi.setRowData(this.rowDocumentData);
+      }
+
+      getToastSuccess(this.$t("messages.employee.success.documentDeleted"));
+      return { status: 1 };
     } catch (error) {
       getError(error);
+      return { status: 0 };
+    } finally {
+      this.showDialog = false;
     }
   }
 
   async insertSalary(formData: any) {
     try {
+      this.isSaving = true;
+
+      if (
+        !formData.base_salary ||
+        !formData.effective_date ||
+        !formData.adjustment_reason
+      ) {
+        getToastError(this.$t("messages.employee.error.fillRequired"));
+        this.isSaving = false;
+        return;
+      }
+
+      // const { status2 } = await employeeAPI.InsertEmployeeSalary(formData);
+
+      // Mock implementation
+      // First, update all existing salaries to not be current
+      this.rowSalaryData.forEach((item: any) => {
+        if (item.is_current) {
+          item.is_current = false;
+          item.end_date = formData.effective_date;
+        }
+      });
+
+      const newId =
+        Math.max(
+          ...this.rowSalaryData.map((salary: any) => salary.id || 0),
+          0
+        ) + 1;
+      const newSalary = {
+        id: newId,
+        employee_id: this.employeeId,
+        base_salary: parseFloat(formData.base_salary),
+        effective_date: formData.effective_date,
+        end_date: "",
+        is_current: true,
+        remark:
+          formData.remark || `Salary adjustment: ${formData.adjustment_reason}`,
+        created_at: formatDateTimeUTC(new Date()),
+        created_by: "Current User",
+        updated_at: formatDateTimeUTC(new Date()),
+        updated_by: "Current User",
+      };
+
+      this.rowSalaryData.push(newSalary);
+
+      // Update employee's current base salary
+      if (this.employeeData) {
+        this.employeeData.base_salary = parseFloat(formData.base_salary);
+      }
+
+      // Refresh data grid
+      if (this.salaryGridApi) {
+        this.salaryGridApi.setRowData(this.rowSalaryData);
+      }
+
+      getToastSuccess(this.$t("messages.employee.success.salaryUpdated"));
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
   async updateSalary(formData: any) {
     try {
-    } catch (error) {
-      getError(error);
-    }
-  }
+      this.isSaving = true;
+      getToastError(this.$t("messages.employee.error.cannotEditSalary"));
 
-  async deleteSalary(formData: any) {
-    try {
+      // For certain cases where you might want to update remarks or other non-critical fields:
+      /*
+    const index = this.rowSalaryData.findIndex(
+      (item: any) => item.id === formData.id
+    );
+    
+    if (index !== -1) {
+      this.rowSalaryData[index] = {
+        ...this.rowSalaryData[index],
+        remark: formData.remark,
+        updated_at: formatDateTimeUTC(new Date()),
+        updated_by: "Current User"
+      };
+      
+      // Refresh grid
+      if (this.salaryGridApi) {
+        this.salaryGridApi.setRowData(this.rowSalaryData);
+      }
+      
+      getToastSuccess(this.$t("messages.employee.success.salaryUpdated"));
+      this.closeModal();
+    }
+    */
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
   async insertBenefit(formData: any) {
     try {
+      this.isSaving = true;
+
+      if (
+        !formData.component_type ||
+        !formData.component ||
+        !formData.amount ||
+        !formData.effective_date
+      ) {
+        getToastError(this.$t("messages.employee.error.fillRequired"));
+        this.isSaving = false;
+        return;
+      }
+
+      // const { status2 } = await employeeAPI.InsertEmployeeBenefit(formData);
+
+      const selectedComponent = this.benefitOptions.find(
+        (option: any) => option.code === formData.component
+      );
+
+      const newId =
+        Math.max(
+          ...this.rowBenefitData.map((benefit: any) => benefit.id || 0),
+          0
+        ) + 1;
+      const newBenefit = {
+        id: newId,
+        employee_id: this.employeeId,
+        payroll_component_id: newId,
+        payroll_component_code: formData.component,
+        payroll_component_name: selectedComponent
+          ? selectedComponent.name
+          : formData.component,
+        amount: parseFloat(formData.amount),
+        quantity: parseInt(formData.qty) || 1,
+        effective_date: formData.effective_date,
+        end_date: formData.end_date || null,
+        is_current:
+          !formData.end_date || new Date(formData.end_date) > new Date(),
+        remark: formData.remark || "",
+        created_at: formatDateTimeUTC(new Date()),
+        created_by: "Current User",
+        updated_at: formatDateTimeUTC(new Date()),
+        updated_by: "Current User",
+      };
+
+      this.rowBenefitData.push(newBenefit);
+
+      // Refresh data grid
+      if (this.benefitGridApi) {
+        this.benefitGridApi.setRowData(this.rowBenefitData);
+      }
+
+      getToastSuccess(this.$t("messages.employee.success.benefitAdded"));
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
   async updateBenefit(formData: any) {
     try {
+      this.isSaving = true;
+
+      if (
+        !formData.component_type ||
+        !formData.component ||
+        !formData.amount ||
+        !formData.effective_date
+      ) {
+        getToastError(this.$t("messages.employee.error.fillRequired"));
+        this.isSaving = false;
+        return;
+      }
+
+      // const { status2 } = await employeeAPI.UpdateEmployeeBenefit(formData);
+
+      const index = this.rowBenefitData.findIndex(
+        (item: any) => item.id === formData.id
+      );
+
+      if (index !== -1) {
+        // Find the selected component details to get the name
+        const selectedComponent = this.benefitOptions.find(
+          (option: any) => option.code === formData.component
+        );
+
+        this.rowBenefitData[index] = {
+          ...this.rowBenefitData[index],
+          payroll_component_code: formData.component,
+          payroll_component_name: selectedComponent
+            ? selectedComponent.name
+            : formData.component,
+          amount: parseFloat(formData.amount),
+          quantity: parseInt(formData.qty) || 1,
+          effective_date: formData.effective_date,
+          end_date: formData.end_date || null,
+          is_current:
+            !formData.end_date || new Date(formData.end_date) > new Date(),
+          remark: formData.remark || "",
+          updated_at: formatDateTimeUTC(new Date()),
+          updated_by: "Current User",
+        };
+
+        // Refresh grid
+        if (this.benefitGridApi) {
+          this.benefitGridApi.setRowData(this.rowBenefitData);
+        }
+
+        getToastSuccess(this.$t("messages.employee.success.benefitUpdated"));
+      }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
-  async deleteBenefit(formData: any) {
+  async deleteBenefit() {
     try {
+      // const { status2 } = await employeeAPI.DeleteEmployeeBenefit(this.deleteParam.id);
+
+      this.rowBenefitData = this.rowBenefitData.filter(
+        (item: any) => item.id !== this.deleteParam.id
+      );
+
+      // Refresh grid
+      if (this.benefitGridApi) {
+        this.benefitGridApi.setRowData(this.rowBenefitData);
+      }
+
+      getToastSuccess(this.$t("messages.employee.success.benefitDeleted"));
     } catch (error) {
       getError(error);
     }
@@ -1834,7 +2132,7 @@ export default class EmployeeDetail extends Vue {
         };
       case "SALARY":
         return {
-          id: params.base_salary,
+          id: params.id,
           base_salary: params.base_salary,
           effective_date: params.effective_date,
           adjustment_reason: params.adjustment_reason,
@@ -1847,12 +2145,14 @@ export default class EmployeeDetail extends Vue {
           component_type: params.component_type,
           component: params.component,
           amount: params.amount,
-          qty: params.qty,
+          qty: parseInt(params.qty),
           effective_date: params.effective_date,
           end_date: params.end_date,
           remark: params.remark,
           employee_id: this.employeeId,
         };
+      default:
+        params;
     }
   }
 
@@ -1944,7 +2244,9 @@ export default class EmployeeDetail extends Vue {
           ? this.$t("title.insertDocument")
           : this.$t("title.updateDocument");
       case "SALARY":
-        return this.$t("title.insertSalaryAdjustment");
+        return this.modalMode === $global.modeData.insert
+          ? this.$t("title.insertSalaryAdjustment")
+          : this.$t("title.updateSalaryAdjustment");
       case "BENEFIT":
         return this.modalMode === $global.modeData.insert
           ? this.$t("title.insertBenefit")
@@ -1954,14 +2256,43 @@ export default class EmployeeDetail extends Vue {
     }
   }
 
+  calculateDocumentStatus(expiryDate: string): string {
+    if (!expiryDate) return "Valid";
+
+    const today = new Date();
+    const expiry = new Date(expiryDate);
+
+    if (expiry < today) {
+      return "Expired";
+    } else if (expiry.getTime() - today.getTime() < 30 * 24 * 60 * 60 * 1000) {
+      return "Expiring Soon";
+    } else {
+      return "Valid";
+    }
+  }
+
   closeModal() {
     this.showModal = false;
     this.isSaving = false;
     this.currentForm = {};
   }
 
+  onComponentTypeChange() {
+    // Reset component selection when component type changes
+    this.currentForm.component = "";
+  }
+
   // GETTER AND SETTER =======================================================
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowSalaryData, this.columnDefs);
+  }
+
+  get filteredComponentOptions() {
+    if (!this.currentForm || !this.currentForm.component_type) {
+      return [];
+    }
+    return this.benefitOptions.filter((option: any) => {
+      return option.type === this.currentForm.component_type;
+    });
   }
 }
