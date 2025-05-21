@@ -124,13 +124,13 @@
                 <div class="col-3 text-muted">
                   <strong>{{$t('labels.payroll.employee.placement')}}</strong>
                 </div>
-                <div class="col-7">: {{employeeData.placement_name}}</div>
+                <div class="col-7">: {{employeeData.placement}}</div>
               </div>
               <div class="row mb-2">
                 <div class="col-3 text-muted">
                   <strong>{{$t('labels.payroll.employee.department')}}</strong>
                 </div>
-                <div class="col-7">: {{employeeData.department_name}}</div>
+                <div class="col-7">: {{employeeData.department}}</div>
               </div>
               <div class="row mb-2">
                 <div class="col-3 text-muted">
@@ -191,12 +191,12 @@
               </li>
               <li class="nav-item" role="presentation">
                 <button
-                  id="salary-history-tab"
+                  id="salaries-tab"
                   class="nav-link"
                   role="tab"
                   data-bs-toggle="tab"
-                  data-bs-target="#table-salary-history"
-                  aria-controls="table-salary-history"
+                  data-bs-target="#table-salaries"
+                  aria-controls="table-salaries"
                   aria-selected="false"
                   tabindex="-1"
                 >
@@ -205,16 +205,16 @@
               </li>
               <li class="nav-item" role="presentation">
                 <button
-                  id="salary-component-tab"
+                  id="benefits-tab"
                   class="nav-link"
                   role="tab"
                   data-bs-toggle="tab"
-                  data-bs-target="#table-salary-component"
-                  aria-controls="table-salary-component"
+                  data-bs-target="#table-benefits"
+                  aria-controls="table-benefits"
                   aria-selected="false"
                   tabindex="-1"
                 >
-                  {{$t('labels.payroll.employee.salaryComponent')}}
+                  {{$t('labels.payroll.employee.benefits')}}
                 </button>
               </li>
             </ul>
@@ -253,10 +253,10 @@
 
             <!-- table salary history -->
             <div
-              id="table-salary-history"
+              id="table-salaries"
               class="tab-pane fade"
               role="tabpanel"
-              aria-labelledby="salary-history-tab"
+              aria-labelledby="salaries-tab"
             >
               <ag-grid-vue
                 :style="agGridSetting.styleAgGridFrame"
@@ -264,7 +264,7 @@
                 :columnDefs="columnSalaryDefs"
                 :rowData="rowSalaryData"
                 :paginationPageSize="paginationPageSize"
-                :gridOptions="Object.assign({}, gridOptions, { id: 'salary-history-tab-grid' })"
+                :gridOptions="Object.assign({}, gridOptions, { id: 'salaries-tab-grid' })"
                 :context="context"
                 :frameworkComponents="frameworkComponents"
                 :enableCellChangeFlash="true"
@@ -275,25 +275,25 @@
                 :suppressDragLeaveHidesColumns="true"
                 :suppressMakeColumnVisibleAfterUnGroup="true"
                 :statusBar="statusBar"
-                @grid-ready="(params) => onGridReady(params, 'salary-history-tab-grid')"
+                @grid-ready="(params) => onGridReady(params, 'salaries-tab-grid')"
                 @cellContextMenu="handleRowRightClicked"
               ></ag-grid-vue>
             </div>
 
             <!-- table salary component -->
             <div
-              id="table-salary-component"
+              id="table-benefits"
               class="tab-pane fade"
               role="tabpanel"
-              aria-labelledby="salary-component-tab"
+              aria-labelledby="benefits-tab"
             >
               <ag-grid-vue
                 :style="agGridSetting.styleAgGridFrame"
                 :class="agGridSetting.themeAgGrid"
-                :columnDefs="columnComponentDefs"
-                :rowData="rowComponentData"
+                :columnDefs="columnBenefitDefs"
+                :rowData="rowBenefitData"
                 :paginationPageSize="paginationPageSize"
-                :gridOptions="Object.assign({}, gridOptions, { id: 'salary-component-tab-grid' })"
+                :gridOptions="Object.assign({}, gridOptions, { id: 'benefits-tab-grid' })"
                 :context="context"
                 :frameworkComponents="frameworkComponents"
                 :enableCellChangeFlash="true"
@@ -304,7 +304,7 @@
                 :suppressDragLeaveHidesColumns="true"
                 :suppressMakeColumnVisibleAfterUnGroup="true"
                 :statusBar="statusBar"
-                @grid-ready="(params) => onGridReady(params, 'salary-component-tab-grid')"
+                @grid-ready="(params) => onGridReady(params, 'benefits-tab-grid')"
                 @cellContextMenu="handleRowRightClicked"
               ></ag-grid-vue>
             </div>
@@ -313,24 +313,230 @@
       </div>
     </div>
 
-    <!-- modal -->
+    <!-- modal document -->
     <c-modal
-      v-show="showDocumentModal"
-      :title="salaryForm.id ? $t('labels.payroll.employee.editSalarfy') : $t('labels.payroll.employee.addSalary')"
+      v-show="showModal"
+      :title="getModalTitle()"
       size="lg"
-      @close="showGenerateModal = false"
-      @save="handleSaveModal"
-      :isSaving="isGenerating"
+      @close="closeModal"
+      @save="saveCurrentForm"
+      :isSaving="isSaving"
     >
       <div @click.stop>
-        <div class="row"></div>
+        <!-- document modal -->
+        <div v-if="modalType === 'DOCUMENT'" class="row">
+          <div class="col-md-6">
+            <c-select
+              required
+              offset="right"
+              class="row mb-1"
+              name="DocumentType"
+              labelName="name"
+              keyName="code"
+              v-model="currentForm.document_yype"
+              :label="$t('labels.payroll.employee.documentType')"
+              :options="documentTypeOptions"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-input
+              type="file"
+              name="DocumentFile"
+              id="DocumentFile"
+              class="row mb-1"
+              :label="$t('labels.payroll.employee.documentFile')"
+              @change="handleFileChange"
+              :required="modalMode === $global.modeData.insert"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-datepicker
+              required
+              id="IssueDate"
+              customLabelClass="col-3 mb-1"
+              type="date"
+              valueType="YYYY-MM-DD"
+              format="DD/MM/YYYY"
+              name="issueDate"
+              :label="$t('labels.payroll.employee.issueDate')"
+              v-model="currentForm.issue_date"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-datepicker
+              id="ExpiryDate"
+              customLabelClass="col-3 mb-1"
+              type="date"
+              valueType="YYYY-MM-DD"
+              format="DD/MM/YYYY"
+              name="ExpiryDate"
+              :label="$t('labels.payroll.employee.expiryDate')"
+              v-model="currentForm.expiry_date"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-input
+              type="textarea"
+              name="Remark"
+              id="Remark"
+              class="row mb-1"
+              :label="$t('labels.remark')"
+              v-model="currentForm.remark"
+            />
+          </div>
+        </div>
+
+        <!-- salary modal -->
+        <div v-if="modalType === 'SALARY'" class="row">
+          <div class="col-md-6">
+            <c-input
+              required
+              formatted
+              showZeroNumber
+              type="number"
+              name="BaseSalary"
+              id="BaseSalary"
+              class="row mb-1"
+              :label="$t('labels.payroll.employee.baseSalary')"
+              v-model="currentForm.base_salary"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-datepicker
+              required
+              name="EffectiveDate"
+              id="EffectiveDate"
+              customLabelClass="col-3  mb-1"
+              :label="$t('labels.payroll.employee.effectiveDate')"
+              type="date"
+              valueType="YYYY-MM-DD"
+              format="DD/MM/YYYY"
+              v-model="currentForm.effective_date"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-select
+              required
+              offset="right"
+              class="row mb-1"
+              name="AdjustmentReason"
+              labelName="name"
+              keyName="code"
+              v-model="currentForm.adjustment_reason"
+              :label="$t('labels.payroll.employee.adjustmentReason')"
+              :options="adjustmentReasonOptions"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-input
+              type="textarea"
+              name="Remark"
+              id="Remark"
+              class="row mb-1"
+              :label="$t('labels.remark')"
+              v-model="currentForm.remark"
+            />
+          </div>
+        </div>
+
+        <!-- benefit modal -->
+        <div v-if="modalType === 'BENEFIT'" class="row">
+          <div class="col-md-6">
+            <c-select
+              required
+              offset="right"
+              class="row mb-1"
+              name="ComponentType"
+              labelName="name"
+              keyName="code"
+              v-model="currentForm.component_type"
+              :label="$t('labels.payroll.payroll.type')"
+              :options="componentTypeOptions"
+              @change="onComponentTypeChange"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-select
+              required
+              offset="right"
+              class="row mb-1"
+              name="ComponentName"
+              labelName="name"
+              keyName="code"
+              v-model="currentForm.component"
+              :label="$t('labels.payroll.payroll.component')"
+              :options="filteredComponentOptions"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-input
+              required
+              formatted
+              showZeroNumber
+              type="number"
+              name="ComponentAmount"
+              id="ComponentAmount"
+              class="row mb-1"
+              :label="$t('labels.payroll.payroll.amount')"
+              v-model="currentForm.amount"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-input
+              required
+              type="number"
+              name="ComponentQuantity"
+              id="ComponentQuantity"
+              class="row mb-1"
+              :label="$t('labels.payroll.payroll.quantity')"
+              v-model="currentForm.qty"
+              :min="1"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-datepicker
+              required
+              id="ComponentEffectiveDate"
+              customLabelClass="col-3 mb-1"
+              type="date"
+              valueType="YYYY-MM-DD"
+              format="DD/MM/YYYY"
+              name="ComponentEffectiveDate"
+              :label="$t('labels.payroll.employee.effectiveDate')"
+              v-model="currentForm.effective_date"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-datepicker
+              id="ComponentEndDate"
+              name="ComponentEndDate"
+              customLabelClass="col-3 mb-1"
+              :label="$t('labels.payroll.employee.endDate')"
+              type="date"
+              valueType="YYYY-MM-DD"
+              format="DD/MM/YYYY"
+              v-model="currentForm.end_date"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-input
+              type="textarea"
+              name="Remark"
+              id="Remark"
+              class="row mb-1"
+              :label="$t('labels.remark')"
+              v-model="currentForm.remark"
+            />
+          </div>
+        </div>
+
         <!-- button -->
         <div class="d-flex justify-content-end mt-2">
           <button
             type="button"
             n
             class="btn btn-danger mr-1 px-3"
-            @click="showGenerateModal = false"
+            @click="closeModal"
           >
             <i class="fa fa-times" aria-hidden="true"></i>
             {{$t('buttons.cancel')}}
@@ -340,8 +546,8 @@
             class="btn btn-primary px-3"
             @click="handleSaveModal"
           >
-            <i class="fa fa-play"></i>
-            {{$t('buttons.generate')}}
+            <i class="fa fa-save"></i>
+            {{$t('buttons.save')}}
           </button>
         </div>
       </div>

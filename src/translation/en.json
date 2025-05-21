@@ -88,7 +88,11 @@
         "allowExpiry": "Allow Expiry",
         "profile": "Profile",
         "documents": "Documents",
-        "salaryComponent": "Salary Component"
+        "benefits": "Benefits",
+        "effectiveDate": "Effective Date",
+        "documentFile": "Document File",
+        "expiryDate": "Expiry Date",
+        "adjustmentReason": "Adjustment Reason"
       },
       "attendance": {
         "attendanceAndLeave": "Attendance & Leave",
@@ -130,6 +134,7 @@
         "payrollComponents": "Payroll Components",
         "payrollApprovals": "Payroll Approvals",
         "payrollDisbursement": "Payroll Disbursement",
+        "component": "Component",
         "earnings": "Earnings",
         "deductions": "Deductions",
         "statutory": "Statutory",
@@ -1661,6 +1666,11 @@
   "title": {
     "t11": "t11",
     "employee": "Employee",
+    "insertDocument": "Insert Document",
+    "updateDocument": "Update Document",
+    "insertBenefit": "Insert Benefit",
+    "updateBenefit": "Update Benefit",
+    "insertSalaryAdjustment": "Insert Salary Adjustment",
     "employeeProfile": "Employee Profile",
     "employeeDetail": "Employee Detail",
     "employeeManagement": "Employee Management",
@@ -2167,6 +2177,7 @@
         "delete": "Employee has been successfully removed from the system",
         "statusChange": "Employee status has been successfully updated",
         "documentUpload": "Employee document has been successfully uploaded",
+        "documentUpdated": "Employee document has been successfully updated",
         "documentDelete": "Employee document has been successfully removed",
         "salaryUpdate": "Employee salary information has been successfully updated",
         "assignBenefit": "Benefits have been successfully assigned to the employee",
@@ -2188,6 +2199,7 @@
         "accessDenied": "You don't have permission to perform this action",
         "serverError": "Server error occurred. Please contact your system administrator",
         "dataValidation": "Please correct the errors in the form before submitting",
+        "fillRequired": "Please fill in all required fields",
         "importFailed": "Employee data import failed. Please check your file format",
         "salaryCalculation": "Failed to calculate salary. Please check the components",
         "systemError": "System error occurred. Please try again later"
