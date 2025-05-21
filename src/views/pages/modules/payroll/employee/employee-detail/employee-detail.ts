@@ -367,11 +367,11 @@ export default class EmployeeDetail extends Vue {
         field: "payroll_component_code",
         width: 100,
         enableRowGroup: true,
-        valueGetter: (params: any) => {
-          return params.data.payroll_component_code.startsWith("CE")
-            ? "Earnings"
-            : "Deductions";
-        },
+        // valueGetter: (params: any) => {
+        //   return params.data.payroll_component_code.startsWith("CE")
+        //     ? "Earnings"
+        //     : "Deductions";
+        // },
       },
       {
         headerName: this.$t("commons.table.payroll.employee.code"),
@@ -492,11 +492,21 @@ export default class EmployeeDetail extends Vue {
     this.limitPageSize = this.agGridSetting.limitDefaultPageSize;
   }
 
-  onGridReady(params: any) {
+  onGridReady(params: any, gridId?: string) {
+    const id = gridId || params.api.gridOptionsWrapper.gridOptions.id;
+    switch (id) {
+      case "documents-tab-grid":
+        this.documentGridApi = params.api;
+        break;
+      case "salaries-tab-grid":
+        this.salaryGridApi = params.api;
+        break;
+      case "benefits-tab-grid":
+        this.benefitGridApi = params.api;
+        break;
+    }
+
     this.gridApi = params.api;
-    this.documentGridApi = params.api;
-    this.salaryGridApi = params.api;
-    this.benefitGridApi = params.api;
     this.ColumnApi = params.columnApi;
     // params.api.sizeColumnsToFit();
   }
@@ -779,23 +789,6 @@ export default class EmployeeDetail extends Vue {
     }
 
     this.showDialog = true;
-  }
-
-  confirmAction() {
-    this.showDialog = false;
-
-    if (!this.deleteParam) return;
-
-    switch (this.dataType) {
-      case "DOCUMENT":
-        this.deleteDocument();
-        break;
-      case "BENEFIT":
-        this.deleteBenefit();
-        break;
-    }
-
-    this.deleteParam = null;
   }
 
   handleBack() {
@@ -1590,7 +1583,7 @@ export default class EmployeeDetail extends Vue {
           (p: any) => p.employee_id === this.employeeId
         );
       } else {
-        // this.$router.push({ name: "Employee" });
+        this.$router.push({ name: "Employee" });
         getToastError(this.$t("messages.employee.error.notFound"));
       }
     } catch (error) {
@@ -1807,26 +1800,35 @@ export default class EmployeeDetail extends Vue {
     }
   }
 
+  confirmAction() {
+    this.showDialog = false;
+
+    this.$nextTick(() => {
+      if (this.dataType === "DOCUMENT") {
+        this.deleteDocument();
+      } else if (this.dataType === "BENEFIT") {
+        // this.deleteBenefit(currentParam);
+      }
+    });
+  }
+
   async deleteDocument() {
     try {
       // const { status2 } = await employeeAPI.DeleteEmployeeDocument(this.deleteParam.id);
 
-      this.rowDocumentData = this.rowDocumentData.filter(
-        (item: any) => item.id !== this.deleteParam.id
-      );
+      console.log("deleteParam", this.deleteParam);
+      // const updatedDocuments = this.rowDocumentData.filter(
+      //   (document: any) => document.id !== this.deleteParam.id
+      // );
 
-      // Refresh grid
-      if (this.documentGridApi) {
-        this.documentGridApi.setRowData(this.rowDocumentData);
-      }
+      // this.rowDocumentData = [...updatedDocuments];
 
-      getToastSuccess(this.$t("messages.employee.success.documentDeleted"));
-      return { status: 1 };
+      await this.loadDataGrid();
+
+      getToastSuccess(this.$t("messages.employee.success.documentDelete"));
     } catch (error) {
-      getError(error);
-      return { status: 0 };
-    } finally {
-      this.showDialog = false;
+      console.error("Error deleting document:", error);
+      getToastError(this.$t("messages.employee.error.documentDelete"));
     }
   }
 
@@ -2065,7 +2067,13 @@ export default class EmployeeDetail extends Vue {
 
       getToastSuccess(this.$t("messages.employee.success.benefitDeleted"));
     } catch (error) {
-      getError(error);
+      const safeError =
+        error || new Error("Unknown error during benefit deletion");
+      console.error("Error in deleteBenefit:", safeError);
+
+      // Directly show toast error instead of using getError which might fail
+      getToastError(this.$t("messages.employee.error.benefitDeleteFailed"));
+      return false;
     }
   }
 

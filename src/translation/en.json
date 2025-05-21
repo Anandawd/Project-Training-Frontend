@@ -2192,6 +2192,7 @@
         "save": "An error occurred while saving employee data. Please try again",
         "update": "Failed to update employee information. Please check your data and try again",
         "delete": "Failed to delete employee. The employee may be referenced in other modules",
+        "documentDelete": "Failed to delete employee document",
         "notFound": "Employee not found in the system",
         "duplicateId": "Employee ID already exists. Please use a different ID",
         "duplicateEmail": "Email address is already registered in the system",

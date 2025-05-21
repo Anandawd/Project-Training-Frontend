@@ -561,6 +561,7 @@
       v-show="showDialog"
       dialogTitle="Confirm"
       size="sm"
+      :isSaving="isSaving"
       @confirm="confirmAction"
       @cancel="showDialog=false"
     >
