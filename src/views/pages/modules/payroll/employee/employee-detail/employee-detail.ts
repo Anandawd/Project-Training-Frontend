@@ -26,6 +26,9 @@ import { AgGridVue } from "ag-grid-vue3";
 import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import EmployeeInputForm from "../employee-input-form/employee-input-form.vue";
+import BenefitTableComponent from "./benefit-table-component/benefit-table-component.vue";
+import DocumentTableComponent from "./document-table-component/document-table-component.vue";
+import SalaryTableComponent from "./salary-table-component/salary-table-component.vue";
 
 const employeeAPI = new EmployeeAPI();
 
@@ -38,6 +41,9 @@ const employeeAPI = new EmployeeAPI();
     CDatepicker,
     CInput,
     EmployeeInputForm,
+    DocumentTableComponent,
+    BenefitTableComponent,
+    SalaryTableComponent,
   },
 })
 export default class EmployeeDetail extends Vue {
@@ -62,10 +68,10 @@ export default class EmployeeDetail extends Vue {
   public deductionsComponentOptions: any[] = [];
   public benefitOptions: any[] = [];
 
-  // tab data
-  documentData: any[] = [];
-  salaryData: any[] = [];
-  benefitData: any[] = [];
+  // child components refs
+  documentTableRef: any = ref();
+  salaryTableRef: any = ref();
+  benefitTableRef: any = ref();
 
   // modal form
   documentForm: any = reactive({});
@@ -91,6 +97,8 @@ export default class EmployeeDetail extends Vue {
   public showForm: boolean = false;
   public inputFormElement: any = ref();
   public employeeForm: any = reactive({});
+
+  // delete nanti
   salaryFormRef: any = ref();
   documentFormRef: any = ref();
   benefitFormRef: any = ref();
@@ -122,6 +130,7 @@ export default class EmployeeDetail extends Vue {
   agGridSetting: any;
 
   salaryGridOptions: any = {};
+
   // RECYCLE LIFE FUNCTION =======================================================
   created() {
     this.employeeId = this.$route.params.id;
@@ -587,9 +596,6 @@ export default class EmployeeDetail extends Vue {
     this.showModal = false;
     await this.$nextTick();
 
-    console.log("handleShowModal clicked", mode);
-    console.log("handleShowModal params clicked", params);
-    console.log("handleShowModal type clicked", type);
     this.modalMode = mode;
     this.modalType = type;
     this.currentForm = this.formatModalData(params, this.modalType);
@@ -615,8 +621,6 @@ export default class EmployeeDetail extends Vue {
               const currentSalary = this.rowSalaryData.find(
                 (item: any) => item.is_current
               );
-
-              console.log("currentSalary", currentSalary);
 
               this.currentForm = {
                 id: null,
@@ -771,7 +775,7 @@ export default class EmployeeDetail extends Vue {
 
     this.dataType = this.getDataType(params);
 
-    this.deleteParam = params;
+    this.deleteParam = { ...params };
     this.dialogAction = "delete";
 
     switch (this.dataType) {
@@ -789,6 +793,44 @@ export default class EmployeeDetail extends Vue {
     }
 
     this.showDialog = true;
+  }
+
+  handleTableAction(params: any) {
+    console.log("handleTableAction:", params);
+
+    if (!params || !params.type) {
+      console.error("Invalid parameters in handleTableAction");
+      return;
+    }
+
+    switch (params.type) {
+      case "DOCUMENT":
+        if (params.data) {
+          if (params.event && params.event.type === "delete") {
+            this.handleDelete(params.data);
+          } else {
+            this.handleEdit(params.data);
+          }
+        } else {
+          this.handleInsert({ type: "DOCUMENT" });
+        }
+      case "SALARY":
+        if (params.data) {
+          this.handleEdit(params.data);
+        } else {
+          this.handleInsert({ type: "SALARY" });
+        }
+      case "BENEFIT":
+        if (params.data) {
+          if (params.event && params.event.type === "delete") {
+            this.handleDelete(params.data);
+          } else {
+            this.handleEdit(params.data);
+          }
+        } else {
+          this.handleInsert({ type: "BENEFIT" });
+        }
+    }
   }
 
   handleBack() {
@@ -1606,37 +1648,6 @@ export default class EmployeeDetail extends Vue {
       // For real implementation
       // const { data } = await employeeAPI.GetEmployeeDocumentList(this.employeeId);
       // this.documents = data;
-
-      this.documentData = [
-        {
-          id: 1,
-          document_type: "KTP",
-          file_name: "ktp_john_doe.pdf",
-          file_path: "/uploads/ktp_john_doe.pdf",
-          issue_date: "2020-01-15",
-          expiry_date: "2025-01-15",
-          remark: "National ID Card",
-          status: "Valid",
-          employee_id: this.employeeId,
-          document_entity: "DOCUMENT",
-        },
-        {
-          id: 2,
-          document_type: "NPWP",
-          file_name: "npwp_john_doe.pdf",
-          file_path: "/uploads/npwp_john_doe.pdf",
-          issue_date: "2018-05-10",
-          expiry_date: null,
-          remark: "Tax ID",
-          status: "Valid",
-          employee_id: this.employeeId,
-          document_entity: "DOCUMENT",
-        },
-      ];
-
-      if (this.documentGridApi) {
-        this.documentGridApi.setRowData(this.documentData);
-      }
     } catch (error) {
       getError(error);
     }
@@ -1647,7 +1658,7 @@ export default class EmployeeDetail extends Vue {
       // For real implementation
       // const { data } = await employeeAPI.GetEmployeePayrollComponentList(this.employeeId);
       // this.payrollComponents = data;
-      // For mock implementation - already loaded in loadEmployeeData
+      // For mock implementation - already loadned in loadEmployeeData
     } catch (error) {
       getError(error);
     }
@@ -1801,9 +1812,17 @@ export default class EmployeeDetail extends Vue {
   }
 
   confirmAction() {
+    if (!this.deleteParam) {
+      console.error("Delete parameter is null or undefined");
+      this.showDialog = false;
+      return;
+    }
+
+    const paramToDelete = { ...this.deleteParam };
     this.showDialog = false;
 
     this.$nextTick(() => {
+      this.deleteParam = paramToDelete;
       if (this.dataType === "DOCUMENT") {
         this.deleteDocument();
       } else if (this.dataType === "BENEFIT") {
@@ -1817,13 +1836,22 @@ export default class EmployeeDetail extends Vue {
       // const { status2 } = await employeeAPI.DeleteEmployeeDocument(this.deleteParam.id);
 
       console.log("deleteParam", this.deleteParam);
-      // const updatedDocuments = this.rowDocumentData.filter(
-      //   (document: any) => document.id !== this.deleteParam.id
-      // );
+      const updatedDocument = this.rowDocumentData.filter(
+        (document: any) => document.id !== this.deleteParam.id
+      );
 
-      // this.rowDocumentData = [...updatedDocuments];
+      this.rowDocumentData = [...updatedDocument];
 
-      await this.loadDataGrid();
+      this.deleteParam = null;
+
+      await this.$nextTick();
+      if (
+        this.documentTableRef &&
+        typeof this.documentTableRef.refreshGrid === "function"
+      ) {
+        this.documentTableRef.refreshGrid();
+      }
+      // await this.loadDataGrid("DOCUMENT");
 
       getToastSuccess(this.$t("messages.employee.success.documentDelete"));
     } catch (error) {

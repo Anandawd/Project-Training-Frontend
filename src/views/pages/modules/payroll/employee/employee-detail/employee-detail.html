@@ -229,26 +229,16 @@
               role="tabpanel"
               aria-labelledby="documents-tab"
             >
-              <ag-grid-vue
-                :style="agGridSetting.styleAgGridFrame"
-                :class="agGridSetting.themeAgGrid"
-                :columnDefs="columnDocumentDefs"
+              <document-table-component
+                ref="documentTableRef"
+                :employeeId="employeeId"
                 :rowData="rowDocumentData"
-                :paginationPageSize="paginationPageSize"
-                :gridOptions="Object.assign({}, gridOptions, { id: 'documents-tab-grid' })"
-                :context="context"
-                :frameworkComponents="frameworkComponents"
-                :enableCellChangeFlash="true"
-                :rowSelection="rowSelection"
-                :getContextMenuItems="getContextMenu"
-                :defaultColDef="agGridSetting.defColDef"
-                :rowGroupPanelShow="rowGroupPanelShow"
-                :suppressDragLeaveHidesColumns="true"
-                :suppressMakeColumnVisibleAfterUnGroup="true"
-                :statusBar="statusBar"
-                @grid-ready="(params) => onGridReady(params, 'documents-tab-grid')"
-                @cellContextMenu="handleRowRightClicked"
-              ></ag-grid-vue>
+                :documentTypeOptions="documentTypeOptions"
+                @insert="handleTableAction"
+                @edit="handleTableAction"
+                @delete="handleTableAction"
+              >
+              </document-table-component>
             </div>
 
             <!-- table salary history -->
@@ -258,26 +248,16 @@
               role="tabpanel"
               aria-labelledby="salaries-tab"
             >
-              <ag-grid-vue
-                :style="agGridSetting.styleAgGridFrame"
-                :class="agGridSetting.themeAgGrid"
-                :columnDefs="columnSalaryDefs"
+              <salary-table-component
+                ref="salaryTableRef"
+                :employeeId="employeeId"
                 :rowData="rowSalaryData"
-                :paginationPageSize="paginationPageSize"
-                :gridOptions="Object.assign({}, salaryGridOptions, { id: 'salaries-tab-grid' })"
-                :context="context"
-                :frameworkComponents="frameworkComponents"
-                :enableCellChangeFlash="true"
-                :rowSelection="rowSelection"
-                :getContextMenuItems="getContextMenu"
-                :defaultColDef="agGridSetting.defColDef"
-                :rowGroupPanelShow="rowGroupPanelShow"
-                :suppressDragLeaveHidesColumns="true"
-                :suppressMakeColumnVisibleAfterUnGroup="true"
-                :statusBar="statusBar"
-                @grid-ready="(params) => onGridReady(params, 'salaries-tab-grid')"
-                @cellContextMenu="handleRowRightClicked"
-              ></ag-grid-vue>
+                :adjustmentReasonOptions="adjustmentReasonOptions"
+                @insert="handleTableAction"
+                @edit="handleTableAction"
+                @delete="handleTableAction"
+              >
+              </salary-table-component>
             </div>
 
             <!-- table salary component -->
@@ -287,26 +267,18 @@
               role="tabpanel"
               aria-labelledby="benefits-tab"
             >
-              <ag-grid-vue
-                :style="agGridSetting.styleAgGridFrame"
-                :class="agGridSetting.themeAgGrid"
-                :columnDefs="columnBenefitDefs"
+              <benefit-table-component
+                ref="benefitsTableRef"
+                :employeeId="employeeId"
                 :rowData="rowBenefitData"
-                :paginationPageSize="paginationPageSize"
-                :gridOptions="Object.assign({}, gridOptions, { id: 'benefits-tab-grid' })"
-                :context="context"
-                :frameworkComponents="frameworkComponents"
-                :enableCellChangeFlash="true"
-                :rowSelection="rowSelection"
-                :getContextMenuItems="getContextMenu"
-                :defaultColDef="agGridSetting.defColDef"
-                :rowGroupPanelShow="rowGroupPanelShow"
-                :suppressDragLeaveHidesColumns="true"
-                :suppressMakeColumnVisibleAfterUnGroup="true"
-                :statusBar="statusBar"
-                @grid-ready="(params) => onGridReady(params, 'benefits-tab-grid')"
-                @cellContextMenu="handleRowRightClicked"
-              ></ag-grid-vue>
+                :componentTypeOptions="componentTypeOptions"
+                :earningsComponentOptions="earningsComponentOptions"
+                :deductionsComponentOptions="deductionsComponentOptions"
+                @insert="handleTableAction"
+                @edit="handleTableAction"
+                @delete="handleTableAction"
+              >
+              </benefit-table-component>
             </div>
           </div>
         </div>
