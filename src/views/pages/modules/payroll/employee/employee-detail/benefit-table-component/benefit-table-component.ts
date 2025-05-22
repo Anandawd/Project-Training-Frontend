@@ -93,7 +93,7 @@ export default class BenefitTableComponent extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.name"),
-        field: "payroll_component_code",
+        field: "payroll_component",
         width: 100,
         enableRowGroup: true,
         // valueGetter: (params: any) => {
@@ -101,18 +101,6 @@ export default class BenefitTableComponent extends Vue {
         //     ? "Earnings"
         //     : "Deductions";
         // },
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.code"),
-        field: "payroll_component_code",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.name"),
-        field: "payroll_component_name",
-        width: 180,
-        enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.amount"),
@@ -280,11 +268,11 @@ export default class BenefitTableComponent extends Vue {
   }
 
   handleEdit(params: any) {
-    this.$emit("edit", { type: "BENEFIT", params });
+    this.$emit("edit", { type: "BENEFIT", event: "EDIT", params });
   }
 
   handleDelete(params: any) {
-    this.$emit("delete", { type: "BENEFIT", params });
+    this.$emit("delete", { type: "BENEFIT", event: "DELETE", params });
   }
 
   refreshGrid() {

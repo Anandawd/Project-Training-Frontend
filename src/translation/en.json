@@ -1671,6 +1671,7 @@
     "insertBenefit": "Insert Benefit",
     "updateBenefit": "Update Benefit",
     "insertSalaryAdjustment": "Insert Salary Adjustment",
+    "updateSalaryAdjustment": "Update Salary Adjustment",
     "employeeProfile": "Employee Profile",
     "employeeDetail": "Employee Detail",
     "employeeManagement": "Employee Management",
@@ -3117,7 +3118,8 @@
           "updatePosition": "Update Position",
           "updatePlacement": "Update Placement",
           "effectiveDate": "Effective Date",
-          "isCurrent": "Is Current"
+          "isCurrent": "Is Current",
+          "adjustmentReason": "Adjustment Reason"
         },
         "payroll": {
           "name": "Name",

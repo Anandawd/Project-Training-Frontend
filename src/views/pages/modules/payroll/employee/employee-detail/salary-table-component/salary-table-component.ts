@@ -35,7 +35,6 @@ import { Options, Vue } from "vue-class-component";
   emits: ["insert", "edit", "delete"],
 })
 export default class SalaryTableComponent extends Vue {
-  public modeData!: any;
   public employeeId!: string;
   public rowData!: any[];
   public adjustmentReasonOptions!: any[];
@@ -83,6 +82,12 @@ export default class SalaryTableComponent extends Vue {
         cellRenderer: "actionGrid",
         colId: "params",
         width: 100,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.adjustmentReason"),
+        field: "adjustment_reason",
+        width: 150,
+        enableRowGroup: false,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.effectiveDate"),
@@ -206,19 +211,9 @@ export default class SalaryTableComponent extends Vue {
       },
       {
         name: this.$t("commons.contextMenu.update"),
-        disabled:
-          !this.paramsData ||
-          (!this.paramsData.is_current && this.paramsData.base_salary),
+        disabled: !this.paramsData || !this.paramsData.is_current,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () => this.handleEdit(this.paramsData),
-      },
-      {
-        name: this.$t("commons.contextMenu.delete"),
-        disabled:
-          !this.paramsData ||
-          (!this.paramsData.is_current && this.paramsData.base_salary),
-        icon: generateIconContextMenuAgGrid("delete_icon24"),
-        action: () => this.handleDelete(this.paramsData),
       },
     ];
     return result;

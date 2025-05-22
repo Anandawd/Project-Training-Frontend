@@ -260,12 +260,13 @@
               </salary-table-component>
             </div>
 
-            <!-- table salary component -->
+            <!-- table benefit -->
             <div
               id="table-benefits"
               class="tab-pane fade"
               role="tabpanel"
               aria-labelledby="benefits-tab"
+              n
             >
               <benefit-table-component
                 ref="benefitsTableRef"
@@ -305,7 +306,7 @@
               name="DocumentType"
               labelName="name"
               keyName="code"
-              v-model="currentForm.document_yype"
+              v-model="currentForm.document_type"
               :label="$t('labels.payroll.employee.documentType')"
               :options="documentTypeOptions"
             />
@@ -370,7 +371,7 @@
               id="BaseSalary"
               class="row mb-1"
               :label="$t('labels.payroll.employee.baseSalary')"
-              :disabled="modeData === $global.modeData.edit"
+              :disabled="modalMode === $global.modeData.edit"
               v-model="currentForm.base_salary"
             />
           </div>
@@ -384,7 +385,7 @@
               valueType="YYYY-MM-DD"
               format="DD/MM/YYYY"
               :label="$t('labels.payroll.employee.effectiveDate')"
-              :disabled="modeData === $global.modeData.edit"
+              :disabled="modalMode === $global.modeData.edit"
               v-model="currentForm.effective_date"
             />
           </div>
@@ -397,7 +398,7 @@
               labelName="name"
               keyName="code"
               v-model="currentForm.adjustment_reason"
-              :disabled="modeData === $global.modeData.edit"
+              :disabled="modalMode === $global.modeData.edit"
               :label="$t('labels.payroll.employee.adjustmentReason')"
               :options="adjustmentReasonOptions"
             />

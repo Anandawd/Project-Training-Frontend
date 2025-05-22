@@ -1,27 +1,14 @@
-import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
-import Checklist from "@/components/ag_grid-framework/checklist.vue";
-import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDatepicker from "@/components/datepicker/datepicker.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CInput from "@/components/input/input.vue";
 import CModal from "@/components/modal/modal.vue";
 import CSelect from "@/components/select/select.vue";
 import EmployeeAPI from "@/services/api/payroll/employee/employee";
-import {
-  formatDate,
-  formatDateTime,
-  formatDateTimeUTC,
-  formatNumber2,
-} from "@/utils/format";
-import {
-  generateIconContextMenuAgGrid,
-  generateTotalFooterAgGrid,
-  getError,
-} from "@/utils/general";
+import { formatDateTimeUTC } from "@/utils/format";
+import { getError } from "@/utils/general";
 import $global from "@/utils/global";
 import { getToastError, getToastSuccess } from "@/utils/toast";
 import "ag-grid-enterprise";
-import { GridApi } from "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
@@ -113,23 +100,7 @@ export default class EmployeeDetail extends Vue {
   documentGridApi: any;
   benefitGridApi: any;
 
-  // AG GRID VARIABLE
-  gridOptions: any = {};
-  columnDefs: any;
-  context: any;
-  frameworkComponents: any;
-  rowGroupPanelShow: string;
-  statusBar: any;
-  paginationPageSize: any;
-  rowSelection: string;
-  rowModelType: string;
-  limitPageSize: any;
-  gridApi: any;
   paramsData: any;
-  ColumnApi: any;
-  agGridSetting: any;
-
-  salaryGridOptions: any = {};
 
   // RECYCLE LIFE FUNCTION =======================================================
   created() {
@@ -139,435 +110,9 @@ export default class EmployeeDetail extends Vue {
     this.loadEmployeeData();
   }
 
-  beforeMount(): void {
-    this.agGridSetting = $global.agGrid;
-    this.gridOptions = {
-      actionGrid: {
-        insert: true,
-        edit: true,
-        delete: true,
-      },
-      rowHeight: $global.agGrid.rowHeightDefault,
-      headerHeight: $global.agGrid.headerHeight,
-    };
-    this.salaryGridOptions = {
-      actionGrid: {
-        insert: true,
-        edit: true,
-      },
-      rowHeight: $global.agGrid.rowHeightDefault,
-      headerHeight: $global.agGrid.headerHeight,
-    };
-    this.columnDocumentDefs = [
-      {
-        headerName: this.$t("commons.table.action"),
-        headerClass: "align-header-center",
-        field: "id",
-        enableRowGroup: false,
-        resizable: false,
-        filter: false,
-        suppressMenu: true,
-        suppressMoveable: true,
-        lockPosition: "left",
-        sortable: false,
-        cellRenderer: "actionGrid",
-        colId: "params",
-        width: 100,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.documentType"),
-        field: "document_type",
-        width: 150,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.fileName"),
-        field: "file_name",
-        width: 200,
-        enableRowGroup: false,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.issueDate"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "issue_date",
-        width: 120,
-        enableRowGroup: true,
-        valueFormatter: formatDate,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.expiryDate"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "expiry_date",
-        width: 120,
-        enableRowGroup: true,
-        valueFormatter: formatDate,
-      },
-      {
-        headerName: this.$t("commons.table.status"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "status",
-        width: 100,
-        cellRenderer: (params: any) => {
-          const status = params.value;
-          let badgeClass = "";
-
-          if (status === "Valid") badgeClass = "bg-success";
-          else if (status === "Expired") badgeClass = "bg-danger";
-          else badgeClass = "bg-secondary";
-
-          return `<span class="badge ${badgeClass} py-1 px-4">${status}</span>`;
-        },
-      },
-      {
-        headerName: this.$t("commons.table.remark"),
-        field: "remark",
-        width: 200,
-        enableRowGroup: false,
-      },
-      {
-        headerName: this.$t("commons.table.updatedAt"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "updated_at",
-        width: 120,
-        enableRowGroup: false,
-        valueFormatter: formatDateTime,
-      },
-      {
-        headerName: this.$t("commons.table.updatedBy"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "updated_by",
-        width: 120,
-        enableRowGroup: false,
-      },
-      {
-        headerName: this.$t("commons.table.createdAt"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "created_at",
-        width: 120,
-        enableRowGroup: false,
-        valueFormatter: formatDateTime,
-      },
-      {
-        headerName: this.$t("commons.table.createdBy"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "created_by",
-        width: 120,
-        enableRowGroup: false,
-      },
-    ];
-    this.columnSalaryDefs = [
-      {
-        headerName: this.$t("commons.table.action"),
-        headerClass: "align-header-center",
-        field: "id",
-        enableRowGroup: false,
-        resizable: false,
-        filter: false,
-        suppressMenu: true,
-        suppressMoveable: true,
-        lockPosition: "left",
-        sortable: false,
-        cellRenderer: "actionGrid",
-        colId: "params",
-        width: 100,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.effectiveDate"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "effective_date",
-        width: 120,
-        enableRowGroup: true,
-        valueFormatter: formatDate,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.endDate"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "end_date",
-        width: 120,
-        enableRowGroup: true,
-        valueFormatter: formatDate,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.baseSalary"),
-        headerClass: "align-header-right",
-        cellClass: "text-right",
-        field: "base_salary",
-        width: 150,
-        enableRowGroup: true,
-        valueFormatter: formatNumber2,
-      },
-      {
-        headerName: this.$t("commons.table.status"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "is_current",
-        width: 100,
-        enableRowGroup: true,
-        cellRenderer: "checklistRenderer",
-      },
-      {
-        headerName: this.$t("commons.table.remark"),
-        field: "remark",
-        width: 200,
-        enableRowGroup: false,
-      },
-      {
-        headerName: this.$t("commons.table.updatedAt"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "updated_at",
-        width: 120,
-        enableRowGroup: false,
-        valueFormatter: formatDateTime,
-      },
-      {
-        headerName: this.$t("commons.table.updatedBy"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "updated_by",
-        width: 120,
-        enableRowGroup: false,
-      },
-      {
-        headerName: this.$t("commons.table.createdAt"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "created_at",
-        width: 120,
-        enableRowGroup: false,
-        valueFormatter: formatDateTime,
-      },
-      {
-        headerName: this.$t("commons.table.createdBy"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "created_by",
-        width: 120,
-        enableRowGroup: false,
-      },
-    ];
-    this.columnBenefitDefs = [
-      {
-        headerName: this.$t("commons.table.action"),
-        headerClass: "align-header-center",
-        field: "id",
-        enableRowGroup: false,
-        resizable: false,
-        filter: false,
-        suppressMenu: true,
-        suppressMoveable: true,
-        lockPosition: "left",
-        sortable: false,
-        cellRenderer: "actionGrid",
-        colId: "params",
-        width: 100,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.name"),
-        field: "payroll_component_code",
-        width: 100,
-        enableRowGroup: true,
-        // valueGetter: (params: any) => {
-        //   return params.data.payroll_component_code.startsWith("CE")
-        //     ? "Earnings"
-        //     : "Deductions";
-        // },
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.code"),
-        field: "payroll_component_code",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.name"),
-        field: "payroll_component_name",
-        width: 180,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.amount"),
-        headerClass: "align-header-right",
-        cellClass: "text-right",
-        field: "amount",
-        width: 150,
-        enableRowGroup: true,
-        valueFormatter: formatNumber2,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.qty"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "quantity",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.effectiveDate"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "effective_date",
-        width: 120,
-        enableRowGroup: true,
-        valueFormatter: formatDate,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.endDate"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "end_date",
-        width: 120,
-        enableRowGroup: true,
-        valueFormatter: formatDate,
-      },
-      {
-        headerName: this.$t("commons.table.status"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "is_current",
-        width: 100,
-        enableRowGroup: true,
-        cellRenderer: "checklistRenderer",
-      },
-      {
-        headerName: this.$t("commons.table.remark"),
-        field: "remark",
-        width: 200,
-        enableRowGroup: false,
-      },
-      {
-        headerName: this.$t("commons.table.updatedAt"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "updated_at",
-        width: 120,
-        enableRowGroup: false,
-        valueFormatter: formatDateTime,
-      },
-      {
-        headerName: this.$t("commons.table.updatedBy"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "updated_by",
-        width: 120,
-        enableRowGroup: false,
-      },
-      {
-        headerName: this.$t("commons.table.createdAt"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "created_at",
-        width: 120,
-        enableRowGroup: false,
-        valueFormatter: formatDateTime,
-      },
-      {
-        headerName: this.$t("commons.table.createdBy"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "created_by",
-        width: 120,
-        enableRowGroup: false,
-      },
-    ];
-    this.context = { componentParent: this };
-    this.frameworkComponents = {
-      actionGrid: ActionGrid,
-      iconLockRenderer: IconLockRenderer,
-      checklistRenderer: Checklist,
-    };
-    this.rowGroupPanelShow = "always";
-    this.statusBar = {
-      statusPanels: [
-        { statusPanel: "agTotalAndFilteredRowCountComponent", align: "left" },
-        { statusPanel: "agTotalRowCountComponent", align: "center" },
-        { statusPanel: "agFilteredRowCountComponent" },
-        { statusPanel: "agSelectedRowCountComponent" },
-        { statusPanel: "agAggregationComponent" },
-      ],
-    };
-    this.paginationPageSize = this.agGridSetting.limitDefaultPageSize;
-    this.rowSelection = "single";
-    this.rowModelType = "serverSide";
-    this.limitPageSize = this.agGridSetting.limitDefaultPageSize;
-  }
-
-  onGridReady(params: any, gridId?: string) {
-    const id = gridId || params.api.gridOptionsWrapper.gridOptions.id;
-    switch (id) {
-      case "documents-tab-grid":
-        this.documentGridApi = params.api;
-        break;
-      case "salaries-tab-grid":
-        this.salaryGridApi = params.api;
-        break;
-      case "benefits-tab-grid":
-        this.benefitGridApi = params.api;
-        break;
-    }
-
-    this.gridApi = params.api;
-    this.ColumnApi = params.columnApi;
-    // params.api.sizeColumnsToFit();
-  }
+  beforeMount(): void {}
 
   // GENERAL FUNCTION =======================================================
-  getContextMenu(params: any) {
-    const { node } = params;
-    if (node) {
-      this.paramsData = node.data;
-    } else {
-      this.paramsData = null;
-    }
-
-    const result = [
-      {
-        name: this.$t("commons.contextMenu.insert"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("add_icon24"),
-        action: () => this.handleInsert(this.paramsData),
-      },
-      {
-        name: this.$t("commons.contextMenu.update"),
-        disabled:
-          !this.paramsData ||
-          (!this.paramsData.is_current && this.paramsData.base_salary),
-        icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () => this.handleEdit(this.paramsData),
-      },
-      {
-        name: this.$t("commons.contextMenu.delete"),
-        disabled:
-          !this.paramsData ||
-          (!this.paramsData.is_current && this.paramsData.base_salary),
-        icon: generateIconContextMenuAgGrid("delete_icon24"),
-        action: () => this.handleDelete(this.paramsData),
-      },
-    ];
-    return result;
-  }
-
-  handleRowRightClicked() {
-    if (this.paramsData) {
-      const vm = this;
-      vm.gridApi.forEachNode((node: any) => {
-        if (node.data) {
-          if (node.data.id == vm.paramsData.id) {
-            node.setSelected(true, true);
-          }
-        }
-      });
-    }
-  }
 
   async handleShowForm(params: any, mode: any) {
     this.showForm = false;
@@ -598,143 +143,100 @@ export default class EmployeeDetail extends Vue {
 
     this.modalMode = mode;
     this.modalType = type;
-    this.currentForm = this.formatModalData(params, this.modalType);
-    console.log("currentForm di handleSHowModal", this.currentForm);
+
+    this.currentForm = {};
 
     this.$nextTick(() => {
       if (mode === $global.modeData.insert) {
-        this.$nextTick(() => {
-          switch (type) {
-            case "DOCUMENT":
-              this.currentForm = {
-                id: null,
-                document_type: "",
-                file: null,
-                file_name: "",
-                issue_date: "",
-                expiry_date: "",
-                remark: "",
-                status: "Valid",
-                employee_id: this.employeeId,
-              };
-            case "SALARY":
-              const currentSalary = this.rowSalaryData.find(
-                (item: any) => item.is_current
-              );
-
-              this.currentForm = {
-                id: null,
-                base_salary: currentSalary
-                  ? currentSalary.base_salary
-                  : this.employeeData.base_salary || 0,
-                effective_date: "",
-                adjustment_reason: "",
-                remark: "",
-                employee_id: this.employeeId,
-              };
-            case "BENEFIT":
-              this.currentForm = {
-                id: null,
-                component_type: "",
-                component: "",
-                amount: 0,
-                qty: 1,
-                effective_date: "",
-                end_date: "",
-                remark: "",
-                employee_id: this.employeeId,
-              };
-          }
-        });
-      } else if (mode === $global.modeData.edit) {
-        switch (type) {
-          case "DOCUMENT":
-            this.currentForm = {
-              id: params.id,
-              document_type: params.document_type,
-              file: params.file,
-              file_name: params.file_name,
-              issue_date: params.issue_date,
-              expiry_date: params.expiry_date,
-              remark: params.remark,
-              status: params.status,
-              employee_id: this.employeeId,
-            };
-          case "SALARY":
-            this.currentForm = {
-              id: params.id,
-              base_salary: params.base_salary,
-              effective_date: params.effective_date,
-              adjustment_reason: params.adjustment_reason,
-              remark: params.remark,
-              employee_id: this.employeeId,
-            };
-            break;
-          case "BEENFIT":
-            this.currentForm = {
-              id: params.id,
-              component_type: params.component_type,
-              component: params.component,
-              amount: params.amount,
-              quantity: params.quantity,
-              effective_date: params.effective_date,
-              end_date: params.end_date,
-              remark: params.remark,
-              employee_id: this.employeeId,
-            };
-        }
+        this.setDefaultFormValues(type);
+      } else if (mode === $global.modeData.edit && params) {
+        this.populateModalForm(params, type);
       }
+      this.showModal = true;
     });
-    this.showModal = true;
   }
 
-  async handleSaveModal() {
-    console.log("handleSaveModal clicked");
-    console.log("currentForm sebelum diformat", this.currentForm);
-
+  handleSaveModal() {
     const formattedData = this.formatModalData(
       this.currentForm,
       this.modalType
     );
 
-    console.log("currentForm setelah diformat", formattedData);
-
     if (this.modalMode === $global.modeData.insert) {
       switch (this.modalType) {
         case "DOCUMENT":
-          this.insertDocument(formattedData).then(() => {
-            this.closeModal;
-          });
+          this.insertDocument(formattedData);
           break;
         case "SALARY":
-          this.insertSalary(formattedData).then(() => {
-            this.closeModal;
-          });
+          this.insertSalary(formattedData);
           break;
         case "BENEFIT":
-          this.insertBenefit(formattedData).then(() => {
-            this.closeModal;
-          });
+          this.insertBenefit(formattedData);
           break;
       }
     } else if (this.modalMode === $global.modeData.edit) {
       switch (this.modalType) {
         case "DOCUMENT":
-          this.updateDocument(formattedData).then(() => {
-            this.closeModal;
-          });
+          this.updateDocument(formattedData);
           break;
         case "SALARY":
-          this.updateSalary(formattedData).then(() => {
-            this.closeModal;
-          });
+          this.updateSalary(formattedData);
           break;
         case "BENEFIT":
-          this.updateBenefit(formattedData).then(() => {
-            this.closeModal;
-          });
+          this.updateBenefit(formattedData);
           break;
       }
+    }
+  }
+
+  handleTableAction(params: any) {
+    console.log("handleTableAction:", params.event);
+
+    if (!params || !params.type) {
+      console.error("Invalid parameters in handleTableAction");
+      return;
+    }
+
+    switch (params.type) {
+      case "DOCUMENT":
+        if (params.params) {
+          switch (params.event) {
+            case "EDIT":
+              this.handleEdit(params.params);
+              break;
+            case "DELETE":
+              this.handleDelete(params.params);
+              break;
+            case "PRINT":
+              break;
+            case "DOWNLOAD":
+              break;
+          }
+        } else {
+          this.handleInsert({ type: "DOCUMENT" });
+        }
+        break;
+      case "SALARY":
+        if (params.params) {
+          this.handleEdit(params.params);
+        } else {
+          this.handleInsert({ type: "SALARY" });
+        }
+        break;
+      case "BENEFIT":
+        if (params.params) {
+          switch (params.event) {
+            case "EDIT":
+              this.handleEdit(params.params);
+              break;
+            case "DELETE":
+              this.handleDelete(params.params);
+              break;
+          }
+        } else {
+          this.handleInsert({ type: "BENEFIT" });
+        }
+        break;
     }
   }
 
@@ -753,25 +255,36 @@ export default class EmployeeDetail extends Vue {
   }
 
   handleInsert(params: any) {
-    if (!params) {
-      return;
+    console.log("handleInsert called with:", params);
+    let dataType = "";
+    if (typeof params === "object" && params.type) {
+      dataType = params.type;
+    } else {
+      dataType = this.getDataTypeFromActiveTab();
     }
 
-    this.dataType = this.getDataType(params);
+    this.dataType = dataType;
 
-    this.handleShowModal(params, $global.modeData.insert, this.dataType);
+    this.handleShowModal({}, $global.modeData.insert, dataType);
   }
 
   handleEdit(params: any) {
-    if (!params || (!params.is_current && params.base_salary)) return;
-
+    console.log("handleEdit called with:", params);
+    if (!params) {
+      console.error("No data provided for edit");
+      return;
+    }
     this.dataType = this.getDataType(params);
 
     this.handleShowModal(params, $global.modeData.edit, this.dataType);
   }
 
   handleDelete(params: any) {
-    if (!params) return;
+    console.log("handleDelete called with:", params);
+    if (!params) {
+      console.error("No data provided for delete");
+      return;
+    }
 
     this.dataType = this.getDataType(params);
 
@@ -795,42 +308,32 @@ export default class EmployeeDetail extends Vue {
     this.showDialog = true;
   }
 
-  handleTableAction(params: any) {
-    console.log("handleTableAction:", params);
-
-    if (!params || !params.type) {
-      console.error("Invalid parameters in handleTableAction");
+  confirmAction() {
+    if (!this.deleteParam) {
+      console.error("Delete parameter is null or undefined");
+      this.showDialog = false;
       return;
     }
 
-    switch (params.type) {
-      case "DOCUMENT":
-        if (params.data) {
-          if (params.event && params.event.type === "delete") {
-            this.handleDelete(params.data);
-          } else {
-            this.handleEdit(params.data);
-          }
-        } else {
-          this.handleInsert({ type: "DOCUMENT" });
-        }
-      case "SALARY":
-        if (params.data) {
-          this.handleEdit(params.data);
-        } else {
-          this.handleInsert({ type: "SALARY" });
-        }
-      case "BENEFIT":
-        if (params.data) {
-          if (params.event && params.event.type === "delete") {
-            this.handleDelete(params.data);
-          } else {
-            this.handleEdit(params.data);
-          }
-        } else {
-          this.handleInsert({ type: "BENEFIT" });
-        }
-    }
+    this.showDialog = false;
+
+    this.$nextTick(() => {
+      switch (this.dataType) {
+        case "DOCUMENT":
+          this.deleteDocument();
+          break;
+        case "SALARY":
+          break;
+        case "BENEFIT":
+          this.deleteBenefit();
+          break;
+        default:
+          console.error("Unknown data type for delete:", this.dataType);
+      }
+    });
+
+    this.showDialog = false;
+    this.dialogAction = "";
   }
 
   handleBack() {
@@ -865,42 +368,6 @@ export default class EmployeeDetail extends Vue {
       ]);
     } catch (error) {
       getError(error);
-    }
-  }
-
-  async loadDataGrid(type: any = this.dataType) {
-    let gridApi: GridApi;
-    switch (type) {
-      case "DOCUMENT":
-        gridApi = this.documentGridApi;
-        break;
-      case "SALARY":
-        gridApi = this.salaryGridApi;
-        break;
-      case "BENEFIT":
-        gridApi = this.benefitGridApi;
-        break;
-    }
-
-    if (gridApi) {
-      let rowData;
-      switch (type) {
-        case "DOCUMENT":
-          rowData = [...this.rowDocumentData];
-          break;
-        case "SALARY":
-          rowData = [...this.rowSalaryData];
-          break;
-        case "BENEFIT":
-          rowData = [...this.rowBenefitData];
-          break;
-      }
-
-      gridApi.setRowData(rowData);
-
-      setTimeout(() => {
-        // gridApi.refreshCells({ force: true });
-      }, 100);
     }
   }
 
@@ -1209,6 +676,7 @@ export default class EmployeeDetail extends Vue {
         id: 1,
         employee_id: "EMP001",
         base_salary: 8000000,
+        adjustment_reason: "INITIAL",
         effective_date: "2020-01-10",
         end_date: "2021-01-31",
         is_current: false,
@@ -1222,6 +690,7 @@ export default class EmployeeDetail extends Vue {
         id: 2,
         employee_id: "EMP001",
         base_salary: 8500000,
+        adjustment_reason: "ANNUAL_REVIEW",
         effective_date: "2021-02-01",
         end_date: "2022-01-31",
         is_current: false,
@@ -1235,6 +704,7 @@ export default class EmployeeDetail extends Vue {
         id: 3,
         employee_id: "EMP001",
         base_salary: 9000000,
+        adjustment_reason: "PERFORMANCE",
         effective_date: "2022-02-01",
         end_date: null,
         is_current: true,
@@ -1248,6 +718,7 @@ export default class EmployeeDetail extends Vue {
         id: 4,
         employee_id: "EMP002",
         base_salary: 12000000,
+        adjustment_reason: "INITIAL",
         effective_date: "2021-03-15",
         end_date: "2022-03-31",
         is_current: false,
@@ -1261,6 +732,7 @@ export default class EmployeeDetail extends Vue {
         id: 5,
         employee_id: "EMP002",
         base_salary: 13500000,
+        adjustment_reason: "PROMOTION",
         effective_date: "2022-04-01",
         end_date: null,
         is_current: true,
@@ -1276,7 +748,7 @@ export default class EmployeeDetail extends Vue {
       {
         id: 1,
         employee_id: "EMP001",
-        document_type: "DT001",
+        document_type: "KTP",
         file_name: "john_doe_id_card.pdf",
         file_path: "documents/employee/EMP001/john_doe_id_card.pdf",
         file_type: "application/pdf",
@@ -1293,7 +765,7 @@ export default class EmployeeDetail extends Vue {
       {
         id: 2,
         employee_id: "EMP001",
-        document_type: "DT003",
+        document_type: "NPWP",
         file_name: "john_doe_tax_id.pdf",
         file_path: "documents/employee/EMP001/john_doe_tax_id.pdf",
         file_type: "application/pdf",
@@ -1310,7 +782,7 @@ export default class EmployeeDetail extends Vue {
       {
         id: 3,
         employee_id: "EMP001",
-        document_type: "DT005",
+        document_type: "CV",
         file_name: "john_doe_cv.pdf",
         file_path: "documents/employee/EMP001/john_doe_cv.pdf",
         file_type: "application/pdf",
@@ -1327,7 +799,7 @@ export default class EmployeeDetail extends Vue {
       {
         id: 4,
         employee_id: "EMP002",
-        document_type: "DT001",
+        document_type: "KTP",
         file_name: "jane_smith_id_card.pdf",
         file_path: "documents/employee/EMP002/jane_smith_id_card.pdf",
         file_type: "application/pdf",
@@ -1344,7 +816,7 @@ export default class EmployeeDetail extends Vue {
       {
         id: 5,
         employee_id: "EMP002",
-        document_type: "DT002",
+        document_type: "PASSPORT",
         file_name: "jane_smith_passport.pdf",
         file_path: "documents/employee/EMP002/jane_smith_passport.pdf",
         file_type: "application/pdf",
@@ -1365,8 +837,7 @@ export default class EmployeeDetail extends Vue {
         id: 1,
         employee_id: "EMP001",
         payroll_component_id: 1,
-        payroll_component_code: "CE001",
-        payroll_component_name: "Tunjangan Transportasi",
+        payroll_component: "CE001",
         amount: 200000,
         quantity: 1,
         effective_date: "2020-01-10",
@@ -1382,8 +853,7 @@ export default class EmployeeDetail extends Vue {
         id: 2,
         employee_id: "EMP001",
         payroll_component_id: 2,
-        payroll_component_code: "CE002",
-        payroll_component_name: "Tunjangan Rumah",
+        payroll_component: "CE002",
         amount: 500000,
         quantity: 1,
         effective_date: "2020-01-10",
@@ -1399,8 +869,7 @@ export default class EmployeeDetail extends Vue {
         id: 3,
         employee_id: "EMP001",
         payroll_component_id: 3,
-        payroll_component_code: "CE003",
-        payroll_component_name: "Tunjangan Makan",
+        payroll_component: "CE003",
         amount: 300000,
         quantity: 1,
         effective_date: "2020-01-10",
@@ -1416,8 +885,7 @@ export default class EmployeeDetail extends Vue {
         id: 4,
         employee_id: "EMP001",
         payroll_component_id: 10,
-        payroll_component_code: "DE001",
-        payroll_component_name: "Biaya Jabatan",
+        payroll_component: "DE001",
         amount: 100000,
         quantity: 1,
         effective_date: "2020-01-10",
@@ -1433,8 +901,7 @@ export default class EmployeeDetail extends Vue {
         id: 5,
         employee_id: "EMP002",
         payroll_component_id: 1,
-        payroll_component_code: "CE001",
-        payroll_component_name: "Tunjangan Transportasi",
+        payroll_component: "CE001",
         amount: 300000,
         quantity: 1,
         effective_date: "2021-03-15",
@@ -1450,8 +917,7 @@ export default class EmployeeDetail extends Vue {
         id: 6,
         employee_id: "EMP002",
         payroll_component_id: 5,
-        payroll_component_code: "CE005",
-        payroll_component_name: "Bonus",
+        payroll_component: "CE005",
         amount: 1000000,
         quantity: 1,
         effective_date: "2021-12-15",
@@ -1473,9 +939,11 @@ export default class EmployeeDetail extends Vue {
         { code: "PASSPORT", name: "Passport" },
         { code: "NPWP", name: "NPWP" },
         { code: "CERTIFICATE", name: "Certificate" },
+        { code: "CV", name: "CV" },
       ];
 
       this.adjustmentReasonOptions = [
+        { code: "INITIAL", name: "Initial Salary" },
         { code: "PROMOTION", name: "Promotion" },
         { code: "ANNUAL_REVIEW", name: "Annual Review" },
         { code: "PERFORMANCE", name: "Performance Based" },
@@ -1693,8 +1161,11 @@ export default class EmployeeDetail extends Vue {
     try {
       this.isSaving = true;
 
-      console.log("insertDocument", formData);
-      if (!formData.document_type || !formData.issue_date) {
+      if (
+        !formData.document_type ||
+        !formData.issue_date ||
+        !formData.file_name
+      ) {
         getToastError(this.$t("messages.employee.error.fillRequired"));
         this.isSaving = false;
         return;
@@ -1737,12 +1208,16 @@ export default class EmployeeDetail extends Vue {
       };
 
       this.rowDocumentData.push(newDocument);
-      getToastSuccess(this.$t("messages.employee.success.documentUpload"));
 
-      // Refresh data grid
-      if (this.documentGridApi) {
-        this.documentGridApi.setRowData(this.rowDocumentData);
+      await this.$nextTick();
+      if (
+        this.documentTableRef &&
+        typeof this.documentTableRef.refreshGrid === "function"
+      ) {
+        this.documentTableRef.refreshGrid();
       }
+      this.closeModal();
+      getToastSuccess(this.$t("messages.employee.success.documentUpload"));
     } catch (error) {
       getError(error);
     } finally {
@@ -1754,8 +1229,6 @@ export default class EmployeeDetail extends Vue {
     try {
       this.isSaving = true;
 
-      console.log("updateDocument", formData);
-      // Basic validation
       if (!formData.document_type || !formData.issue_date) {
         getToastError(this.$t("messages.employee.error.fillRequired"));
         this.isSaving = false;
@@ -1789,21 +1262,30 @@ export default class EmployeeDetail extends Vue {
           file_path: formData.file
             ? `/uploads/${formData.file.name}`
             : this.rowDocumentData[index].file_path,
+          file_type: formData.file
+            ? formData.file.type
+            : this.rowDocumentData[index].file_type,
+          file_size: formData.file
+            ? formData.file.size
+            : this.rowDocumentData[index].file_size,
           issue_date: formData.issue_date,
-          expiry_date: formData.expiry_date,
-          remark: formData.remark,
+          expiry_date: formData.expiry_date || null,
+          remark: formData.remark || "",
           status: this.calculateDocumentStatus(formData.expiry_date),
           updated_at: formatDateTimeUTC(new Date()),
           updated_by: "Current User",
         };
       }
 
-      getToastSuccess(this.$t("messages.employee.success.documentUpdated"));
-
-      // Refresh data grid
-      if (this.documentGridApi) {
-        this.documentGridApi.setRowData(this.rowDocumentData);
+      await this.$nextTick();
+      if (
+        this.documentTableRef &&
+        typeof this.documentTableRef.refreshGrid === "function"
+      ) {
+        this.documentTableRef.refreshGrid();
       }
+      this.closeModal();
+      getToastSuccess(this.$t("messages.employee.success.documentUpdated"));
     } catch (error) {
       getError(error);
     } finally {
@@ -1811,31 +1293,10 @@ export default class EmployeeDetail extends Vue {
     }
   }
 
-  confirmAction() {
-    if (!this.deleteParam) {
-      console.error("Delete parameter is null or undefined");
-      this.showDialog = false;
-      return;
-    }
-
-    const paramToDelete = { ...this.deleteParam };
-    this.showDialog = false;
-
-    this.$nextTick(() => {
-      this.deleteParam = paramToDelete;
-      if (this.dataType === "DOCUMENT") {
-        this.deleteDocument();
-      } else if (this.dataType === "BENEFIT") {
-        // this.deleteBenefit(currentParam);
-      }
-    });
-  }
-
   async deleteDocument() {
     try {
       // const { status2 } = await employeeAPI.DeleteEmployeeDocument(this.deleteParam.id);
 
-      console.log("deleteParam", this.deleteParam);
       const updatedDocument = this.rowDocumentData.filter(
         (document: any) => document.id !== this.deleteParam.id
       );
@@ -1851,12 +1312,10 @@ export default class EmployeeDetail extends Vue {
       ) {
         this.documentTableRef.refreshGrid();
       }
-      // await this.loadDataGrid("DOCUMENT");
 
       getToastSuccess(this.$t("messages.employee.success.documentDelete"));
     } catch (error) {
-      console.error("Error deleting document:", error);
-      getToastError(this.$t("messages.employee.error.documentDelete"));
+      getError(error);
     }
   }
 
@@ -1893,6 +1352,7 @@ export default class EmployeeDetail extends Vue {
       const newSalary = {
         id: newId,
         employee_id: this.employeeId,
+        adjustment_reason: formData.adjustment_reason,
         base_salary: parseFloat(formData.base_salary),
         effective_date: formData.effective_date,
         end_date: "",
@@ -1907,16 +1367,14 @@ export default class EmployeeDetail extends Vue {
 
       this.rowSalaryData.push(newSalary);
 
-      // Update employee's current base salary
-      if (this.employeeData) {
-        this.employeeData.base_salary = parseFloat(formData.base_salary);
+      await this.$nextTick();
+      if (
+        this.salaryTableRef &&
+        typeof this.salaryTableRef.refreshGrid === "function"
+      ) {
+        this.salaryTableRef.refreshGrid();
       }
-
-      // Refresh data grid
-      if (this.salaryGridApi) {
-        this.salaryGridApi.setRowData(this.rowSalaryData);
-      }
-
+      this.closeModal();
       getToastSuccess(this.$t("messages.employee.success.salaryUpdated"));
     } catch (error) {
       getError(error);
@@ -1928,31 +1386,29 @@ export default class EmployeeDetail extends Vue {
   async updateSalary(formData: any) {
     try {
       this.isSaving = true;
-      getToastError(this.$t("messages.employee.error.cannotEditSalary"));
 
-      // For certain cases where you might want to update remarks or other non-critical fields:
-      /*
-    const index = this.rowSalaryData.findIndex(
-      (item: any) => item.id === formData.id
-    );
-    
-    if (index !== -1) {
-      this.rowSalaryData[index] = {
-        ...this.rowSalaryData[index],
-        remark: formData.remark,
-        updated_at: formatDateTimeUTC(new Date()),
-        updated_by: "Current User"
-      };
-      
-      // Refresh grid
-      if (this.salaryGridApi) {
-        this.salaryGridApi.setRowData(this.rowSalaryData);
+      const index = this.rowSalaryData.findIndex(
+        (item: any) => item.id === formData.id
+      );
+
+      if (index !== -1) {
+        this.rowSalaryData[index] = {
+          ...this.rowSalaryData[index],
+          remark: formData.remark,
+          updated_at: formatDateTimeUTC(new Date()),
+          updated_by: "Current User",
+        };
+
+        await this.$nextTick();
+        if (
+          this.salaryTableRef &&
+          typeof this.salaryTableRef.refreshGrid === "function"
+        ) {
+          this.salaryTableRef.refreshGrid();
+        }
+        this.closeModal();
+        getToastSuccess(this.$t("messages.employee.success.salaryUpdated"));
       }
-      
-      getToastSuccess(this.$t("messages.employee.success.salaryUpdated"));
-      this.closeModal();
-    }
-    */
     } catch (error) {
       getError(error);
     } finally {
@@ -1990,17 +1446,14 @@ export default class EmployeeDetail extends Vue {
         id: newId,
         employee_id: this.employeeId,
         payroll_component_id: newId,
-        payroll_component_code: formData.component,
-        payroll_component_name: selectedComponent
-          ? selectedComponent.name
-          : formData.component,
+        payroll_component: formData.component,
         amount: parseFloat(formData.amount),
-        quantity: parseInt(formData.qty) || 1,
+        quantity: parseInt(formData.qty),
         effective_date: formData.effective_date,
         end_date: formData.end_date || null,
         is_current:
           !formData.end_date || new Date(formData.end_date) > new Date(),
-        remark: formData.remark || "",
+        remark: formData.remark,
         created_at: formatDateTimeUTC(new Date()),
         created_by: "Current User",
         updated_at: formatDateTimeUTC(new Date()),
@@ -2009,12 +1462,15 @@ export default class EmployeeDetail extends Vue {
 
       this.rowBenefitData.push(newBenefit);
 
-      // Refresh data grid
-      if (this.benefitGridApi) {
-        this.benefitGridApi.setRowData(this.rowBenefitData);
+      await this.$nextTick();
+      if (
+        this.benefitTableRef &&
+        typeof this.benefitTableRef.refreshGrid === "function"
+      ) {
+        this.benefitTableRef.refreshGrid();
       }
-
-      getToastSuccess(this.$t("messages.employee.success.benefitAdded"));
+      this.closeModal();
+      getToastSuccess(this.$t("messages.employee.success.benefitInsert"));
     } catch (error) {
       getError(error);
     } finally {
@@ -2051,25 +1507,29 @@ export default class EmployeeDetail extends Vue {
 
         this.rowBenefitData[index] = {
           ...this.rowBenefitData[index],
-          payroll_component_code: formData.component,
+          payroll_component: formData.component,
           payroll_component_name: selectedComponent
             ? selectedComponent.name
             : formData.component,
           amount: parseFloat(formData.amount),
-          quantity: parseInt(formData.qty) || 1,
+          quantity: parseInt(formData.qty),
           effective_date: formData.effective_date,
           end_date: formData.end_date || null,
           is_current:
             !formData.end_date || new Date(formData.end_date) > new Date(),
-          remark: formData.remark || "",
+          remark: formData.remark,
           updated_at: formatDateTimeUTC(new Date()),
           updated_by: "Current User",
         };
 
-        // Refresh grid
-        if (this.benefitGridApi) {
-          this.benefitGridApi.setRowData(this.rowBenefitData);
+        await this.$nextTick();
+        if (
+          this.benefitTableRef &&
+          typeof this.benefitTableRef.refreshGrid === "function"
+        ) {
+          this.benefitTableRef.refreshGrid();
         }
+        this.closeModal();
 
         getToastSuccess(this.$t("messages.employee.success.benefitUpdated"));
       }
@@ -2084,24 +1544,26 @@ export default class EmployeeDetail extends Vue {
     try {
       // const { status2 } = await employeeAPI.DeleteEmployeeBenefit(this.deleteParam.id);
 
-      this.rowBenefitData = this.rowBenefitData.filter(
-        (item: any) => item.id !== this.deleteParam.id
+      const updatedBenefit = this.rowBenefitData.filter(
+        (benefit: any) => benefit.id !== this.deleteParam.id
       );
 
-      // Refresh grid
-      if (this.benefitGridApi) {
-        this.benefitGridApi.setRowData(this.rowBenefitData);
+      this.rowBenefitData = [...updatedBenefit];
+
+      this.deleteParam = null;
+
+      await this.$nextTick();
+      if (
+        this.benefitTableRef &&
+        typeof this.benefitTableRef.refreshGrid === "function"
+      ) {
+        this.benefitTableRef.refreshGrid();
       }
+      this.closeModal();
 
-      getToastSuccess(this.$t("messages.employee.success.benefitDeleted"));
+      getToastSuccess(this.$t("messages.employee.success.benefitDelete"));
     } catch (error) {
-      const safeError =
-        error || new Error("Unknown error during benefit deletion");
-      console.error("Error in deleteBenefit:", safeError);
-
-      // Directly show toast error instead of using getError which might fail
-      getToastError(this.$t("messages.employee.error.benefitDeleteFailed"));
-      return false;
+      getError(error);
     }
   }
 
@@ -2192,6 +1654,52 @@ export default class EmployeeDetail extends Vue {
     }
   }
 
+  setDefaultFormValues(type: string) {
+    switch (type) {
+      case "DOCUMENT":
+        this.currentForm = {
+          id: null,
+          document_type: "",
+          file: null,
+          file_name: "",
+          issue_date: "",
+          expiry_date: "",
+          remark: "",
+          status: "Valid",
+          employee_id: this.employeeId,
+        };
+        break;
+      case "SALARY":
+        const currentSalary = this.rowSalaryData.find(
+          (item: any) => item.is_current
+        );
+        this.currentForm = {
+          id: null,
+          base_salary: currentSalary
+            ? currentSalary.base_salary
+            : this.employeeData.base_salary || 0,
+          effective_date: "",
+          adjustment_reason: "",
+          remark: "",
+          employee_id: this.employeeId,
+        };
+        break;
+      case "BENEFIT":
+        this.currentForm = {
+          id: null,
+          component_type: "",
+          component: "",
+          amount: 0,
+          qty: 1,
+          effective_date: "",
+          end_date: "",
+          remark: "",
+          employee_id: this.employeeId,
+        };
+        break;
+    }
+  }
+
   populateForm(params: any) {
     if (!params) {
       console.error("Invalid data for form population:", params);
@@ -2247,30 +1755,88 @@ export default class EmployeeDetail extends Vue {
     });
   }
 
+  populateModalForm(params: any, type: string) {
+    console.log("populateModalForm:", { params, type });
+
+    switch (type) {
+      case "DOCUMENT":
+        this.currentForm = {
+          id: params.id,
+          document_type: params.document_type,
+          file: params.file_name,
+          file_name: params.file_name,
+          issue_date: params.issue_date,
+          expiry_date: params.expiry_date,
+          remark: params.remark,
+          status: params.status,
+          employee_id: this.employeeId,
+        };
+        break;
+
+      case "SALARY":
+        this.currentForm = {
+          id: params.id,
+          base_salary: params.base_salary,
+          effective_date: params.effective_date,
+          adjustment_reason: params.adjustment_reason,
+          remark: params.remark,
+          employee_id: this.employeeId,
+        };
+        break;
+
+      case "BENEFIT":
+        const componentType = params.payroll_component?.startsWith("CE")
+          ? "EARNINGS"
+          : "DEDUCTIONS";
+
+        this.currentForm = {
+          id: params.id,
+          component_type: componentType,
+          component: params.payroll_component,
+          amount: params.amount,
+          qty: params.quantity,
+          effective_date: params.effective_date,
+          end_date: params.end_date,
+          remark: params.remark,
+          employee_id: this.employeeId,
+        };
+        break;
+    }
+  }
+
   getDataType(params: any): string {
-    if (!params) return "";
+    if (!params) {
+      return this.getDataTypeFromActiveTab();
+    }
 
-    if (params.document_type !== undefined) return "DOCUMENT";
-    if (params.adjustment_reason !== undefined) return "SALARY";
-    if (params.component_type !== undefined) return "BENEFIT";
+    if (params.document_type !== undefined || params.file_name !== undefined) {
+      return "DOCUMENT";
+    }
+    if (
+      params.base_salary !== undefined &&
+      params.effective_date !== undefined
+    ) {
+      return "SALARY";
+    }
+    if (
+      params.payroll_component !== undefined ||
+      params.payroll_component_name !== undefined ||
+      params.component_type !== undefined
+    ) {
+      return "BENEFIT";
+    }
 
+    return this.getDataTypeFromActiveTab();
+  }
+
+  getDataTypeFromActiveTab(): string {
     const activeTabId = document.querySelector(".tab-pane.active")?.id;
 
     if (activeTabId?.includes("documents")) return "DOCUMENT";
     if (activeTabId?.includes("salaries")) return "SALARY";
     if (activeTabId?.includes("benefits")) return "BENEFIT";
 
-    return "";
-  }
-
-  getActiveGridApi(): any {
-    const activeTabId = document.querySelector(".tab-pane.active")?.id;
-
-    if (activeTabId?.includes("documents")) return this.documentGridApi;
-    if (activeTabId?.includes("salaries")) return this.salaryGridApi;
-    if (activeTabId?.includes("benefits")) return this.benefitGridApi;
-
-    return null;
+    return "DOCUMENT";
   }
 
   getModalTitle(): string {
@@ -2319,10 +1885,6 @@ export default class EmployeeDetail extends Vue {
   }
 
   // GETTER AND SETTER =======================================================
-  get pinnedBottomRowData() {
-    return generateTotalFooterAgGrid(this.rowSalaryData, this.columnDefs);
-  }
-
   get filteredComponentOptions() {
     if (!this.currentForm || !this.currentForm.component_type) {
       return [];

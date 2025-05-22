@@ -28,7 +28,7 @@ import { Options, Vue } from "vue-class-component";
       default: (): any[] => [],
     },
   },
-  emits: ["insert", "edit", "delete"],
+  emits: ["insert", "edit", "delete", "print", "download"],
 })
 export default class DocumentTableComponent extends Vue {
   public modeData!: any;
@@ -54,6 +54,14 @@ export default class DocumentTableComponent extends Vue {
   detailCellRenderer: any;
 
   // RECYCLE LIFE FUNCTION ===================================================
+  created(): void {
+    console.log("created rowData di document table", this.rowData);
+  }
+
+  updated(): void {
+    console.log("updated rowData di document table", this.rowData);
+  }
+
   beforeMount(): void {
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
@@ -214,19 +222,28 @@ export default class DocumentTableComponent extends Vue {
       },
       {
         name: this.$t("commons.contextMenu.update"),
-        disabled:
-          !this.paramsData ||
-          (!this.paramsData.is_current && this.paramsData.base_salary),
+        disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () => this.handleEdit(this.paramsData),
       },
       {
         name: this.$t("commons.contextMenu.delete"),
-        disabled:
-          !this.paramsData ||
-          (!this.paramsData.is_current && this.paramsData.base_salary),
+        disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("delete_icon24"),
         action: () => this.handleDelete(this.paramsData),
+      },
+      "separator",
+      {
+        name: this.$t("commons.contextMenu.print"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("print_icon24"),
+        action: () => this.handlePrint(this.paramsData),
+      },
+      {
+        name: this.$t("commons.contextMenu.download"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("download_icon24"),
+        action: () => this.handleDownload(this.paramsData),
       },
     ];
     return result;
@@ -250,11 +267,19 @@ export default class DocumentTableComponent extends Vue {
   }
 
   handleEdit(params: any) {
-    this.$emit("edit", { type: "DOCUMENT", params });
+    this.$emit("edit", { type: "DOCUMENT", event: "EDIT", params });
   }
 
   handleDelete(params: any) {
-    this.$emit("delete", { type: "DOCUMENT", params });
+    this.$emit("delete", { type: "DOCUMENT", event: "DELETE", params });
+  }
+
+  handlePrint(params: any) {
+    this.$emit("print", { type: "DOCUMENT", event: "PRINT", params });
+  }
+
+  handleDownload(params: any) {
+    this.$emit("download", { type: "DOCUMENT", event: "DOWNLOAD", params });
   }
 
   refreshGrid() {

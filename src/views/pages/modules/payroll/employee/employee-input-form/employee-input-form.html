@@ -351,6 +351,7 @@
                     :min="0"
                     :label="$t('labels.payroll.employee.baseSalary')"
                     v-model="form.base_salary"
+                    :disabled="modeData === $global.modeData.edit"
                   />
                 </div>
                 <div class="col-md-4">
@@ -571,7 +572,7 @@
         </div> -->
 
         <!-- Attendance and Leave Data -->
-        <!-- <div class="accordion-item">
+        <div class="accordion-item">
           <h6 class="accordion-header" id="itemAttendanceAndLeaveDataHeader">
             <button
               type="button"
@@ -603,6 +604,7 @@
                     :label="$t('labels.payroll.employee.workSchedule')"
                     :columnOptions="columnOptions"
                     :options="workScheduleOptions"
+                    :disabled="modeData === $global.modeData.edit"
                   >
                   </c-select>
                 </div>
@@ -616,6 +618,7 @@
                     :label="$t('labels.payroll.employee.annualLeaveQuota')"
                     v-model="form.annual_leave_quota"
                     showZeroNumber
+                    :disabled="modeData === $global.modeData.edit"
                   />
                 </div>
                 <div class="col-md-4">
@@ -633,7 +636,7 @@
               </div>
             </div>
           </div>
-        </div> -->
+        </div>
       </div>
 
       <!-- buttons -->
