@@ -1,3 +1,4 @@
+import CCheckbox from "@/components/checkbox/checkbox.vue";
 import CDatepicker from "@/components/datepicker/datepicker.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CInput from "@/components/input/input.vue";
@@ -31,6 +32,7 @@ const employeeAPI = new EmployeeAPI();
     DocumentTableComponent,
     BenefitTableComponent,
     SalaryTableComponent,
+    CCheckbox,
   },
 })
 export default class EmployeeDetail extends Vue {
@@ -54,6 +56,17 @@ export default class EmployeeDetail extends Vue {
   public earningsComponentOptions: any[] = [];
   public deductionsComponentOptions: any[] = [];
   public benefitOptions: any[] = [];
+
+  // employee options
+  public employeeTypeOptions: any[] = [];
+  public genderOptions: any[] = [];
+  public paymentFrequencyOptions: any[] = [];
+  public maritalStatusOptions: any[] = [];
+  public paymentMethodOptions: any[] = [];
+  public bankOptions: any[] = [];
+  public departmentOptions: any[] = [];
+  public positionOptions: any[] = [];
+  public placementOptions: any[] = [];
 
   // child components refs
   documentTableRef: any = ref();
@@ -101,6 +114,21 @@ export default class EmployeeDetail extends Vue {
   benefitGridApi: any;
 
   paramsData: any;
+
+  columnOptions = [
+    {
+      label: "name",
+      field: "name",
+      align: "left",
+      width: "200",
+    },
+    {
+      field: "code",
+      label: "code",
+      align: "right",
+      width: "100",
+    },
+  ];
 
   // RECYCLE LIFE FUNCTION =======================================================
   created() {
@@ -343,9 +371,13 @@ export default class EmployeeDetail extends Vue {
   }
 
   handleFileChange(event: any) {
-    if (event.target.files.length > 0) {
-      this.currentForm.file = event.target.files[0];
-      this.currentForm.file_name = event.target.files[0].name;
+    console.log("handleFileChange", event);
+    const file = event.target.files?.[0];
+    if (file) {
+      this.currentForm.file = file;
+      if (this.modalMode === $global.modeData.insert) {
+        this.currentForm.file_name = file.name;
+      }
     }
   }
 
@@ -834,106 +866,438 @@ export default class EmployeeDetail extends Vue {
 
     this.benefitsListData = [
       {
+        // Data dari tabel EMPLOYEE_PAYROLL_COMPONENT
         id: 1,
         employee_id: "EMP001",
-        payroll_component_id: 1,
-        payroll_component: "CE001",
-        amount: 200000,
+        payroll_component_id: 1, // FK ke PAY_PAYROLL_COMPONENT
+        amount: 200000, // Amount yang disimpan (bisa default atau override)
         quantity: 1,
         effective_date: "2020-01-10",
         end_date: null,
         is_current: true,
+        is_override: false, // Tidak override, menggunakan default amount
         remark: "Monthly transportation allowance",
         created_at: "2020-01-10 10:15:00",
         created_by: "Admin System",
         updated_at: "2020-01-10 10:15:00",
         updated_by: "Admin System",
+
+        // Data tambahan untuk display (dari join dengan PAY_PAYROLL_COMPONENT)
+        payroll_component: "CE001", // Kode component
+        payroll_component_name: "Tunjangan Transportasi", // Nama component
+        component_type: "EARNINGS", // Type component
+        default_amount: 200000, // Default amount dari PAY_PAYROLL_COMPONENT
+        unit: "Per Bulan",
+        category: "Variable Allowance",
+        is_taxable: true,
+        is_fixed: false, // Component ini bisa di-override
       },
       {
+        // Data dengan override amount
         id: 2,
         employee_id: "EMP001",
-        payroll_component_id: 2,
-        payroll_component: "CE002",
-        amount: 500000,
+        payroll_component_id: 2, // FK ke PAY_PAYROLL_COMPONENT
+        amount: 600000, // Amount override (default dari master: 500000)
         quantity: 1,
         effective_date: "2020-01-10",
         end_date: null,
         is_current: true,
-        remark: "Housing allowance",
+        is_override: true, // Override aktif - amount berbeda dari default
+        remark: "Housing allowance with custom amount",
         created_at: "2020-01-10 10:30:00",
         created_by: "Admin System",
         updated_at: "2020-01-10 10:30:00",
         updated_by: "Admin System",
+
+        // Data dari PAY_PAYROLL_COMPONENT
+        payroll_component: "CE002",
+        payroll_component_name: "Tunjangan Rumah",
+        component_type: "EARNINGS",
+        default_amount: 500000, // Default amount dari master (berbeda dengan amount aktual)
+        unit: "Per Bulan",
+        category: "Fix Allowance",
+        is_taxable: true,
+        is_fixed: false, // Component ini bisa di-override
       },
       {
+        // Data dengan component fixed (tidak bisa override)
         id: 3,
         employee_id: "EMP001",
-        payroll_component_id: 3,
-        payroll_component: "CE003",
-        amount: 300000,
+        payroll_component_id: 3, // FK ke PAY_PAYROLL_COMPONENT
+        amount: 300000, // Amount selalu sama dengan default (karena fixed)
         quantity: 1,
         effective_date: "2020-01-10",
         end_date: null,
         is_current: true,
-        remark: "Meal allowance",
+        is_override: false, // Tidak bisa override karena component fixed
+        remark: "Meal allowance - fixed component",
         created_at: "2020-01-10 10:45:00",
         created_by: "Admin System",
         updated_at: "2020-01-10 10:45:00",
         updated_by: "Admin System",
+
+        // Data dari PAY_PAYROLL_COMPONENT
+        payroll_component: "CE003",
+        payroll_component_name: "Tunjangan Makan",
+        component_type: "EARNINGS",
+        default_amount: 300000, // Selalu sama dengan amount karena fixed
+        unit: "Per Bulan",
+        category: "Fixed Allowance",
+        is_taxable: true,
+        is_fixed: true, // Component fixed - tidak bisa di-override
       },
       {
+        // Data deduction
         id: 4,
         employee_id: "EMP001",
-        payroll_component_id: 10,
-        payroll_component: "DE001",
-        amount: 100000,
+        payroll_component_id: 10, // FK ke PAY_PAYROLL_COMPONENT
+        amount: 100000, // Amount default
         quantity: 1,
         effective_date: "2020-01-10",
         end_date: null,
         is_current: true,
+        is_override: false, // Menggunakan default amount
         remark: "Position fee",
         created_at: "2020-01-10 11:00:00",
         created_by: "Admin System",
         updated_at: "2020-01-10 11:00:00",
         updated_by: "Admin System",
+
+        // Data dari PAY_PAYROLL_COMPONENT
+        payroll_component: "DE001",
+        payroll_component_name: "Biaya Jabatan",
+        component_type: "DEDUCTIONS",
+        default_amount: 100000, // Default amount dari master
+        unit: "Per Bulan",
+        category: "Fix Deduction",
+        is_taxable: false,
+        is_fixed: true, // Fixed deduction - tidak bisa di-override
       },
       {
+        // Data employee kedua dengan override
         id: 5,
         employee_id: "EMP002",
-        payroll_component_id: 1,
-        payroll_component: "CE001",
-        amount: 300000,
+        payroll_component_id: 1, // FK ke PAY_PAYROLL_COMPONENT yang sama
+        amount: 250000, // Amount override (default: 200000)
         quantity: 1,
         effective_date: "2021-03-15",
         end_date: null,
         is_current: true,
-        remark: "Monthly transportation allowance",
+        is_override: true, // Override aktif
+        remark: "Transportation allowance with custom amount",
         created_at: "2021-03-15 10:15:00",
         created_by: "Admin System",
         updated_at: "2021-03-15 10:15:00",
         updated_by: "Admin System",
+
+        // Data dari PAY_PAYROLL_COMPONENT (sama dengan id 1)
+        payroll_component: "CE001",
+        payroll_component_name: "Tunjangan Transportasi",
+        component_type: "EARNINGS",
+        default_amount: 200000, // Default dari master
+        unit: "Per Bulan",
+        category: "Variable Allowance",
+        is_taxable: true,
+        is_fixed: false,
       },
       {
+        // Data dengan end date (tidak current)
         id: 6,
         employee_id: "EMP002",
-        payroll_component_id: 5,
-        payroll_component: "CE005",
-        amount: 1000000,
+        payroll_component_id: 5, // FK ke PAY_PAYROLL_COMPONENT
+        amount: 1500000, // Amount override
         quantity: 1,
         effective_date: "2021-12-15",
-        end_date: "2021-12-31",
-        is_current: false,
-        remark: "End of year bonus",
+        end_date: "2021-12-31", // Sudah berakhir
+        is_current: false, // Tidak current karena sudah berakhir
+        is_override: true, // Override aktif
+        remark: "End of year performance bonus with custom amount",
         created_at: "2021-12-15 14:30:00",
         created_by: "HR Manager",
         updated_at: "2021-12-15 14:30:00",
         updated_by: "HR Manager",
+
+        // Data dari PAY_PAYROLL_COMPONENT
+        payroll_component: "CE005",
+        payroll_component_name: "Bonus Performance",
+        component_type: "EARNINGS",
+        default_amount: 1000000, // Default dari master
+        unit: "Per Kejadian",
+        category: "Incentive",
+        is_taxable: true,
+        is_fixed: false,
       },
     ];
   }
 
   async loadDropdown() {
     try {
+      // Employee form options
+      this.employeeTypeOptions = [
+        { code: "Permanent", name: "Permanent", SubGroupName: "Employee Type" },
+        { code: "Contract", name: "Contract", SubGroupName: "Employee Type" },
+        { code: "Part-time", name: "Part-time", SubGroupName: "Employee Type" },
+        { code: "Seasonal", name: "Seasonal", SubGroupName: "Employee Type" },
+        { code: "Casual", name: "Casual", SubGroupName: "Employee Type" },
+        { code: "Intern", name: "Intern", SubGroupName: "Employee Type" },
+        {
+          code: "Freelancer",
+          name: "Freelancer",
+          SubGroupName: "Employee Type",
+        },
+        {
+          code: "Contractor",
+          name: "Contractor",
+          SubGroupName: "Employee Type",
+        },
+        {
+          code: "Consultant",
+          name: "Consultant",
+          SubGroupName: "Employee Type",
+        },
+        { code: "Vendor", name: "Vendor", SubGroupName: "Employee Type" },
+        { code: "Resigned", name: "Resigned", SubGroupName: "Employee Type" },
+        { code: "Retired", name: "Retired", SubGroupName: "Employee Type" },
+        {
+          code: "Terminated",
+          name: "Terminated",
+          SubGroupName: "Employee Type",
+        },
+      ];
+
+      this.genderOptions = [
+        { code: "M", name: "Male", SubGroupName: "Gender" },
+        { code: "F", name: "Female", SubGroupName: "Gender" },
+      ];
+
+      this.paymentFrequencyOptions = [
+        { code: "Daily", name: "Daily", SubGroupName: "Payment Frequency" },
+        { code: "Weekly", name: "Weekly", SubGroupName: "Payment Frequency" },
+        {
+          code: "BiWeekly",
+          name: "Bi-Weekly",
+          SubGroupName: "Payment Frequency",
+        },
+        { code: "Monthly", name: "Monthly", SubGroupName: "Payment Frequency" },
+      ];
+
+      this.maritalStatusOptions = [
+        {
+          code: "TK0",
+          name: "TK0 - Single, no dependent",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "TK1",
+          name: "TK1 - Single, 1 dependent",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "TK2",
+          name: "TK2 - Single, 2 dependents",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "TK3",
+          name: "TK3 - Single, 3 dependents",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "K0",
+          name: "K0 - Married, no dependent",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "K1",
+          name: "K1 - Married, 1 dependent",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "K2",
+          name: "K2 - Married, 2 dependents",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "K3",
+          name: "K3 - Married, 3 dependents",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "KI0",
+          name: "KI0 - Married (combined income), no dependent",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "KI1",
+          name: "KI1 - Married (combined income), 1 dependent",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "KI2",
+          name: "KI2 - Married (combined income), 2 dependents",
+          SubGroupName: "Marital Status",
+        },
+        {
+          code: "KI3",
+          name: "KI3 - Married (combined income), 3 dependents",
+          SubGroupName: "Marital Status",
+        },
+      ];
+
+      this.paymentMethodOptions = [
+        { code: "Cash", name: "Cash", SubGroupName: "Payment Method" },
+        {
+          code: "Transfer",
+          name: "Bank Transfer",
+          SubGroupName: "Payment Method",
+        },
+        {
+          code: "E-wallet",
+          name: "E-wallet Transfer",
+          SubGroupName: "Payment Method",
+        },
+        {
+          code: "Virtual Account",
+          name: "Virtual Account",
+          SubGroupName: "Payment Method",
+        },
+      ];
+
+      this.bankOptions = [
+        { code: "BCA", name: "Bank Central Asia (BCA)", SubGroupName: "Bank" },
+        {
+          code: "BNI",
+          name: "Bank Negara Indonesia (BNI)",
+          SubGroupName: "Bank",
+        },
+        {
+          code: "BRI",
+          name: "Bank Rakyat Indonesia (BRI)",
+          SubGroupName: "Bank",
+        },
+        { code: "Mandiri", name: "Bank Mandiri", SubGroupName: "Bank" },
+        { code: "CIMB Niaga", name: "CIMB Niaga", SubGroupName: "Bank" },
+        { code: "Danamon", name: "Bank Danamon", SubGroupName: "Bank" },
+        { code: "Permata", name: "Bank Permata", SubGroupName: "Bank" },
+        {
+          code: "BTN",
+          name: "Bank Tabungan Negara (BTN)",
+          SubGroupName: "Bank",
+        },
+        { code: "Maybank", name: "Maybank Indonesia", SubGroupName: "Bank" },
+        { code: "OCBC NISP", name: "OCBC NISP", SubGroupName: "Bank" },
+        { code: "Panin Bank", name: "Panin Bank", SubGroupName: "Bank" },
+        { code: "BTPN", name: "Bank BTPN", SubGroupName: "Bank" },
+      ];
+
+      this.departmentOptions = [
+        { code: "D001", name: "Executive", SubGroupName: "Department" },
+        { code: "D002", name: "Human Resources", SubGroupName: "Department" },
+        { code: "D003", name: "Finance", SubGroupName: "Department" },
+        {
+          code: "D004",
+          name: "Information Technology",
+          SubGroupName: "Department",
+        },
+        { code: "D005", name: "Marketing", SubGroupName: "Department" },
+        { code: "D006", name: "Sales", SubGroupName: "Department" },
+        { code: "D007", name: "Operations", SubGroupName: "Department" },
+        { code: "D008", name: "Front Office", SubGroupName: "Department" },
+        { code: "D009", name: "Housekeeping", SubGroupName: "Department" },
+        { code: "D010", name: "Food & Beverage", SubGroupName: "Department" },
+        { code: "D011", name: "Engineering", SubGroupName: "Department" },
+        { code: "D012", name: "Security", SubGroupName: "Department" },
+        { code: "D013", name: "Spa & Wellness", SubGroupName: "Department" },
+        {
+          code: "D014",
+          name: "Events & Conferences",
+          SubGroupName: "Department",
+        },
+        {
+          code: "D015",
+          name: "Training & Development",
+          SubGroupName: "Department",
+        },
+      ];
+
+      this.positionOptions = [
+        {
+          code: "P001",
+          name: "Chief Executive Officer",
+          SubGroupName: "Position",
+        },
+        {
+          code: "P002",
+          name: "Chief Operating Officer",
+          SubGroupName: "Position",
+        },
+        {
+          code: "P003",
+          name: "Chief Financial Officer",
+          SubGroupName: "Position",
+        },
+        { code: "P004", name: "HR Director", SubGroupName: "Position" },
+        { code: "P005", name: "IT Director", SubGroupName: "Position" },
+        { code: "P006", name: "Marketing Director", SubGroupName: "Position" },
+        { code: "P007", name: "Operations Manager", SubGroupName: "Position" },
+        {
+          code: "P008",
+          name: "Front Office Manager",
+          SubGroupName: "Position",
+        },
+        {
+          code: "P009",
+          name: "Housekeeping Manager",
+          SubGroupName: "Position",
+        },
+        { code: "P010", name: "Executive Chef", SubGroupName: "Position" },
+        { code: "P011", name: "HR Manager", SubGroupName: "Position" },
+        { code: "P012", name: "IT Manager", SubGroupName: "Position" },
+        { code: "P013", name: "Accounting Manager", SubGroupName: "Position" },
+        {
+          code: "P014",
+          name: "Front Desk Supervisor",
+          SubGroupName: "Position",
+        },
+        { code: "P015", name: "Restaurant Manager", SubGroupName: "Position" },
+        { code: "P016", name: "HR Specialist", SubGroupName: "Position" },
+        {
+          code: "P017",
+          name: "IT Support Specialist",
+          SubGroupName: "Position",
+        },
+        { code: "P018", name: "Accountant", SubGroupName: "Position" },
+        { code: "P019", name: "Front Desk Agent", SubGroupName: "Position" },
+        { code: "P020", name: "Server", SubGroupName: "Position" },
+        { code: "P021", name: "Housekeeper", SubGroupName: "Position" },
+        {
+          code: "P022",
+          name: "Marketing Coordinator",
+          SubGroupName: "Position",
+        },
+        { code: "P023", name: "Sales Executive", SubGroupName: "Position" },
+        { code: "P024", name: "Security Officer", SubGroupName: "Position" },
+        {
+          code: "P025",
+          name: "Maintenance Technician",
+          SubGroupName: "Position",
+        },
+      ];
+
+      this.placementOptions = [
+        { code: "PL001", name: "Amora Ubud", SubGroupName: "Placement" },
+        { code: "PL002", name: "Amora Canggu", SubGroupName: "Placement" },
+        { code: "PL003", name: "Amora Seminyak", SubGroupName: "Placement" },
+        { code: "PL004", name: "Amora Nusa Dua", SubGroupName: "Placement" },
+        { code: "PL005", name: "Amora Jakarta", SubGroupName: "Placement" },
+        { code: "PL006", name: "Amora Yogyakarta", SubGroupName: "Placement" },
+        { code: "PL007", name: "Amora Bandung", SubGroupName: "Placement" },
+        { code: "PL008", name: "Amora Surabaya", SubGroupName: "Placement" },
+        { code: "PL009", name: "Amora Makassar", SubGroupName: "Placement" },
+        { code: "PL010", name: "Amora Singapore", SubGroupName: "Placement" },
+      ];
+
+      // Document types
       this.documentTypeOptions = [
         { code: "KTP", name: "KTP" },
         { code: "PASSPORT", name: "Passport" },
@@ -942,6 +1306,7 @@ export default class EmployeeDetail extends Vue {
         { code: "CV", name: "CV" },
       ];
 
+      // Salary adjustment reasons
       this.adjustmentReasonOptions = [
         { code: "INITIAL", name: "Initial Salary" },
         { code: "PROMOTION", name: "Promotion" },
@@ -950,90 +1315,154 @@ export default class EmployeeDetail extends Vue {
         { code: "MARKET_ADJUSTMENT", name: "Market Adjustment" },
       ];
 
+      // Component types untuk benefit
       this.componentTypeOptions = [
         { code: "EARNINGS", name: "Earnings" },
         { code: "DEDUCTIONS", name: "Deductions" },
       ];
 
       this.earningsComponentOptions = [
-        { code: "CE001", name: "Tunjangan Transportasi" },
-        { code: "CE002", name: "Tunjangan Rumah" },
-        { code: "CE003", name: "Tunjangan Makan" },
+        {
+          id: 1,
+          code: "CE001",
+          name: "Tunjangan Transportasi",
+          type: "EARNINGS",
+          category: "Variable Allowance",
+          default_amount: 200000,
+          unit: "Per Bulan",
+          description: "Tunjangan transportasi bulanan untuk karyawan",
+          is_taxable: true,
+          is_fixed: false,
+        },
+        {
+          id: 2,
+          code: "CE002",
+          name: "Tunjangan Rumah",
+          type: "EARNINGS",
+          category: "Fix Allowance",
+          default_amount: 500000,
+          unit: "Per Bulan",
+          description: "Tunjangan perumahan untuk karyawan",
+          is_taxable: true,
+          is_fixed: false,
+        },
+        {
+          id: 3,
+          code: "CE003",
+          name: "Tunjangan Makan",
+          type: "EARNINGS",
+          category: "Fixed Allowance",
+          default_amount: 300000,
+          unit: "Per Bulan",
+          description: "Tunjangan makan dan konsumsi - fixed amount",
+          is_taxable: true,
+          is_fixed: true,
+        },
+        {
+          id: 4,
+          code: "CE004",
+          name: "Tunjangan Fasilitas",
+          type: "EARNINGS",
+          category: "Fix Allowance",
+          default_amount: 750000,
+          unit: "Per Bulan",
+          description: "Tunjangan fasilitas kantor dan operasional",
+          is_taxable: true,
+          is_fixed: false,
+        },
+        {
+          id: 5,
+          code: "CE005",
+          name: "Bonus Performance",
+          type: "EARNINGS",
+          category: "Incentive",
+          default_amount: 1000000,
+          unit: "Per Kejadian",
+          description: "Bonus berdasarkan performance karyawan",
+          is_taxable: true,
+          is_fixed: false,
+        },
+        {
+          id: 6,
+          code: "CE006",
+          name: "Uang Lembur",
+          type: "EARNINGS",
+          category: "Incentive",
+          default_amount: 50000,
+          unit: "Per Jam",
+          description: "Kompensasi untuk jam kerja lembur",
+          is_taxable: true,
+          is_fixed: true,
+        },
       ];
 
       this.deductionsComponentOptions = [
-        { code: "DE001", name: "Biaya Jabatan" },
-        { code: "DE002", name: "Unpaid Leave" },
-        { code: "DE003", name: "Cicilan Kasbon" },
-      ];
-
-      this.benefitOptions = [
         {
-          code: "CE001",
-          name: "Tunjangan Transportasi",
-          type: "Earnings",
-          category: "Variable Allowance",
-        },
-        {
-          code: "CE002",
-          name: "Tunjangan Rumah",
-          type: "Earnings",
-          category: "Fix Allowance",
-        },
-        {
-          code: "CE003",
-          name: "Tunjangan Makan",
-          type: "Earnings",
-          category: "Variable Allowance",
-        },
-        {
-          code: "CE004",
-          name: "Tunjangan Fasilitas",
-          type: "Earnings",
-          category: "Fix Allowance",
-        },
-        {
-          code: "CE005",
-          name: "Bonus",
-          type: "Earnings",
-          category: "Incentive",
-        },
-        {
-          code: "CE006",
-          name: "Uang Lembur",
-          type: "Earnings",
-          category: "Incentive",
-        },
-        {
+          id: 10,
           code: "DE001",
           name: "Biaya Jabatan",
-          type: "Deductions",
+          type: "DEDUCTIONS",
           category: "Fix Deduction",
+          default_amount: 100000,
+          unit: "Per Bulan",
+          description: "Potongan biaya jabatan sesuai regulasi",
+          is_taxable: false,
+          is_fixed: true,
         },
         {
+          id: 11,
           code: "DE002",
           name: "Unpaid Leave",
-          type: "Deductions",
+          type: "DEDUCTIONS",
           category: "Variable Deduction",
+          default_amount: 150000,
+          unit: "Per Hari",
+          description: "Potongan untuk cuti tanpa gaji",
+          is_taxable: false,
+          is_fixed: false,
         },
         {
+          id: 12,
           code: "DE003",
           name: "Cicilan Kasbon",
-          type: "Deductions",
+          type: "DEDUCTIONS",
           category: "Kasbon",
+          default_amount: 250000,
+          unit: "Per Bulan",
+          description: "Cicilan pembayaran kasbon karyawan",
+          is_taxable: false,
+          is_fixed: false,
         },
         {
+          id: 13,
           code: "DE004",
           name: "Late Arrival",
-          type: "Deductions",
+          type: "DEDUCTIONS",
           category: "Variable Deduction",
+          default_amount: 25000,
+          unit: "Per Kejadian",
+          description: "Potongan untuk keterlambatan masuk kerja",
+          is_taxable: false,
+          is_fixed: true,
         },
         {
+          id: 14,
           code: "DE005",
           name: "Iuran Keagamaan",
-          type: "Deductions",
+          type: "DEDUCTIONS",
           category: "Fix Deduction",
+          default_amount: 50000,
+          unit: "Per Bulan",
+          description: "Iuran untuk kegiatan keagamaan",
+          is_taxable: false,
+          is_fixed: false,
         },
+      ];
+
+      // Gabungan semua benefit options (untuk filtering)
+      this.benefitOptions = [
+        ...this.earningsComponentOptions,
+        ...this.deductionsComponentOptions,
       ];
     } catch (error) {
       getError(error);
@@ -1092,6 +1521,7 @@ export default class EmployeeDetail extends Vue {
         this.rowBenefitData = this.benefitsListData.filter(
           (p: any) => p.employee_id === this.employeeId
         );
+        console.log("rowBenefitData", this.rowBenefitData);
       } else {
         this.$router.push({ name: "Employee" });
         getToastError(this.$t("messages.employee.error.notFound"));
@@ -1423,10 +1853,22 @@ export default class EmployeeDetail extends Vue {
       if (
         !formData.component_type ||
         !formData.component ||
-        !formData.amount ||
+        !formData.payroll_component_id ||
         !formData.effective_date
       ) {
         getToastError(this.$t("messages.employee.error.fillRequired"));
+        this.isSaving = false;
+        return;
+      }
+
+      if (parseInt(formData.qty) <= 0) {
+        getToastError("Quantity harus lebih dari 0");
+        this.isSaving = false;
+        return;
+      }
+
+      if (formData.is_override && parseFloat(formData.amount) <= 0) {
+        getToastError("Amount harus lebih dari 0");
         this.isSaving = false;
         return;
       }
@@ -1437,27 +1879,47 @@ export default class EmployeeDetail extends Vue {
         (option: any) => option.code === formData.component
       );
 
+      if (!selectedComponent) {
+        getToastError("Component tidak ditemukan");
+        this.isSaving = false;
+        return;
+      }
+
+      const finalAmount = formData.is_override
+        ? parseFloat(formData.amount)
+        : selectedComponent.default_amount;
+
       const newId =
         Math.max(
           ...this.rowBenefitData.map((benefit: any) => benefit.id || 0),
           0
         ) + 1;
+
       const newBenefit = {
         id: newId,
         employee_id: this.employeeId,
-        payroll_component_id: newId,
+        payroll_component_id: selectedComponent.id,
+        component_type: formData.component_type,
         payroll_component: formData.component,
-        amount: parseFloat(formData.amount),
-        quantity: parseInt(formData.qty),
+        amount: finalAmount,
+        qty: parseInt(formData.qty),
         effective_date: formData.effective_date,
         end_date: formData.end_date || null,
+        remark: formData.remark || "",
         is_current:
           !formData.end_date || new Date(formData.end_date) > new Date(),
-        remark: formData.remark,
+        is_override: formData.is_override,
         created_at: formatDateTimeUTC(new Date()),
         created_by: "Current User",
         updated_at: formatDateTimeUTC(new Date()),
         updated_by: "Current User",
+
+        payroll_component_name: selectedComponent.name,
+        default_amount: selectedComponent.default_amount,
+        unit: selectedComponent.unit || "Per Bulan",
+        category: selectedComponent.category,
+        is_taxable: selectedComponent.is_taxable,
+        is_fixed: selectedComponent.is_fixed,
       };
 
       this.rowBenefitData.push(newBenefit);
@@ -1485,10 +1947,24 @@ export default class EmployeeDetail extends Vue {
       if (
         !formData.component_type ||
         !formData.component ||
-        !formData.amount ||
+        !formData.payroll_component_id ||
         !formData.effective_date
       ) {
         getToastError(this.$t("messages.employee.error.fillRequired"));
+        this.isSaving = false;
+        return;
+      }
+
+      // Validasi quantity harus lebih dari 0
+      if (parseInt(formData.quantity) <= 0) {
+        getToastError("Quantity harus lebih dari 0");
+        this.isSaving = false;
+        return;
+      }
+
+      // Validasi amount jika override aktif
+      if (formData.is_override && parseFloat(formData.amount) <= 0) {
+        getToastError("Amount harus lebih dari 0");
         this.isSaving = false;
         return;
       }
@@ -1500,26 +1976,42 @@ export default class EmployeeDetail extends Vue {
       );
 
       if (index !== -1) {
-        // Find the selected component details to get the name
         const selectedComponent = this.benefitOptions.find(
           (option: any) => option.code === formData.component
         );
 
+        if (!selectedComponent) {
+          getToastError("Component tidak ditemukan");
+          this.isSaving = false;
+          return;
+        }
+
+        const finalAmount = formData.is_override
+          ? parseFloat(formData.amount)
+          : selectedComponent.default_amount;
+
         this.rowBenefitData[index] = {
           ...this.rowBenefitData[index],
+          payroll_component_id: selectedComponent.id,
           payroll_component: formData.component,
-          payroll_component_name: selectedComponent
-            ? selectedComponent.name
-            : formData.component,
-          amount: parseFloat(formData.amount),
-          quantity: parseInt(formData.qty),
+          payroll_component_name: selectedComponent.name,
+          amount: finalAmount,
+          qty: parseInt(formData.qty),
           effective_date: formData.effective_date,
           end_date: formData.end_date || null,
           is_current:
             !formData.end_date || new Date(formData.end_date) > new Date(),
-          remark: formData.remark,
+          is_override: formData.is_override,
+          remark: formData.remark || "",
           updated_at: formatDateTimeUTC(new Date()),
           updated_by: "Current User",
+
+          component_type: formData.component_type,
+          default_amount: selectedComponent.default_amount,
+          unit: selectedComponent.unit || "Per Bulan",
+          category: selectedComponent.category,
+          is_taxable: selectedComponent.is_taxable,
+          is_fixed: selectedComponent.is_fixed,
         };
 
         await this.$nextTick();
@@ -1640,17 +2132,21 @@ export default class EmployeeDetail extends Vue {
       case "BENEFIT":
         return {
           id: params.id,
+          payroll_component_id: params.payroll_component_id,
           component_type: params.component_type,
           component: params.component,
-          amount: params.amount,
+          amount: parseFloat(params.amount),
           qty: parseInt(params.qty),
           effective_date: params.effective_date,
           end_date: params.end_date,
           remark: params.remark,
+          is_current:
+            !params.end_date || new Date(params.end_date) > new Date(),
+          is_override: params.is_override,
           employee_id: this.employeeId,
         };
       default:
-        params;
+        return params;
     }
   }
 
@@ -1687,6 +2183,7 @@ export default class EmployeeDetail extends Vue {
       case "BENEFIT":
         this.currentForm = {
           id: null,
+          payroll_component_id: null,
           component_type: "",
           component: "",
           amount: 0,
@@ -1694,6 +2191,8 @@ export default class EmployeeDetail extends Vue {
           effective_date: "",
           end_date: "",
           remark: "",
+          is_current: true,
+          is_override: false,
           employee_id: this.employeeId,
         };
         break;
@@ -1756,14 +2255,12 @@ export default class EmployeeDetail extends Vue {
   }
 
   populateModalForm(params: any, type: string) {
-    console.log("populateModalForm:", { params, type });
-
     switch (type) {
       case "DOCUMENT":
         this.currentForm = {
           id: params.id,
           document_type: params.document_type,
-          file: params.file_name,
+          file: null,
           file_name: params.file_name,
           issue_date: params.issue_date,
           expiry_date: params.expiry_date,
@@ -1772,7 +2269,6 @@ export default class EmployeeDetail extends Vue {
           employee_id: this.employeeId,
         };
         break;
-
       case "SALARY":
         this.currentForm = {
           id: params.id,
@@ -1783,21 +2279,27 @@ export default class EmployeeDetail extends Vue {
           employee_id: this.employeeId,
         };
         break;
-
       case "BENEFIT":
         const componentType = params.payroll_component?.startsWith("CE")
           ? "EARNINGS"
           : "DEDUCTIONS";
 
+        const componentData = this.benefitOptions.find(
+          (option: any) => option.code === params.payroll_component
+        );
+
         this.currentForm = {
           id: params.id,
+          payroll_component_id: params.payroll_component_id,
           component_type: componentType,
           component: params.payroll_component,
           amount: params.amount,
-          qty: params.quantity,
+          qty: params.qty,
           effective_date: params.effective_date,
           end_date: params.end_date,
           remark: params.remark,
+          is_current: params.is_current,
+          is_override: params.is_override,
           employee_id: this.employeeId,
         };
         break;
@@ -1880,8 +2382,38 @@ export default class EmployeeDetail extends Vue {
   }
 
   onComponentTypeChange() {
-    // Reset component selection when component type changes
     this.currentForm.component = "";
+    this.currentForm.payroll_component_id = null;
+    this.currentForm.amount = 0;
+    this.currentForm.qty = 1;
+    this.currentForm.is_override = false;
+
+    this.$forceUpdate();
+  }
+
+  onComponentChange() {
+    const selectedComponent = this.selectedComponentData;
+
+    if (selectedComponent) {
+      this.currentForm.payroll_component_id = selectedComponent.id;
+      this.currentForm.amount = selectedComponent.default_amount || 0;
+      this.currentForm.qty = 1;
+      this.currentForm.is_override = false;
+    } else {
+      this.currentForm.payroll_component_id = null;
+      this.currentForm.amount = 0;
+      this.currentForm.quantity = 1;
+      this.currentForm.is_override = false;
+    }
+  }
+
+  onOverrideAmountChange() {
+    if (!this.currentForm.is_override) {
+      if (this.selectedComponentData) {
+        this.currentForm.amount =
+          this.selectedComponentData.default_amount || 0;
+      }
+    }
   }
 
   // GETTER AND SETTER =======================================================
@@ -1889,8 +2421,80 @@ export default class EmployeeDetail extends Vue {
     if (!this.currentForm || !this.currentForm.component_type) {
       return [];
     }
-    return this.benefitOptions.filter((option: any) => {
-      return option.type === this.currentForm.component_type;
-    });
+
+    if (this.currentForm.component_type === "EARNINGS") {
+      return this.earningsComponentOptions;
+    } else {
+      return this.deductionsComponentOptions;
+    }
+  }
+
+  get filteredComponentOptionsWithDetails() {
+    return this.filteredComponentOptions.map((option: any) => ({
+      code: option.code,
+      name: option.name,
+      SubGroupName: option.category,
+      ...option,
+    }));
+  }
+
+  get selectedComponentData() {
+    if (!this.currentForm.component) {
+      return null;
+    }
+
+    return this.benefitOptions.find(
+      (option: any) => option.code === this.currentForm.component
+    );
+  }
+
+  get isFixedComponent(): boolean {
+    return this.selectedComponentData
+      ? this.selectedComponentData.is_fixed
+      : false;
+  }
+
+  get isValidForm(): boolean {
+    if (!this.currentForm || !this.modalType) {
+      return false;
+    }
+
+    switch (this.modalType) {
+      case "DOCUMENT":
+        return !!(
+          this.currentForm.document_type &&
+          this.currentForm.issue_date &&
+          (this.modalMode === $global.modeData.edit || this.currentForm.file)
+        );
+
+      case "SALARY":
+        return !!(
+          this.currentForm.base_salary &&
+          parseFloat(this.currentForm.base_salary) > 0 &&
+          this.currentForm.effective_date &&
+          this.currentForm.adjustment_reason
+        );
+
+      case "BENEFIT":
+        // Jika override aktif, amount harus > 0
+        // Jika tidak override, amount akan otomatis dari default component
+        const isAmountValid = this.currentForm.is_override
+          ? this.currentForm.amount && parseFloat(this.currentForm.amount) > 0
+          : this.selectedComponentData &&
+            this.selectedComponentData.default_amount > 0;
+
+        return !!(
+          this.currentForm.component_type &&
+          this.currentForm.component &&
+          this.currentForm.payroll_component_id &&
+          isAmountValid &&
+          this.currentForm.quantity &&
+          parseInt(this.currentForm.quantity) > 0 &&
+          this.currentForm.effective_date
+        );
+
+      default:
+        return false;
+    }
   }
 }

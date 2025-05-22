@@ -321,6 +321,14 @@
               @change="handleFileChange"
               :required="modalMode === $global.modeData.insert"
             />
+            <div
+              v-if="modalMode === $global.modeData.edit && currentForm.file_name"
+              class="mt-1"
+            >
+              <small class="text-muted">
+                File saat ini: {{ currentForm.file_name }}
+              </small>
+            </div>
           </div>
           <div class="col-md-6">
             <c-datepicker
@@ -429,6 +437,7 @@
               :label="$t('labels.payroll.payroll.type')"
               :options="componentTypeOptions"
               @change="onComponentTypeChange"
+              :disabled="modalMode === $global.modeData.edit"
             />
           </div>
           <div class="col-md-6">
@@ -437,25 +446,44 @@
               offset="right"
               class="row mb-1"
               name="ComponentName"
+              selectType="column"
               labelName="name"
               keyName="code"
               v-model="currentForm.component"
               :label="$t('labels.payroll.payroll.component')"
-              :options="filteredComponentOptions"
+              :options="filteredComponentOptionsWithDetails"
+              :columnOptions="columnOptions"
+              :disabled="!currentForm.component_type || modalMode === $global.modeData.edit"
+              @change="onComponentChange"
             />
           </div>
           <div class="col-md-6">
-            <c-input
-              required
-              formatted
-              showZeroNumber
-              type="number"
-              name="ComponentAmount"
-              id="ComponentAmount"
-              class="row mb-1"
-              :label="$t('labels.payroll.payroll.amount')"
-              v-model="currentForm.amount"
-            />
+            <div class="row mb-1">
+              <div class="col-9">
+                <c-input
+                  :required="currentForm.is_override"
+                  formatted
+                  showZeroNumber
+                  type="number"
+                  customLabelClass="col-4"
+                  :label="$t('labels.payroll.payroll.amount')"
+                  v-model="currentForm.amount"
+                  :disabled="!currentForm.component || !currentForm.is_override"
+                  :min="currentForm.is_override ? 1 : undefined"
+                />
+              </div>
+              <div class="col-3 d-flex">
+                <c-checkbox
+                  class="align-items-center"
+                  name="ComponentAmount"
+                  id="ComponentAmount"
+                  :label="$t('labels.override')"
+                  v-model="currentForm.is_override"
+                  :disabled="!currentForm.component || isFixedComponent"
+                  @change="onOverrideAmountChange"
+                />
+              </div>
+            </div>
           </div>
           <div class="col-md-6">
             <c-input
@@ -467,6 +495,7 @@
               :label="$t('labels.payroll.payroll.quantity')"
               v-model="currentForm.qty"
               :min="1"
+              :disabled="!currentForm.component"
             />
           </div>
           <div class="col-md-6">

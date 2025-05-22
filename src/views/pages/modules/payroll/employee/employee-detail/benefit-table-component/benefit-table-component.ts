@@ -92,6 +92,20 @@ export default class BenefitTableComponent extends Vue {
         width: 100,
       },
       {
+        headerName: this.$t("commons.table.payroll.payroll.qty"),
+        field: "component_type",
+        width: 120,
+        enableRowGroup: true,
+        valueGetter: (params: any) => {
+          if (params.data?.payroll_component) {
+            return params.data.payroll_component.startsWith("CE")
+              ? "Earnings"
+              : "Deductions";
+          }
+          return "";
+        },
+      },
+      {
         headerName: this.$t("commons.table.payroll.payroll.name"),
         field: "payroll_component",
         width: 100,
