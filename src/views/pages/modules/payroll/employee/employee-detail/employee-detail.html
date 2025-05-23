@@ -326,7 +326,8 @@
               class="mt-1"
             >
               <small class="text-muted">
-                File saat ini: {{ currentForm.file_name }}
+                {{$t('labels.payroll.employee.currentFile')}}: {{
+                currentForm.file_name }}
               </small>
             </div>
           </div>

@@ -146,7 +146,6 @@ export default class EmployeeDetail extends Vue {
     this.showForm = false;
     await this.$nextTick();
 
-    console.log("handleShowForm clicked", mode);
     this.modeData = mode;
 
     this.$nextTick(() => {
@@ -218,8 +217,6 @@ export default class EmployeeDetail extends Vue {
   }
 
   handleTableAction(params: any) {
-    console.log("handleTableAction:", params.event);
-
     if (!params || !params.type) {
       console.error("Invalid parameters in handleTableAction");
       return;
@@ -283,7 +280,6 @@ export default class EmployeeDetail extends Vue {
   }
 
   handleInsert(params: any) {
-    console.log("handleInsert called with:", params);
     let dataType = "";
     if (typeof params === "object" && params.type) {
       dataType = params.type;
@@ -297,7 +293,6 @@ export default class EmployeeDetail extends Vue {
   }
 
   handleEdit(params: any) {
-    console.log("handleEdit called with:", params);
     if (!params) {
       console.error("No data provided for edit");
       return;
@@ -308,7 +303,6 @@ export default class EmployeeDetail extends Vue {
   }
 
   handleDelete(params: any) {
-    console.log("handleDelete called with:", params);
     if (!params) {
       console.error("No data provided for delete");
       return;
@@ -371,7 +365,6 @@ export default class EmployeeDetail extends Vue {
   }
 
   handleFileChange(event: any) {
-    console.log("handleFileChange", event);
     const file = event.target.files?.[0];
     if (file) {
       this.currentForm.file = file;
@@ -379,6 +372,47 @@ export default class EmployeeDetail extends Vue {
         this.currentForm.file_name = file.name;
       }
     }
+  }
+
+  onComponentTypeChange() {
+    this.currentForm.component = "";
+    this.currentForm.payroll_component_id = null;
+    this.currentForm.amount = 0;
+    this.currentForm.qty = 1;
+    this.currentForm.is_override = false;
+
+    this.$forceUpdate();
+  }
+
+  onComponentChange() {
+    const selectedComponent = this.selectedComponentData;
+
+    if (selectedComponent) {
+      this.currentForm.payroll_component_id = selectedComponent.id;
+      this.currentForm.amount = selectedComponent.default_amount || 0;
+      this.currentForm.qty = 1;
+      this.currentForm.is_override = false;
+    } else {
+      this.currentForm.payroll_component_id = null;
+      this.currentForm.amount = 0;
+      this.currentForm.quantity = 1;
+      this.currentForm.is_override = false;
+    }
+  }
+
+  onOverrideAmountChange() {
+    if (!this.currentForm.is_override) {
+      if (this.selectedComponentData) {
+        this.currentForm.amount =
+          this.selectedComponentData.default_amount || 0;
+      }
+    }
+  }
+
+  closeModal() {
+    this.showModal = false;
+    this.isSaving = false;
+    this.currentForm = {};
   }
 
   refreshData(search: any) {
@@ -1477,7 +1511,7 @@ export default class EmployeeDetail extends Vue {
       */
 
       // for demo
-      console.log("employeeData di loadEditData", this.employeeData);
+
       if (this.employeeData) {
         this.$nextTick(() => {
           this.inputFormElement.form = this.populateForm(this.employeeData);
@@ -1647,7 +1681,7 @@ export default class EmployeeDetail extends Vue {
         this.documentTableRef.refreshGrid();
       }
       this.closeModal();
-      getToastSuccess(this.$t("messages.employee.success.documentUpload"));
+      getToastSuccess(this.$t("messages.employee.success.saveDocument"));
     } catch (error) {
       getError(error);
     } finally {
@@ -1715,7 +1749,7 @@ export default class EmployeeDetail extends Vue {
         this.documentTableRef.refreshGrid();
       }
       this.closeModal();
-      getToastSuccess(this.$t("messages.employee.success.documentUpdated"));
+      getToastSuccess(this.$t("messages.employee.success.updateDocument"));
     } catch (error) {
       getError(error);
     } finally {
@@ -1743,7 +1777,7 @@ export default class EmployeeDetail extends Vue {
         this.documentTableRef.refreshGrid();
       }
 
-      getToastSuccess(this.$t("messages.employee.success.documentDelete"));
+      getToastSuccess(this.$t("messages.employee.success.deleteDocument"));
     } catch (error) {
       getError(error);
     }
@@ -1805,7 +1839,7 @@ export default class EmployeeDetail extends Vue {
         this.salaryTableRef.refreshGrid();
       }
       this.closeModal();
-      getToastSuccess(this.$t("messages.employee.success.salaryUpdated"));
+      getToastSuccess(this.$t("messages.employee.success.saveSalary"));
     } catch (error) {
       getError(error);
     } finally {
@@ -1837,7 +1871,7 @@ export default class EmployeeDetail extends Vue {
           this.salaryTableRef.refreshGrid();
         }
         this.closeModal();
-        getToastSuccess(this.$t("messages.employee.success.salaryUpdated"));
+        getToastSuccess(this.$t("messages.employee.success.updateSalary"));
       }
     } catch (error) {
       getError(error);
@@ -1900,26 +1934,29 @@ export default class EmployeeDetail extends Vue {
         employee_id: this.employeeId,
         payroll_component_id: selectedComponent.id,
         component_type: formData.component_type,
+
         payroll_component: formData.component,
+        payroll_component_name: selectedComponent.name,
+
         amount: finalAmount,
         qty: parseInt(formData.qty),
         effective_date: formData.effective_date,
         end_date: formData.end_date || null,
         remark: formData.remark || "",
+
         is_current:
           !formData.end_date || new Date(formData.end_date) > new Date(),
         is_override: formData.is_override,
-        created_at: formatDateTimeUTC(new Date()),
-        created_by: "Current User",
-        updated_at: formatDateTimeUTC(new Date()),
-        updated_by: "Current User",
-
-        payroll_component_name: selectedComponent.name,
         default_amount: selectedComponent.default_amount,
         unit: selectedComponent.unit || "Per Bulan",
         category: selectedComponent.category,
         is_taxable: selectedComponent.is_taxable,
         is_fixed: selectedComponent.is_fixed,
+
+        created_at: formatDateTimeUTC(new Date()),
+        created_by: "Current User",
+        updated_at: formatDateTimeUTC(new Date()),
+        updated_by: "Current User",
       };
 
       this.rowBenefitData.push(newBenefit);
@@ -1932,7 +1969,7 @@ export default class EmployeeDetail extends Vue {
         this.benefitTableRef.refreshGrid();
       }
       this.closeModal();
-      getToastSuccess(this.$t("messages.employee.success.benefitInsert"));
+      getToastSuccess(this.$t("messages.employee.success.saveBenefit"));
     } catch (error) {
       getError(error);
     } finally {
@@ -2023,7 +2060,7 @@ export default class EmployeeDetail extends Vue {
         }
         this.closeModal();
 
-        getToastSuccess(this.$t("messages.employee.success.benefitUpdated"));
+        getToastSuccess(this.$t("messages.employee.success.updateBenefit"));
       }
     } catch (error) {
       getError(error);
@@ -2053,7 +2090,7 @@ export default class EmployeeDetail extends Vue {
       }
       this.closeModal();
 
-      getToastSuccess(this.$t("messages.employee.success.benefitDelete"));
+      getToastSuccess(this.$t("messages.employee.success.deleteBenefit"));
     } catch (error) {
       getError(error);
     }
@@ -2199,6 +2236,21 @@ export default class EmployeeDetail extends Vue {
     }
   }
 
+  calculateDocumentStatus(expiryDate: string): string {
+    if (!expiryDate) return "Valid";
+
+    const today = new Date();
+    const expiry = new Date(expiryDate);
+
+    if (expiry < today) {
+      return "Expired";
+    } else if (expiry.getTime() - today.getTime() < 30 * 24 * 60 * 60 * 1000) {
+      return "Expiring Soon";
+    } else {
+      return "Valid";
+    }
+  }
+
   populateForm(params: any) {
     if (!params) {
       console.error("Invalid data for form population:", params);
@@ -2284,10 +2336,6 @@ export default class EmployeeDetail extends Vue {
           ? "EARNINGS"
           : "DEDUCTIONS";
 
-        const componentData = this.benefitOptions.find(
-          (option: any) => option.code === params.payroll_component
-        );
-
         this.currentForm = {
           id: params.id,
           payroll_component_id: params.payroll_component_id,
@@ -2360,60 +2408,64 @@ export default class EmployeeDetail extends Vue {
     }
   }
 
-  calculateDocumentStatus(expiryDate: string): string {
-    if (!expiryDate) return "Valid";
+  getComponentDisplayName(componentCode: string): string {
+    if (!componentCode) return "";
 
-    const today = new Date();
-    const expiry = new Date(expiryDate);
+    const component = this.benefitOptions.find(
+      (option: any) => option.code === componentCode
+    );
 
-    if (expiry < today) {
-      return "Expired";
-    } else if (expiry.getTime() - today.getTime() < 30 * 24 * 60 * 60 * 1000) {
-      return "Expiring Soon";
-    } else {
-      return "Valid";
-    }
+    return component ? component.name : componentCode;
   }
 
-  closeModal() {
-    this.showModal = false;
-    this.isSaving = false;
-    this.currentForm = {};
+  getDepartmentDisplayName(departmentCode: string): string {
+    if (!departmentCode) return "";
+
+    const department = this.departmentOptions.find(
+      (option: any) => option.code === departmentCode
+    );
+
+    return department ? department.name : departmentCode;
   }
 
-  onComponentTypeChange() {
-    this.currentForm.component = "";
-    this.currentForm.payroll_component_id = null;
-    this.currentForm.amount = 0;
-    this.currentForm.qty = 1;
-    this.currentForm.is_override = false;
+  getPositionDisplayName(positionCode: string): string {
+    if (!positionCode) return "";
 
-    this.$forceUpdate();
+    const position = this.positionOptions.find(
+      (option: any) => option.code === positionCode
+    );
+
+    return position ? position.name : positionCode;
   }
 
-  onComponentChange() {
-    const selectedComponent = this.selectedComponentData;
+  getPlacementDisplayName(placementCode: string): string {
+    if (!placementCode) return "";
 
-    if (selectedComponent) {
-      this.currentForm.payroll_component_id = selectedComponent.id;
-      this.currentForm.amount = selectedComponent.default_amount || 0;
-      this.currentForm.qty = 1;
-      this.currentForm.is_override = false;
-    } else {
-      this.currentForm.payroll_component_id = null;
-      this.currentForm.amount = 0;
-      this.currentForm.quantity = 1;
-      this.currentForm.is_override = false;
-    }
+    const placement = this.placementOptions.find(
+      (option: any) => option.code === placementCode
+    );
+
+    return placement ? placement.name : placementCode;
   }
 
-  onOverrideAmountChange() {
-    if (!this.currentForm.is_override) {
-      if (this.selectedComponentData) {
-        this.currentForm.amount =
-          this.selectedComponentData.default_amount || 0;
-      }
-    }
+  getDocumentTypeDisplayName(documentTypeCode: string): string {
+    if (!documentTypeCode) return "";
+
+    const docType = this.documentTypeOptions.find(
+      (option: any) => option.code === documentTypeCode
+    );
+
+    return docType ? docType.name : documentTypeCode;
+  }
+
+  getAdjustmentReasonDisplayName(reasonCode: string): string {
+    if (!reasonCode) return "";
+
+    const reason = this.adjustmentReasonOptions.find(
+      (option: any) => option.code === reasonCode
+    );
+
+    return reason ? reason.name : reasonCode;
   }
 
   // GETTER AND SETTER =======================================================

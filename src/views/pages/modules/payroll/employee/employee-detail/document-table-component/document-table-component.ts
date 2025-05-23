@@ -54,13 +54,6 @@ export default class DocumentTableComponent extends Vue {
   detailCellRenderer: any;
 
   // RECYCLE LIFE FUNCTION ===================================================
-  created(): void {
-    console.log("created rowData di document table", this.rowData);
-  }
-
-  updated(): void {
-    console.log("updated rowData di document table", this.rowData);
-  }
 
   beforeMount(): void {
     this.agGridSetting = $global.agGrid;

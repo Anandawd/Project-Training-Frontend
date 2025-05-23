@@ -92,7 +92,7 @@ export default class BenefitTableComponent extends Vue {
         width: 100,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.qty"),
+        headerName: this.$t("commons.table.payroll.payroll.type"),
         field: "component_type",
         width: 120,
         enableRowGroup: true,
@@ -106,15 +106,37 @@ export default class BenefitTableComponent extends Vue {
         },
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.name"),
+        headerName: this.$t("commons.table.payroll.payroll.code"),
         field: "payroll_component",
         width: 100,
         enableRowGroup: true,
-        // valueGetter: (params: any) => {
-        //   return params.data.payroll_component_code.startsWith("CE")
-        //     ? "Earnings"
-        //     : "Deductions";
-        // },
+        hide: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.name"),
+        field: "payroll_component_name",
+        width: 200,
+        enableRowGroup: true,
+        valueGetter: (params: any) => {
+          if (params.data?.payroll_component_name) {
+            return params.data.payroll_component_name;
+          }
+          if (params.data?.payroll_component) {
+            const parentComponent = params.context?.componentParent;
+            if (parentComponent && parentComponent.getComponentDisplayName) {
+              return parentComponent.getComponentDisplayName(
+                params.data.payroll_component
+              );
+            }
+            return params.data?.payroll_component || "";
+          }
+        },
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.category"),
+        field: "category",
+        width: 150,
+        enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.amount"),
@@ -294,7 +316,14 @@ export default class BenefitTableComponent extends Vue {
       this.gridApi.setRowData([...this.rowData]);
     }
   }
-
+  getComponentDisplayName(componentCode: string): string {
+    // Akses parent component untuk mendapatkan data komponen
+    const parentComponent = this.$parent as any;
+    if (parentComponent && parentComponent.getComponentDisplayName) {
+      return parentComponent.getComponentDisplayName(componentCode);
+    }
+    return componentCode;
+  }
   // GETTER AND SETTER =======================================================
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);

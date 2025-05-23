@@ -337,24 +337,10 @@ export default class Employee extends Vue {
   }
 
   handleShowDetail(params: any) {
-    console.log("handleShowDetail", params.id);
     this.$router.push({
       name: "EmployeeDetail",
       params: { id: params.employee_id },
     });
-  }
-
-  handleSalaryHistory(paramsId: string) {
-    console.log(`Viewing salary history for employee ${paramsId}`);
-  }
-
-  handleDownloadPayslip(paramsId: string) {
-    console.log(`Downloading payslip for employee ${paramsId}`);
-    getToastSuccess("Payslip download started");
-  }
-
-  handlePrintPayslip(paramsId: string) {
-    getToastSuccess("Payslip print started");
   }
 
   handleMenu() {}
@@ -1222,7 +1208,6 @@ export default class Employee extends Vue {
       */
 
       // for demo
-      console.log("Inserting new employee data:", formData);
       const newId = Math.max(...this.rowData.map((emp: any) => emp.id)) + 1;
       const newEmployee = {
         id: newId,
