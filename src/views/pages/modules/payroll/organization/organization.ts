@@ -1,20 +1,21 @@
-import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
-import Checklist from "@/components/ag_grid-framework/checklist.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import OrganizationAPI from "@/services/api/payroll/organization/organization";
-import { generateIconContextMenuAgGrid, getError } from "@/utils/general";
+import { formatDateTimeUTC } from "@/utils/format";
+import { getError } from "@/utils/general";
 import $global from "@/utils/global";
-import { getToastError, getToastSuccess } from "@/utils/toast";
+import { getToastSuccess } from "@/utils/toast";
 import CSearchFilter from "@/views/pages/components/filter/filter.vue";
 import "ag-grid-enterprise";
-import { GridApi } from "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import EarningsInputForm from "../payroll-component/earnings-component-input-form/earnings-component-input-form.vue";
 import DepartmentInputForm from "./department-input-form/department-input-form.vue";
+import DepartmentTableComponent from "./department-table-component/department-table-component.vue";
 import PlacementInputForm from "./placement-input-form/placement-input-form.vue";
+import PlacementTableComponent from "./placement-table-component/placement-table-component.vue";
 import PositionInputForm from "./position-input-form/position-input-form.vue";
+import PositionTableComponent from "./position-table-component/position-table-component.vue";
 
 const organizationAPI = new OrganizationAPI();
 
@@ -27,6 +28,9 @@ const organizationAPI = new OrganizationAPI();
     DepartmentInputForm,
     PlacementInputForm,
     EarningsInputForm,
+    DepartmentTableComponent,
+    PositionTableComponent,
+    PlacementTableComponent,
   },
 })
 export default class Employee extends Vue {
@@ -34,21 +38,23 @@ export default class Employee extends Vue {
   public rowDepartmentData: any = [];
   public rowPositionData: any = [];
   public rowPlacementData: any = [];
-  public deleteParam: any;
 
   // form
+  public dataType: any;
   public showForm: boolean = false;
   public modeData: any;
-  public form: any = {};
-  public showDialog: boolean = false;
-  public dialogMessage: string = "";
-  // public inputFormElement: any = ref();
-  public currentFormType: string = "";
-
-  public departmentFormElement: any = ref();
+  public currentForm: any = reactive({});
+  public inputFormElement: any = ref();
   public positionFormElement: any = ref();
+  public departmentFormElement: any = ref();
   public placementFormElement: any = ref();
 
+  // child components refs
+  positionTableRef: any = ref();
+  departmentTableRef: any = ref();
+  placementTableRef: any = ref();
+
+  // options
   public positionLevelOptions: any[];
   public departmentOptions: any[];
   public placementOptions: any[];
@@ -57,27 +63,11 @@ export default class Employee extends Vue {
   public countryOptions: any[];
   public cityOptions: any = ref([]);
 
-  // AG GRID VARIABLE
-  gridOptions: any = {};
-  columnDepartmentDefs: any;
-  columnPositionDefs: any;
-  columnPlacementDefs: any;
-  context: any;
-  frameworkComponents: any;
-  rowGroupPanelShow: string;
-  statusBar: any;
-  paginationPageSize: any;
-  rowSelection: string;
-  rowModelType: string;
-  limitPageSize: any;
-  gridApi: any;
-  paramsData: any;
-  ColumnApi: any;
-  agGridSetting: any;
-
-  departmentTabGridApi: any;
-  positionTabGridApi: any;
-  placementTabGridApi: any;
+  // modal
+  public showDialog: boolean = false;
+  public dialogMessage: string = "";
+  public dialogAction: string = "";
+  public deleteParam: any = null;
 
   // RECYCLE LIFE FUNCTION =======================================================
   created() {
@@ -85,422 +75,95 @@ export default class Employee extends Vue {
     this.loadMockData();
   }
 
-  beforeMount(): void {
-    this.agGridSetting = $global.agGrid;
-    this.gridOptions = {
-      actionGrid: {
-        edit: true,
-        delete: true,
-      },
-      rowHeight: $global.agGrid.rowHeightDefault,
-      headerHeight: $global.agGrid.headerHeight,
-    };
-    this.columnPositionDefs = [
-      {
-        headerName: this.$t("commons.table.action"),
-        headerClass: "align-header-center",
-        cellClass: "action-grid-buttons",
-        field: "id",
-        width: 100,
-        enableRowGroup: false,
-        resizeable: false,
-        filter: false,
-        suppressMenu: true,
-        lockPosition: "left",
-        sortable: false,
-        cellRenderer: "actionGrid",
-        colId: "params",
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.code"),
-        field: "position_code",
-        width: 100,
-        enableRowGroup: false,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.positionName"),
-        field: "position_name",
-        width: 200,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.description"),
-        field: "position_description",
-        width: 200,
-        enableRowGroup: false,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.level"),
-        field: "position_level",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.department"),
-        field: "position_department",
-        width: 200,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.placement"),
-        field: "position_placement",
-        width: 200,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.status"),
-        headerClass: "align-header-center",
-        cellClass: "ag-cell-center-checkbox",
-        field: "position_status",
-        width: 100,
-        enableRowGroup: true,
-        cellRenderer: "checklistRenderer",
-      },
-      {
-        headerName: this.$t("commons.table.updatedAt"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "position_updated_at",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.updatedBy"),
-        field: "position_updated_by",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.createdAt"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "position_created_at",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.createdBy"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "position_created_by",
-        width: 120,
-        enableRowGroup: true,
-      },
-    ];
-    this.columnDepartmentDefs = [
-      {
-        headerName: this.$t("commons.table.action"),
-        headerClass: "align-header-center",
-        cellClass: "action-grid-buttons",
-        field: "id",
-        width: 100,
-        enableRowGroup: false,
-        resizeable: false,
-        filter: false,
-        suppressMenu: true,
-        lockPosition: "left",
-        sortable: false,
-        cellRenderer: "actionGrid",
-        colId: "params",
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.code"),
-        field: "department_code",
-        width: 100,
-        enableRowGroup: false,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.departmentName"),
-        field: "department_name",
-        width: 150,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.description"),
-        field: "department_description",
-        width: 200,
-        enableRowGroup: false,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.placement"),
-        field: "department_placement",
-        width: 200,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.manager"),
-        field: "department_manager",
-        width: 150,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.supervisor"),
-        field: "department_supervisor",
-        width: 150,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.status"),
-        headerClass: "align-header-center",
-        cellClass: "ag-cell-center-checkbox",
-        field: "department_status",
-        width: 100,
-        enableRowGroup: true,
-        cellRenderer: "checklistRenderer",
-      },
-      {
-        headerName: this.$t("commons.table.updatedAt"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "department_updated_at",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.updatedBy"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "department_updated_by",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.createdAt"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "department_created_at",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.createdBy"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "department_created_by",
-        width: 120,
-        enableRowGroup: true,
-      },
-    ];
-    this.columnPlacementDefs = [
-      {
-        headerName: this.$t("commons.table.action"),
-        headerClass: "align-header-center",
-        cellClass: "action-grid-buttons",
-        field: "id",
-        width: 100,
-        enableRowGroup: false,
-        resizeable: false,
-        filter: false,
-        suppressMenu: true,
-        lockPosition: "left",
-        sortable: false,
-        cellRenderer: "actionGrid",
-        colId: "params",
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.code"),
-        field: "placement_code",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.placementName"),
-        field: "placement_name",
-        width: 200,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.country"),
-        field: "placement_country",
-        width: 150,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.city"),
-        field: "placement_city",
-        width: 150,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.address"),
-        field: "placement_address",
-        width: 300,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.status"),
-        headerClass: "align-header-center",
-        cellClass: "ag-cell-center-checkbox",
-        field: "placement_status",
-        width: 100,
-        enableRowGroup: true,
-        cellRenderer: "checklistRenderer",
-      },
-      {
-        headerName: this.$t("commons.table.updatedAt"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "placement_updated_at",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.updatedBy"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "placement_updated_by",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.createdAt"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "placement_created_at",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.createdBy"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "placement_created_by",
-        width: 120,
-        enableRowGroup: true,
-      },
-    ];
-    this.context = { componentParent: this };
-    this.frameworkComponents = {
-      actionGrid: ActionGrid,
-      checklistRenderer: Checklist,
-    };
-    this.rowGroupPanelShow = "always";
-    this.statusBar = {
-      statusPanels: [
-        { statusPanel: "agTotalAndFilteredRowCountComponent", align: "left" },
-        { statusPanel: "agTotalRowCountComponent", align: "center" },
-        { statusPanel: "agFilteredRowCountComponent" },
-        { statusPanel: "agSelectedRowCountComponent" },
-        { statusPanel: "agAggregationComponent" },
-      ],
-    };
-    this.paginationPageSize = this.agGridSetting.limitDefaultPageSize;
-    this.rowSelection = "single";
-    this.rowModelType = "serverSide";
-    this.limitPageSize = this.agGridSetting.limitDefaultPageSize;
-  }
-
-  onGridReady(params: any, gridId?: string) {
-    const id = gridId || params.api.gridOptionsWrapper.gridOptions.id;
-    switch (id) {
-      case "position-tab-grid":
-        this.positionTabGridApi = params.api;
-        break;
-      case "department-tab-grid":
-        this.departmentTabGridApi = params.api;
-        break;
-      case "placement-tab-grid":
-        this.placementTabGridApi = params.api;
-        break;
-    }
-    this.gridApi = params.api;
-    this.ColumnApi = params.columnApi;
-  }
-
   // GENERAL FUNCTION =======================================================
-  getContextMenu(params: any) {
-    const { node } = params;
-    if (node) {
-      this.paramsData = node.data;
-    } else {
-      this.paramsData = null;
-    }
-
-    const result = [
-      {
-        name: this.$t("commons.contextMenu.update"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () =>
-          this.handleShowForm(this.paramsData, $global.modeData.edit),
-      },
-      {
-        name: this.$t("commons.contextMenu.delete"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("delete_icon24"),
-        action: () => this.handleDelete(this.paramsData),
-      },
-    ];
-    return result;
-  }
-
-  handleRowRightClicked() {
-    if (this.paramsData) {
-      const vm = this;
-      vm.gridApi.forEachNode((node: any) => {
-        if (node.data) {
-          if (node.data.id == vm.paramsData.id) {
-            node.setSelected(true, true);
-          }
-        }
-      });
-    }
-  }
-
-  async handleShowForm(params: any, mode: any) {
+  async handleShowForm(params: any, mode: any, type: any) {
     this.showForm = false;
     await this.$nextTick();
 
     this.modeData = mode;
+    this.dataType = type;
+    this.currentForm = {};
 
-    if (typeof params === "string") {
-      this.currentFormType = params;
-    } else {
-      this.currentFormType = this.getCurrentFormType(params);
-    }
-
-    this.showForm = true;
-
+    const formElement = this.getFormElementByType(this.dataType);
+    console.log("handleShowForm", params);
+    console.log("formElement", formElement);
     this.$nextTick(() => {
-      const formElement = this.getFormElementByType(this.currentFormType);
-      if (formElement && typeof formElement.initialize === "function") {
+      if (mode === $global.modeData.insert) {
         formElement.initialize();
-
-        if (mode === $global.modeData.edit && typeof params !== "string") {
-          this.populateForm(params);
-        }
+      } else if (mode === $global.modeData.edit && params) {
+        console.log("masuk ke edit");
+        formElement.form = this.populateForm(params);
       }
     });
+
+    this.showForm = true;
   }
 
   handleSave(formData: any) {
-    // if(!this.validateFormData(formData)){
-    //   return
-    // }
-    const formType = this.getCurrentFormType(formData);
-    const formattedData = this.formatFormData(formData, formType);
+    const formattedData = this.formatFormData(formData, this.dataType);
+
     if (this.modeData === $global.modeData.insert) {
-      this.insertData(formattedData).then(() => {
-        this.showForm = false;
-      });
+      this.insertData(formattedData);
     } else {
-      this.updateData(formattedData).then(() => {
-        this.showForm = false;
-      });
+      this.updateData(formattedData);
     }
   }
 
   handleEdit(formData: any) {
-    const formType = this.getCurrentFormType(formData);
-    this.currentFormType = formType;
-    this.handleShowForm(formData, $global.modeData.edit);
-    // this.loadEditData(formData, formType);
+    console.log("handleEdit", formData);
+    this.dataType = this.getDataType(formData);
+    this.handleShowForm(formData, $global.modeData.edit, this.dataType);
   }
 
   handleDelete(params: any) {
-    // this.showDialog = true;
-    this.deleteParam = params;
+    this.dataType = this.getDataType(params);
+    this.deleteParam = { ...params };
+    this.dialogAction = "delete";
+
+    switch (this.dataType) {
+      case "POSITION":
+        this.dialogMessage = this.$t(
+          "messages.employee.confirm.deletePosition"
+        );
+        break;
+      case "DEPARTMENT":
+        this.dialogMessage = this.$t(
+          "messages.employee.confirm.deleteDepartment"
+        );
+        break;
+      case "PLACEMENT":
+        this.dialogMessage = this.$t(
+          "messages.employee.confirm.deletePlacement"
+        );
+        break;
+    }
+    this.showDialog = true;
+  }
+
+  handleTableAction(params: any) {
+    switch (params.event) {
+      case "EDIT":
+        this.handleEdit(params.params);
+        break;
+      case "DELETE":
+        this.handleDelete(params.params);
+        break;
+      default:
+        this.handleShowForm(
+          params.params,
+          $global.modeData.insert,
+          params.type
+        );
+    }
+  }
+
+  confirmAction() {
+    this.showDialog = false;
+    this.dataType = this.getDataType(this.deleteParam);
     this.deleteData();
+
+    this.showDialog = false;
+    this.dialogAction = "";
   }
 
   refreshData(search: any) {
@@ -520,47 +183,28 @@ export default class Employee extends Vue {
     }
   }
 
-  async loadDataGrid(formType: any = this.currentFormType) {
-    let gridApi: GridApi;
-    switch (formType) {
-      case "position":
-        gridApi = this.positionTabGridApi;
+  async loadDataGrid(type: any = this.dataType) {
+    switch (type) {
+      case "POSITION":
+        if (this.positionTableRef) {
+          this.positionTableRef.refreshGrid();
+        }
         break;
-      case "department":
-        gridApi = this.departmentTabGridApi;
+      case "DEPARTMENT":
+        if (this.departmentTableRef) {
+          this.departmentTableRef.refreshGrid();
+        }
         break;
-      case "placement":
-        gridApi = this.placementTabGridApi;
+      case "PLACEMENT":
+        if (this.placementTableRef) {
+          this.placementTableRef.refreshGrid();
+        }
         break;
-    }
-
-    if (gridApi) {
-      let rowData;
-      switch (formType) {
-        case "position":
-          rowData = [...this.rowPositionData];
-          break;
-        case "department":
-          rowData = [...this.rowDepartmentData];
-          break;
-        case "placement":
-          rowData = [...this.rowPlacementData];
-          break;
-      }
-
-      gridApi.setRowData(rowData);
-
-      // setTimeout(() => {
-      //   gridApi.refreshCells({ force: true });
-      // }, 100);
     }
   }
 
   async loadEditData(params: any, type: any) {
     try {
-      this.showForm = true;
-      await this.$nextTick();
-
       // for real implementation
       // if (type === "position") {
       //   const { data } = await organizationAPI.GetPosition(params.id);
@@ -583,7 +227,7 @@ export default class Employee extends Vue {
         return;
       }
 
-      this.populateForm(params);
+      // this.populateForm(params);
     } catch (error) {
       getError(error);
     }
@@ -594,838 +238,830 @@ export default class Employee extends Vue {
       {
         id: 1,
         department_code: "D001",
-        department_name: "Executive",
-        department_description: "Executive leadership team",
-        department_placement: "Amora Ubud",
-        department_manager: "John Smith",
-        department_supervisor: "Jane Doe",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Executive",
+        description: "Executive leadership team",
+        placement: "Amora Ubud",
+        manager: "John Smith",
+        supervisor: "Jane Doe",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 2,
         department_code: "D002",
-        department_name: "Human Resources",
-        department_description:
-          "Employee recruitment, management, and development",
-        department_placement: "Amora Ubud",
-        department_manager: "Sarah Johnson",
-        department_supervisor: "Michael Brown",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Human Resources",
+        description: "Employee recruitment, management, and development",
+        placement: "Amora Ubud",
+        manager: "Sarah Johnson",
+        supervisor: "Michael Brown",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 3,
         department_code: "D003",
-        department_name: "Finance",
-        department_description: "Financial management and accounting",
-        department_placement: "Amora Ubud",
-        department_manager: "Robert Chen",
-        department_supervisor: "Emily Davis",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Finance",
+        description: "Financial management and accounting",
+        placement: "Amora Ubud",
+        manager: "Robert Chen",
+        supervisor: "Emily Davis",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 4,
         department_code: "D004",
-        department_name: "Information Technology",
-        department_description: "IT infrastructure and support",
-        department_placement: "Amora Ubud",
-        department_manager: "David Wilson",
-        department_supervisor: "Lisa Anderson",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Information Technology",
+        description: "IT infrastructure and support",
+        placement: "Amora Ubud",
+        manager: "David Wilson",
+        supervisor: "Lisa Anderson",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 5,
         department_code: "D005",
-        department_name: "Marketing",
-        department_description: "Brand management and promotion",
-        department_placement: "Amora Canggu",
-        department_manager: "Jennifer Garcia",
-        department_supervisor: "Kevin Martinez",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Marketing",
+        description: "Brand management and promotion",
+        placement: "Amora Canggu",
+        manager: "Jennifer Garcia",
+        supervisor: "Kevin Martinez",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 6,
         department_code: "D006",
-        department_name: "Sales",
-        department_description: "Sales and business development",
-        department_placement: "Amora Canggu",
-        department_manager: "Thomas Wright",
-        department_supervisor: "Patricia Hall",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Sales",
+        description: "Sales and business development",
+        placement: "Amora Canggu",
+        manager: "Thomas Wright",
+        supervisor: "Patricia Hall",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 7,
         department_code: "D007",
-        department_name: "Operations",
-        department_description: "Hotel operations management",
-        department_placement: "Amora Canggu",
-        department_manager: "Charles Lopez",
-        department_supervisor: "Nancy Young",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Operations",
+        description: "Hotel operations management",
+        placement: "Amora Canggu",
+        manager: "Charles Lopez",
+        supervisor: "Nancy Young",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 8,
         department_code: "D008",
-        department_name: "Front Office",
-        department_description: "Reception, concierge, and guest services",
-        department_placement: "Amora Ubud",
-        department_manager: "Daniel Lee",
-        department_supervisor: "Susan Clark",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Front Office",
+        description: "Reception, concierge, and guest services",
+        placement: "Amora Ubud",
+        manager: "Daniel Lee",
+        supervisor: "Susan Clark",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 9,
         department_code: "D009",
-        department_name: "Housekeeping",
-        department_description: "Room and public area cleaning and maintenance",
-        department_placement: "Amora Ubud",
-        department_manager: "Jessica Walker",
-        department_supervisor: "Brian Turner",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Housekeeping",
+        description: "Room and public area cleaning and maintenance",
+        placement: "Amora Ubud",
+        manager: "Jessica Walker",
+        supervisor: "Brian Turner",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 10,
         department_code: "D010",
-        department_name: "Food & Beverage",
-        department_description: "Restaurant, bar, and catering operations",
-        department_placement: "Amora Canggu",
-        department_manager: "Richard Baker",
-        department_supervisor: "Elizabeth Scott",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Food & Beverage",
+        description: "Restaurant, bar, and catering operations",
+        placement: "Amora Canggu",
+        manager: "Richard Baker",
+        supervisor: "Elizabeth Scott",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 11,
         department_code: "D011",
-        department_name: "Engineering",
-        department_description: "Facility maintenance and repairs",
-        department_placement: "Amora Ubud",
-        department_manager: "Andrew Miller",
-        department_supervisor: "Laura Nelson",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Engineering",
+        description: "Facility maintenance and repairs",
+        placement: "Amora Ubud",
+        manager: "Andrew Miller",
+        supervisor: "Laura Nelson",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 12,
         department_code: "D012",
-        department_name: "Security",
-        department_description: "Safety and security operations",
-        department_placement: "Amora Canggu",
-        department_manager: "James Carter",
-        department_supervisor: "Maria Gonzalez",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Security",
+        description: "Safety and security operations",
+        placement: "Amora Canggu",
+        manager: "James Carter",
+        supervisor: "Maria Gonzalez",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 13,
         department_code: "D013",
-        department_name: "Spa & Wellness",
-        department_description: "Spa services and wellness programs",
-        department_placement: "Amora Ubud",
-        department_manager: "Michelle Adams",
-        department_supervisor: "Samuel Green",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Spa & Wellness",
+        description: "Spa services and wellness programs",
+        placement: "Amora Ubud",
+        manager: "Michelle Adams",
+        supervisor: "Samuel Green",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 14,
         department_code: "D014",
-        department_name: "Events & Conferences",
-        department_description: "Event planning and execution",
-        department_placement: "Amora Canggu",
-        department_manager: "Christopher Hill",
-        department_supervisor: "Rebecca White",
-        department_status: true,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-01-01 08:00:00",
-        department_updated_by: "Admin System",
+        name: "Events & Conferences",
+        description: "Event planning and execution",
+        placement: "Amora Canggu",
+        manager: "Christopher Hill",
+        supervisor: "Rebecca White",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 15,
         department_code: "D015",
-        department_name: "Training & Development",
-        department_description: "Staff training and career development",
-        department_placement: "Amora Ubud",
-        department_manager: "Jonathan Evans",
-        department_supervisor: "Amanda Parker",
-        department_status: false,
-        department_created_at: "2023-01-01 08:00:00",
-        department_created_by: "Admin System",
-        department_updated_at: "2023-03-15 14:30:00",
-        department_updated_by: "HR Director",
+        name: "Training & Development",
+        description: "Staff training and career development",
+        placement: "Amora Ubud",
+        manager: "Jonathan Evans",
+        supervisor: "Amanda Parker",
+        status: false,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-03-15 14:30:00",
+        updated_by: "HR Director",
       },
     ];
     this.rowPositionData = [
       {
         id: 1,
         position_code: "P001",
-        position_name: "Chief Executive Officer",
-        position_description:
-          "Overall company leadership and strategic direction",
-        position_level: "1",
-        position_department: "Executive",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Chief Executive Officer",
+        description: "Overall company leadership and strategic direction",
+        level: "1",
+        department: "Executive",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 2,
         position_code: "P002",
-        position_name: "Chief Operating Officer",
-        position_description:
+        name: "Chief Operating Officer",
+        description:
           "Oversees daily operations and execution of strategic plans",
-        position_level: "1",
-        position_department: "Executive",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        level: "1",
+        department: "Executive",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 3,
         position_code: "P003",
-        position_name: "Chief Financial Officer",
-        position_description: "Financial planning, management, and reporting",
-        position_level: "1",
-        position_department: "Finance",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Chief Financial Officer",
+        description: "Financial planning, management, and reporting",
+        level: "1",
+        department: "Finance",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 4,
         position_code: "P004",
-        position_name: "HR Director",
-        position_description: "Oversees human resources functions and strategy",
-        position_level: "2",
-        position_department: "Human Resources",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "HR Director",
+        description: "Oversees human resources functions and strategy",
+        level: "2",
+        department: "Human Resources",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 5,
         position_code: "P005",
-        position_name: "IT Director",
-        position_description: "Leads IT strategy and operations",
-        position_level: "2",
-        position_department: "Information Technology",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "IT Director",
+        description: "Leads IT strategy and operations",
+        level: "2",
+        department: "Information Technology",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 6,
         position_code: "P006",
-        position_name: "Marketing Director",
-        position_description:
+        name: "Marketing Director",
+        description:
           "Responsible for marketing strategies and brand management",
-        position_level: "2",
-        position_department: "Marketing",
-        position_placement: "Amora Canggu",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        level: "2",
+        department: "Marketing",
+        placement: "Amora Canggu",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 7,
         position_code: "P007",
-        position_name: "Operations Manager",
-        position_description: "Manages daily hotel operations and staff",
-        position_level: "3",
-        position_department: "Operations",
-        position_placement: "Amora Canggu",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Operations Manager",
+        description: "Manages daily hotel operations and staff",
+        level: "3",
+        department: "Operations",
+        placement: "Amora Canggu",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 8,
         position_code: "P008",
-        position_name: "Front Office Manager",
-        position_description:
-          "Supervises reception, concierge, and guest services",
-        position_level: "3",
-        position_department: "Front Office",
-        position_placement: "Amora Canggu",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Front Office Manager",
+        description: "Supervises reception, concierge, and guest services",
+        level: "3",
+        department: "Front Office",
+        placement: "Amora Canggu",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 9,
         position_code: "P009",
-        position_name: "Housekeeping Manager",
-        position_description:
+        name: "Housekeeping Manager",
+        description:
           "Oversees cleaning and maintenance of rooms and public areas",
-        position_level: "3",
-        position_department: "Housekeeping",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        level: "3",
+        department: "Housekeeping",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 10,
         position_code: "P010",
-        position_name: "Executive Chef",
-        position_description: "Leads culinary team and menu development",
-        position_level: "3",
-        position_department: "Food & Beverage",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Executive Chef",
+        description: "Leads culinary team and menu development",
+        level: "3",
+        department: "Food & Beverage",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 11,
         position_code: "P011",
-        position_name: "HR Manager",
-        position_description:
-          "Manages recruitment, training, and employee relations",
-        position_level: "3",
-        position_department: "Human Resources",
-        position_placement: "Amora Canggu",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "HR Manager",
+        description: "Manages recruitment, training, and employee relations",
+        level: "3",
+        department: "Human Resources",
+        placement: "Amora Canggu",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 12,
         position_code: "P012",
-        position_name: "IT Manager",
-        position_description: "Manages IT infrastructure and support",
-        position_level: "3",
-        position_department: "Information Technology",
-        position_placement: "Amora Canggu",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "IT Manager",
+        description: "Manages IT infrastructure and support",
+        level: "3",
+        department: "Information Technology",
+        placement: "Amora Canggu",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 13,
         position_code: "P013",
-        position_name: "Accounting Manager",
-        position_description:
-          "Oversees accounting functions and financial reporting",
-        position_level: "3",
-        position_department: "Finance",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Accounting Manager",
+        description: "Oversees accounting functions and financial reporting",
+        level: "3",
+        department: "Finance",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 14,
         position_code: "P014",
-        position_name: "Front Desk Supervisor",
-        position_description: "Supervises front desk staff and operations",
-        position_level: "4",
-        position_department: "Front Office",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Front Desk Supervisor",
+        description: "Supervises front desk staff and operations",
+        level: "4",
+        department: "Front Office",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 15,
         position_code: "P015",
-        position_name: "Restaurant Manager",
-        position_description: "Manages restaurant operations and staff",
-        position_level: "4",
-        position_department: "Food & Beverage",
-        position_placement: "Amora Canggu",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Restaurant Manager",
+        description: "Manages restaurant operations and staff",
+        level: "4",
+        department: "Food & Beverage",
+        placement: "Amora Canggu",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 16,
         position_code: "P016",
-        position_name: "HR Specialist",
-        position_description: "Handles recruitment and employee relations",
-        position_level: "4",
-        position_department: "Human Resources",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "HR Specialist",
+        description: "Handles recruitment and employee relations",
+        level: "4",
+        department: "Human Resources",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 17,
         position_code: "P017",
-        position_name: "IT Support Specialist",
-        position_description: "Provides technical support and troubleshooting",
-        position_level: "4",
-        position_department: "Information Technology",
-        position_placement: "Amora Canggu",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "IT Support Specialist",
+        description: "Provides technical support and troubleshooting",
+        level: "4",
+        department: "Information Technology",
+        placement: "Amora Canggu",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 18,
         position_code: "P018",
-        position_name: "Accountant",
-        position_description: "Handles financial transactions and reporting",
-        position_level: "4",
-        position_department: "Finance",
-        position_placement: "Amora Canggu",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Accountant",
+        description: "Handles financial transactions and reporting",
+        level: "4",
+        department: "Finance",
+        placement: "Amora Canggu",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 19,
         position_code: "P019",
-        position_name: "Front Desk Agent",
-        position_description: "Handles check-in/check-out and guest inquiries",
-        position_level: "5",
-        position_department: "Front Office",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Front Desk Agent",
+        description: "Handles check-in/check-out and guest inquiries",
+        level: "5",
+        department: "Front Office",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 20,
         position_code: "P020",
-        position_name: "Server",
-        position_description: "Provides food and beverage service to guests",
-        position_level: "5",
-        position_department: "Food & Beverage",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Server",
+        description: "Provides food and beverage service to guests",
+        level: "5",
+        department: "Food & Beverage",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 21,
         position_code: "P021",
-        position_name: "Housekeeper",
-        position_description: "Cleans and maintains guest rooms",
-        position_level: "5",
-        position_department: "Housekeeping",
-        position_placement: "Amora Canggu",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Housekeeper",
+        description: "Cleans and maintains guest rooms",
+        level: "5",
+        department: "Housekeeping",
+        placement: "Amora Canggu",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 22,
         position_code: "P022",
-        position_name: "Marketing Coordinator",
-        position_description: "Implements marketing campaigns and social media",
-        position_level: "4",
-        position_department: "Marketing",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Marketing Coordinator",
+        description: "Implements marketing campaigns and social media",
+        level: "4",
+        department: "Marketing",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 23,
         position_code: "P023",
-        position_name: "Sales Executive",
-        position_description: "Handles client relationships and sales",
-        position_level: "4",
-        position_department: "Sales",
-        position_placement: "Amora Canggu",
-        position_status: false,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-05-15 10:30:00",
-        position_updated_by: "HR Manager",
+        name: "Sales Executive",
+        description: "Handles client relationships and sales",
+        level: "4",
+        department: "Sales",
+        placement: "Amora Canggu",
+        status: false,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-05-15 10:30:00",
+        updated_by: "HR Manager",
       },
       {
         id: 24,
         position_code: "P024",
-        position_name: "Security Officer",
-        position_description: "Ensures safety and security of premises",
-        position_level: "5",
-        position_department: "Security",
-        position_placement: "Amora Ubud",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Security Officer",
+        description: "Ensures safety and security of premises",
+        level: "5",
+        department: "Security",
+        placement: "Amora Ubud",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 25,
         position_code: "P025",
-        position_name: "Maintenance Technician",
-        position_description: "Performs repairs and preventive maintenance",
-        position_level: "5",
-        position_department: "Engineering",
-        position_placement: "Amora Canggu",
-        position_status: true,
-        position_created_at: "2023-01-01 08:00:00",
-        position_created_by: "Admin System",
-        position_updated_at: "2023-01-01 08:00:00",
-        position_updated_by: "Admin System",
+        name: "Maintenance Technician",
+        description: "Performs repairs and preventive maintenance",
+        level: "5",
+        department: "Engineering",
+        placement: "Amora Canggu",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
     ];
     this.rowPlacementData = [
       {
         id: 1,
         placement_code: "PL001",
-        placement_name: "Amora Ubud",
-        placement_country: "Indonesia",
-        placement_city: "Bali",
-        placement_address: "Jl. Raya Ubud No. 88, Ubud, Gianyar, Bali 80571",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Ubud",
+        country: "Indonesia",
+        city: "Bali",
+        address: "Jl. Raya Ubud No. 88, Ubud, Gianyar, Bali 80571",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 2,
         placement_code: "PL002",
-        placement_name: "Amora Canggu",
-        placement_country: "Indonesia",
-        placement_city: "Bali",
-        placement_address:
+        name: "Amora Canggu",
+        country: "Indonesia",
+        city: "Bali",
+        address:
           "Jl. Pantai Batu Bolong No. 99, Canggu, Kuta Utara, Badung, Bali 80361",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 3,
         placement_code: "PL003",
-        placement_name: "Amora Seminyak",
-        placement_country: "Indonesia",
-        placement_city: "Bali",
-        placement_address:
-          "Jl. Kayu Aya No. 123, Seminyak, Kuta, Badung, Bali 80361",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Seminyak",
+        country: "Indonesia",
+        city: "Bali",
+        address: "Jl. Kayu Aya No. 123, Seminyak, Kuta, Badung, Bali 80361",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 4,
         placement_code: "PL004",
-        placement_name: "Amora Nusa Dua",
-        placement_country: "Indonesia",
-        placement_city: "Bali",
-        placement_address: "Jl. Nusa Dua No. 45, BTDC, Nusa Dua, Bali 80363",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Nusa Dua",
+        country: "Indonesia",
+        city: "Bali",
+        address: "Jl. Nusa Dua No. 45, BTDC, Nusa Dua, Bali 80363",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 5,
         placement_code: "PL005",
-        placement_name: "Amora Jakarta",
-        placement_country: "Indonesia",
-        placement_city: "Jakarta",
-        placement_address:
-          "Jl. Jendral Sudirman Kav. 52-53, Jakarta Selatan 12190",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Jakarta",
+        country: "Indonesia",
+        city: "Jakarta",
+        address: "Jl. Jendral Sudirman Kav. 52-53, Jakarta Selatan 12190",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 6,
         placement_code: "PL006",
-        placement_name: "Amora Yogyakarta",
-        placement_country: "Indonesia",
-        placement_city: "Yogyakarta",
-        placement_address: "Jl. Malioboro No. 77, Yogyakarta 55271",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Yogyakarta",
+        country: "Indonesia",
+        city: "Yogyakarta",
+        address: "Jl. Malioboro No. 77, Yogyakarta 55271",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 7,
         placement_code: "PL007",
-        placement_name: "Amora Bandung",
-        placement_country: "Indonesia",
-        placement_city: "Bandung",
-        placement_address: "Jl. Asia Afrika No. 100, Bandung 40112",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Bandung",
+        country: "Indonesia",
+        city: "Bandung",
+        address: "Jl. Asia Afrika No. 100, Bandung 40112",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 8,
         placement_code: "PL008",
-        placement_name: "Amora Surabaya",
-        placement_country: "Indonesia",
-        placement_city: "Surabaya",
-        placement_address: "Jl. Embong Malang No. 55, Surabaya 60261",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Surabaya",
+        country: "Indonesia",
+        city: "Surabaya",
+        address: "Jl. Embong Malang No. 55, Surabaya 60261",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 9,
         placement_code: "PL009",
-        placement_name: "Amora Makassar",
-        placement_country: "Indonesia",
-        placement_city: "Makassar",
-        placement_address: "Jl. Penghibur No. 33, Makassar 90111",
-        placement_status: false,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-04-15 09:30:00",
-        placement_updated_by: "Operations Director",
+        name: "Amora Makassar",
+        country: "Indonesia",
+        city: "Makassar",
+        address: "Jl. Penghibur No. 33, Makassar 90111",
+        status: false,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-04-15 09:30:00",
+        updated_by: "Operations Director",
       },
       {
         id: 10,
         placement_code: "PL010",
-        placement_name: "Amora Singapore",
-        placement_country: "Singapore",
-        placement_city: "Singapore",
-        placement_address: "88 Orchard Road, Singapore 238890",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Singapore",
+        country: "Singapore",
+        city: "Singapore",
+        address: "88 Orchard Road, Singapore 238890",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 11,
         placement_code: "PL011",
-        placement_name: "Amora Kuala Lumpur",
-        placement_country: "Malaysia",
-        placement_city: "Kuala Lumpur",
-        placement_address: "123 Jalan Bukit Bintang, Kuala Lumpur 55100",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Kuala Lumpur",
+        country: "Malaysia",
+        city: "Kuala Lumpur",
+        address: "123 Jalan Bukit Bintang, Kuala Lumpur 55100",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 12,
         placement_code: "PL012",
-        placement_name: "Amora Bangkok",
-        placement_country: "Thailand",
-        placement_city: "Bangkok",
-        placement_address: "789 Sukhumvit Road, Watthana, Bangkok 10110",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Bangkok",
+        country: "Thailand",
+        city: "Bangkok",
+        address: "789 Sukhumvit Road, Watthana, Bangkok 10110",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 13,
         placement_code: "PL013",
-        placement_name: "Amora Phuket",
-        placement_country: "Thailand",
-        placement_city: "Phuket",
-        placement_address: "45 Patong Beach Road, Patong, Phuket 83150",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Phuket",
+        country: "Thailand",
+        city: "Phuket",
+        address: "45 Patong Beach Road, Patong, Phuket 83150",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 14,
         placement_code: "PL014",
-        placement_name: "Amora Manila",
-        placement_country: "Philippines",
-        placement_city: "Manila",
-        placement_address: "567 Makati Avenue, Makati City, Manila 1200",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Manila",
+        country: "Philippines",
+        city: "Manila",
+        address: "567 Makati Avenue, Makati City, Manila 1200",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 15,
         placement_code: "PL015",
-        placement_name: "Amora Ho Chi Minh",
-        placement_country: "Vietnam",
-        placement_city: "Ho Chi Minh",
-        placement_address:
-          "321 Nguyen Hue Boulevard, District 1, Ho Chi Minh City",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Ho Chi Minh",
+        country: "Vietnam",
+        city: "Ho Chi Minh",
+        address: "321 Nguyen Hue Boulevard, District 1, Ho Chi Minh City",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 16,
         placement_code: "PL016",
-        placement_name: "Amora Hong Kong",
-        placement_country: "Hong Kong",
-        placement_city: "Hong Kong",
-        placement_address: "88 Nathan Road, Tsim Sha Tsui, Kowloon, Hong Kong",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Hong Kong",
+        country: "Hong Kong",
+        city: "Hong Kong",
+        address: "88 Nathan Road, Tsim Sha Tsui, Kowloon, Hong Kong",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 17,
         placement_code: "PL017",
-        placement_name: "Amora Tokyo",
-        placement_country: "Japan",
-        placement_city: "Tokyo",
-        placement_address: "1-1-1 Roppongi, Minato-ku, Tokyo 106-0032",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Tokyo",
+        country: "Japan",
+        city: "Tokyo",
+        address: "1-1-1 Roppongi, Minato-ku, Tokyo 106-0032",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 18,
         placement_code: "PL018",
-        placement_name: "Amora Sydney",
-        placement_country: "Australia",
-        placement_city: "Sydney",
-        placement_address: "123 George Street, Sydney, NSW 2000",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Sydney",
+        country: "Australia",
+        city: "Sydney",
+        address: "123 George Street, Sydney, NSW 2000",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 19,
         placement_code: "PL019",
-        placement_name: "Amora Melbourne",
-        placement_country: "Australia",
-        placement_city: "Melbourne",
-        placement_address: "456 Collins Street, Melbourne, VIC 3000",
-        placement_status: true,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-01-01 08:00:00",
-        placement_updated_by: "Admin System",
+        name: "Amora Melbourne",
+        country: "Australia",
+        city: "Melbourne",
+        address: "456 Collins Street, Melbourne, VIC 3000",
+        status: true,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-01-01 08:00:00",
+        updated_by: "Admin System",
       },
       {
         id: 20,
         placement_code: "PL020",
-        placement_name: "Amora Auckland",
-        placement_country: "New Zealand",
-        placement_city: "Auckland",
-        placement_address: "789 Queen Street, Auckland 1010",
-        placement_status: false,
-        placement_created_at: "2023-01-01 08:00:00",
-        placement_created_by: "Admin System",
-        placement_updated_at: "2023-06-10 11:45:00",
-        placement_updated_by: "Regional Manager",
+        name: "Amora Auckland",
+        country: "New Zealand",
+        city: "Auckland",
+        address: "789 Queen Street, Auckland 1010",
+        status: false,
+        created_at: "2023-01-01 08:00:00",
+        created_by: "Admin System",
+        updated_at: "2023-06-10 11:45:00",
+        updated_by: "Regional Manager",
       },
     ];
   }
@@ -1577,9 +1213,7 @@ export default class Employee extends Vue {
 
   async insertData(formData: any) {
     try {
-      const formType = this.getCurrentFormType(formData);
-
-      formData.id = this.generateUniqueId(formType);
+      formData.id = this.generateUniqueId(this.dataType);
 
       // for real implementation
       // if (formType === "position") {
@@ -1612,18 +1246,69 @@ export default class Employee extends Vue {
       // }
 
       // for demo
-      if (formType === "position") {
-        this.rowPositionData = [...this.rowPositionData, formData];
-      } else if (formType === "department") {
-        this.rowDepartmentData = [...this.rowDepartmentData, formData];
-      } else if (formType === "placement") {
-        this.rowPlacementData = [...this.rowPlacementData, formData];
+      switch (this.dataType) {
+        case "POSITION":
+          const newPosition = {
+            id: formData.id,
+            position_code: formData.position_code,
+            name: formData.name,
+            description: formData.description,
+            level: formData.level,
+            department: formData.department,
+            placement: formData.placement,
+            status: formData.status ? "A" : "I",
+            created_at: formatDateTimeUTC(new Date()),
+            created_by: "Current User",
+            updated_at: formatDateTimeUTC(new Date()),
+            updated_by: "Current User",
+          };
+
+          this.rowPositionData.push(newPosition);
+
+          getToastSuccess(this.$t("messages.employee.success.savePosition"));
+          break;
+        case "DEPARTMENT":
+          const newDepartment = {
+            id: formData.id,
+            department_code: formData.department_code,
+            name: formData.name,
+            description: formData.description,
+            placement: formData.placement,
+            manager: formData.manager,
+            supervisor: formData.supervisor,
+            status: formData.status ? "A" : "I",
+            created_at: formatDateTimeUTC(new Date()),
+            created_by: "Current User",
+            updated_at: formatDateTimeUTC(new Date()),
+            updated_by: "Current User",
+          };
+          this.rowDepartmentData.push(newDepartment);
+
+          getToastSuccess(this.$t("messages.employee.success.saveDepartment"));
+          break;
+        case "PLACEMENT":
+          const newPlacement = {
+            id: formData.id,
+            placement_code: formData.placement_code,
+            name: formData.name,
+            country: formData.country,
+            city: formData.city,
+            address: formData.address,
+            status: formData.status ? "A" : "I",
+            created_at: formatDateTimeUTC(new Date()),
+            created_by: "Current User",
+            updated_at: formatDateTimeUTC(new Date()),
+            updated_by: "Current User",
+          };
+          this.rowPlacementData.push(newPlacement);
+
+          getToastSuccess(this.$t("messages.employee.success.savePlacement"));
+          break;
       }
 
-      await this.loadDataGrid(formType);
-      getToastSuccess(
-        this.$t("messages.insertSuccess") || "Data added successfully"
-      );
+      await this.$nextTick();
+      this.loadDataGrid();
+      this.showForm = false;
     } catch (error) {
       getError(error);
     }
@@ -1631,8 +1316,6 @@ export default class Employee extends Vue {
 
   async updateData(formData: any) {
     try {
-      const formType = this.getCurrentFormType(formData);
-
       // for real implementation
       // if (formType === "position") {
       //   const { status2 } = await organizationAPI.UpdatePosition(formData);
@@ -1664,54 +1347,76 @@ export default class Employee extends Vue {
       // }
 
       // for demo
-      if (formType === "position") {
-        const index = this.rowPositionData.findIndex(
-          (item: any) => item.id === formData.id
-        );
-        console.log(
-          "data yang akan diupdate",
-          this.rowPositionData.find((item: any) => item.id === formData.id)
-        );
-        if (index !== -1) {
-          this.rowPositionData = [
-            ...this.rowPositionData.slice(0, index),
-            { ...formData },
-            ...this.rowPositionData.slice(index + 1),
-          ];
-        }
-        console.log(
-          "data setelah update",
-          this.rowPositionData.find((item: any) => item.id === formData.id)
-        );
-      } else if (formType === "department") {
-        const index = this.rowDepartmentData.findIndex(
-          (item: any) => item.id === formData.id
-        );
-        if (index !== -1) {
-          this.rowDepartmentData = [
-            ...this.rowDepartmentData.slice(0, index),
-            { ...formData },
-            ...this.rowDepartmentData.slice(index + 1),
-          ];
-        }
-      } else if (formType === "placement") {
-        const index = this.rowPlacementData.findIndex(
-          (item: any) => item.id === formData.id
-        );
-        if (index !== -1) {
-          this.rowPlacementData = [
-            ...this.rowPlacementData.slice(0, index),
-            { ...formData },
-            ...this.rowPlacementData.slice(index + 1),
-          ];
-        }
+      switch (this.dataType) {
+        case "POSITION":
+          const iPos = this.rowPositionData.findIndex(
+            (item: any) => item.id === formData.id
+          );
+          if (iPos !== -1) {
+            this.rowPositionData[iPos] = {
+              ...this.rowPositionData[iPos],
+              position_code: this.rowPositionData[iPos].position_code,
+              name: this.rowPositionData[iPos].name,
+              description: this.rowPositionData[iPos].description,
+              level: this.rowPositionData[iPos].level,
+              department: this.rowPositionData[iPos].department,
+              placement: this.rowPositionData[iPos].placement,
+              status: this.rowPositionData[iPos].status ? "A" : "I",
+              updated_at: formatDateTimeUTC(new Date()),
+              updated_by: "Current User",
+            };
+          }
+
+          getToastSuccess(this.$t("messages.employee.success.updatePosition"));
+          break;
+        case "DEPARTMENT":
+          const iDep = this.rowPositionData.findIndex(
+            (item: any) => item.id === formData.id
+          );
+          if (iDep !== -1) {
+            this.rowDepartmentData[iDep] = {
+              ...this.rowDepartmentData[iDep],
+              department_code: this.rowDepartmentData[iDep].department_code,
+              name: this.rowDepartmentData[iDep].name,
+              description: this.rowDepartmentData[iDep].description,
+              placement: this.rowDepartmentData[iDep].placement,
+              manager: this.rowDepartmentData[iDep].manager,
+              supervisor: this.rowDepartmentData[iDep].supervisor,
+              status: this.rowDepartmentData[iDep].status ? "A" : "I",
+              updated_at: formatDateTimeUTC(new Date()),
+              updated_by: "Current User",
+            };
+          }
+
+          getToastSuccess(
+            this.$t("messages.employee.success.updateDepartment")
+          );
+          break;
+        case "PLACEMENT":
+          const iPlc = this.rowPositionData.findIndex(
+            (item: any) => item.id === formData.id
+          );
+          if (iDep !== -1) {
+            this.rowPlacementData[iPlc] = {
+              ...this.rowPlacementData[iPlc],
+              placement_code: this.rowPlacementData[iPlc].placement_code,
+              name: this.rowPlacementData[iPlc].name,
+              country: this.rowPlacementData[iPlc].country,
+              city: this.rowPlacementData[iPlc].city,
+              address: this.rowPlacementData[iPlc].address,
+              status: this.rowPlacementData[iPlc].status ? "A" : "I",
+              updated_at: formatDateTimeUTC(new Date()),
+              updated_by: "Current User",
+            };
+          }
+
+          getToastSuccess(this.$t("messages.employee.success.updatePlacement"));
+          break;
       }
 
-      await this.loadDataGrid(formType);
-
-      getToastSuccess(
-        this.$t("messages.updateSuccess") || "Data updated successfully"
-      );
+      await this.$nextTick();
+      this.loadDataGrid();
+      this.showForm = false;
     } catch (error) {
       getError(error);
     }
@@ -1720,7 +1425,6 @@ export default class Employee extends Vue {
   async deleteData() {
     try {
       const params = this.deleteParam;
-      const type = this.getCurrentFormType(params);
       // this.showDialog = false;
       // await this.$nextTick()
 
@@ -1746,27 +1450,40 @@ export default class Employee extends Vue {
       // }
 
       // for demo
-      if (type === "position") {
-        this.rowPositionData = this.rowPositionData.filter(
-          (item: any) => item.id !== params.id
-        );
-        getToastSuccess(`Item ${type} has been removed successfully`);
-      } else if (type === "department") {
-        this.rowDepartmentData = this.rowDepartmentData.filter(
-          (item: any) => item.id !== params.id
-        );
-        getToastSuccess(`Item ${type} has been removed successfully`);
-      } else if (type === "placement") {
-        this.rowPlacementData = this.rowPlacementData.filter(
-          (item: any) => item.id !== params.id
-        );
-        getToastSuccess(`Item ${type} has been removed successfully`);
-      } else {
-        getToastError("Type not found");
-        return;
+      switch (this.dataType) {
+        case "POSITION":
+          const updatedPosition = this.rowPositionData.filter(
+            (position: any) => position.id !== this.deleteParam.id
+          );
+
+          this.rowPositionData = [...updatedPosition];
+
+          getToastSuccess(this.$t("messages.employee.success.deletePosition"));
+          break;
+        case "DEPARTMENT":
+          const updatedDepartment = this.rowDepartmentData.filter(
+            (department: any) => department.id !== this.deleteParam.id
+          );
+
+          this.rowDepartmentData = [...updatedDepartment];
+          getToastSuccess(
+            this.$t("messages.employee.success.deleteDepartment")
+          );
+          break;
+        case "PLACEMENT":
+          const updatedPlacement = this.rowPlacementData.filter(
+            (placement: any) => placement.id !== this.deleteParam.id
+          );
+
+          this.rowPlacementData = [...updatedPlacement];
+
+          getToastSuccess(this.$t("messages.employee.success.deletePlacement"));
+          break;
       }
 
-      await this.loadDataGrid(type);
+      await this.$nextTick();
+      this.deleteParam = null;
+      this.loadDataGrid();
     } catch (error) {
       getError(error);
     }
@@ -1775,91 +1492,76 @@ export default class Employee extends Vue {
   // HELPER FUNCTION =======================================================
   generateUniqueId(formType: string): number {
     let maxId = 0;
-    if (formType === "position") {
-      maxId = Math.max(
-        ...this.rowPositionData.map((item: any) => item.id || 0)
-      );
-    } else if (formType === "department") {
-      maxId = Math.max(
-        ...this.rowDepartmentData.map((item: any) => item.id || 0)
-      );
-    } else if (formType === "placement") {
-      maxId = Math.max(
-        ...this.rowPlacementData.map((item: any) => item.id || 0)
-      );
+    if (formType === "POSITION") {
+      maxId =
+        Math.max(...this.rowPositionData.map((item: any) => item.id || 0), 0) +
+        1;
+    } else if (formType === "DEPARTMENT") {
+      maxId =
+        Math.max(
+          ...this.rowDepartmentData.map((item: any) => item.id || 0),
+          0
+        ) + 1;
+    } else if (formType === "PLACEMENT") {
+      maxId =
+        Math.max(...this.rowPlacementData.map((item: any) => item.id || 0), 0) +
+        1;
     }
     return maxId + 1;
   }
 
   populateForm(params: any) {
-    if (!params) {
-      console.info("Invalid data for form population:", params);
-      return;
-    }
-
-    const formType = this.getCurrentFormType(params);
-    const formElement = this.getFormElementByType(formType);
-
-    if (!formElement) {
-      console.info(`Form element for ${formType} not found during population`);
-      return;
-    }
-
     this.$nextTick(() => {
-      switch (formType) {
-        case "position":
-          formElement.form = {
-            positionCode: params.position_code || "",
-            positionName: params.position_name || "",
-            positionDescription: params.position_description || "",
-            positionLevel: params.position_level || "",
-            positionDepartment: params.position_department || "",
-            positionPlacement: params.position_placement || "",
-            positionStatus: params.position_status ? "A" : "I",
+      switch (this.dataType) {
+        case "POSITION":
+          this.$refs.positionFormElement = {
             id: params.id,
+            position_code: params.position_code,
+            name: params.name,
+            description: params.description,
+            level: params.level,
+            department: params.department,
+            placement: params.placement,
+            status: params.status ? "A" : "I",
           };
           break;
-        case "department":
-          formElement.form = {
-            departmentCode: params.department_code || "",
-            departmentName: params.department_name || "",
-            departmentDescription: params.department_description || "",
-            departmentPlacement: params.department_placement || "",
-            departmentManager: params.department_manager || "",
-            departmentSupervisor: params.department_supervisor || "",
-            departmentStatus: params.department_status ? "A" : "I",
+        case "DEPARTMENT":
+          this.$refs.departmentFormElement = {
             id: params.id,
+            department_code: params.department_code,
+            name: params.name,
+            description: params.description,
+            placement: params.placement,
+            manager: params.manager,
+            supervisor: params.supervisor,
+            status: params.status ? "A" : "I",
           };
           break;
-        case "placement":
-          formElement.form = {
-            placementCode: params.placement_code || "",
-            placementName: params.placement_name || "",
-            placementCountry: params.placement_country || "",
-            placementCity: params.placement_city || "",
-            placementAddress: params.placement_address || "",
-            placementStatus: params.placement_status ? "A" : "I",
+        case "PLACEMENT":
+          this.$refs.placementFormElement = {
             id: params.id,
+            placement_code: params.placement_code,
+            name: params.name,
+            country: params.country,
+            city: params.city,
+            address: params.address,
+            status: params.status ? "A" : "I",
           };
           break;
-      }
-
-      if (formElement.form) {
-        formElement.form.id = params.id;
       }
     });
   }
 
-  formatFormData(params: any, formType: string): any {
+  formatFormData(params: any, type: string): any {
     let formatted: any;
-    switch (formType) {
-      case "position":
+    switch (type) {
+      case "POSITION":
         formatted = this.formatPositionData(params);
         break;
-      case "department":
+      case "DEPARTMENT":
         formatted = this.formatDepartmentData(params);
         break;
-      case "placement":
+      case "PLACEMENT":
         formatted = this.formatPlacement(params);
         break;
       default:
@@ -1876,97 +1578,104 @@ export default class Employee extends Vue {
   formatPositionData(params: any) {
     return {
       id: params.id,
-      position_code: params.positionCode,
-      position_name: params.positionName,
-      position_description: params.positionDescription,
-      position_level: params.positionLevel,
-      position_department: params.positionDepartment,
-      position_placement: params.positionPlacement,
-      position_status: params.positionStatus === "A",
-      position_created_at: params.id
+      position_code: params.posiditon_code,
+      name: params.name,
+      description: params.description,
+      level: params.level,
+      department: params.department,
+      placement: params.placement,
+      status: params.status === "A",
+      created_at: params.id
         ? undefined
         : new Date().toISOString().split("T")[0] +
           " " +
           new Date().toTimeString().split(" ")[0],
-      position_created_by: params.id ? undefined : "Current User",
-      position_updated_at:
+      created_by: params.id ? undefined : "Current User",
+      updated_at:
         new Date().toISOString().split("T")[0] +
         " " +
         new Date().toTimeString().split(" ")[0],
-      position_updated_by: "Current User",
+      updated_by: "Current User",
     };
   }
 
   formatDepartmentData(params: any) {
     return {
       id: params.id,
-      department_code: params.departmentCode,
-      department_name: params.departmentName,
-      department_description: params.departmentDescription,
-      department_placement: params.departmentPlacement,
-      department_manager: params.departmentManager,
-      department_supervisor: params.departmentSupervisor,
-      department_status: params.departmentStatus === "A",
-      department_created_at: params.id
+      department_code: params.department_code,
+      name: params.name,
+      description: params.description,
+      placement: params.placement,
+      manager: params.manager,
+      supervisor: params.supervisor,
+      status: params.status === "A",
+      created_at: params.id
         ? undefined
         : new Date().toISOString().split("T")[0] +
           " " +
           new Date().toTimeString().split(" ")[0],
-      department_created_by: params.id ? undefined : "Current User",
-      department_updated_at:
+      created_by: params.id ? undefined : "Current User",
+      updated_at:
         new Date().toISOString().split("T")[0] +
         " " +
         new Date().toTimeString().split(" ")[0],
-      department_updated_by: "Current User",
+      updated_by: "Current User",
     };
   }
 
   formatPlacement(params: any) {
     return {
       id: params.id,
-      placement_code: params.placementCode,
-      placement_name: params.placementName,
-      placement_country: params.placementCountry,
-      placement_city: params.placementCity,
-      placement_address: params.placementAddress,
-      placement_status: params.placementStatus === "A",
-      placement_created_at: params.id
+      placement_code: params.placement_code,
+      name: params.name,
+      country: params.country,
+      city: params.city,
+      address: params.address,
+      status: params.status === "A",
+      created_at: params.id
         ? undefined
         : new Date().toISOString().split("T")[0] +
           " " +
           new Date().toTimeString().split(" ")[0],
-      placement_created_by: params.id ? undefined : "Current User",
-      placement_updated_at:
+      created_by: params.id ? undefined : "Current User",
+      updated_at:
         new Date().toISOString().split("T")[0] +
         " " +
         new Date().toTimeString().split(" ")[0],
-      placement_updated_by: "Current User",
+      updated_by: "Current User",
     };
   }
 
-  getCurrentFormType(params: any): string {
-    if (typeof params === "string") return params;
+  getDataType(params: any): string {
+    if (!params) {
+      return this.getDataTypeFromActiveTab();
+    }
 
     // for grid row data
-    if (params.position_code !== undefined) return "position";
-    if (params.department_code !== undefined) return "department";
-    if (params.placement_code !== undefined) return "placement";
+    if (params.position_code !== undefined) return "POSITION";
+    if (params.department_code !== undefined) return "DEPARTMENT";
+    if (params.placement_code !== undefined) return "PLACEMENT";
 
-    // for form data
-    if (params.positionCode !== undefined) return "position";
-    if (params.departmentCode !== undefined) return "department";
-    if (params.placementCode !== undefined) return "placement";
+    return this.dataType;
+  }
 
-    return this.currentFormType;
+  getDataTypeFromActiveTab(): string {
+    const activeTabId = document.querySelector(".tab-pane.active")?.id;
+
+    if (activeTabId?.includes("position")) return "POSITION";
+    if (activeTabId?.includes("department")) return "DEPARTMENT";
+    if (activeTabId?.includes("placement")) return "PLACEMENT";
+
+    return "POSITION";
   }
 
   getFormElementByType(type: string): any {
     switch (type) {
-      case "position":
+      case "POSITION":
         return this.$refs.positionFormElement;
-      case "department":
+      case "DEPARTMENT":
         return this.$refs.departmentFormElement;
-      case "placement":
+      case "PLACEMENT":
         return this.$refs.placementFormElement;
       default:
         console.info(`Unknown form type: ${type}`);
@@ -1974,20 +1683,5 @@ export default class Employee extends Vue {
     }
   }
 
-  getCurrentFormRef() {
-    switch (this.currentFormType) {
-      case "position":
-        return "positionFormElement";
-      case "department":
-        return "departmentFormElement";
-      case "placement":
-        return "placementFormElement";
-      default:
-        console.info(`Unknown form ref`);
-    }
-  }
   // GETTER AND SETTER =======================================================
-  // get pinnedBottomRowData() {
-  //   return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
-  // }
 }

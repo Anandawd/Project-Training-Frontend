@@ -6,7 +6,7 @@
         title="Insert Position"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('position', $global.modeData.insert)"
+        @click="handleShowForm('', $global.modeData.insert, 'POSITION')"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insertPosition') }}
@@ -15,7 +15,7 @@
         title="Insert Department"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('department', $global.modeData.insert)"
+        @click="handleShowForm('', $global.modeData.insert, 'DEPARTMENT')"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insertDepartment') }}
@@ -24,7 +24,7 @@
         title="Insert Placement"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('placement', $global.modeData.insert)"
+        @click="handleShowForm('', $global.modeData.insert, 'PLACEMENT')"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insertPlacement') }}
@@ -35,7 +35,7 @@
     <transition name="fade" mode="out-in">
       <position-input-form
         ref="positionFormElement"
-        v-if="showForm && currentFormType  === 'position'"
+        v-if="showForm && dataType  === 'POSITION'"
         class="px-2"
         :modeData="modeData"
         :levelOptions="positionLevelOptions"
@@ -49,7 +49,7 @@
     <transition name="fade" mode="out-in">
       <department-input-form
         ref="departmentFormElement"
-        v-if="showForm && currentFormType  === 'department'"
+        v-if="showForm && dataType  === 'DEPARTMENT'"
         class="px-2"
         :modeData="modeData"
         :placementOptions="placementOptions"
@@ -63,7 +63,7 @@
     <transition name="fade" mode="out-in">
       <placement-input-form
         ref="placementFormElement"
-        v-if="showForm && currentFormType  === 'placement'"
+        v-if="showForm && dataType  === 'PLACEMENT'"
         class="px-2"
         :modeData="modeData"
         :countryOptions="countryOptions"
@@ -137,7 +137,15 @@
               role="tabpanel"
               aria-labelledby="position-tab"
             >
-              <ag-grid-vue
+              <position-table-component
+                ref="positionTableRef"
+                :rowData="rowPositionData"
+                @insert="handleTableAction"
+                @edit="handleTableAction"
+                @delete="handleTableAction"
+              >
+              </position-table-component>
+              <!-- <ag-grid-vue
                 :style="agGridSetting.styleAgGridFrame"
                 :class="agGridSetting.themeAgGrid"
                 :columnDefs="columnPositionDefs"
@@ -156,7 +164,7 @@
                 :statusBar="statusBar"
                 @grid-ready="(params) => onGridReady(params, 'position-tab-grid')"
                 @cellContextMenu="handleRowRightClicked"
-              ></ag-grid-vue>
+              ></ag-grid-vue> -->
             </div>
 
             <!-- table department -->
@@ -166,7 +174,15 @@
               role="tabpanel"
               aria-labelledby="department-tab"
             >
-              <ag-grid-vue
+              <department-table-component
+                ref="departmentTableRef"
+                :rowData="rowDepartmentData"
+                @insert="handleTableAction"
+                @edit="handleTableAction"
+                @delete="handleTableAction"
+              >
+              </department-table-component>
+              <!-- <ag-grid-vue
                 :style="agGridSetting.styleAgGridFrame"
                 :class="agGridSetting.themeAgGrid"
                 :columnDefs="columnDepartmentDefs"
@@ -185,7 +201,7 @@
                 :statusBar="statusBar"
                 @grid-ready="(params) => onGridReady(params, 'department-tab-grid')"
                 @cellContextMenu="handleRowRightClicked"
-              ></ag-grid-vue>
+              ></ag-grid-vue> -->
             </div>
 
             <!-- table placement -->
@@ -195,7 +211,15 @@
               role="tabpanel"
               aria-labelledby="placement-tab"
             >
-              <ag-grid-vue
+              <placement-table-component
+                ref="placementTableRef"
+                :rowData="rowPlacementData"
+                @insert="handleTableAction"
+                @edit="handleTableAction"
+                @delete="handleTableAction"
+              >
+              </placement-table-component>
+              <!-- <ag-grid-vue
                 :style="agGridSetting.styleAgGridFrame"
                 :class="agGridSetting.themeAgGrid"
                 :columnDefs="columnPlacementDefs"
@@ -214,7 +238,7 @@
                 :statusBar="statusBar"
                 @grid-ready="(params) => onGridReady(params, 'placement-tab-grid')"
                 @cellContextMenu="handleRowRightClicked"
-              ></ag-grid-vue>
+              ></ag-grid-vue> -->
             </div>
           </div>
         </div>
@@ -222,14 +246,15 @@
     </div>
 
     <!-- dialog -->
-    <!-- <c-dialog
-      v-if="showDialog"
+    <c-dialog
+      v-show="showDialog"
       dialogTitle="Confirm"
       size="sm"
-      @confirm="deleteData"
+      :isSaving="isSaving"
+      @confirm="confirmAction"
       @cancel="showDialog=false"
     >
-      <template #body> Are you sure to delete this data? </template>
-    </c-dialog> -->
+      <template #body> {{dialogMessage}} </template>
+    </c-dialog>
   </div>
 </section>

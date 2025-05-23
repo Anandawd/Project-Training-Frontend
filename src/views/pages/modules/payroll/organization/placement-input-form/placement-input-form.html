@@ -18,7 +18,7 @@
             id="PlacementCode"
             class="row mb-1"
             :label="$t('labels.payroll.employee.code')"
-            v-model="form.placementCode"
+            v-model="form.placement_code"
           />
         </div>
         <div class="col-md-4">
@@ -29,7 +29,7 @@
             id="PlacementName"
             class="row mb-1"
             :label="$t('labels.payroll.employee.placementName')"
-            v-model="form.placementName"
+            v-model="form.name"
           />
         </div>
         <div class="col-md-4">
@@ -39,7 +39,7 @@
             name="PlacementCountry"
             labelName="name"
             keyName="code"
-            v-model="form.placementCountry"
+            v-model="form.country"
             :label="$t('labels.payroll.employee.country')"
             :options="placementCountryOptions"
             :columnOptions="columnOptions"
@@ -53,7 +53,7 @@
             name="PlacementCity"
             labelName="name"
             keyName="code"
-            v-model="form.placementCity"
+            v-model="form.city"
             :label="$t('labels.payroll.employee.city')"
             :options="placementCityOptions"
             :columnOptions="columnOptions"
@@ -67,7 +67,7 @@
             id="PlacementAddress"
             class="row mb-1"
             :label="$t('labels.payroll.employee.address')"
-            v-model="form.placementAddress"
+            v-model="form.address"
           />
         </div>
         <div class="col-md-4 mb-sm-1">
@@ -83,13 +83,13 @@
               <c-radio
                 class="me-3"
                 :label="$t('labels.active')"
-                v-model="form.placementStatus"
+                v-model="form.status"
                 value="A"
               ></c-radio>
               <c-radio
                 class="me-3"
                 :label="$t('labels.inactive')"
-                v-model="form.placementStatus"
+                v-model="form.status"
                 value="I"
               ></c-radio>
             </div>

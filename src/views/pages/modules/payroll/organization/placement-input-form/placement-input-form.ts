@@ -64,12 +64,12 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      placementCode: "",
-      placementName: "",
-      placementCountry: "",
-      placementCity: "",
-      placementAddress: "",
-      placementStatus: "A",
+      placement_code: "",
+      name: "",
+      country: "",
+      city: "",
+      address: "",
+      status: "A",
       id: undefined,
     };
   }

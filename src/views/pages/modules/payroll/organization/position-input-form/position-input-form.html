@@ -29,7 +29,7 @@
             id="PositionName"
             class="row mb-1"
             :label="$t('labels.payroll.employee.positionName')"
-            v-model="form.positionName"
+            v-model="form.name"
           />
         </div>
         <div class="col-md-4">
@@ -39,7 +39,7 @@
             id="PositionDescription"
             class="row mb-1"
             :label="$t('labels.payroll.employee.description')"
-            v-model="form.positionDescription"
+            v-model="form.description"
           />
         </div>
         <div class="col-md-4">
@@ -50,7 +50,7 @@
             name="PositionLevel"
             labelName="name"
             keyName="code"
-            v-model="form.positionLevel"
+            v-model="form.level"
             :label="$t('labels.payroll.employee.level')"
             :options="positionLevelOptions"
             :columnOptions="columnOptions"
@@ -65,7 +65,7 @@
             name="positionDepartment"
             labelName="name"
             keyName="code"
-            v-model="form.positionDepartment"
+            v-model="form.department"
             :label="$t('labels.payroll.employee.department')"
             :options="positionDepartmentOptions"
             :columnOptions="columnOptions"
@@ -82,7 +82,7 @@
             name="positionPlacement"
             labelName="name"
             keyName="code"
-            v-model="form.positionPlacement"
+            v-model="form.placement"
             :label="$t('labels.payroll.employee.placement')"
             :options="positionPlacementOptions"
             :columnOptions="columnOptions"
@@ -104,13 +104,13 @@
               <c-radio
                 class="me-3"
                 :label="$t('labels.active')"
-                v-model="form.positionStatus"
+                v-model="form.status"
                 value="A"
               ></c-radio>
               <c-radio
                 class="me-3"
                 :label="$t('labels.inactive')"
-                v-model="form.positionStatus"
+                v-model="form.status"
                 value="I"
               ></c-radio>
             </div>

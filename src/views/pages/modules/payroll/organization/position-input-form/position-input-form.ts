@@ -67,13 +67,13 @@ export default class InputForm extends Vue {
     await this.$nextTick();
     this.form = {
       // Category tab
-      positionCode: "",
-      positionName: "",
-      positionDescription: "",
-      positionLevel: "",
-      positionDepartment: "",
-      positionPlacement: "",
-      positionStatus: "A",
+      position_code: "",
+      name: "",
+      description: "",
+      level: "",
+      department: "",
+      placement: "",
+      status: "A",
       id: undefined,
     };
   }

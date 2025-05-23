@@ -1,6 +1,5 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import Checklist from "@/components/ag_grid-framework/checklist.vue";
-import { formatDate, formatDateTime, formatNumber2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -15,36 +14,15 @@ import { Options, Vue } from "vue-class-component";
     AgGridVue,
   },
   props: {
-    employeeId: {
-      type: String,
-      require: true,
-    },
     rowData: {
-      type: Array,
-      default: (): any[] => [],
-    },
-    componentTypeOptions: {
-      type: Array,
-      default: (): any[] => [],
-    },
-    earningsComponentOptions: {
-      type: Array,
-      default: (): any[] => [],
-    },
-    deductionsComponentOptions: {
       type: Array,
       default: (): any[] => [],
     },
   },
   emits: ["insert", "edit", "delete"],
 })
-export default class BenefitTableComponent extends Vue {
-  public modeData!: any;
-  public employeeId!: string;
+export default class DocumentTableComponent extends Vue {
   public rowData!: any[];
-  public componentTypeOptions!: any[];
-  public earningsComponentOptions!: any[];
-  public deductionsComponentOptions!: any[];
 
   // AG GRID VARIABLE
   gridOptions: any = {};
@@ -64,6 +42,7 @@ export default class BenefitTableComponent extends Vue {
   detailCellRenderer: any;
 
   // RECYCLE LIFE FUNCTION ===================================================
+
   beforeMount(): void {
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
@@ -79,114 +58,62 @@ export default class BenefitTableComponent extends Vue {
       {
         headerName: this.$t("commons.table.action"),
         headerClass: "align-header-center",
+        cellClass: "action-grid-buttons",
         field: "id",
+        width: 100,
         enableRowGroup: false,
-        resizable: false,
+        resizeable: false,
         filter: false,
         suppressMenu: true,
-        suppressMoveable: true,
         lockPosition: "left",
         sortable: false,
         cellRenderer: "actionGrid",
         colId: "params",
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.code"),
+        field: "department_code",
         width: 100,
+        enableRowGroup: false,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.type"),
-        field: "component_type",
-        width: 120,
+        headerName: this.$t("commons.table.payroll.employee.departmentName"),
+        field: "name",
+        width: 150,
         enableRowGroup: true,
-        valueGetter: (params: any) => {
-          if (params.data?.payroll_component) {
-            return params.data.payroll_component.startsWith("CE")
-              ? "Earnings"
-              : "Deductions";
-          }
-          return "";
-        },
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.code"),
-        field: "payroll_component",
-        width: 100,
-        enableRowGroup: true,
-        hide: true,
+        headerName: this.$t("commons.table.payroll.employee.description"),
+        field: "description",
+        width: 200,
+        enableRowGroup: false,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.name"),
-        field: "payroll_component_name",
+        headerName: this.$t("commons.table.payroll.employee.placement"),
+        field: "placement",
         width: 200,
         enableRowGroup: true,
-        valueGetter: (params: any) => {
-          if (params.data?.payroll_component_name) {
-            return params.data.payroll_component_name;
-          }
-          if (params.data?.payroll_component) {
-            const parentComponent = params.context?.componentParent;
-            if (parentComponent && parentComponent.getComponentDisplayName) {
-              return parentComponent.getComponentDisplayName(
-                params.data.payroll_component
-              );
-            }
-            return params.data?.payroll_component || "";
-          }
-        },
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.category"),
-        field: "category",
+        headerName: this.$t("commons.table.payroll.employee.manager"),
+        field: "manager",
         width: 150,
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.amount"),
-        headerClass: "align-header-right",
-        cellClass: "text-right",
-        field: "amount",
+        headerName: this.$t("commons.table.payroll.employee.supervisor"),
+        field: "supervisor",
         width: 150,
         enableRowGroup: true,
-        valueFormatter: formatNumber2,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.qty"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "qty",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.effectiveDate"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "effective_date",
-        width: 120,
-        enableRowGroup: true,
-        valueFormatter: formatDate,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.endDate"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "end_date",
-        width: 120,
-        enableRowGroup: true,
-        valueFormatter: formatDate,
       },
       {
         headerName: this.$t("commons.table.status"),
         headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "is_current",
+        cellClass: "ag-cell-center-checkbox",
+        field: "status",
         width: 100,
         enableRowGroup: true,
         cellRenderer: "checklistRenderer",
-      },
-      {
-        headerName: this.$t("commons.table.remark"),
-        field: "remark",
-        width: 200,
-        enableRowGroup: false,
       },
       {
         headerName: this.$t("commons.table.updatedAt"),
@@ -194,8 +121,7 @@ export default class BenefitTableComponent extends Vue {
         cellClass: "text-center",
         field: "updated_at",
         width: 120,
-        enableRowGroup: false,
-        valueFormatter: formatDateTime,
+        enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.updatedBy"),
@@ -203,7 +129,7 @@ export default class BenefitTableComponent extends Vue {
         cellClass: "text-center",
         field: "updated_by",
         width: 120,
-        enableRowGroup: false,
+        enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.createdAt"),
@@ -211,8 +137,7 @@ export default class BenefitTableComponent extends Vue {
         cellClass: "text-center",
         field: "created_at",
         width: 120,
-        enableRowGroup: false,
-        valueFormatter: formatDateTime,
+        enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.createdBy"),
@@ -220,7 +145,7 @@ export default class BenefitTableComponent extends Vue {
         cellClass: "text-center",
         field: "created_by",
         width: 120,
-        enableRowGroup: false,
+        enableRowGroup: true,
       },
     ];
     this.context = { componentParent: this };
@@ -268,17 +193,13 @@ export default class BenefitTableComponent extends Vue {
       },
       {
         name: this.$t("commons.contextMenu.update"),
-        disabled:
-          !this.paramsData ||
-          (!this.paramsData.is_current && this.paramsData.base_salary),
+        disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () => this.handleEdit(this.paramsData),
       },
       {
         name: this.$t("commons.contextMenu.delete"),
-        disabled:
-          !this.paramsData ||
-          (!this.paramsData.is_current && this.paramsData.base_salary),
+        disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("delete_icon24"),
         action: () => this.handleDelete(this.paramsData),
       },
@@ -300,15 +221,15 @@ export default class BenefitTableComponent extends Vue {
   }
 
   handleInsert() {
-    this.$emit("insert", { type: "BENEFIT" });
+    this.$emit("insert", { type: "DEPARTMENT" });
   }
 
   handleEdit(params: any) {
-    this.$emit("edit", { type: "BENEFIT", event: "EDIT", params });
+    this.$emit("edit", { type: "DEPARTMENT", event: "EDIT", params });
   }
 
   handleDelete(params: any) {
-    this.$emit("delete", { type: "BENEFIT", event: "DELETE", params });
+    this.$emit("delete", { type: "DEPARTMENT", event: "DELETE", params });
   }
 
   refreshGrid() {
@@ -316,14 +237,7 @@ export default class BenefitTableComponent extends Vue {
       this.gridApi.setRowData([...this.rowData]);
     }
   }
-  getComponentDisplayName(componentCode: string): string {
-    // Akses parent component untuk mendapatkan data komponen
-    const parentComponent = this.$parent as any;
-    if (parentComponent && parentComponent.getComponentDisplayName) {
-      return parentComponent.getComponentDisplayName(componentCode);
-    }
-    return componentCode;
-  }
+
   // GETTER AND SETTER =======================================================
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);

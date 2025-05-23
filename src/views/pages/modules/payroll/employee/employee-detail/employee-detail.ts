@@ -18,6 +18,100 @@ import BenefitTableComponent from "./benefit-table-component/benefit-table-compo
 import DocumentTableComponent from "./document-table-component/document-table-component.vue";
 import SalaryTableComponent from "./salary-table-component/salary-table-component.vue";
 
+interface EmployeeRequest {
+  id?: number;
+  employee_id: string;
+  first_name: string;
+  last_name: string;
+  gender_code: string;
+  birth_date: string;
+  marital_status: string;
+  phone: string;
+  email: string;
+  address: string;
+  hire_date: string;
+  end_date: string | null;
+  status_code: string; // A = Active, I = Inactive
+  employee_type_code: string;
+  department_code: string;
+  position_code: string;
+  placement_code: string;
+  supervisor_id: string | null;
+  base_salary: number;
+  payment_frequency_code: string;
+  payment_method_code: string;
+  bank_code: string;
+  account_number: string;
+  account_name: string;
+  tax_number: string;
+  social_insurance_number: string;
+  health_insurance_number: string;
+}
+
+interface EmployeeResponse {
+  id: number;
+  employee_id: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  gender: string;
+  birth_date: string;
+  age: number;
+  email: string;
+  phone: string;
+  address: string;
+  hire_date: string;
+  end_date: string | null;
+  status: string; // A = Active, I = Inactive
+  employee_type: string;
+  department_code: string;
+  department_name: string;
+  department_manager_name: string;
+  position_code: string;
+  position_name: string;
+  placement_code: string;
+  placement_name: string;
+  supervisor_id: string | null;
+  supervisor_name: string | null;
+  base_salary: number;
+  payment_frequency_code: string;
+  payment_frequency_name: string;
+  payment_method_code: string;
+  payment_method_name: string;
+  bank_code: string;
+  bank_name: string;
+  account_number: string;
+  account_name: string;
+  leave_quota: number;
+  leave_remaining: number;
+  created_at: string;
+  created_by: string;
+  updated_at: string;
+  updated_by: string;
+}
+
+interface DocumentRequest {
+  id?: number;
+  employee_id: string;
+  document_type_code: string;
+  file?: File;
+  issue_date: string;
+  expiry_date?: string | null;
+  remark?: string;
+}
+
+interface BenefitRequest {
+  id?: number;
+  employee_id: string;
+  payroll_component_code: string;
+  amount: number;
+  quantity: number;
+  effective_date: string;
+  end_date?: string | null;
+  is_override: boolean;
+  remark?: string;
+}
+
 const employeeAPI = new EmployeeAPI();
 
 @Options({
@@ -73,17 +167,12 @@ export default class EmployeeDetail extends Vue {
   salaryTableRef: any = ref();
   benefitTableRef: any = ref();
 
-  // modal form
-  documentForm: any = reactive({});
-  salaryForm: any = reactive({});
-  benefitForm: any = reactive({});
-
   /// modal state
   public dataType: any;
-  public currentForm: any = reactive({});
-  public showModal: boolean = false;
   public modalType: string = "";
   public modalMode: any;
+  public currentForm: any = reactive({});
+  public showModal: boolean = false;
   public isSaving: boolean = false;
 
   // dialog
@@ -97,23 +186,6 @@ export default class EmployeeDetail extends Vue {
   public showForm: boolean = false;
   public inputFormElement: any = ref();
   public employeeForm: any = reactive({});
-
-  // delete nanti
-  salaryFormRef: any = ref();
-  documentFormRef: any = ref();
-  benefitFormRef: any = ref();
-
-  // table config
-  columnSalaryDefs: any;
-  columnDocumentDefs: any;
-  columnBenefitDefs: any;
-
-  // grid api
-  salaryGridApi: any;
-  documentGridApi: any;
-  benefitGridApi: any;
-
-  paramsData: any;
 
   columnOptions = [
     {
@@ -138,10 +210,7 @@ export default class EmployeeDetail extends Vue {
     this.loadEmployeeData();
   }
 
-  beforeMount(): void {}
-
   // GENERAL FUNCTION =======================================================
-
   async handleShowForm(params: any, mode: any) {
     this.showForm = false;
     await this.$nextTick();
@@ -217,11 +286,6 @@ export default class EmployeeDetail extends Vue {
   }
 
   handleTableAction(params: any) {
-    if (!params || !params.type) {
-      console.error("Invalid parameters in handleTableAction");
-      return;
-    }
-
     switch (params.type) {
       case "DOCUMENT":
         if (params.params) {
@@ -293,23 +357,13 @@ export default class EmployeeDetail extends Vue {
   }
 
   handleEdit(params: any) {
-    if (!params) {
-      console.error("No data provided for edit");
-      return;
-    }
     this.dataType = this.getDataType(params);
 
     this.handleShowModal(params, $global.modeData.edit, this.dataType);
   }
 
   handleDelete(params: any) {
-    if (!params) {
-      console.error("No data provided for delete");
-      return;
-    }
-
     this.dataType = this.getDataType(params);
-
     this.deleteParam = { ...params };
     this.dialogAction = "delete";
 
@@ -331,14 +385,7 @@ export default class EmployeeDetail extends Vue {
   }
 
   confirmAction() {
-    if (!this.deleteParam) {
-      console.error("Delete parameter is null or undefined");
-      this.showDialog = false;
-      return;
-    }
-
     this.showDialog = false;
-
     this.$nextTick(() => {
       switch (this.dataType) {
         case "DOCUMENT":
@@ -395,7 +442,7 @@ export default class EmployeeDetail extends Vue {
     } else {
       this.currentForm.payroll_component_id = null;
       this.currentForm.amount = 0;
-      this.currentForm.quantity = 1;
+      this.currentForm.qty = 1;
       this.currentForm.is_override = false;
     }
   }
@@ -905,7 +952,7 @@ export default class EmployeeDetail extends Vue {
         employee_id: "EMP001",
         payroll_component_id: 1, // FK ke PAY_PAYROLL_COMPONENT
         amount: 200000, // Amount yang disimpan (bisa default atau override)
-        quantity: 1,
+        qty: 1,
         effective_date: "2020-01-10",
         end_date: null,
         is_current: true,
@@ -932,7 +979,7 @@ export default class EmployeeDetail extends Vue {
         employee_id: "EMP001",
         payroll_component_id: 2, // FK ke PAY_PAYROLL_COMPONENT
         amount: 600000, // Amount override (default dari master: 500000)
-        quantity: 1,
+        qty: 1,
         effective_date: "2020-01-10",
         end_date: null,
         is_current: true,
@@ -959,7 +1006,7 @@ export default class EmployeeDetail extends Vue {
         employee_id: "EMP001",
         payroll_component_id: 3, // FK ke PAY_PAYROLL_COMPONENT
         amount: 300000, // Amount selalu sama dengan default (karena fixed)
-        quantity: 1,
+        qty: 1,
         effective_date: "2020-01-10",
         end_date: null,
         is_current: true,
@@ -986,7 +1033,7 @@ export default class EmployeeDetail extends Vue {
         employee_id: "EMP001",
         payroll_component_id: 10, // FK ke PAY_PAYROLL_COMPONENT
         amount: 100000, // Amount default
-        quantity: 1,
+        qty: 1,
         effective_date: "2020-01-10",
         end_date: null,
         is_current: true,
@@ -1013,7 +1060,7 @@ export default class EmployeeDetail extends Vue {
         employee_id: "EMP002",
         payroll_component_id: 1, // FK ke PAY_PAYROLL_COMPONENT yang sama
         amount: 250000, // Amount override (default: 200000)
-        quantity: 1,
+        qty: 1,
         effective_date: "2021-03-15",
         end_date: null,
         is_current: true,
@@ -1040,7 +1087,7 @@ export default class EmployeeDetail extends Vue {
         employee_id: "EMP002",
         payroll_component_id: 5, // FK ke PAY_PAYROLL_COMPONENT
         amount: 1500000, // Amount override
-        quantity: 1,
+        qty: 1,
         effective_date: "2021-12-15",
         end_date: "2021-12-31", // Sudah berakhir
         is_current: false, // Tidak current karena sudah berakhir
@@ -1609,11 +1656,19 @@ export default class EmployeeDetail extends Vue {
 
       // for demo
       this.employeeData = {
+        ...this.employeeData,
         ...formData,
         updated_at: formatDateTimeUTC(new Date()),
         updated_by: "Current User",
       };
 
+      if (formData.first_name || formData.last_name) {
+        this.employeeData.full_name = `${
+          formData.first_name || this.employeeData.first_name
+        } ${formData.last_name || this.employeeData.last_name}`;
+      }
+
+      await this.$nextTick;
       getToastSuccess(this.$t("messages.employee.success.update"));
     } catch (error) {
       getError(error);
@@ -1914,7 +1969,7 @@ export default class EmployeeDetail extends Vue {
       );
 
       if (!selectedComponent) {
-        getToastError("Component tidak ditemukan");
+        getToastError(this.$t("messages.employee.error.componentNotFound"));
         this.isSaving = false;
         return;
       }
@@ -1992,8 +2047,8 @@ export default class EmployeeDetail extends Vue {
         return;
       }
 
-      // Validasi quantity harus lebih dari 0
-      if (parseInt(formData.quantity) <= 0) {
+      // Validasi qty harus lebih dari 0
+      if (parseInt(formData.qty) <= 0) {
         getToastError("Quantity harus lebih dari 0");
         this.isSaving = false;
         return;
@@ -2241,6 +2296,8 @@ export default class EmployeeDetail extends Vue {
 
     const today = new Date();
     const expiry = new Date(expiryDate);
+
+    if (isNaN(expiry.getTime())) return "Valid";
 
     if (expiry < today) {
       return "Expired";
@@ -2540,8 +2597,8 @@ export default class EmployeeDetail extends Vue {
           this.currentForm.component &&
           this.currentForm.payroll_component_id &&
           isAmountValid &&
-          this.currentForm.quantity &&
-          parseInt(this.currentForm.quantity) > 0 &&
+          this.currentForm.qty &&
+          parseInt(this.currentForm.qty) > 0 &&
           this.currentForm.effective_date
         );
 

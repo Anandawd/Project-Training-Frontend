@@ -18,7 +18,7 @@
             id="DepartmentCode"
             class="row mb-1"
             :label="$t('labels.payroll.employee.code')"
-            v-model="form.departmentCode"
+            v-model="form.department_code"
           />
         </div>
         <div class="col-md-4">
@@ -29,7 +29,7 @@
             id="DepartmentName"
             class="row mb-1"
             :label="$t('labels.payroll.employee.departmentName')"
-            v-model="form.departmentName"
+            v-model="form.name"
           />
         </div>
         <div class="col-md-4">
@@ -39,7 +39,7 @@
             id="DepartmentDescription"
             class="row mb-1"
             :label="$t('labels.payroll.employee.description')"
-            v-model="form.departmentDescription"
+            v-model="form.description"
           />
         </div>
         <div class="col-md-4">
@@ -52,7 +52,7 @@
             name="DepartmentPlacement"
             labelName="name"
             keyName="code"
-            v-model="form.departmentPlacement"
+            v-model="form.placement"
             :label="$t('labels.payroll.employee.placement')"
             :columnOptions="columnOptions"
             :options="departmentPlacementOptions"
@@ -68,7 +68,7 @@
             name="manager"
             labelName="name"
             keyName="code"
-            v-model="form.departmentManager"
+            v-model="form.manager"
             :label="$t('labels.payroll.employee.manager')"
             :columnOptions="columnOptions"
             :options="departmentManagerOptions"
@@ -85,7 +85,7 @@
             name="supervisor"
             labelName="name"
             keyName="code"
-            v-model="form.departmentSupervisor"
+            v-model="form.supervisor"
             :label="$t('labels.payroll.employee.supervisor')"
             :columnOptions="columnOptions"
             :options="departmentSupervisorOptions"
@@ -105,13 +105,13 @@
               <c-radio
                 class="me-3"
                 :label="$t('labels.active')"
-                v-model="form.departmentStatus"
+                v-model="form.status"
                 value="A"
               ></c-radio>
               <c-radio
                 class="me-3"
                 :label="$t('labels.inactive')"
-                v-model="form.departmentStatus"
+                v-model="form.status"
                 value="I"
               ></c-radio>
             </div>
