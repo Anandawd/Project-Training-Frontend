@@ -1,6 +1,12 @@
 // src/mock/interfaces.ts
 // Definisi interface untuk mock data sesuai dengan ERD
 
+// utils
+export interface ValidationState {
+  isValid: boolean;
+  errors: string[];
+}
+
 // Core Entities
 export interface IPlacement {
   id: number;

@@ -292,12 +292,18 @@
       :title="getModalTitle()"
       size="lg"
       @close="closeModal"
-      @save="saveCurrentForm"
+      @save="handleSaveModal"
       :isSaving="isSaving"
     >
       <div @click.stop>
         <!-- document modal -->
-        <div v-if="dataType === 'DOCUMENT'" class="row">
+        <c-form
+          v-if="dataType === 'DOCUMENT'"
+          ref="documentFormRef"
+          :validation-schema="documentValidationSchema"
+          @submit="handleSaveModal"
+          class="row"
+        >
           <div class="col-md-6">
             <c-select
               required
@@ -309,6 +315,7 @@
               v-model="currentForm.document_type"
               :label="$t('labels.payroll.employee.documentType')"
               :options="documentTypeOptions"
+              validate
             />
           </div>
           <div class="col-md-6">
@@ -320,6 +327,7 @@
               :label="$t('labels.payroll.employee.documentFile')"
               @change="handleFileChange"
               :required="modalMode === $global.modeData.insert"
+              validate
             />
             <div
               v-if="modalMode === $global.modeData.edit && currentForm.file_name"
@@ -342,6 +350,7 @@
               name="issueDate"
               :label="$t('labels.payroll.employee.issueDate')"
               v-model="currentForm.issue_date"
+              validate
             />
           </div>
           <div class="col-md-6">
@@ -354,6 +363,7 @@
               name="ExpiryDate"
               :label="$t('labels.payroll.employee.expiryDate')"
               v-model="currentForm.expiry_date"
+              validate
             />
           </div>
           <div class="col-md-6">
@@ -366,10 +376,16 @@
               v-model="currentForm.remark"
             />
           </div>
-        </div>
+        </c-form>
 
         <!-- salary modal -->
-        <div v-if="dataType === 'SALARY'" class="row">
+        <c-form
+          v-if="dataType === 'SALARY'"
+          ref="salaryFormRef"
+          :validation-schema="salaryValidationSchema"
+          @submit="handleSaveModal"
+          class="row"
+        >
           <div class="col-md-6">
             <c-input
               required
@@ -382,6 +398,7 @@
               :label="$t('labels.payroll.employee.baseSalary')"
               :disabled="modalMode === $global.modeData.edit"
               v-model="currentForm.base_salary"
+              validate
             />
           </div>
           <div class="col-md-6">
@@ -396,6 +413,7 @@
               :label="$t('labels.payroll.employee.effectiveDate')"
               :disabled="modalMode === $global.modeData.edit"
               v-model="currentForm.effective_date"
+              validate
             />
           </div>
           <div class="col-md-6">
@@ -410,6 +428,7 @@
               :disabled="modalMode === $global.modeData.edit"
               :label="$t('labels.payroll.employee.adjustmentReason')"
               :options="adjustmentReasonOptions"
+              validate
             />
           </div>
           <div class="col-md-6">
@@ -420,12 +439,19 @@
               class="row mb-1"
               :label="$t('labels.remark')"
               v-model="currentForm.remark"
+              validate
             />
           </div>
-        </div>
+        </c-form>
 
         <!-- benefit modal -->
-        <div v-if="dataType === 'BENEFIT'" class="row">
+        <c-form
+          v-if="dataType === 'BENEFIT'"
+          ref="benefitFormRef"
+          :validation-schema="benefitValidationSchema"
+          @submit="handleSaveModal"
+          class="row"
+        >
           <div class="col-md-6">
             <c-select
               required
@@ -439,6 +465,7 @@
               :options="componentTypeOptions"
               @change="onComponentTypeChange"
               :disabled="modalMode === $global.modeData.edit"
+              validate
             />
           </div>
           <div class="col-md-6">
@@ -446,8 +473,7 @@
               required
               offset="right"
               class="row mb-1"
-              name="ComponentName"
-              selectType="column"
+              name="ComponentCode"
               labelName="name"
               keyName="code"
               v-model="currentForm.payroll_component_code"
@@ -456,6 +482,7 @@
               :columnOptions="columnOptions"
               :disabled="!currentForm.component_type || modalMode === $global.modeData.edit"
               @change="onComponentChange"
+              validate
             />
           </div>
           <div class="col-md-6">
@@ -471,13 +498,14 @@
                   v-model="currentForm.amount"
                   :disabled="!currentForm.payroll_component_code || !currentForm.is_override"
                   :min="currentForm.is_override ? 1 : undefined"
+                  validate
                 />
               </div>
               <div class="col-3 d-flex">
                 <c-checkbox
                   class="align-items-center"
-                  name="ComponentAmount"
-                  id="ComponentAmount"
+                  name="Amount"
+                  id="Amount"
                   :label="$t('labels.override')"
                   v-model="currentForm.is_override"
                   :disabled="!currentForm.payroll_component_code || isFixedComponent"
@@ -490,38 +518,41 @@
             <c-input
               required
               type="number"
-              name="ComponentQuantity"
-              id="ComponentQuantity"
+              name="Qty"
+              id="Qty"
               class="row mb-1"
               :label="$t('labels.payroll.payroll.quantity')"
               v-model="currentForm.qty"
               :min="1"
               :disabled="!currentForm.payroll_component_code"
+              validate
             />
           </div>
           <div class="col-md-6">
             <c-datepicker
               required
-              id="ComponentEffectiveDate"
+              name="EffectiveDate"
+              id="EffectiveDate"
               customLabelClass="col-3 mb-1"
               type="date"
               valueType="YYYY-MM-DD"
               format="DD/MM/YYYY"
-              name="ComponentEffectiveDate"
               :label="$t('labels.payroll.employee.effectiveDate')"
               v-model="currentForm.effective_date"
+              validate
             />
           </div>
           <div class="col-md-6">
             <c-datepicker
-              id="ComponentEndDate"
-              name="ComponentEndDate"
+              id="EndDate"
+              name="EndDate"
               customLabelClass="col-3 mb-1"
               :label="$t('labels.payroll.employee.endDate')"
               type="date"
               valueType="YYYY-MM-DD"
               format="DD/MM/YYYY"
               v-model="currentForm.end_date"
+              validate
             />
           </div>
           <div class="col-md-6">
@@ -534,7 +565,7 @@
               v-model="currentForm.remark"
             />
           </div>
-        </div>
+        </c-form>
 
         <!-- button -->
         <div class="d-flex justify-content-end mt-2">
@@ -543,6 +574,7 @@
             n
             class="btn btn-danger mr-1 px-3"
             @click="closeModal"
+            :disabled="isSaving"
           >
             <i class="fa fa-times" aria-hidden="true"></i>
             {{$t('buttons.cancel')}}
@@ -551,7 +583,14 @@
             type="button"
             class="btn btn-primary px-3"
             @click="handleSaveModal"
+            :disabled="!isValidForm || isSaving"
           >
+            <span
+              v-if="isSaving"
+              class="spinner-border spinner-border-sm mr-1"
+              role="status"
+              aria-hidden="true"
+            ></span>
             <i class="fa fa-save"></i>
             {{$t('buttons.save')}}
           </button>

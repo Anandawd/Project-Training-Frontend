@@ -179,8 +179,6 @@ export default class InputForm extends Vue {
   onSubmit() {
     console.log("onSubmit clicked:", this.form);
     this.inputFormValidation.$el.requestSubmit();
-
-    // this.$emit("save", this.form);
   }
 
   onSave() {

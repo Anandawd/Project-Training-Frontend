@@ -13,104 +13,11 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
+import * as Yup from "yup";
 import EmployeeInputForm from "../employee-input-form/employee-input-form.vue";
 import BenefitTableComponent from "./benefit-table-component/benefit-table-component.vue";
 import DocumentTableComponent from "./document-table-component/document-table-component.vue";
 import SalaryTableComponent from "./salary-table-component/salary-table-component.vue";
-
-interface EmployeeRequest {
-  id?: number;
-  employee_id: string;
-  first_name: string;
-  last_name: string;
-  gender_code: string;
-  birth_date: string;
-  marital_status: string;
-  phone: string;
-  email: string;
-  address: string;
-  hire_date: string;
-  end_date: string | null;
-  status_code: string; // A = Active, I = Inactive
-  employee_type_code: string;
-  department_code: string;
-  position_code: string;
-  placement_code: string;
-  supervisor_id: string | null;
-  base_salary: number;
-  payment_frequency_code: string;
-  payment_method_code: string;
-  bank_code: string;
-  account_number: string;
-  account_name: string;
-  tax_number: string;
-  social_insurance_number: string;
-  health_insurance_number: string;
-}
-
-interface EmployeeResponse {
-  id: number;
-  employee_id: string;
-  first_name: string;
-  last_name: string;
-  full_name: string;
-  gender: string;
-  birth_date: string;
-  age: number;
-  email: string;
-  phone: string;
-  address: string;
-  hire_date: string;
-  end_date: string | null;
-  status: string; // A = Active, I = Inactive
-  employee_type: string;
-  department_code: string;
-  department_name: string;
-  department_manager_name: string;
-  position_code: string;
-  position_name: string;
-  placement_code: string;
-  placement_name: string;
-  supervisor_id: string | null;
-  supervisor_name: string | null;
-  base_salary: number;
-  payment_frequency_code: string;
-  payment_frequency_name: string;
-  payment_method_code: string;
-  payment_method_name: string;
-  bank_code: string;
-  bank_name: string;
-  account_number: string;
-  account_name: string;
-  leave_quota: number;
-  leave_remaining: number;
-  created_at: string;
-  created_by: string;
-  updated_at: string;
-  updated_by: string;
-}
-
-interface DocumentRequest {
-  id?: number;
-  employee_id: string;
-  document_type_code: string;
-  file?: File;
-  issue_date: string;
-  expiry_date?: string | null;
-  remark?: string;
-}
-
-interface BenefitRequest {
-  id?: number;
-  employee_id: string;
-  payroll_component_code: string;
-  amount: number;
-  quantity: number;
-  effective_date: string;
-  end_date?: string | null;
-  is_override: boolean;
-  remark?: string;
-}
 
 const employeeAPI = new EmployeeAPI();
 
@@ -173,6 +80,9 @@ export default class EmployeeDetail extends Vue {
   public currentForm: any = reactive({});
   public showModal: boolean = false;
   public isSaving: boolean = false;
+  public documentFormRef: any = ref();
+  public salaryFormRef: any = ref();
+  public benefitFormRef: any = ref();
 
   // dialog
   public showDialog: boolean = false;
@@ -239,8 +149,6 @@ export default class EmployeeDetail extends Vue {
     this.modalMode = mode;
     this.dataType = type;
 
-    console.log("dataype modal", this.dataType);
-
     this.currentForm = {};
 
     this.$nextTick(() => {
@@ -253,36 +161,66 @@ export default class EmployeeDetail extends Vue {
     });
   }
 
-  handleSaveModal() {
+  async handleSaveModal() {
+    this.isSaving = true;
+
+    let isValid = false;
+
+    switch (this.dataType) {
+      case "DOCUMENT":
+        if (this.documentFormRef && this.documentFormRef.validate) {
+          const { valid } = await this.documentFormRef.validate();
+          isValid = valid;
+        } else {
+          // Fallback validation
+          isValid = !!(
+            this.currentForm.document_type && this.currentForm.issue_date
+          );
+        }
+        break;
+      case "SALARY":
+        if (this.salaryFormRef && this.salaryFormRef.validate) {
+          const { valid } = await this.salaryFormRef.validate();
+          isValid = valid;
+        } else {
+          // Fallback validation
+          isValid = !!(
+            this.currentForm.base_salary &&
+            this.currentForm.effective_date &&
+            this.currentForm.adjustment_reason
+          );
+        }
+        break;
+      case "BENEFIT":
+        if (this.benefitFormRef && this.benefitFormRef.validate) {
+          const { valid } = await this.benefitFormRef.validate();
+          isValid = valid;
+        } else {
+          // Fallback validation
+          isValid = !!(
+            this.currentForm.component_type &&
+            this.currentForm.payroll_component_code &&
+            this.currentForm.effective_date
+          );
+        }
+        break;
+    }
+
+    if (!isValid) {
+      this.isSaving = false;
+      getToastError(this.$t("messages.employee.error.fillRequired"));
+      return;
+    }
+
     const formattedData = this.formatModalData(this.currentForm, this.dataType);
 
     if (this.modalMode === $global.modeData.insert) {
       this.insertModalData(formattedData);
-      // switch (this.dataType) {
-      //   case "DOCUMENT":
-      //     this.insertDocument(formattedData);
-      //     break;
-      //   case "SALARY":
-      //     this.insertSalary(formattedData);
-      //     break;
-      //   case "BENEFIT":
-      //     this.insertBenefit(formattedData);
-      //     break;
-      // }
     } else if (this.modalMode === $global.modeData.edit) {
       this.updateModalData(formattedData);
-      // switch (this.dataType) {
-      //   case "DOCUMENT":
-      //     this.updateDocument(formattedData);
-      //     break;
-      //   case "SALARY":
-      //     this.updateSalary(formattedData);
-      //     break;
-      //   case "BENEFIT":
-      //     this.updateBenefit(formattedData);
-      //     break;
-      // }
     }
+
+    this.isSaving = false;
   }
 
   handleTableAction(params: any) {
@@ -409,11 +347,18 @@ export default class EmployeeDetail extends Vue {
   }
 
   onComponentTypeChange() {
-    this.currentForm.component = "";
-    this.currentForm.payroll_component_id = null;
+    this.currentForm.payroll_component_code = "";
+    this.currentForm.payroll_component_name = "";
     this.currentForm.amount = 0;
     this.currentForm.qty = 1;
     this.currentForm.is_override = false;
+    this.currentForm.category = false;
+
+    // if (this.benefitFormRef) {
+    //   this.benefitFormRef.resetField("payroll_component_code");
+    //   this.benefitFormRef.resetField("amount");
+    //   this.benefitFormRef.resetField("qty");
+    // }
 
     this.$forceUpdate();
   }
@@ -422,16 +367,32 @@ export default class EmployeeDetail extends Vue {
     const selectedComponent = this.selectedComponentData;
 
     if (selectedComponent) {
-      this.currentForm.payroll_component_id = selectedComponent.id;
+      this.currentForm.payroll_component_code = selectedComponent.code;
+      this.currentForm.payroll_component_name = selectedComponent.name;
+      this.currentForm.category = selectedComponent.category;
       this.currentForm.amount = selectedComponent.default_amount || 0;
-      this.currentForm.qty = 1;
+      this.currentForm.qty = selectedComponent.qty || 1;
       this.currentForm.is_override = false;
+
+      this.currentForm.is_taxable = selectedComponent.is_taxable;
+      this.currentForm.is_fixed = selectedComponent.is_fixed;
+      this.currentForm.is_prorated = selectedComponent.is_prorated;
+      this.currentForm.is_included_in_bpjs_health =
+        selectedComponent.is_included_in_bpjs_health;
+      this.currentForm.is_included_in_bpjs_employee =
+        selectedComponent.is_included_in_bpjs_employee;
+      this.currentForm.is_show_in_payslip =
+        selectedComponent.is_show_in_payslip;
     } else {
-      this.currentForm.payroll_component_id = null;
+      this.currentForm.payroll_component_code = "";
+      this.currentForm.payroll_component_name = "";
+      this.currentForm.category = "";
       this.currentForm.amount = 0;
       this.currentForm.qty = 1;
       this.currentForm.is_override = false;
     }
+
+    this.$forceUpdate();
   }
 
   onOverrideAmountChange() {
@@ -439,6 +400,7 @@ export default class EmployeeDetail extends Vue {
       if (this.selectedComponentData) {
         this.currentForm.amount =
           this.selectedComponentData.default_amount || 0;
+        this.currentForm.qty = this.selectedComponentData.default_quantity || 1;
       }
     }
   }
@@ -1101,7 +1063,6 @@ export default class EmployeeDetail extends Vue {
           break;
         case "BENEFIT":
           if (this.benefitTableRef) {
-            console.log("benefitTableRef", this.benefitTableRef);
             this.benefitTableRef.refreshGrid();
           }
           break;
@@ -1646,7 +1607,6 @@ export default class EmployeeDetail extends Vue {
         this.rowBenefitData = this.benefitsListData.filter(
           (p: any) => p.employee_id === this.employeeId
         );
-        console.log("rowBenefitData", this.rowBenefitData);
       } else {
         this.$router.push({ name: "Employee" });
         getToastError(this.$t("messages.employee.error.notFound"));
@@ -1916,6 +1876,7 @@ export default class EmployeeDetail extends Vue {
 
       await this.$nextTick();
       this.loadDataGrid();
+      this.closeModal();
     } catch (error) {
       getError(error);
     }
@@ -2234,10 +2195,6 @@ export default class EmployeeDetail extends Vue {
         };
         break;
       case "BENEFIT":
-        const componentType = params.payroll_component?.startsWith("CE")
-          ? "EARNINGS"
-          : "DEDUCTIONS";
-
         this.currentForm = {
           id: params.id,
           payroll_component_code: params.payroll_component_code,
@@ -2334,18 +2291,17 @@ export default class EmployeeDetail extends Vue {
     return this.filteredComponentOptions.map((option: any) => ({
       code: option.code,
       name: option.name,
-      SubGroupName: option.category,
       ...option,
     }));
   }
 
   get selectedComponentData() {
-    if (!this.currentForm.component) {
+    if (!this.currentForm.payroll_component_code) {
       return null;
     }
 
     return this.benefitOptions.find(
-      (option: any) => option.code === this.currentForm.component
+      (option: any) => option.code === this.currentForm.payroll_component_code
     );
   }
 
@@ -2363,39 +2319,51 @@ export default class EmployeeDetail extends Vue {
     switch (this.dataType) {
       case "DOCUMENT":
         return !!(
-          this.currentForm.document_type &&
-          this.currentForm.issue_date &&
-          (this.modalMode === $global.modeData.edit || this.currentForm.file)
+          this.currentForm.document_type && this.currentForm.issue_date
         );
 
       case "SALARY":
         return !!(
           this.currentForm.base_salary &&
-          parseFloat(this.currentForm.base_salary) > 0 &&
           this.currentForm.effective_date &&
           this.currentForm.adjustment_reason
         );
-
       case "BENEFIT":
-        // Jika override aktif, amount harus > 0
-        // Jika tidak override, amount akan otomatis dari default component
-        const isAmountValid = this.currentForm.is_override
-          ? this.currentForm.amount && parseFloat(this.currentForm.amount) > 0
-          : this.selectedComponentData &&
-            this.selectedComponentData.default_amount > 0;
-
         return !!(
           this.currentForm.component_type &&
-          this.currentForm.component &&
-          this.currentForm.payroll_component_id &&
-          isAmountValid &&
-          this.currentForm.qty &&
-          parseInt(this.currentForm.qty) > 0 &&
+          this.currentForm.payroll_component_code &&
           this.currentForm.effective_date
         );
 
       default:
         return false;
     }
+  }
+
+  get documentValidationSchema() {
+    return Yup.object().shape({
+      DocumentType: Yup.string().required(),
+      IssueDate: Yup.date().required(),
+      ExpiryDate: Yup.date().nullable().min(Yup.ref("IssueDate")),
+    });
+  }
+
+  get salaryValidationSchema() {
+    return Yup.object().shape({
+      BaseSalary: Yup.number().required().min(1).max(999999999),
+      EffectiveDate: Yup.date().required(),
+      AdjustmentReason: Yup.string().required(),
+    });
+  }
+
+  get benefitValidationSchema() {
+    return Yup.object().shape({
+      ComponentType: Yup.string().required(),
+      ComponentCode: Yup.string().required(),
+      Amount: Yup.number().min(1).max(999999999),
+      Qty: Yup.number().required().min(1).max(1000),
+      EffectiveDate: Yup.date().required(),
+      EndDate: Yup.date().nullable(),
+    });
   }
 }
