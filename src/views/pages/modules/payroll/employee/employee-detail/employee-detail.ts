@@ -386,20 +386,7 @@ export default class EmployeeDetail extends Vue {
 
   confirmAction() {
     this.showDialog = false;
-    this.$nextTick(() => {
-      switch (this.dataType) {
-        case "DOCUMENT":
-          this.deleteDocument();
-          break;
-        case "SALARY":
-          break;
-        case "BENEFIT":
-          this.deleteBenefit();
-          break;
-        default:
-          console.error("Unknown data type for delete:", this.dataType);
-      }
-    });
+    this.deleteModalData();
 
     this.showDialog = false;
     this.dialogAction = "";
@@ -1114,6 +1101,7 @@ export default class EmployeeDetail extends Vue {
           break;
         case "BENEFIT":
           if (this.benefitTableRef) {
+            console.log("benefitTableRef", this.benefitTableRef);
             this.benefitTableRef.refreshGrid();
           }
           break;
@@ -1735,6 +1723,7 @@ export default class EmployeeDetail extends Vue {
   async insertModalData(formData: any) {
     try {
       formData.id = this.generateUniqueId(this.dataType);
+
       switch (this.dataType) {
         case "DOCUMENT":
           const newDocument = {
@@ -1792,7 +1781,6 @@ export default class EmployeeDetail extends Vue {
           getToastSuccess(this.$t("messages.employee.success.saveSalary"));
           break;
         case "BENEFIT":
-          console.log("insert benefit", formData);
           const selectedComponent = this.benefitOptions.find(
             (option: any) => option.code === formData.payroll_component_code
           );
@@ -1827,11 +1815,11 @@ export default class EmployeeDetail extends Vue {
             updated_at: formatDateTimeUTC(new Date()),
             updated_by: "Current User",
           };
-
           this.rowBenefitData.push(newBenefit);
           getToastSuccess(this.$t("messages.employee.success.saveBenefit"));
           break;
       }
+
       await this.$nextTick();
       this.loadDataGrid();
       this.closeModal();
@@ -1842,6 +1830,92 @@ export default class EmployeeDetail extends Vue {
 
   async updateModalData(formData: any) {
     try {
+      switch (this.dataType) {
+        case "DOCUMENT":
+          const iDocument = this.rowDocumentData.findIndex(
+            (item: any) => item.id === formData.id
+          );
+          if (iDocument !== -1) {
+            this.rowDocumentData[iDocument] = {
+              ...this.rowDocumentData[iDocument],
+              document_type: formData.document_type,
+              file_name: formData.file
+                ? formData.file.name
+                : this.rowDocumentData[iDocument].file_name,
+              file_path: formData.file
+                ? `/uploads/${formData.file.name}`
+                : this.rowDocumentData[iDocument].file_path,
+              file_type: formData.file
+                ? formData.file.type
+                : this.rowDocumentData[iDocument].file_type,
+              file_size: formData.file
+                ? formData.file.size
+                : this.rowDocumentData[iDocument].file_size,
+              issue_date: formData.issue_date,
+              expiry_date: formData.expiry_date || null,
+              remark: formData.remark || "",
+              status: this.calculateDocumentStatus(formData.expiry_date),
+              updated_at: formatDateTimeUTC(new Date()),
+              updated_by: "Current User",
+            };
+          }
+          getToastSuccess(this.$t("messages.employee.success.updateDocument"));
+
+          break;
+        case "SALARY":
+          const iSalary = this.rowSalaryData.findIndex(
+            (item: any) => item.id === formData.id
+          );
+
+          if (iSalary !== -1) {
+            this.rowSalaryData[iSalary] = {
+              ...this.rowSalaryData[iSalary],
+              remark: formData.remark,
+              updated_at: formatDateTimeUTC(new Date()),
+              updated_by: "Current User",
+            };
+          }
+          getToastSuccess(this.$t("messages.employee.success.updateSalary"));
+          break;
+        case "BENEFIT":
+          const iBenefit = this.rowBenefitData.findIndex(
+            (item: any) => item.id === formData.id
+          );
+          if (iBenefit !== -1) {
+            const selectedComponent = this.benefitOptions.find(
+              (option: any) => option.code === formData.component
+            );
+
+            if (!selectedComponent) {
+              getToastError("Component tidak ditemukan");
+              this.isSaving = false;
+              return;
+            }
+
+            const finalAmount = formData.is_override
+              ? parseFloat(formData.amount)
+              : selectedComponent.default_amount;
+
+            this.rowBenefitData[iBenefit] = {
+              ...this.rowBenefitData[iBenefit],
+              amount: finalAmount,
+              qty: parseInt(formData.qty),
+              effective_date: formData.effective_date,
+              end_date: formData.end_date || null,
+              remark: formData.remark || "",
+              is_current:
+                !formData.end_date || new Date(formData.end_date) > new Date(),
+              is_override: formData.is_override,
+              updated_at: formatDateTimeUTC(new Date()),
+              updated_by: "Current User",
+            };
+          }
+          getToastSuccess(this.$t("messages.employee.success.saveBenefit"));
+          break;
+      }
+
+      await this.$nextTick();
+      this.loadDataGrid();
     } catch (error) {
       getError(error);
     }
@@ -1849,483 +1923,27 @@ export default class EmployeeDetail extends Vue {
 
   async deleteModalData() {
     try {
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async insertDocument(formData: any) {
-    try {
-      this.isSaving = true;
-
-      if (
-        !formData.document_type ||
-        !formData.issue_date ||
-        !formData.file_name
-      ) {
-        getToastError(this.$t("messages.employee.error.fillRequired"));
-        this.isSaving = false;
-        return;
+      switch (this.dataType) {
+        case "DOCUMENT":
+          const updatedDocument = this.rowDocumentData.filter(
+            (document: any) => document.id !== this.deleteParam.id
+          );
+          this.rowDocumentData = [...updatedDocument];
+          getToastSuccess(this.$t("messages.employee.success.deleteDocument"));
+          break;
+        case "BENEFIT":
+          const updatedBenefit = this.rowBenefitData.filter(
+            (benefit: any) => benefit.id !== this.deleteParam.id
+          );
+          this.rowBenefitData = [...updatedBenefit];
+          getToastSuccess(this.$t("messages.employee.success.deleteBenefit"));
+          break;
       }
-
-      // const formData = new FormData();
-      // const formDataToSend = new FormData();
-      // formDataToSend.append('employeeId', this.employeeId);
-      // formDataToSend.append('documentType', formData.document_type);
-      // formDataToSend.append('issueDate', formData.issue_date);
-      // formDataToSend.append('expiryDate', formData.expiry_date || '');
-      // formDataToSend.append('remark', formData.remark || '');
-      // if (formData.file) {
-      //   formDataToSend.append('file', formData.file);
-      // }
-
-      // const { status2 } = await employeeAPI.InsertEmployeeDocument(formDataToSend);
-
-      // Mock implementation
-      const newId =
-        Math.max(...this.rowDocumentData.map((doc: any) => doc.id || 0), 0) + 1;
-      const newDocument = {
-        id: newId,
-        employee_id: this.employeeId,
-        document_type: formData.document_type,
-        file_name: formData.file ? formData.file.name : `document_${newId}.pdf`,
-        file_path: formData.file
-          ? `/uploads/${formData.file.name}`
-          : `/uploads/document_${newId}.pdf`,
-        file_type: formData.file ? formData.file.type : "application/pdf",
-        file_size: formData.file ? formData.file.size : 1024000,
-        issue_date: formData.issue_date,
-        expiry_date: formData.expiry_date,
-        remark: formData.remark,
-        status: this.calculateDocumentStatus(formData.expiry_date),
-        created_at: formatDateTimeUTC(new Date()),
-        created_by: "Current User",
-        updated_at: formatDateTimeUTC(new Date()),
-        updated_by: "Current User",
-      };
-
-      this.rowDocumentData.push(newDocument);
-
       await this.$nextTick();
-      if (
-        this.documentTableRef &&
-        typeof this.documentTableRef.refreshGrid === "function"
-      ) {
-        this.documentTableRef.refreshGrid();
-      }
-      this.closeModal();
-      getToastSuccess(this.$t("messages.employee.success.saveDocument"));
-    } catch (error) {
-      getError(error);
-    } finally {
-      this.isSaving = false;
-    }
-  }
-
-  async updateDocument(formData: any) {
-    try {
-      this.isSaving = true;
-
-      if (!formData.document_type || !formData.issue_date) {
-        getToastError(this.$t("messages.employee.error.fillRequired"));
-        this.isSaving = false;
-        return;
-      }
-
-      // For real implementation with API
-      // const formDataToSend = new FormData();
-      // formDataToSend.append('employeeId', this.employeeId);
-      // formDataToSend.append('documentType', formData.document_type);
-      // formDataToSend.append('issueDate', formData.issue_date);
-      // formDataToSend.append('expiryDate', formData.expiry_date || '');
-      // formDataToSend.append('remark', formData.remark || '');
-      // if (formData.file) {
-      //   formDataToSend.append('file', formData.file);
-      // }
-
-      // const { status2 } = await employeeAPI.UpdateEmployeeDocument(formDataToSend);
-
-      // Mock implementation
-      const index = this.rowDocumentData.findIndex(
-        (item: any) => item.id === formData.id
-      );
-      if (index !== -1) {
-        this.rowDocumentData[index] = {
-          ...this.rowDocumentData[index],
-          document_type: formData.document_type,
-          file_name: formData.file
-            ? formData.file.name
-            : this.rowDocumentData[index].file_name,
-          file_path: formData.file
-            ? `/uploads/${formData.file.name}`
-            : this.rowDocumentData[index].file_path,
-          file_type: formData.file
-            ? formData.file.type
-            : this.rowDocumentData[index].file_type,
-          file_size: formData.file
-            ? formData.file.size
-            : this.rowDocumentData[index].file_size,
-          issue_date: formData.issue_date,
-          expiry_date: formData.expiry_date || null,
-          remark: formData.remark || "",
-          status: this.calculateDocumentStatus(formData.expiry_date),
-          updated_at: formatDateTimeUTC(new Date()),
-          updated_by: "Current User",
-        };
-      }
-
-      await this.$nextTick();
-      if (
-        this.documentTableRef &&
-        typeof this.documentTableRef.refreshGrid === "function"
-      ) {
-        this.documentTableRef.refreshGrid();
-      }
-      this.closeModal();
-      getToastSuccess(this.$t("messages.employee.success.updateDocument"));
-    } catch (error) {
-      getError(error);
-    } finally {
-      this.isSaving = false;
-    }
-  }
-
-  async deleteDocument() {
-    try {
-      // const { status2 } = await employeeAPI.DeleteEmployeeDocument(this.deleteParam.id);
-
-      const updatedDocument = this.rowDocumentData.filter(
-        (document: any) => document.id !== this.deleteParam.id
-      );
-
-      this.rowDocumentData = [...updatedDocument];
 
       this.deleteParam = null;
-
-      await this.$nextTick();
-      if (
-        this.documentTableRef &&
-        typeof this.documentTableRef.refreshGrid === "function"
-      ) {
-        this.documentTableRef.refreshGrid();
-      }
-
-      getToastSuccess(this.$t("messages.employee.success.deleteDocument"));
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async insertSalary(formData: any) {
-    try {
-      this.isSaving = true;
-
-      if (
-        !formData.base_salary ||
-        !formData.effective_date ||
-        !formData.adjustment_reason
-      ) {
-        getToastError(this.$t("messages.employee.error.fillRequired"));
-        this.isSaving = false;
-        return;
-      }
-
-      // const { status2 } = await employeeAPI.InsertEmployeeSalary(formData);
-
-      // Mock implementation
-      // First, update all existing salaries to not be current
-      this.rowSalaryData.forEach((item: any) => {
-        if (item.is_current) {
-          item.is_current = false;
-          item.end_date = formData.effective_date;
-        }
-      });
-
-      const newId =
-        Math.max(
-          ...this.rowSalaryData.map((salary: any) => salary.id || 0),
-          0
-        ) + 1;
-      const newSalary = {
-        id: newId,
-        employee_id: this.employeeId,
-        adjustment_reason: formData.adjustment_reason,
-        base_salary: parseFloat(formData.base_salary),
-        effective_date: formData.effective_date,
-        end_date: "",
-        is_current: true,
-        remark:
-          formData.remark || `Salary adjustment: ${formData.adjustment_reason}`,
-        created_at: formatDateTimeUTC(new Date()),
-        created_by: "Current User",
-        updated_at: formatDateTimeUTC(new Date()),
-        updated_by: "Current User",
-      };
-
-      this.rowSalaryData.push(newSalary);
-
-      await this.$nextTick();
-      if (
-        this.salaryTableRef &&
-        typeof this.salaryTableRef.refreshGrid === "function"
-      ) {
-        this.salaryTableRef.refreshGrid();
-      }
+      this.loadDataGrid();
       this.closeModal();
-      getToastSuccess(this.$t("messages.employee.success.saveSalary"));
-    } catch (error) {
-      getError(error);
-    } finally {
-      this.isSaving = false;
-    }
-  }
-
-  async updateSalary(formData: any) {
-    try {
-      this.isSaving = true;
-
-      const index = this.rowSalaryData.findIndex(
-        (item: any) => item.id === formData.id
-      );
-
-      if (index !== -1) {
-        this.rowSalaryData[index] = {
-          ...this.rowSalaryData[index],
-          remark: formData.remark,
-          updated_at: formatDateTimeUTC(new Date()),
-          updated_by: "Current User",
-        };
-
-        await this.$nextTick();
-        if (
-          this.salaryTableRef &&
-          typeof this.salaryTableRef.refreshGrid === "function"
-        ) {
-          this.salaryTableRef.refreshGrid();
-        }
-        this.closeModal();
-        getToastSuccess(this.$t("messages.employee.success.updateSalary"));
-      }
-    } catch (error) {
-      getError(error);
-    } finally {
-      this.isSaving = false;
-    }
-  }
-
-  async insertBenefit(formData: any) {
-    try {
-      this.isSaving = true;
-
-      if (
-        !formData.component_type ||
-        !formData.component ||
-        !formData.payroll_component_id ||
-        !formData.effective_date
-      ) {
-        getToastError(this.$t("messages.employee.error.fillRequired"));
-        this.isSaving = false;
-        return;
-      }
-
-      if (parseInt(formData.qty) <= 0) {
-        getToastError("Quantity harus lebih dari 0");
-        this.isSaving = false;
-        return;
-      }
-
-      if (formData.is_override && parseFloat(formData.amount) <= 0) {
-        getToastError("Amount harus lebih dari 0");
-        this.isSaving = false;
-        return;
-      }
-
-      // const { status2 } = await employeeAPI.InsertEmployeeBenefit(formData);
-
-      const selectedComponent = this.benefitOptions.find(
-        (option: any) => option.code === formData.component
-      );
-
-      console.log("selectedComponent", selectedComponent);
-
-      if (!selectedComponent) {
-        getToastError(this.$t("messages.employee.error.componentNotFound"));
-        this.isSaving = false;
-        return;
-      }
-
-      const finalAmount = formData.is_override
-        ? parseFloat(formData.amount)
-        : selectedComponent.default_amount;
-
-      const newId =
-        Math.max(
-          ...this.rowBenefitData.map((benefit: any) => benefit.id || 0),
-          0
-        ) + 1;
-
-      const newBenefit = {
-        id: newId,
-        employee_id: this.employeeId,
-        payroll_component_id: selectedComponent.id,
-        component_type: formData.component_type,
-
-        payroll_component: formData.component,
-        payroll_component_name: selectedComponent.name,
-
-        amount: finalAmount,
-        qty: parseInt(formData.qty),
-        effective_date: formData.effective_date,
-        end_date: formData.end_date || null,
-        remark: formData.remark || "",
-
-        is_current:
-          !formData.end_date || new Date(formData.end_date) > new Date(),
-        is_override: formData.is_override,
-        default_amount: selectedComponent.default_amount,
-        unit: selectedComponent.unit || "Per Bulan",
-        category: selectedComponent.category,
-        is_taxable: selectedComponent.is_taxable,
-        is_fixed: selectedComponent.is_fixed,
-
-        created_at: formatDateTimeUTC(new Date()),
-        created_by: "Current User",
-        updated_at: formatDateTimeUTC(new Date()),
-        updated_by: "Current User",
-      };
-
-      this.rowBenefitData.push(newBenefit);
-
-      await this.$nextTick();
-      if (
-        this.benefitTableRef &&
-        typeof this.benefitTableRef.refreshGrid === "function"
-      ) {
-        this.benefitTableRef.refreshGrid();
-      }
-      this.closeModal();
-      getToastSuccess(this.$t("messages.employee.success.saveBenefit"));
-    } catch (error) {
-      getError(error);
-    } finally {
-      this.isSaving = false;
-    }
-  }
-
-  async updateBenefit(formData: any) {
-    try {
-      this.isSaving = true;
-
-      if (
-        !formData.component_type ||
-        !formData.component ||
-        !formData.payroll_component_id ||
-        !formData.effective_date
-      ) {
-        getToastError(this.$t("messages.employee.error.fillRequired"));
-        this.isSaving = false;
-        return;
-      }
-
-      // Validasi qty harus lebih dari 0
-      if (parseInt(formData.qty) <= 0) {
-        getToastError("Quantity harus lebih dari 0");
-        this.isSaving = false;
-        return;
-      }
-
-      // Validasi amount jika override aktif
-      if (formData.is_override && parseFloat(formData.amount) <= 0) {
-        getToastError("Amount harus lebih dari 0");
-        this.isSaving = false;
-        return;
-      }
-
-      // const { status2 } = await employeeAPI.UpdateEmployeeBenefit(formData);
-
-      const index = this.rowBenefitData.findIndex(
-        (item: any) => item.id === formData.id
-      );
-
-      if (index !== -1) {
-        const selectedComponent = this.benefitOptions.find(
-          (option: any) => option.code === formData.component
-        );
-
-        if (!selectedComponent) {
-          getToastError("Component tidak ditemukan");
-          this.isSaving = false;
-          return;
-        }
-
-        const finalAmount = formData.is_override
-          ? parseFloat(formData.amount)
-          : selectedComponent.default_amount;
-
-        this.rowBenefitData[index] = {
-          ...this.rowBenefitData[index],
-          payroll_component_id: selectedComponent.id,
-          payroll_component: formData.component,
-          payroll_component_name: selectedComponent.name,
-          amount: finalAmount,
-          qty: parseInt(formData.qty),
-          effective_date: formData.effective_date,
-          end_date: formData.end_date || null,
-          is_current:
-            !formData.end_date || new Date(formData.end_date) > new Date(),
-          is_override: formData.is_override,
-          remark: formData.remark || "",
-          updated_at: formatDateTimeUTC(new Date()),
-          updated_by: "Current User",
-
-          component_type: formData.component_type,
-          default_amount: selectedComponent.default_amount,
-          unit: selectedComponent.unit || "Per Bulan",
-          category: selectedComponent.category,
-          is_taxable: selectedComponent.is_taxable,
-          is_fixed: selectedComponent.is_fixed,
-        };
-
-        await this.$nextTick();
-        if (
-          this.benefitTableRef &&
-          typeof this.benefitTableRef.refreshGrid === "function"
-        ) {
-          this.benefitTableRef.refreshGrid();
-        }
-        this.closeModal();
-
-        getToastSuccess(this.$t("messages.employee.success.updateBenefit"));
-      }
-    } catch (error) {
-      getError(error);
-    } finally {
-      this.isSaving = false;
-    }
-  }
-
-  async deleteBenefit() {
-    try {
-      // const { status2 } = await employeeAPI.DeleteEmployeeBenefit(this.deleteParam.id);
-
-      const updatedBenefit = this.rowBenefitData.filter(
-        (benefit: any) => benefit.id !== this.deleteParam.id
-      );
-
-      this.rowBenefitData = [...updatedBenefit];
-
-      this.deleteParam = null;
-
-      await this.$nextTick();
-      if (
-        this.benefitTableRef &&
-        typeof this.benefitTableRef.refreshGrid === "function"
-      ) {
-        this.benefitTableRef.refreshGrid();
-      }
-      this.closeModal();
-
-      getToastSuccess(this.$t("messages.employee.success.deleteBenefit"));
     } catch (error) {
       getError(error);
     }
@@ -2502,19 +2120,19 @@ export default class EmployeeDetail extends Vue {
   generateUniqueId(type: string): number {
     let maxId = 0;
     switch (type) {
-      case "POSITION":
+      case "DOCUMENT":
         maxId =
           Math.max(
             ...this.rowDocumentData.map((item: any) => item.id || 0),
             0
           ) + 1;
         break;
-      case "DEPARTMENT":
+      case "SALARY":
         maxId =
           Math.max(...this.rowSalaryData.map((item: any) => item.id || 0), 0) +
           1;
         break;
-      case "PLACEMENT":
+      case "BENEFIT":
         maxId =
           Math.max(...this.rowBenefitData.map((item: any) => item.id || 0), 0) +
           1;
@@ -2697,66 +2315,6 @@ export default class EmployeeDetail extends Vue {
       default:
         return "";
     }
-  }
-
-  getComponentDisplayName(componentCode: string): string {
-    if (!componentCode) return "";
-
-    const component = this.benefitOptions.find(
-      (option: any) => option.code === componentCode
-    );
-
-    return component ? component.name : componentCode;
-  }
-
-  getDepartmentDisplayName(departmentCode: string): string {
-    if (!departmentCode) return "";
-
-    const department = this.departmentOptions.find(
-      (option: any) => option.code === departmentCode
-    );
-
-    return department ? department.name : departmentCode;
-  }
-
-  getPositionDisplayName(positionCode: string): string {
-    if (!positionCode) return "";
-
-    const position = this.positionOptions.find(
-      (option: any) => option.code === positionCode
-    );
-
-    return position ? position.name : positionCode;
-  }
-
-  getPlacementDisplayName(placementCode: string): string {
-    if (!placementCode) return "";
-
-    const placement = this.placementOptions.find(
-      (option: any) => option.code === placementCode
-    );
-
-    return placement ? placement.name : placementCode;
-  }
-
-  getDocumentTypeDisplayName(documentTypeCode: string): string {
-    if (!documentTypeCode) return "";
-
-    const docType = this.documentTypeOptions.find(
-      (option: any) => option.code === documentTypeCode
-    );
-
-    return docType ? docType.name : documentTypeCode;
-  }
-
-  getAdjustmentReasonDisplayName(reasonCode: string): string {
-    if (!reasonCode) return "";
-
-    const reason = this.adjustmentReasonOptions.find(
-      (option: any) => option.code === reasonCode
-    );
-
-    return reason ? reason.name : reasonCode;
   }
 
   // GETTER AND SETTER =======================================================

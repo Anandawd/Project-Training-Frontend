@@ -312,8 +312,10 @@ export default class BenefitTableComponent extends Vue {
   }
 
   refreshGrid() {
+    console.log("refreshGrid called");
     if (this.gridApi) {
       this.gridApi.setRowData([...this.rowData]);
+      console.log("new rowData", this.rowData);
     }
   }
   getComponentDisplayName(componentCode: string): string {
