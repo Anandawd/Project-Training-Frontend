@@ -96,18 +96,18 @@ export default class BenefitTableComponent extends Vue {
         field: "component_type",
         width: 120,
         enableRowGroup: true,
-        valueGetter: (params: any) => {
-          if (params.data?.payroll_component) {
-            return params.data.payroll_component.startsWith("CE")
-              ? "Earnings"
-              : "Deductions";
-          }
-          return "";
-        },
+        // valueGetter: (params: any) => {
+        //   if (params.data?.payroll_component) {
+        //     return params.data.payroll_component.startsWith("CE")
+        //       ? "Earnings"
+        //       : "Deductions";
+        //   }
+        //   return "";
+        // },
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.code"),
-        field: "payroll_component",
+        field: "payroll_component_code",
         width: 100,
         enableRowGroup: true,
         hide: true,
@@ -117,20 +117,20 @@ export default class BenefitTableComponent extends Vue {
         field: "payroll_component_name",
         width: 200,
         enableRowGroup: true,
-        valueGetter: (params: any) => {
-          if (params.data?.payroll_component_name) {
-            return params.data.payroll_component_name;
-          }
-          if (params.data?.payroll_component) {
-            const parentComponent = params.context?.componentParent;
-            if (parentComponent && parentComponent.getComponentDisplayName) {
-              return parentComponent.getComponentDisplayName(
-                params.data.payroll_component
-              );
-            }
-            return params.data?.payroll_component || "";
-          }
-        },
+        // valueGetter: (params: any) => {
+        //   if (params.data?.payroll_component_name) {
+        //     return params.data.payroll_component_name;
+        //   }
+        //   if (params.data?.payroll_component) {
+        //     const parentComponent = params.context?.componentParent;
+        //     if (parentComponent && parentComponent.getComponentDisplayName) {
+        //       return parentComponent.getComponentDisplayName(
+        //         params.data.payroll_component
+        //       );
+        //     }
+        //     return params.data?.payroll_component || "";
+        //   }
+        // },
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.category"),

@@ -297,7 +297,7 @@
     >
       <div @click.stop>
         <!-- document modal -->
-        <div v-if="modalType === 'DOCUMENT'" class="row">
+        <div v-if="dataType === 'DOCUMENT'" class="row">
           <div class="col-md-6">
             <c-select
               required
@@ -369,7 +369,7 @@
         </div>
 
         <!-- salary modal -->
-        <div v-if="modalType === 'SALARY'" class="row">
+        <div v-if="dataType === 'SALARY'" class="row">
           <div class="col-md-6">
             <c-input
               required
@@ -425,7 +425,7 @@
         </div>
 
         <!-- benefit modal -->
-        <div v-if="modalType === 'BENEFIT'" class="row">
+        <div v-if="dataType === 'BENEFIT'" class="row">
           <div class="col-md-6">
             <c-select
               required
@@ -450,7 +450,7 @@
               selectType="column"
               labelName="name"
               keyName="code"
-              v-model="currentForm.component"
+              v-model="currentForm.payroll_component_code"
               :label="$t('labels.payroll.payroll.component')"
               :options="filteredComponentOptionsWithDetails"
               :columnOptions="columnOptions"
@@ -469,7 +469,7 @@
                   customLabelClass="col-4"
                   :label="$t('labels.payroll.payroll.amount')"
                   v-model="currentForm.amount"
-                  :disabled="!currentForm.component || !currentForm.is_override"
+                  :disabled="!currentForm.payroll_component_code || !currentForm.is_override"
                   :min="currentForm.is_override ? 1 : undefined"
                 />
               </div>
@@ -480,7 +480,7 @@
                   id="ComponentAmount"
                   :label="$t('labels.override')"
                   v-model="currentForm.is_override"
-                  :disabled="!currentForm.component || isFixedComponent"
+                  :disabled="!currentForm.payroll_component_code || isFixedComponent"
                   @change="onOverrideAmountChange"
                 />
               </div>
@@ -496,7 +496,7 @@
               :label="$t('labels.payroll.payroll.quantity')"
               v-model="currentForm.qty"
               :min="1"
-              :disabled="!currentForm.component"
+              :disabled="!currentForm.payroll_component_code"
             />
           </div>
           <div class="col-md-6">

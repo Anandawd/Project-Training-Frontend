@@ -169,7 +169,6 @@ export default class EmployeeDetail extends Vue {
 
   /// modal state
   public dataType: any;
-  public modalType: string = "";
   public modalMode: any;
   public currentForm: any = reactive({});
   public showModal: boolean = false;
@@ -238,7 +237,9 @@ export default class EmployeeDetail extends Vue {
     await this.$nextTick();
 
     this.modalMode = mode;
-    this.modalType = type;
+    this.dataType = type;
+
+    console.log("dataype modal", this.dataType);
 
     this.currentForm = {};
 
@@ -253,35 +254,34 @@ export default class EmployeeDetail extends Vue {
   }
 
   handleSaveModal() {
-    const formattedData = this.formatModalData(
-      this.currentForm,
-      this.modalType
-    );
+    const formattedData = this.formatModalData(this.currentForm, this.dataType);
 
     if (this.modalMode === $global.modeData.insert) {
-      switch (this.modalType) {
-        case "DOCUMENT":
-          this.insertDocument(formattedData);
-          break;
-        case "SALARY":
-          this.insertSalary(formattedData);
-          break;
-        case "BENEFIT":
-          this.insertBenefit(formattedData);
-          break;
-      }
+      this.insertModalData(formattedData);
+      // switch (this.dataType) {
+      //   case "DOCUMENT":
+      //     this.insertDocument(formattedData);
+      //     break;
+      //   case "SALARY":
+      //     this.insertSalary(formattedData);
+      //     break;
+      //   case "BENEFIT":
+      //     this.insertBenefit(formattedData);
+      //     break;
+      // }
     } else if (this.modalMode === $global.modeData.edit) {
-      switch (this.modalType) {
-        case "DOCUMENT":
-          this.updateDocument(formattedData);
-          break;
-        case "SALARY":
-          this.updateSalary(formattedData);
-          break;
-        case "BENEFIT":
-          this.updateBenefit(formattedData);
-          break;
-      }
+      this.updateModalData(formattedData);
+      // switch (this.dataType) {
+      //   case "DOCUMENT":
+      //     this.updateDocument(formattedData);
+      //     break;
+      //   case "SALARY":
+      //     this.updateSalary(formattedData);
+      //     break;
+      //   case "BENEFIT":
+      //     this.updateBenefit(formattedData);
+      //     break;
+      // }
     }
   }
 
@@ -947,168 +947,180 @@ export default class EmployeeDetail extends Vue {
 
     this.benefitsListData = [
       {
-        // Data dari tabel EMPLOYEE_PAYROLL_COMPONENT
         id: 1,
         employee_id: "EMP001",
-        payroll_component_id: 1, // FK ke PAY_PAYROLL_COMPONENT
-        amount: 200000, // Amount yang disimpan (bisa default atau override)
+        component_type: "EARNINGS",
+        payroll_component_code: "CE001",
+        payroll_component_name: "Tunjangan Transportasi",
+        category: "Variable Allowance",
+        amount: 200000,
         qty: 1,
         effective_date: "2020-01-10",
         end_date: null,
-        is_current: true,
-        is_override: false, // Tidak override, menggunakan default amount
         remark: "Monthly transportation allowance",
+        is_current: true,
+        is_override: false,
+        is_taxable: true,
+        is_fixed: false,
+        is_prorated: false,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_show_in_payslip: false,
         created_at: "2020-01-10 10:15:00",
         created_by: "Admin System",
         updated_at: "2020-01-10 10:15:00",
         updated_by: "Admin System",
-
-        // Data tambahan untuk display (dari join dengan PAY_PAYROLL_COMPONENT)
-        payroll_component: "CE001", // Kode component
-        payroll_component_name: "Tunjangan Transportasi", // Nama component
-        component_type: "EARNINGS", // Type component
-        default_amount: 200000, // Default amount dari PAY_PAYROLL_COMPONENT
-        unit: "Per Bulan",
-        category: "Variable Allowance",
-        is_taxable: true,
-        is_fixed: false, // Component ini bisa di-override
       },
       {
-        // Data dengan override amount
         id: 2,
         employee_id: "EMP001",
-        payroll_component_id: 2, // FK ke PAY_PAYROLL_COMPONENT
-        amount: 600000, // Amount override (default dari master: 500000)
+        payroll_component_code: "CE002",
+        payroll_component_name: "Tunjangan Rumah",
+        component_type: "EARNINGS",
+        category: "Fix Allowance",
+        amount: 600000,
         qty: 1,
         effective_date: "2020-01-10",
+        remark: "Housing allowance with custom amount",
         end_date: null,
         is_current: true,
-        is_override: true, // Override aktif - amount berbeda dari default
-        remark: "Housing allowance with custom amount",
+        is_override: true,
+        is_taxable: true,
+        is_fixed: false,
+        is_prorated: false,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_show_in_payslip: false,
         created_at: "2020-01-10 10:30:00",
         created_by: "Admin System",
         updated_at: "2020-01-10 10:30:00",
         updated_by: "Admin System",
-
-        // Data dari PAY_PAYROLL_COMPONENT
-        payroll_component: "CE002",
-        payroll_component_name: "Tunjangan Rumah",
-        component_type: "EARNINGS",
-        default_amount: 500000, // Default amount dari master (berbeda dengan amount aktual)
-        unit: "Per Bulan",
-        category: "Fix Allowance",
-        is_taxable: true,
-        is_fixed: false, // Component ini bisa di-override
       },
       {
-        // Data dengan component fixed (tidak bisa override)
         id: 3,
         employee_id: "EMP001",
-        payroll_component_id: 3, // FK ke PAY_PAYROLL_COMPONENT
-        amount: 300000, // Amount selalu sama dengan default (karena fixed)
-        qty: 1,
-        effective_date: "2020-01-10",
-        end_date: null,
-        is_current: true,
-        is_override: false, // Tidak bisa override karena component fixed
-        remark: "Meal allowance - fixed component",
-        created_at: "2020-01-10 10:45:00",
-        created_by: "Admin System",
-        updated_at: "2020-01-10 10:45:00",
-        updated_by: "Admin System",
-
-        // Data dari PAY_PAYROLL_COMPONENT
-        payroll_component: "CE003",
+        payroll_component_code: "CE003",
         payroll_component_name: "Tunjangan Makan",
         component_type: "EARNINGS",
-        default_amount: 300000, // Selalu sama dengan amount karena fixed
-        unit: "Per Bulan",
         category: "Fixed Allowance",
-        is_taxable: true,
-        is_fixed: true, // Component fixed - tidak bisa di-override
-      },
-      {
-        // Data deduction
-        id: 4,
-        employee_id: "EMP001",
-        payroll_component_id: 10, // FK ke PAY_PAYROLL_COMPONENT
-        amount: 100000, // Amount default
+        amount: 300000,
         qty: 1,
         effective_date: "2020-01-10",
-        end_date: null,
+        end_date: "2021-12-31",
+        remark: "Meal allowance - fixed component",
         is_current: true,
-        is_override: false, // Menggunakan default amount
-        remark: "Position fee",
-        created_at: "2020-01-10 11:00:00",
+        is_override: false,
+        is_taxable: true,
+        is_fixed: false,
+        is_prorated: false,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_show_in_payslip: false,
+        created_at: "2020-01-10 10:30:00",
         created_by: "Admin System",
-        updated_at: "2020-01-10 11:00:00",
+        updated_at: "2020-01-10 10:30:00",
         updated_by: "Admin System",
-
-        // Data dari PAY_PAYROLL_COMPONENT
+      },
+      {
+        id: 4,
+        employee_id: "EMP001",
         payroll_component: "DE001",
         payroll_component_name: "Biaya Jabatan",
         component_type: "DEDUCTIONS",
-        default_amount: 100000, // Default amount dari master
-        unit: "Per Bulan",
         category: "Fix Deduction",
+        amount: 100000,
+        qty: 1,
+        effective_date: "2020-01-10",
+        end_date: null,
+        remark: "Position fee",
+        is_current: true,
+        is_override: false,
         is_taxable: false,
-        is_fixed: true, // Fixed deduction - tidak bisa di-override
+        is_fixed: true,
+        is_prorated: false,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_show_in_payslip: false,
+        created_at: "2020-01-10 10:30:00",
+        created_by: "Admin System",
+        updated_at: "2020-01-10 10:30:00",
+        updated_by: "Admin System",
       },
       {
-        // Data employee kedua dengan override
         id: 5,
         employee_id: "EMP002",
-        payroll_component_id: 1, // FK ke PAY_PAYROLL_COMPONENT yang sama
-        amount: 250000, // Amount override (default: 200000)
-        qty: 1,
-        effective_date: "2021-03-15",
-        end_date: null,
-        is_current: true,
-        is_override: true, // Override aktif
-        remark: "Transportation allowance with custom amount",
-        created_at: "2021-03-15 10:15:00",
-        created_by: "Admin System",
-        updated_at: "2021-03-15 10:15:00",
-        updated_by: "Admin System",
-
-        // Data dari PAY_PAYROLL_COMPONENT (sama dengan id 1)
         payroll_component: "CE001",
         payroll_component_name: "Tunjangan Transportasi",
         component_type: "EARNINGS",
-        default_amount: 200000, // Default dari master
-        unit: "Per Bulan",
         category: "Variable Allowance",
+        amount: 250000,
+        qty: 1,
+        effective_date: "2021-03-15",
+        remark: "Transportation allowance with custom amount",
+        end_date: null,
+        is_current: true,
+        is_override: true,
         is_taxable: true,
         is_fixed: false,
+        is_prorated: false,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_show_in_payslip: false,
+        created_at: "2020-01-10 10:30:00",
+        created_by: "Admin System",
+        updated_at: "2020-01-10 10:30:00",
+        updated_by: "Admin System",
       },
       {
-        // Data dengan end date (tidak current)
         id: 6,
         employee_id: "EMP002",
-        payroll_component_id: 5, // FK ke PAY_PAYROLL_COMPONENT
-        amount: 1500000, // Amount override
-        qty: 1,
-        effective_date: "2021-12-15",
-        end_date: "2021-12-31", // Sudah berakhir
-        is_current: false, // Tidak current karena sudah berakhir
-        is_override: true, // Override aktif
-        remark: "End of year performance bonus with custom amount",
-        created_at: "2021-12-15 14:30:00",
-        created_by: "HR Manager",
-        updated_at: "2021-12-15 14:30:00",
-        updated_by: "HR Manager",
-
-        // Data dari PAY_PAYROLL_COMPONENT
-        payroll_component: "CE005",
+        payroll_component_code: "CE005",
         payroll_component_name: "Bonus Performance",
         component_type: "EARNINGS",
-        default_amount: 1000000, // Default dari master
-        unit: "Per Kejadian",
         category: "Incentive",
+        amount: 1500000,
+        qty: 1,
+        effective_date: "2021-12-15",
+        end_date: "2021-12-31",
+        remark: "End of year performance bonus with custom amount",
+        is_current: false,
+        is_override: true,
         is_taxable: true,
         is_fixed: false,
+        is_prorated: false,
+        is_included_in_bpjs_health: false,
+        is_included_in_bpjs_employee: false,
+        is_show_in_payslip: false,
+        created_at: "2020-01-10 10:30:00",
+        created_by: "Admin System",
+        updated_at: "2020-01-10 10:30:00",
+        updated_by: "Admin System",
       },
     ];
+  }
+
+  async loadDataGrid(type: any = this.dataType) {
+    try {
+      switch (type) {
+        case "DOCUMENT":
+          if (this.documentTableRef) {
+            this.documentTableRef.refreshGrid();
+          }
+          break;
+        case "SALARY":
+          if (this.salaryTableRef) {
+            this.salaryTableRef.refreshGrid();
+          }
+          break;
+        case "BENEFIT":
+          if (this.benefitTableRef) {
+            this.benefitTableRef.refreshGrid();
+          }
+          break;
+      }
+    } catch (error) {
+      getError(error);
+    }
   }
 
   async loadDropdown() {
@@ -1676,6 +1688,127 @@ export default class EmployeeDetail extends Vue {
     }
   }
 
+  async insertModalData(formData: any) {
+    try {
+      formData.id = this.generateUniqueId(this.dataType);
+      switch (this.dataType) {
+        case "DOCUMENT":
+          const newDocument = {
+            id: formData.id,
+            employee_id: this.employeeId,
+            document_type: formData.document_type,
+            file_name: formData.file
+              ? formData.file.name
+              : `document_${formData.id}.pdf`,
+            file_path: formData.file
+              ? `/uploads/${formData.file.name}`
+              : `/uploads/document_${formData.id}.pdf`,
+            file_type: formData.file ? formData.file.type : "application/pdf",
+            file_size: formData.file ? formData.file.size : 1024000,
+            issue_date: formData.issue_date,
+            expiry_date: formData.expiry_date,
+            remark: formData.remark,
+            status: this.calculateDocumentStatus(formData.expiry_date),
+            created_at: formatDateTimeUTC(new Date()),
+            created_by: "Current User",
+            updated_at: formatDateTimeUTC(new Date()),
+            updated_by: "Current User",
+          };
+
+          this.rowDocumentData.push(newDocument);
+
+          getToastSuccess(this.$t("messages.employee.success.saveDocument"));
+          break;
+        case "SALARY":
+          this.rowSalaryData.forEach((item: any) => {
+            if (item.is_current) {
+              item.is_current = false;
+              item.end_date = formData.effective_date;
+            }
+          });
+
+          const newSalary = {
+            id: formData.id,
+            employee_id: this.employeeId,
+            adjustment_reason: formData.adjustment_reason,
+            base_salary: parseFloat(formData.base_salary),
+            effective_date: formData.effective_date,
+            end_date: "",
+            is_current: true,
+            remark:
+              formData.remark ||
+              `Salary adjustment: ${formData.adjustment_reason}`,
+            created_at: formatDateTimeUTC(new Date()),
+            created_by: "Current User",
+            updated_at: formatDateTimeUTC(new Date()),
+            updated_by: "Current User",
+          };
+
+          this.rowSalaryData.push(newSalary);
+          getToastSuccess(this.$t("messages.employee.success.saveSalary"));
+          break;
+        case "BENEFIT":
+          const selectedComponent = this.benefitOptions.find(
+            (option: any) => option.code === formData.component
+          );
+          const finalAmount = formData.is_override
+            ? parseFloat(formData.amount)
+            : selectedComponent.default_amount;
+          const newBenefit = {
+            id: formData.id,
+            employee_id: this.employeeId,
+            payroll_component_code: selectedComponent.code,
+            payroll_component_name: selectedComponent.name,
+            component_type: formData.component_type,
+            category: selectedComponent.category,
+            amount: finalAmount,
+            qty: parseInt(formData.qty),
+            effective_date: formData.effective_date,
+            end_date: formData.end_date,
+            remark: formData.remark,
+            is_current:
+              !formData.end_date || new Date(formData.end_date) > new Date(),
+            is_override: formData.is_override,
+            is_taxable: selectedComponent.is_taxable,
+            is_fixed: selectedComponent.is_fixed,
+            is_prorated: selectedComponent.is_prorated,
+            is_included_in_bpjs_health:
+              selectedComponent.is_included_in_bpjs_health,
+            is_included_in_bpjs_employee:
+              selectedComponent.is_included_in_bpjs_employee,
+            is_show_in_payslip: selectedComponent.is_show_in_payslip,
+            created_at: formatDateTimeUTC(new Date()),
+            created_by: "Current User",
+            updated_at: formatDateTimeUTC(new Date()),
+            updated_by: "Current User",
+          };
+
+          this.rowBenefitData.push(newBenefit);
+          getToastSuccess(this.$t("messages.employee.success.saveBenefit"));
+          break;
+      }
+      await this.$nextTick();
+      this.loadDataGrid();
+      this.closeModal();
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async updateModalData(formData: any) {
+    try {
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async deleteModalData() {
+    try {
+    } catch (error) {
+      getError(error);
+    }
+  }
+
   async insertDocument(formData: any) {
     try {
       this.isSaving = true;
@@ -1968,6 +2101,8 @@ export default class EmployeeDetail extends Vue {
         (option: any) => option.code === formData.component
       );
 
+      console.log("selectedComponent", selectedComponent);
+
       if (!selectedComponent) {
         getToastError(this.$t("messages.employee.error.componentNotFound"));
         this.isSaving = false;
@@ -2224,9 +2359,10 @@ export default class EmployeeDetail extends Vue {
       case "BENEFIT":
         return {
           id: params.id,
-          payroll_component_id: params.payroll_component_id,
+          payroll_component_code: params.payroll_component_code,
+          payroll_component_name: params.payroll_component_name,
           component_type: params.component_type,
-          component: params.component,
+          category: params.category,
           amount: parseFloat(params.amount),
           qty: parseInt(params.qty),
           effective_date: params.effective_date,
@@ -2235,6 +2371,12 @@ export default class EmployeeDetail extends Vue {
           is_current:
             !params.end_date || new Date(params.end_date) > new Date(),
           is_override: params.is_override,
+          is_taxable: params.is_taxable,
+          is_fixed: params.is_taxable,
+          is_prorated: params.is_taxable,
+          is_included_in_bpjs_health: params.is_taxable,
+          is_included_in_bpjs_employee: params.is_taxable,
+          is_show_in_payslip: params.is_taxable,
           employee_id: this.employeeId,
         };
       default:
@@ -2275,9 +2417,10 @@ export default class EmployeeDetail extends Vue {
       case "BENEFIT":
         this.currentForm = {
           id: null,
-          payroll_component_id: null,
+          payroll_component_code: "",
+          payroll_component_name: "",
           component_type: "",
-          component: "",
+          category: "",
           amount: 0,
           qty: 1,
           effective_date: "",
@@ -2285,10 +2428,54 @@ export default class EmployeeDetail extends Vue {
           remark: "",
           is_current: true,
           is_override: false,
+          is_taxable: false,
+          is_fixed: false,
+          is_prorated: false,
+          is_included_in_bpjs_health: false,
+          is_included_in_bpjs_employee: false,
+          is_show_in_payslip: false,
           employee_id: this.employeeId,
         };
         break;
     }
+  }
+
+  validateData(params: any, type: any = this.dataType) {
+    if (params) {
+      switch (type) {
+        case "DOCUMENT":
+          break;
+        case "SALARY":
+          break;
+        case "BENEFIT":
+          break;
+      }
+    }
+    return;
+  }
+
+  generateUniqueId(type: string): number {
+    let maxId = 0;
+    switch (type) {
+      case "POSITION":
+        maxId =
+          Math.max(
+            ...this.rowDocumentData.map((item: any) => item.id || 0),
+            0
+          ) + 1;
+        break;
+      case "DEPARTMENT":
+        maxId =
+          Math.max(...this.rowSalaryData.map((item: any) => item.id || 0), 0) +
+          1;
+        break;
+      case "PLACEMENT":
+        maxId =
+          Math.max(...this.rowBenefitData.map((item: any) => item.id || 0), 0) +
+          1;
+        break;
+    }
+    return maxId;
   }
 
   calculateDocumentStatus(expiryDate: string): string {
@@ -2309,11 +2496,6 @@ export default class EmployeeDetail extends Vue {
   }
 
   populateForm(params: any) {
-    if (!params) {
-      console.error("Invalid data for form population:", params);
-      return;
-    }
-
     this.$nextTick(() => {
       this.inputFormElement.form = {
         id: params.id,
@@ -2395,9 +2577,10 @@ export default class EmployeeDetail extends Vue {
 
         this.currentForm = {
           id: params.id,
-          payroll_component_id: params.payroll_component_id,
-          component_type: componentType,
-          component: params.payroll_component,
+          payroll_component_code: params.payroll_component_code,
+          payroll_component_name: params.payroll_component_name,
+          component_type: params.component,
+          category: params.category,
           amount: params.amount,
           qty: params.qty,
           effective_date: params.effective_date,
@@ -2405,6 +2588,12 @@ export default class EmployeeDetail extends Vue {
           remark: params.remark,
           is_current: params.is_current,
           is_override: params.is_override,
+          is_taxable: params.is_taxable,
+          is_fixed: params.is_fixed,
+          is_prorated: params.is_prorated,
+          is_included_in_bpjs_health: params.is_included_in_bpjs_health,
+          is_included_in_bpjs_employee: params.is_included_in_bpjs_employee,
+          is_show_in_payslip: params.is_show_in_payslip,
           employee_id: this.employeeId,
         };
         break;
@@ -2447,7 +2636,7 @@ export default class EmployeeDetail extends Vue {
   }
 
   getModalTitle(): string {
-    switch (this.modalType) {
+    switch (this.dataType) {
       case "DOCUMENT":
         return this.modalMode === $global.modeData.insert
           ? this.$t("title.insertDocument")
@@ -2564,11 +2753,11 @@ export default class EmployeeDetail extends Vue {
   }
 
   get isValidForm(): boolean {
-    if (!this.currentForm || !this.modalType) {
+    if (!this.currentForm || !this.dataType) {
       return false;
     }
 
-    switch (this.modalType) {
+    switch (this.dataType) {
       case "DOCUMENT":
         return !!(
           this.currentForm.document_type &&

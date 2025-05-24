@@ -22,8 +22,11 @@ export interface IDepartment {
   description: string;
   status: boolean;
   placement_code: string;
-  employee_manager_id: string | null;
-  employee_supervisor_id: string | null;
+  placement_name: string;
+  manager_id: string | null;
+  manager_name: string | null;
+  supervisor_id: string | null;
+  supervisor_name: string | null;
   created_at: string;
   created_by: string;
   updated_at: string;
@@ -38,7 +41,9 @@ export interface IPosition {
   level: number; // 1|2|3|4|5
   status: boolean;
   placement_code: string;
+  placement_name: string;
   department_code: string;
+  department_name: string;
   created_at: string;
   created_by: string;
   updated_at: string;
@@ -51,8 +56,7 @@ export interface IEmployee {
   employee_id: string;
   first_name: string;
   last_name: string;
-  full_name: string;
-  gender: string; // M|F
+  gender: string;
   birth_date: string;
   address: string;
   phone: string;
@@ -68,22 +72,23 @@ export interface IEmployee {
   placement_name: string;
   supervisor_id: string | null;
   supervisor_name: string | null;
-  employee_type: string;
-  payment_frequency: string;
+  employee_type_code: string;
+  employee_type_name: string;
   payment_frequency_code: string;
+  payment_frequency_name: string;
   daily_rate: number;
   base_salary: number;
   tax_number: string;
   identity_number: string;
   marital_status: string;
   health_insurance_number: string;
-  social_security_number: string;
+  social_insurance_number: string;
   bank_name: string;
   bank_code: string;
   bank_account_number: string;
   bank_account_name: string;
-  payment_method: string;
   payment_method_code: string;
+  payment_method_name: string;
   profile_photo: string;
   leave_quota: number;
   leave_remaining: number;
@@ -96,7 +101,7 @@ export interface IEmployee {
 export interface IEmployeeDocument {
   id: number;
   employee_id: string;
-  document_type: string;
+  document_type_code: string;
   document_type_name: string;
   file_name: string;
   file_path: string;
@@ -116,7 +121,8 @@ export interface IEmployeeSalary {
   id: number;
   employee_id: string;
   base_salary: number;
-  adjustment_reason: string;
+  adjustment_reason_code: string;
+  adjustment_reason_name: string;
   effective_date: string;
   end_date: string | null;
   is_current: boolean;
@@ -134,9 +140,8 @@ export interface IComponentCategory {
   code: string;
   name: string;
   description: string;
-  type: string; // Earnings|Deductions
-  status: boolean;
-  entity_type: string; // category
+  type_code: string; // Earnings|Deductions
+  type_name: string; // Earnings|Deductions
   created_at: string;
   created_by: string;
   updated_at: string;
@@ -147,6 +152,7 @@ export interface IPayrollComponent {
   id: number;
   placement_code: string;
   category_code: string;
+  category_name: string;
   name: string;
   code: string;
   description: string;
@@ -161,9 +167,9 @@ export interface IPayrollComponent {
   is_included_in_bpjs_employee: boolean;
   is_show_in_payslip: boolean;
   active: boolean;
-  calculation_method: string;
+  calculation_method_code: string;
+  calculation_method_name: string;
   formula: string;
-  entity_type: string; // earnings|deductions
   created_at: string;
   created_by: string;
   updated_at: string;
@@ -173,18 +179,16 @@ export interface IPayrollComponent {
 export interface IEmployeePayrollComponent {
   id: number;
   employee_id: string;
-  payroll_component_id: number;
-  payroll_component: string;
+  payroll_component_code: string;
   payroll_component_name: string;
-  component_type: string;
+  component_type_code: string;
+  component_type_name: string;
   amount: number;
   qty: number;
-  quantity: number;
   effective_date: string;
   end_date: string | null;
   is_current: boolean;
   is_override: boolean;
-  default_amount: number;
   unit: string;
   category: string;
   is_taxable: boolean;
