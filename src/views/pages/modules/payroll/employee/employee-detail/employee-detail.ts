@@ -1426,6 +1426,10 @@ export default class EmployeeDetail extends Vue {
           description: "Tunjangan transportasi bulanan untuk karyawan",
           is_taxable: true,
           is_fixed: false,
+          is_prorated: true,
+          is_included_in_bpjs_health: true,
+          is_included_in_bpjs_employee: true,
+          is_show_in_payslip: true,
         },
         {
           id: 2,
@@ -1438,6 +1442,10 @@ export default class EmployeeDetail extends Vue {
           description: "Tunjangan perumahan untuk karyawan",
           is_taxable: true,
           is_fixed: false,
+          is_prorated: true,
+          is_included_in_bpjs_health: true,
+          is_included_in_bpjs_employee: true,
+          is_show_in_payslip: true,
         },
         {
           id: 3,
@@ -1450,6 +1458,10 @@ export default class EmployeeDetail extends Vue {
           description: "Tunjangan makan dan konsumsi - fixed amount",
           is_taxable: true,
           is_fixed: true,
+          is_prorated: true,
+          is_included_in_bpjs_health: true,
+          is_included_in_bpjs_employee: true,
+          is_show_in_payslip: true,
         },
         {
           id: 4,
@@ -1462,6 +1474,10 @@ export default class EmployeeDetail extends Vue {
           description: "Tunjangan fasilitas kantor dan operasional",
           is_taxable: true,
           is_fixed: false,
+          is_prorated: true,
+          is_included_in_bpjs_health: true,
+          is_included_in_bpjs_employee: true,
+          is_show_in_payslip: true,
         },
         {
           id: 5,
@@ -1474,6 +1490,10 @@ export default class EmployeeDetail extends Vue {
           description: "Bonus berdasarkan performance karyawan",
           is_taxable: true,
           is_fixed: false,
+          is_prorated: true,
+          is_included_in_bpjs_health: true,
+          is_included_in_bpjs_employee: true,
+          is_show_in_payslip: true,
         },
         {
           id: 6,
@@ -1486,6 +1506,10 @@ export default class EmployeeDetail extends Vue {
           description: "Kompensasi untuk jam kerja lembur",
           is_taxable: true,
           is_fixed: true,
+          is_prorated: true,
+          is_included_in_bpjs_health: true,
+          is_included_in_bpjs_employee: true,
+          is_show_in_payslip: true,
         },
       ];
 
@@ -1501,6 +1525,10 @@ export default class EmployeeDetail extends Vue {
           description: "Potongan biaya jabatan sesuai regulasi",
           is_taxable: false,
           is_fixed: true,
+          is_prorated: true,
+          is_included_in_bpjs_health: true,
+          is_included_in_bpjs_employee: true,
+          is_show_in_payslip: true,
         },
         {
           id: 11,
@@ -1513,6 +1541,10 @@ export default class EmployeeDetail extends Vue {
           description: "Potongan untuk cuti tanpa gaji",
           is_taxable: false,
           is_fixed: false,
+          is_prorated: true,
+          is_included_in_bpjs_health: true,
+          is_included_in_bpjs_employee: true,
+          is_show_in_payslip: true,
         },
         {
           id: 12,
@@ -1525,6 +1557,10 @@ export default class EmployeeDetail extends Vue {
           description: "Cicilan pembayaran kasbon karyawan",
           is_taxable: false,
           is_fixed: false,
+          is_prorated: true,
+          is_included_in_bpjs_health: true,
+          is_included_in_bpjs_employee: true,
+          is_show_in_payslip: true,
         },
         {
           id: 13,
@@ -1537,6 +1573,10 @@ export default class EmployeeDetail extends Vue {
           description: "Potongan untuk keterlambatan masuk kerja",
           is_taxable: false,
           is_fixed: true,
+          is_prorated: true,
+          is_included_in_bpjs_health: true,
+          is_included_in_bpjs_employee: true,
+          is_show_in_payslip: true,
         },
         {
           id: 14,
@@ -1549,6 +1589,10 @@ export default class EmployeeDetail extends Vue {
           description: "Iuran untuk kegiatan keagamaan",
           is_taxable: false,
           is_fixed: false,
+          is_prorated: true,
+          is_included_in_bpjs_health: true,
+          is_included_in_bpjs_employee: true,
+          is_show_in_payslip: true,
         },
       ];
 
@@ -1748,8 +1792,9 @@ export default class EmployeeDetail extends Vue {
           getToastSuccess(this.$t("messages.employee.success.saveSalary"));
           break;
         case "BENEFIT":
+          console.log("insert benefit", formData);
           const selectedComponent = this.benefitOptions.find(
-            (option: any) => option.code === formData.component
+            (option: any) => option.code === formData.payroll_component_code
           );
           const finalAmount = formData.is_override
             ? parseFloat(formData.amount)
