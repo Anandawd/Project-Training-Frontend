@@ -3,31 +3,13 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
-        title="Reject Request"
-        type="button"
-        class="btn btn-danger mr-1"
-        @click="handleReject"
-      >
-        <i class="fa fa-times mr-1" aria-hidden="true"></i>{{
-        $t('buttons.reject') }}
-      </button>
-      <button
-        title="Approve Request"
-        type="button"
-        class="btn btn-success mr-1"
-        @click="handleApprove"
-      >
-        <i class="fa fa-check mr-1" aria-hidden="true"></i>{{
-        $t('buttons.approve') }}
-      </button>
-      <button
-        title="Insert Request"
+        title="Request Adjustment"
         type="button"
         class="btn btn-primary mr-1"
         @click="handleShowForm('', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
-        $t('buttons.insertAdjustment') }}
+        $t('buttons.requestAdjustment') }}
       </button>
     </div>
 
@@ -98,13 +80,13 @@
             <input
               class="mr-1"
               type="radio"
-              name="showApproved"
-              id="showApproved"
+              name="showRejected"
+              id="showRejected"
               v-model="search.filter[0]"
-              value="2"
+              value="3"
               @change="onRefresh"
             />
-            <label for="showApproved"
+            <label for="showRejected"
               >{{ $t('commons.filter.checkList.rejected') }}</label
             >
           </div>

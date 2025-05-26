@@ -30,6 +30,7 @@ export default class SalaryAdjustment extends Vue {
   public rowData: any = [];
   public deleteParam: any;
   public approveParam: any;
+  public selectedData: any = null;
 
   // options data
   public employeeOptions: any = [];
@@ -283,6 +284,7 @@ export default class SalaryAdjustment extends Vue {
   onGridReady(params: any) {
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
+    console.log("gridAPI", this.gridApi);
   }
 
   // GENERAL FUNCTION =======================================================
@@ -382,7 +384,7 @@ export default class SalaryAdjustment extends Vue {
   }
 
   handleApprove(params: any) {
-    this.approveParam = params.id;
+    const selectedData = params || this.getSelectedRowData();
     this.dialogMessage = this.$t(
       "messages.employee.confirm.approveSalaryAdjustment"
     );
@@ -391,6 +393,7 @@ export default class SalaryAdjustment extends Vue {
   }
 
   handleReject(params: any) {
+    const selectedData = params || this.getSelectedRowData();
     this.approveParam = params.id;
     this.dialogMessage = this.$t(
       "messages.employee.confirm.rejectSalaryAdjustment"
@@ -414,7 +417,9 @@ export default class SalaryAdjustment extends Vue {
     this.loadDataGrid(search);
   }
 
-  onRefresh() {}
+  onRefresh() {
+    this.loadDataGrid(this.searchDefault);
+  }
 
   // API REQUEST =======================================================
   async loadData() {
@@ -440,8 +445,8 @@ export default class SalaryAdjustment extends Vue {
 
       let filteredData = [...this.rowData];
 
-      if (search.text) {
-        let searchText = search.text.toLowerCase();
+      if (search.text && search.text.trim()) {
+        let searchText = search.text.toLowerCase().trim();
         let searchIndex = search.index;
 
         filteredData = filteredData.filter((item: any) => {
@@ -453,7 +458,7 @@ export default class SalaryAdjustment extends Vue {
             case 2: // Department
               return item.department_name.toLowerCase().includes(searchText);
             case 3: // Adjustment Reason
-              return item.adjustment_reason_code.includes(searchText);
+              return item.adjustment_reason_name.includes(searchText);
             default:
               return true;
           }
@@ -462,11 +467,17 @@ export default class SalaryAdjustment extends Vue {
 
       if (search.filter && search.filter[0] !== 0) {
         const statusFilter = search.filter[0];
-        filteredData = filteredData.filter((item) => {
-          if (statusFilter === 1) return item.status === "PENDING";
-          if (statusFilter === 2) return item.status === "APPROVED";
-          if (statusFilter === 3) return item.status === "REJECTED";
-          return true;
+        filteredData = filteredData.filter((item: any) => {
+          switch (statusFilter) {
+            case 1:
+              return item.status === "PENDING";
+            case 2:
+              return item.status === "APPROVED";
+            case 3:
+              return item.status === "REJECTED";
+            default:
+              return true;
+          }
         });
       }
 
@@ -735,9 +746,6 @@ export default class SalaryAdjustment extends Vue {
       */
 
       const newId = Math.max(...this.rowData.map((adj: any) => adj.id)) + 1;
-      const selectedEmployee = this.employeeOptions.find(
-        (emp: any) => emp.employee_id === formData.employee_id
-      );
 
       const selectedReason = this.adjustmentReasonOptions.find(
         (item: any) => item.code === formData.adjustment_reason_code
@@ -747,7 +755,6 @@ export default class SalaryAdjustment extends Vue {
       const percentageChange =
         (differenceAmount / formData.current_salary) * 100;
 
-      console.log("formData di insert", formData);
       const newAdjustment = {
         id: newId,
         employee_id: formData.employee_id,
@@ -772,10 +779,13 @@ export default class SalaryAdjustment extends Vue {
       };
 
       this.rowData.push(newAdjustment);
+      this.searchDefault.filter = [1];
 
       setTimeout(() => {
         if (this.gridApi) {
-          this.gridApi.setRowData([...this.rowData]);
+          this.loadDataGrid(this.searchDefault);
+
+          // this.gridApi.setRowData([...this.rowData]);
           // this.gridApi.refreshCells({ force: true });
         }
 
@@ -830,16 +840,14 @@ export default class SalaryAdjustment extends Vue {
           updated_at: formatDateTimeUTC(new Date()),
           updated_by: "Current User",
         };
-
-        // getToastSuccess(
-        //   this.$t("messages.employee.success.updateSalaryAdjustment")
-        // );
       }
-      // await this.loadDataGrid();
-      // this.showForm = false;
+
+      this.searchDefault.filter = [1];
+
       setTimeout(() => {
         if (this.gridApi) {
-          this.gridApi.setRowData([...this.rowData]);
+          this.loadDataGrid(this.searchDefault);
+          // this.gridApi.setRowData([...this.rowData]);
           // this.gridApi.refreshCells({ force: true });
         }
 
@@ -885,14 +893,15 @@ export default class SalaryAdjustment extends Vue {
       */
 
       const index = this.rowData.findIndex(
-        (item: any) => item.id === this.deleteParam
+        (item: any) => item.id === this.approveParam
       );
       if (index !== -1) {
         this.rowData[index].status = "APPROVED";
         this.rowData[index].updated_at = formatDateTimeUTC(new Date());
         this.rowData[index].updated_by = "Current User";
       }
-      await this.loadDataGrid();
+
+      this.loadDataGrid(this.searchDefault);
       getToastSuccess(
         this.$t("messages.employee.success.approveSalaryAdjustment")
       );
@@ -912,14 +921,14 @@ export default class SalaryAdjustment extends Vue {
       */
 
       const index = this.rowData.findIndex(
-        (item: any) => item.id === this.deleteParam
+        (item: any) => item.id === this.approveParam
       );
       if (index !== -1) {
         this.rowData[index].status = "REJECTED";
         this.rowData[index].updated_at = formatDateTimeUTC(new Date());
         this.rowData[index].updated_by = "Current User";
       }
-      await this.loadDataGrid();
+      this.loadDataGrid(this.searchDefault);
       getToastSuccess(
         this.$t("messages.employee.success.rejectSalaryAdjustment")
       );

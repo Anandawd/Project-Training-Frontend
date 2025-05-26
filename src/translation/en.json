@@ -2506,6 +2506,7 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "requestAdjustment": "Request Adjustment",
     "setAsInProgress": "Set as In Progress",
     "setAsDone": "Set as Done",
     "mergeAll": "Merge All",
