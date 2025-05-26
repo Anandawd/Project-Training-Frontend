@@ -402,7 +402,6 @@ export default class SalaryAdjustment extends Vue {
     }
 
     this.approveParam = params;
-    this.approveParam = params.id;
     this.dialogMessage = this.$t(
       "messages.employee.confirm.rejectSalaryAdjustment"
     );
@@ -893,7 +892,7 @@ export default class SalaryAdjustment extends Vue {
       */
 
       const index = this.rowData.findIndex(
-        (item: any) => item.id === this.approveParam
+        (item: any) => item.id === this.approveParam.id
       );
       if (index !== -1) {
         this.rowData[index].status = "APPROVED";
@@ -925,7 +924,7 @@ export default class SalaryAdjustment extends Vue {
       */
 
       const index = this.rowData.findIndex(
-        (item: any) => item.id === this.approveParam
+        (item: any) => item.id === this.approveParam.id
       );
       if (index !== -1) {
         this.rowData[index].status = "REJECTED";

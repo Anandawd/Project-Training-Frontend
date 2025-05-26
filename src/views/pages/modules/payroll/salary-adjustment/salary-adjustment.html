@@ -44,7 +44,7 @@
               id="all"
               v-model="search.filter[0]"
               value="0"
-              @change="onRefresh"
+              @change="refreshData(search)"
             />
             <label for="all">{{ $t('commons.filter.checkList.all') }}</label>
           </div>
@@ -56,7 +56,7 @@
               id="showPending"
               v-model="search.filter[0]"
               value="1"
-              @change="onRefresh"
+              @change="refreshData(search)"
             />
             <label for="showPending"
               >{{ $t('commons.filter.checkList.pending') }}</label
@@ -70,7 +70,7 @@
               id="showApproved"
               v-model="search.filter[0]"
               value="2"
-              @change="onRefresh"
+              @change="refreshData(search)"
             />
             <label for="showApproved"
               >{{ $t('commons.filter.checkList.approved') }}</label
@@ -84,7 +84,7 @@
               id="showRejected"
               v-model="search.filter[0]"
               value="3"
-              @change="onRefresh"
+              @change="refreshData(search)"
             />
             <label for="showRejected"
               >{{ $t('commons.filter.checkList.rejected') }}</label
