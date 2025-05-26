@@ -34,7 +34,6 @@ export default class SalaryAdjustment extends Vue {
   // options data
   public employeeOptions: any = [];
   public adjustmentReasonOptions: any = [];
-  public departmentOptions: any = [];
 
   // form
   public form: any = {};
@@ -636,9 +635,6 @@ export default class SalaryAdjustment extends Vue {
         salaryAdjustmentAPI.GetAdjustmentReasonOptions().then(response => {
           this.adjustmentReasonOptions = response.data;
         }),
-        salaryAdjustmentAPI.GetDepartmentOptions().then(response => {
-          this.departmentOptions = response.data;
-        })
       ];
 
       await Promise.all(promises);
@@ -724,20 +720,6 @@ export default class SalaryAdjustment extends Vue {
           name: "Job Reclassification",
           SubGroupName: "Reason",
         },
-      ];
-
-      this.departmentOptions = [
-        { code: "D001", name: "Executive", SubGroupName: "Department" },
-        { code: "D002", name: "Human Resources", SubGroupName: "Department" },
-        { code: "D003", name: "Finance", SubGroupName: "Department" },
-        {
-          code: "D004",
-          name: "Information Technology",
-          SubGroupName: "Department",
-        },
-        { code: "D007", name: "Operations", SubGroupName: "Department" },
-        { code: "D009", name: "Housekeeping", SubGroupName: "Department" },
-        { code: "D012", name: "Security", SubGroupName: "Department" },
       ];
     } catch (error) {
       getError(error);
@@ -982,6 +964,7 @@ export default class SalaryAdjustment extends Vue {
       remark: params.remark,
     };
   }
+
   // GETTER AND SETTER =======================================================
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);

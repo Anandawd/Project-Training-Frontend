@@ -15,31 +15,91 @@
 
     <!-- insert form -->
     <transition>
-      <div class="px-2">
-        <c-input-form
-          ref="inputFormElement"
-          v-show="showForm"
-          :schema="schema"
-          :modeData="modeData"
-          @save="handleSave"
-          @close="showForm=false"
-        />
-      </div>
+      <c-input-form
+        class="px-2"
+        ref="inputFormElement"
+        v-show="showForm"
+        :schema="schema"
+        :modeData="modeData"
+        :employeeOptions="employeeOptions"
+        :documentTypeOptions="documentTypeOptions"
+        @save="handleSave"
+        @close="showForm=false"
+      />
     </transition>
 
     <!-- filter -->
     <c-search-filter
-      date-range
       :options="searchOptions"
       :searchDefault="searchDefault"
       @search="refreshData"
     >
+      <template v-slot="{search}">
+        <div class="col-md-6 d-flex mb-md-4">
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="all"
+              id="all"
+              v-model="search.filter[0]"
+              value="0"
+              @change="refreshData(search)"
+            />
+            <label for="all"
+              >{{ $t('commons.filter.checkList.showAll') }}</label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showValid"
+              id="showValid"
+              v-model="search.filter[0]"
+              value="1"
+              @change="refreshData(search)"
+            />
+            <label for="showValid"
+              >{{ $t('commons.filter.checkList.valid') }}</label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showExpiringSoon"
+              id="showExpiringSoon"
+              v-model="search.filter[0]"
+              value="2"
+              @change="refreshData(search)"
+            />
+            <label for="showExpiringSoon"
+              >{{ $t('commons.filter.checkList.expiringSoon') }}</label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showExpired"
+              id="showExpired"
+              v-model="search.filter[0]"
+              value="3"
+              @change="refreshData(search)"
+            />
+            <label for="showExpired"
+              >{{ $t('commons.filter.checkList.expired') }}</label
+            >
+          </div>
+        </div>
+      </template>
     </c-search-filter>
 
     <!-- table -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">{{$t('title.employeeDocument')}}</h3>
+        <h3 class="card-title">{{$t('title.legalDocument')}}</h3>
       </div>
       <div class="card-body">
         <ag-grid-vue
@@ -70,10 +130,10 @@
       v-show="showDialog"
       dialogTitle="Confirm"
       size="sm"
-      @confirm="deleteData"
+      @confirm="confirmAction"
       @cancel="showDialog=false"
     >
-      <template #body> Are you sure to delete this data? </template>
+      <template #body>{{dialogMessage}}</template>
     </c-dialog>
   </div>
 </section>

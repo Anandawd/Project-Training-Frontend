@@ -342,12 +342,12 @@
           <div class="col-md-6">
             <c-datepicker
               required
+              name="IssueDate"
               id="IssueDate"
               customLabelClass="col-3 mb-1"
               type="date"
               valueType="YYYY-MM-DD"
               format="DD/MM/YYYY"
-              name="issueDate"
               :label="$t('labels.payroll.employee.issueDate')"
               v-model="currentForm.issue_date"
               validate

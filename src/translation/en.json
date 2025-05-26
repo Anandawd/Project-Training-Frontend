@@ -101,7 +101,8 @@
         "adjustmentType": "Adjustment Type",
         "difference": "Difference",
         "percentageChange": "Percentage Change",
-        "adjustmentSummary": "Adjustment Summary"
+        "adjustmentSummary": "Adjustment Summary",
+        "documentInformation": "Document Information"
       },
       "attendance": {
         "attendanceAndLeave": "Attendance & Leave",
@@ -4169,13 +4170,17 @@
     "filter": {
       "payroll": {
         "employee": {
-          "employeeId": "Employe ID",
+          "employeeId": "Employee ID",
+          "employeeName": "Employee Name",
           "name": "Name",
           "department": " Department",
           "position": "Position",
           "placement": "Placement",
           "supervisor": "Supervisor",
-          "adjustmentReason": "Adjustment Reason"
+          "adjustmentReason": "Adjustment Reason",
+          "valid": "Valid",
+          "documentType": "Document Type",
+          "fileName": "File Name"
         },
         "payroll": {
           "monthly": "Monthly",
@@ -4485,7 +4490,10 @@
         "showLeave": "Show Leave",
         "approved": "Approved",
         "rejected": "Rejected",
-        "pending": "Pending"
+        "pending": "Pending",
+        "valid": "Valid",
+        "expiringSoon": "Expiring Soon",
+        "expired": "Expired"
       },
       "select": {
         "buildingFloor": "Building/Floor",

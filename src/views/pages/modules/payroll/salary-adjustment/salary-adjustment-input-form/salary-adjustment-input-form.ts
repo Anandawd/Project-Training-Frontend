@@ -39,7 +39,6 @@ export default class InputForm extends Vue {
   modeData: any;
   employeeOptions!: any[];
   adjustmentReasonOptions!: any[];
-  public isSave: boolean = false;
 
   public defaultForm: any = {};
   public form: any = reactive({});

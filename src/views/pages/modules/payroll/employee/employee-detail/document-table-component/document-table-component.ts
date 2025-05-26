@@ -59,6 +59,7 @@ export default class DocumentTableComponent extends Vue {
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
       actionGrid: {
+        menu: true,
         insert: true,
         edit: true,
         delete: true,
@@ -80,7 +81,7 @@ export default class DocumentTableComponent extends Vue {
         sortable: false,
         cellRenderer: "actionGrid",
         colId: "params",
-        width: 100,
+        width: 120,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.documentType"),
@@ -254,6 +255,8 @@ export default class DocumentTableComponent extends Vue {
       });
     }
   }
+
+  handleMenu() {}
 
   handleInsert() {
     this.$emit("insert", { type: "DOCUMENT" });

@@ -23,42 +23,26 @@ import * as Yup from "yup";
       type: Number,
       require: true,
     },
+    employeeOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    documentTypeOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
   },
   emits: ["save", "close"],
 })
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
-  public isSave: boolean = false;
+  employeeOptions!: any[];
+  documentTypeOptions!: any[];
 
   public defaultForm: any = {};
   public form: any = reactive({});
-  public formDocumentType: any = reactive({});
 
-  selectEmployeeOptions: any = [
-    {
-      SubGroupName: "Placement",
-      code: "EMP001",
-      name: "John Doe",
-    },
-    {
-      SubGroupName: "Placement",
-      code: "EMP002",
-      name: "Deddy Cagur",
-    },
-  ];
-  requiredOptions: any = [
-    {
-      SubGroupName: "Type",
-      code: "T01",
-      name: "Yes",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T02",
-      name: "No",
-    },
-  ];
   columnOptions = [
     {
       label: "name",
@@ -67,7 +51,7 @@ export default class InputForm extends Vue {
       width: "200",
     },
     {
-      field: "code",
+      field: "employee_id",
       label: "code",
       align: "right",
       width: "100",
@@ -79,17 +63,17 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
+      id: "",
       employee_id: "",
       employee_name: "",
-      employee_department: "",
-      employee_position: "",
-      total_quota_leave: 0,
-      total_remaining_leave: 0,
-      leave_type: "",
-      reason: "",
-      start_date: new Date(),
-      end_date: new Date(),
+      document_type_code: "",
+      document_type_name: "",
+      file: "",
+      file_name: "",
+      issue_date: "",
+      expiry_date: "",
       remark: "",
+      status: "",
     };
   }
 
@@ -117,9 +101,36 @@ export default class InputForm extends Vue {
     focusOnInvalid();
   }
 
+  onEmployeeChange() {
+    if (this.form.employee_id) {
+      const selectedEmployee = this.employeeOptions.find(
+        (emp: any) => emp.employee_id === this.form.employee_id
+      );
+
+      if (selectedEmployee) {
+        this.form.employee_name = selectedEmployee.name;
+        this.form.department_code = selectedEmployee.department_code;
+        this.form.department_name = selectedEmployee.department_name;
+        this.form.position_code = selectedEmployee.position_code;
+        this.form.position_name = selectedEmployee.position_name;
+      }
+    } else {
+      this.form.employee_name = "";
+      this.form.department_code = "";
+      this.form.department_name = "";
+      this.form.position_code = "";
+      this.form.position_name = "";
+    }
+  }
+
   // validation
   get schema() {
-    return Yup.object().shape({});
+    return Yup.object().shape({
+      SelectEmployee: Yup.string().required(),
+      DocumentType: Yup.string().required(),
+      DocumentFile: Yup.string().required(),
+      IssueDate: Yup.date().required(),
+    });
   }
 
   get title() {
@@ -129,10 +140,6 @@ export default class InputForm extends Vue {
       )}`;
     } else if (this.modeData === $global.modeData.edit) {
       return `${this.$t("commons.update")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
-      )}`;
-    } else if (this.modeData === $global.modeData.duplicate) {
-      return `${this.$t("commons.duplicate")} ${this.$t(
         `${this.$route.meta.pageTitle}`
       )}`;
     }
