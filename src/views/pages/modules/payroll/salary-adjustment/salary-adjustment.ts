@@ -30,7 +30,6 @@ export default class SalaryAdjustment extends Vue {
   public rowData: any = [];
   public deleteParam: any;
   public approveParam: any;
-  public selectedData: any = null;
 
   // options data
   public employeeOptions: any = [];
@@ -284,7 +283,6 @@ export default class SalaryAdjustment extends Vue {
   onGridReady(params: any) {
     this.gridApi = params.api;
     this.ColumnApi = params.columnApi;
-    console.log("gridAPI", this.gridApi);
   }
 
   // GENERAL FUNCTION =======================================================
@@ -312,13 +310,13 @@ export default class SalaryAdjustment extends Vue {
       "separator",
       {
         name: this.$t("commons.contextMenu.approve"),
-        disabled: this.paramsData.status !== "PENDING",
+        disabled: !this.paramsData || this.paramsData.status !== "PENDING",
         icon: generateIconContextMenuAgGrid("approve_icon24"),
         action: () => this.handleApprove(this.paramsData),
       },
       {
         name: this.$t("commons.contextMenu.reject"),
-        disabled: this.paramsData.status !== "PENDING",
+        disabled: !this.paramsData || this.paramsData.status !== "PENDING",
         icon: generateIconContextMenuAgGrid("reject_icon24"),
         action: () => this.handleReject(this.paramsData),
       },
@@ -384,7 +382,12 @@ export default class SalaryAdjustment extends Vue {
   }
 
   handleApprove(params: any) {
-    const selectedData = params || this.getSelectedRowData();
+    if (!params || params.status !== "PENDING") {
+      getToastError(this.$t("messages.employee.error.cannotApproveNonPending"));
+      return;
+    }
+
+    this.approveParam = params;
     this.dialogMessage = this.$t(
       "messages.employee.confirm.approveSalaryAdjustment"
     );
@@ -393,7 +396,12 @@ export default class SalaryAdjustment extends Vue {
   }
 
   handleReject(params: any) {
-    const selectedData = params || this.getSelectedRowData();
+    if (!params || params.status !== "PENDING") {
+      getToastError(this.$t("messages.employee.error.cannotRejectNonPending"));
+      return;
+    }
+
+    this.approveParam = params;
     this.approveParam = params.id;
     this.dialogMessage = this.$t(
       "messages.employee.confirm.rejectSalaryAdjustment"
@@ -414,6 +422,7 @@ export default class SalaryAdjustment extends Vue {
   }
 
   refreshData(search: any) {
+    this.searchOptions = { ...search };
     this.loadDataGrid(search);
   }
 
@@ -465,20 +474,22 @@ export default class SalaryAdjustment extends Vue {
         });
       }
 
-      if (search.filter && search.filter[0] !== 0) {
+      if (search.filter && search.filter.length > 0) {
         const statusFilter = search.filter[0];
-        filteredData = filteredData.filter((item: any) => {
-          switch (statusFilter) {
-            case 1:
-              return item.status === "PENDING";
-            case 2:
-              return item.status === "APPROVED";
-            case 3:
-              return item.status === "REJECTED";
-            default:
-              return true;
-          }
-        });
+        if (statusFilter !== 0) {
+          filteredData = filteredData.filter((item: any) => {
+            switch (statusFilter) {
+              case 1: // Pending
+                return item.status === "PENDING";
+              case 2: // Approved
+                return item.status === "APPROVED";
+              case 3: // Rejected
+                return item.status === "REJECTED";
+              default:
+                return true;
+            }
+          });
+        }
       }
 
       if (this.gridApi) {
@@ -781,18 +792,10 @@ export default class SalaryAdjustment extends Vue {
       this.rowData.push(newAdjustment);
       this.searchDefault.filter = [1];
 
-      setTimeout(() => {
-        if (this.gridApi) {
-          this.loadDataGrid(this.searchDefault);
+      await this.$nextTick();
+      await this.loadDataGrid(this.searchDefault);
 
-          // this.gridApi.setRowData([...this.rowData]);
-          // this.gridApi.refreshCells({ force: true });
-        }
-
-        getToastSuccess(
-          this.$t("messages.employee.success.saveSalaryAdjustment")
-        );
-      }, 50);
+      this.$t("messages.employee.success.saveSalaryAdjustment");
     } catch (error) {
       getError(error);
     }
@@ -844,17 +847,10 @@ export default class SalaryAdjustment extends Vue {
 
       this.searchDefault.filter = [1];
 
-      setTimeout(() => {
-        if (this.gridApi) {
-          this.loadDataGrid(this.searchDefault);
-          // this.gridApi.setRowData([...this.rowData]);
-          // this.gridApi.refreshCells({ force: true });
-        }
+      await this.$nextTick();
+      await this.loadDataGrid(this.searchDefault);
 
-        getToastSuccess(
-          this.$t("messages.employee.success.updateSalaryAdjustment")
-        );
-      }, 50);
+      this.$t("messages.employee.success.updateSalaryAdjustment");
     } catch (error) {
       getError(error);
     }
@@ -873,7 +869,11 @@ export default class SalaryAdjustment extends Vue {
       this.rowData = this.rowData.filter(
         (item: any) => item.id !== this.deleteParam
       );
-      await this.loadDataGrid();
+
+      this.searchDefault.filter = [1];
+
+      await this.$nextTick();
+      await this.loadDataGrid(this.searchDefault);
       getToastSuccess(
         this.$t("messages.employee.success.deleteSalaryAdjustment")
       );
@@ -901,7 +901,10 @@ export default class SalaryAdjustment extends Vue {
         this.rowData[index].updated_by = "Current User";
       }
 
-      this.loadDataGrid(this.searchDefault);
+      this.searchDefault.filter = [1];
+
+      await this.$nextTick();
+      await this.loadDataGrid(this.searchDefault);
       getToastSuccess(
         this.$t("messages.employee.success.approveSalaryAdjustment")
       );
@@ -910,6 +913,7 @@ export default class SalaryAdjustment extends Vue {
       getError(error);
     }
   }
+
   async rejectData() {
     try {
       /*
@@ -928,7 +932,10 @@ export default class SalaryAdjustment extends Vue {
         this.rowData[index].updated_at = formatDateTimeUTC(new Date());
         this.rowData[index].updated_by = "Current User";
       }
-      this.loadDataGrid(this.searchDefault);
+      this.searchDefault.filter = [1];
+
+      await this.$nextTick();
+      await this.loadDataGrid(this.searchDefault);
       getToastSuccess(
         this.$t("messages.employee.success.rejectSalaryAdjustment")
       );

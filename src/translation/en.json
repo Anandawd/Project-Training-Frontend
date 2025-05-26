@@ -2205,7 +2205,9 @@
         "updatePosition": "Position has been successfully updated",
         "updateDepartment": "Department has been successfully updated",
         "updatePlacement": "Placement has been successfully updated",
-        "updateSalaryAdjustment": "Salary Adjustment has been successfully updated"
+        "updateSalaryAdjustment": "Salary Adjustment has been successfully updated",
+        "approveSalaryAdjustment": "Salary Adjustment has been successfully approved",
+        "rejectSalaryAdjustment": "Salary Adjustment has been successfully reject"
       },
       "error": {
         "save": "An error occurred while saving employee data. Please try again",
