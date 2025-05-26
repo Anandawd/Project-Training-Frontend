@@ -474,7 +474,7 @@ export default class SalaryAdjustment extends Vue {
       }
 
       if (search.filter && search.filter.length > 0) {
-        const statusFilter = search.filter[0];
+        const statusFilter = parseInt(search.filter[0]);
         if (statusFilter !== 0) {
           filteredData = filteredData.filter((item: any) => {
             switch (statusFilter) {
