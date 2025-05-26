@@ -316,6 +316,7 @@ export default class BenefitTableComponent extends Vue {
       this.gridApi.setRowData([...this.rowData]);
     }
   }
+
   getComponentDisplayName(componentCode: string): string {
     // Akses parent component untuk mendapatkan data komponen
     const parentComponent = this.$parent as any;

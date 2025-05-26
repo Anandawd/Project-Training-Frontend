@@ -93,7 +93,15 @@
         "documentFile": "Document File",
         "expiryDate": "Expiry Date",
         "adjustmentReason": "Adjustment Reason",
-        "currentFile": "Current File"
+        "currentFile": "Current File",
+        "salaryAdjustmentInformation": "Salary Adjustment Information",
+        "salaryDetails": "Salary Details",
+        "currentSalary": "Current Salary",
+        "newSalary": "New Salary",
+        "adjustmentType": "Adjustment Type",
+        "difference": "Difference",
+        "percentageChange": "Percentage Change",
+        "adjustmentSummary": "Adjustment Summary"
       },
       "attendance": {
         "attendanceAndLeave": "Attendance & Leave",
@@ -2183,20 +2191,21 @@
         "savePosition": "Position has been successfully saved",
         "saveDepartment": "Department has been successfully saved",
         "savePlacement": "Placement has been successfully saved",
+        "saveSalaryAdjustment": "Salary Adjustment has been successfully saved",
         "deleteDocument": "Employee document has been successfully removed",
         "deleteSalary": "Employee salary has been successfully removed",
         "deleteBenefit": "Employee benefit has been successfully removed",
         "deletePosition": "Position has been successfully removed",
         "deleteDepartment": "Department has been successfully removed",
         "deletePlacement": "Placement has been successfully removed",
+        "deleteSalaryAdjustment": "Salary Adjustment has been successfully removed",
         "updateDocument": "Employee document has been successfully updated",
         "updateSalary": "Employee salary information has been successfully updated",
         "updateBenefit": "Employee benefit has been successfully updated",
         "updatePosition": "Position has been successfully updated",
         "updateDepartment": "Department has been successfully updated",
         "updatePlacement": "Placement has been successfully updated",
-        "leaveApproved": "Employee leave request has been approved",
-        "leaveRejected": "Employee leave request has been rejected"
+        "updateSalaryAdjustment": "Salary Adjustment has been successfully updated"
       },
       "error": {
         "save": "An error occurred while saving employee data. Please try again",
@@ -2255,12 +2264,7 @@
         "salaryDelete": "Are you sure you want to delete this employee salary?",
         "benefitDelete": "Are you sure you want to delete this employee benefit?",
         "cancelChanges": "You have unsaved changes. Are you sure you want to cancel?",
-        "bulkUpdate": "You are about to update {count} employee records. Would you like to continue?",
-        "sendCredentials": "Are you sure you want to send login credentials to this employee?",
-        "generateReport": "Are you sure you want to generate a report for this employee?",
-        "closeForm": "Are you sure you want to close this form? Any unsaved changes will be lost",
-        "assignManager": "Are you sure you want to assign {manager} as manager for this employee?",
-        "resetPassword": "Are you sure you want to reset this employee's password?"
+        "approveSalaryAdjustment": "Are you sure you want to approve this salary adjustment?"
       },
       "confirmDeleteEmployee": "Are you sure you want to delete this employee?",
       "saveEmployeeSuccess": "Employee added successfully",
@@ -3129,7 +3133,11 @@
           "updatePlacement": "Update Placement",
           "effectiveDate": "Effective Date",
           "isCurrent": "Is Current",
-          "adjustmentReason": "Adjustment Reason"
+          "adjustmentReason": "Adjustment Reason",
+          "currentSalary": "Current Salary",
+          "newSalary": "New Salary",
+          "difference": "Difference",
+          "percentage": "Percentage"
         },
         "payroll": {
           "name": "Name",
@@ -3894,6 +3902,8 @@
       "outstandingReal": "Outstanding Real"
     },
     "contextMenu": {
+      "approve": "Approve",
+      "reject": "Reject",
       "downloadPayslip": "Download Payslip",
       "salary": "Salary",
       "process": "Process",
@@ -4161,7 +4171,8 @@
           "department": " Department",
           "position": "Position",
           "placement": "Placement",
-          "supervisor": "Supervisor"
+          "supervisor": "Supervisor",
+          "adjustmentReason": "Adjustment Reason"
         },
         "payroll": {
           "monthly": "Monthly",
@@ -4468,7 +4479,10 @@
         "showPresent": "Show Present",
         "showLate": "Show Late",
         "showAbsent": "Show Absent",
-        "showLeave": "Show Leave"
+        "showLeave": "Show Leave",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "pending": "Pending"
       },
       "select": {
         "buildingFloor": "Building/Floor",

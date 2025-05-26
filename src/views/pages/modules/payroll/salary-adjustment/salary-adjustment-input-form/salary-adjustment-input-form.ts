@@ -23,101 +23,27 @@ import * as Yup from "yup";
       type: Number,
       require: true,
     },
+    employeeOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    adjustmentReasonOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
   },
   emits: ["save", "close"],
 })
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
+  employeeOptions!: any[];
+  adjustmentReasonOptions!: any[];
   public isSave: boolean = false;
 
   public defaultForm: any = {};
   public form: any = reactive({});
 
-  selectEmployeeOptions: any = [
-    {
-      SubGroupName: "Placement",
-      code: "EMP001",
-      name: "John Doe",
-    },
-    {
-      SubGroupName: "Placement",
-      code: "EMP002",
-      name: "Deddy Cagur",
-    },
-  ];
-  leaveTypeOptions: any = [
-    {
-      SubGroupName: "Type",
-      code: "T01",
-      name: "Annual Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T02",
-      name: "Sick Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T03",
-      name: "Maternity Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T04",
-      name: "Paternity Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T05",
-      name: "Marriage Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T06",
-      name: "Bereavement Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T07",
-      name: "Unpaid Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T08",
-      name: "Public Holiday",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T09",
-      name: "Compassionate Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T10",
-      name: "Study Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T11",
-      name: "Special Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T12",
-      name: "Emergency Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T13",
-      name: "Religious Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T14",
-      name: "Quarantine Holiday",
-    },
-  ];
   columnOptions = [
     {
       label: "name",
@@ -126,8 +52,8 @@ export default class InputForm extends Vue {
       width: "200",
     },
     {
-      field: "code",
-      label: "code",
+      field: "employee_id",
+      label: "id",
       align: "right",
       width: "100",
     },
@@ -138,16 +64,18 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
+      id: null,
       employee_id: "",
       employee_name: "",
-      employee_department: "",
-      employee_position: "",
-      total_quota_leave: 0,
-      total_remaining_leave: 0,
-      leave_type: "",
-      reason: "",
-      start_date: new Date(),
-      end_date: new Date(),
+      department_code: "",
+      department_name: "",
+      position_code: "",
+      position_name: "",
+      adjustment_reason_code: "",
+      adjustment_reason_name: "",
+      effective_date: new Date().toISOString().split("T")[0],
+      current_salary: 0,
+      new_salary: 0,
       remark: "",
     };
   }
@@ -161,7 +89,18 @@ export default class InputForm extends Vue {
   }
 
   onSave() {
-    this.$emit("save", this.form);
+    const formData = {
+      ...this.form,
+      difference_amount: this.form.new_salary - this.form.current_salary,
+      percentage_change:
+        this.form.current_salary > 0
+          ? ((this.form.new_salary - this.form.current_salary) /
+              this.form.current_salary) *
+            100
+          : 0,
+    };
+    console.log("onSave formData", formData);
+    this.$emit("save", formData);
   }
 
   checkForm() {
@@ -174,6 +113,54 @@ export default class InputForm extends Vue {
 
   onInvalidSubmit() {
     focusOnInvalid();
+  }
+
+  onEmployeeChange() {
+    if (this.form.employee_id) {
+      const selectedEmployee = this.employeeOptions.find(
+        (emp: any) => emp.employee_id === this.form.employee_id
+      );
+
+      if (selectedEmployee) {
+        this.form.employee_name = selectedEmployee.name;
+        this.form.department_code = selectedEmployee.department_code;
+        this.form.department_name = selectedEmployee.department_name;
+        this.form.position_code = selectedEmployee.position_code;
+        this.form.position_name = selectedEmployee.position_name;
+        this.form.current_salary = selectedEmployee.current_salary;
+      }
+    } else {
+      this.form.employee_name = "";
+      this.form.department_code = "";
+      this.form.department_name = "";
+      this.form.position_code = "";
+      this.form.position_name = "";
+      this.form.current_salary = 0;
+    }
+  }
+
+  onCurrentSalaryChange() {
+    // Auto-calculate percentage if new salary is already set
+    if (this.form.current_salary > 0 && this.form.new_salary > 0) {
+      this.calculatePercentage();
+    }
+  }
+
+  onNewSalaryChange() {
+    // Auto-calculate percentage when new salary changes
+    if (this.form.current_salary > 0 && this.form.new_salary > 0) {
+      this.calculatePercentage();
+    }
+  }
+
+  calculatePercentage() {
+    if (this.form.current_salary > 0) {
+      const difference = this.form.new_salary - this.form.current_salary;
+      const percentage = (difference / this.form.current_salary) * 100;
+      // Store calculated values for display (optional)
+      this.form.calculated_difference = difference;
+      this.form.calculated_percentage = percentage;
+    }
   }
 
   // validation
@@ -190,10 +177,35 @@ export default class InputForm extends Vue {
       return `${this.$t("commons.update")} ${this.$t(
         `${this.$route.meta.pageTitle}`
       )}`;
-    } else if (this.modeData === $global.modeData.duplicate) {
-      return `${this.$t("commons.duplicate")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
-      )}`;
     }
+  }
+
+  get salaryDifference() {
+    if (this.form.current_salary && this.form.new_salary) {
+      return this.form.new_salary - this.form.current_salary;
+    }
+    return 0;
+  }
+
+  get percentageChange() {
+    if (
+      this.form.current_salary &&
+      this.form.new_salary &&
+      this.form.current_salary > 0
+    ) {
+      return (
+        ((this.form.new_salary - this.form.current_salary) /
+          this.form.current_salary) *
+        100
+      );
+    }
+    return 0;
+  }
+
+  get isIncreaseDecrease() {
+    const difference = this.salaryDifference;
+    if (difference > 0) return "increase";
+    if (difference < 0) return "decrease";
+    return "same";
   }
 }

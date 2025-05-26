@@ -38,13 +38,15 @@
                     offset="right"
                     class="row mb-1"
                     selectType="column"
-                    name="selectEmployee"
+                    name="SelectEmployee"
                     labelName="name"
-                    keyName="code"
-                    v-model="form.selectEmployee"
+                    keyName="employee_id"
+                    v-model="form.employee_id"
                     :label="$t('labels.payroll.attendance.selectEmployee')"
                     :columnOptions="columnOptions"
-                    :options="selectEmployeeOptions"
+                    :options="employeeOptions"
+                    @change="onEmployeeChange"
+                    :disabled="modeData === $global.modeData.edit"
                   >
                   </c-select>
                 </div>
@@ -52,44 +54,22 @@
                   <c-input
                     disabled
                     type="text"
-                    name="department"
-                    id="department"
+                    name="Department"
+                    id="Department"
                     class="row mb-1"
                     :label="$t('labels.payroll.employee.department')"
-                    v-model="form.employee_department"
+                    v-model="form.department_name"
                   />
                 </div>
                 <div class="col-md-4">
                   <c-input
                     disabled
-                    id="position"
+                    name="Position"
+                    id="Position"
                     class="row mb-1"
                     type="text"
-                    name="position"
-                    v-model="form.employee_position"
+                    v-model="form.position_name"
                     :label="$t('labels.payroll.employee.position')"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    disabled
-                    id="quotaLeave"
-                    class="row mb-1"
-                    type="text"
-                    name="quotaLeave"
-                    v-model="form.total_quota_leave"
-                    :label="$t('labels.payroll.attendance.quotaLeave')"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    disabled
-                    id="remainingLeave"
-                    class="row mb-1"
-                    type="text"
-                    name="remainingLeave"
-                    v-model="form.total_remaining_leave"
-                    :label="$t('labels.payroll.attendance.remainingLeave')"
                   />
                 </div>
               </div>
@@ -97,24 +77,27 @@
           </div>
         </div>
 
-        <!-- leave information -->
+        <!-- salary adjustment information -->
         <div class="accordion-item">
-          <h6 class="accordion-header" id="itemLeaveInformationHeader">
+          <h6
+            class="accordion-header"
+            id="itemSalaryAdjustmentInformationHeader"
+          >
             <button
               type="button"
               class="accordion-button"
               data-bs-toggle="collapse"
-              data-bs-target="#leaveInformation"
-              aria-controls="leaveInformation"
+              data-bs-target="#salaryAdjustmentInformation"
+              aria-controls="salaryAdjustmentInformation"
               aria-expanded="false"
             >
-              {{$t('labels.payroll.employee.leaveInformation')}}
+              {{$t('labels.payroll.employee.salaryAdjustmentInformation')}}
             </button>
           </h6>
           <div
-            id="leaveInformation"
+            id="salaryAdjustmentInformation"
             class="accordion-collapse collapse show p-3"
-            aria-labelledby="leaveInformationHeader"
+            aria-labelledby="salaryAdjustmentInformationHeader"
           >
             <div class="accordion-body">
               <div class="row mb-3">
@@ -123,24 +106,28 @@
                     required
                     offset="right"
                     class="row mb-1"
-                    name="leaveType"
+                    name="AdjustmentReason"
                     labelName="name"
                     keyName="code"
-                    v-model="form.leave_type"
-                    :label="$t('labels.payroll.attendance.leaveType')"
-                    :options="leaveTypeOptions"
+                    v-model="form.adjustment_reason_code"
+                    :label="$t('labels.payroll.employee.adjustmentReason')"
+                    :options="adjustmentReasonOptions"
+                    :disabled="modeData === $global.modeData.edit"
                   >
                   </c-select>
                 </div>
-                <div class="col-md-4">
-                  <c-input
+                <div class="col-md-4 mb-1">
+                  <c-datepicker
                     required
-                    id="reason"
-                    class="row mb-1"
-                    type="text"
-                    name="reason"
-                    v-model="form.reason"
-                    :label="$t('labels.payroll.attendance.reason')"
+                    id="effectiveDate"
+                    customLabelClass="col-3"
+                    :label="$t('labels.payroll.employee.effectiveDate')"
+                    type="date"
+                    valueType="YYYY-MM-DD"
+                    format="DD/MM/YYYY"
+                    name="effectiveDate"
+                    v-model="form.effective_date"
+                    :disabled="modeData === $global.modeData.edit"
                   />
                 </div>
                 <div class="col-md-4">
@@ -153,31 +140,92 @@
                     :label="$t('labels.remark')"
                   />
                 </div>
-                <div class="col-md-4 mb-1">
-                  <c-datepicker
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- salary details -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemSalaryDetailsHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#salaryDetails"
+              aria-controls="salaryDetails"
+              aria-expanded="true"
+            >
+              {{$t('labels.payroll.employee.salaryDetails')}}
+            </button>
+          </h6>
+          <div
+            id="salaryDetails"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="salaryDetailsHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-input
                     required
-                    id="startDate"
-                    customLabelClass="col-3"
-                    :label="$t('labels.payroll.attendance.startDate')"
-                    type="date"
-                    valueType="YYYY-MM-DD"
-                    format="DD/MM/YYYY"
-                    name="startDate"
-                    v-model="form.start_date"
+                    formatted
+                    showZeroNumber
+                    type="number"
+                    name="currentSalary"
+                    id="currentSalary"
+                    class="row mb-1"
+                    :max="9999999999"
+                    :min="0"
+                    :label="$t('labels.payroll.employee.currentSalary')"
+                    v-model="form.current_salary"
+                    @change="onCurrentSalaryChange"
+                    :disabled="true"
                   />
                 </div>
-                <div class="col-md-4 mb-1">
-                  <c-datepicker
+                <div class="col-md-4">
+                  <c-input
                     required
-                    id="endDate"
-                    customLabelClass="col-3"
-                    :label="$t('labels.payroll.attendance.endDate')"
-                    type="date"
-                    valueType="YYYY-MM-DD"
-                    format="DD/MM/YYYY"
-                    name="endDate"
-                    v-model="form.end_date"
+                    formatted
+                    showZeroNumber
+                    type="number"
+                    name="newSalary"
+                    id="newSalary"
+                    class="row mb-1"
+                    :max="9999999999"
+                    :min="0"
+                    :label="$t('labels.payroll.employee.newSalary')"
+                    v-model="form.new_salary"
+                    @change="onNewSalaryChange"
                   />
+                </div>
+                <div class="col-md-4">
+                  <div class="row mb-1">
+                    <div class="col-3">
+                      <label
+                        class="form-label"
+                        style="font-size: 13px; font-weight: 700"
+                      >
+                        {{$t('labels.payroll.employee.difference')}}
+                      </label>
+                    </div>
+                    <div class="col-9">
+                      <div class="form-control" readonly>
+                        <span
+                          :class="{
+                          'text-success': isIncreaseDecrease === 'increase',
+                          'text-danger': isIncreaseDecrease === 'decrease',
+                          'text-muted': isIncreaseDecrease === 'same'
+                        }"
+                        >
+                          {{ salaryDifference >= 0 ? '+' : '' }}{{
+                          salaryDifference.toLocaleString('id-ID') }} ({{
+                          percentageChange >= 0 ? '+' : '' }}{{
+                          percentageChange.toFixed(2) }}%)
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
