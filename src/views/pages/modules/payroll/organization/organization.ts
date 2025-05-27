@@ -92,12 +92,8 @@ export default class Organizaation extends Vue {
       if (mode === $global.modeData.insert && typeof params === "string") {
         switch (this.dataType) {
           case "POSITION":
-            console.log("inputFormElement", this.inputFormElement);
             this.positionFormElement.initialize();
-            console.log(
-              "positionFormElement initialize",
-              this.positionFormElement.initialize()
-            );
+            console.log("positionFormElement", this.positionFormElement);
             break;
           case "DEPARTMENT":
             this.departmentFormElement.initialize();
