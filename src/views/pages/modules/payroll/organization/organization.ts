@@ -43,10 +43,9 @@ export default class Organizaation extends Vue {
   public dataType: any;
   public showForm: boolean = false;
   public modeData: any;
-  public inputFormElement: any = ref();
-  public positionFormElement: any = ref();
-  public departmentFormElement: any = ref();
-  public placementFormElement: any = ref();
+  positionFormElement: any = ref();
+  departmentFormElement: any = ref();
+  placementFormElement: any = ref();
 
   // child components refs
   positionTableRef: any = ref();
@@ -85,15 +84,11 @@ export default class Organizaation extends Vue {
       this.dataType = this.getDataType(params);
     }
 
-    // const formElement = this.getFormElementByType(this.dataType);
-    console.log("handleShowForm", params);
-    console.log("dataType", this.dataType);
     this.$nextTick(() => {
       if (mode === $global.modeData.insert && typeof params === "string") {
         switch (this.dataType) {
           case "POSITION":
             this.positionFormElement.initialize();
-            console.log("positionFormElement", this.positionFormElement);
             break;
           case "DEPARTMENT":
             this.departmentFormElement.initialize();
@@ -103,7 +98,6 @@ export default class Organizaation extends Vue {
             break;
         }
       } else if (mode === $global.modeData.edit && params) {
-        console.log("masuk ke edit");
         this.loadEditData(params);
       }
     });
@@ -1601,19 +1595,19 @@ export default class Organizaation extends Vue {
     return "POSITION";
   }
 
-  getFormElementByType(type: string): any {
-    switch (type) {
-      case "POSITION":
-        return this.positionFormElement;
-      case "DEPARTMENT":
-        return this.departmentFormElement;
-      case "PLACEMENT":
-        return this.placementFormElement;
-      default:
-        console.info(`Unknown form type: ${type}`);
-        return null;
-    }
-  }
+  // getFormElementByType(type: string): any {
+  //   switch (type) {
+  //     case "POSITION":
+  //       return this.positionFormElement;
+  //     case "DEPARTMENT":
+  //       return this.departmentFormElement;
+  //     case "PLACEMENT":
+  //       return this.placementFormElement;
+  //     default:
+  //       console.info(`Unknown form type: ${type}`);
+  //       return null;
+  //   }
+  // }
 
   // GETTER AND SETTER =======================================================
 }

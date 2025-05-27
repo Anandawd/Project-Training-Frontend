@@ -35,7 +35,7 @@
     <transition name="fade" mode="out-in">
       <position-input-form
         ref="positionFormElement"
-        v-if="showForm && dataType  === 'POSITION'"
+        v-show="showForm && dataType  === 'POSITION'"
         class="px-2"
         :modeData="modeData"
         :levelOptions="positionLevelOptions"
@@ -49,7 +49,7 @@
     <transition name="fade" mode="out-in">
       <department-input-form
         ref="departmentFormElement"
-        v-if="showForm && dataType  === 'DEPARTMENT'"
+        v-show="showForm && dataType  === 'DEPARTMENT'"
         class="px-2"
         :modeData="modeData"
         :placementOptions="placementOptions"
@@ -63,7 +63,7 @@
     <transition name="fade" mode="out-in">
       <placement-input-form
         ref="placementFormElement"
-        v-if="showForm && dataType  === 'PLACEMENT'"
+        v-show="showForm && dataType  === 'PLACEMENT'"
         class="px-2"
         :modeData="modeData"
         :countryOptions="countryOptions"
