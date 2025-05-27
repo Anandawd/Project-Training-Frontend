@@ -66,13 +66,14 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      // Category tab
       position_code: "",
-      name: "",
+      position_name: "",
       description: "",
       level: "",
-      department: "",
-      placement: "",
+      department_code: "",
+      department_name: "",
+      placement_code: "",
+      placement_name: "",
       status: "A",
       id: undefined,
     };
@@ -97,7 +98,6 @@ export default class InputForm extends Vue {
 
   onInvalidSubmit({ errors }: any) {
     focusOnInvalid();
-    // getToastError("onInvalidSubmit Please complete all required fields");
   }
 
   // validation

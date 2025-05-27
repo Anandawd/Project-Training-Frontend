@@ -7,7 +7,7 @@ import { getToastSuccess } from "@/utils/toast";
 import CSearchFilter from "@/views/pages/components/filter/filter.vue";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import EarningsInputForm from "../payroll-component/earnings-component-input-form/earnings-component-input-form.vue";
 import DepartmentInputForm from "./department-input-form/department-input-form.vue";
@@ -43,8 +43,7 @@ export default class Employee extends Vue {
   public dataType: any;
   public showForm: boolean = false;
   public modeData: any;
-  public currentForm: any = reactive({});
-  public inputFormElement: any = ref();
+  public currentForm: any = ref();
   public positionFormElement: any = ref();
   public departmentFormElement: any = ref();
   public placementFormElement: any = ref();
@@ -71,28 +70,28 @@ export default class Employee extends Vue {
 
   // RECYCLE LIFE FUNCTION =======================================================
   created() {
-    this.loadDropdown();
-    this.loadMockData();
+    this.loadData();
   }
 
   // GENERAL FUNCTION =======================================================
-  async handleShowForm(params: any, mode: any, type: any) {
+  async handleShowForm(params: any, mode: any) {
     this.showForm = false;
     await this.$nextTick();
 
     this.modeData = mode;
-    this.dataType = type;
+    this.dataType = this.getDataType(params);
     this.currentForm = {};
 
     const formElement = this.getFormElementByType(this.dataType);
     console.log("handleShowForm", params);
+    console.log("dataType", this.dataType);
     console.log("formElement", formElement);
     this.$nextTick(() => {
       if (mode === $global.modeData.insert) {
         formElement.initialize();
       } else if (mode === $global.modeData.edit && params) {
         console.log("masuk ke edit");
-        formElement.form = this.populateForm(params);
+        this.loadEditData(params);
       }
     });
 
@@ -100,19 +99,21 @@ export default class Employee extends Vue {
   }
 
   handleSave(formData: any) {
-    const formattedData = this.formatFormData(formData, this.dataType);
+    const formattedData = this.formatData(formData);
 
     if (this.modeData === $global.modeData.insert) {
-      this.insertData(formattedData);
+      this.insertData(formattedData).then(() => {
+        this.showForm = false;
+      });
     } else {
-      this.updateData(formattedData);
+      this.updateData(formattedData).then(() => {
+        this.showForm = false;
+      });
     }
   }
 
   handleEdit(formData: any) {
-    console.log("handleEdit", formData);
-    this.dataType = this.getDataType(formData);
-    this.handleShowForm(formData, $global.modeData.edit, this.dataType);
+    this.handleShowForm(formData, $global.modeData.edit);
   }
 
   handleDelete(params: any) {
@@ -149,11 +150,7 @@ export default class Employee extends Vue {
         this.handleDelete(params.params);
         break;
       default:
-        this.handleShowForm(
-          params.params,
-          $global.modeData.insert,
-          params.type
-        );
+        this.handleShowForm(params.params, $global.modeData.insert);
     }
   }
 
@@ -173,11 +170,14 @@ export default class Employee extends Vue {
   // API REQUEST =======================================================
   async loadData() {
     try {
-      await Promise.all([
-        this.loadPositionData(),
-        this.loadDepartmentData(),
-        this.loadPlacementData(),
-      ]);
+      // await Promise.all([
+      //   this.loadPositionData(),
+      //   this.loadDepartmentData(),
+      //   this.loadPlacementData(),
+      // ]);
+
+      this.loadDropdown();
+      this.loadMockData();
     } catch (error) {
       getError(error);
     }
@@ -203,7 +203,7 @@ export default class Employee extends Vue {
     }
   }
 
-  async loadEditData(params: any, type: any) {
+  async loadEditData(params: any) {
     try {
       // for real implementation
       // if (type === "position") {
@@ -221,13 +221,41 @@ export default class Employee extends Vue {
       // }
 
       // for demo
-      const formElement = this.getFormElementByType(type);
-      if (!formElement) {
-        console.error(`Form element for ${type} not found`);
-        return;
-      }
+      switch (this.dataType) {
+        case "POSITION":
+          const position = this.rowPositionData.find(
+            (item: any) => item.id === params.id
+          );
 
-      // this.populateForm(params);
+          if (position) {
+            this.$nextTick(() => {
+              this.positionFormElement.form = this.populateForm(position);
+            });
+          }
+          break;
+        case "DEPARTMENT":
+          const department = this.rowPositionData.find(
+            (item: any) => item.id === params.id
+          );
+
+          if (department) {
+            this.$nextTick(() => {
+              this.departmentFormElement.form = this.populateForm(department);
+            });
+          }
+          break;
+        case "PLACEMENT":
+          const placement = this.rowPositionData.find(
+            (item: any) => item.id === params.id
+          );
+
+          if (placement) {
+            this.$nextTick(() => {
+              this.placementFormElement.form = this.populateForm(placement);
+            });
+          }
+          break;
+      }
     } catch (error) {
       getError(error);
     }
@@ -238,11 +266,11 @@ export default class Employee extends Vue {
       {
         id: 1,
         department_code: "D001",
-        name: "Executive",
+        department_name: "Executive",
         description: "Executive leadership team",
-        placement: "Amora Ubud",
-        manager: "John Smith",
-        supervisor: "Jane Doe",
+        placement_name: "Amora Ubud",
+        manager_name: "John Smith",
+        supervisor_name: "Jane Doe",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -252,11 +280,11 @@ export default class Employee extends Vue {
       {
         id: 2,
         department_code: "D002",
-        name: "Human Resources",
+        department_name: "Human Resources",
         description: "Employee recruitment, management, and development",
-        placement: "Amora Ubud",
-        manager: "Sarah Johnson",
-        supervisor: "Michael Brown",
+        placement_name: "Amora Ubud",
+        manager_name: "Sarah Johnson",
+        supervisor_name: "Michael Brown",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -266,11 +294,11 @@ export default class Employee extends Vue {
       {
         id: 3,
         department_code: "D003",
-        name: "Finance",
+        department_name: "Finance",
         description: "Financial management and accounting",
-        placement: "Amora Ubud",
-        manager: "Robert Chen",
-        supervisor: "Emily Davis",
+        placement_name: "Amora Ubud",
+        manager_name: "Robert Chen",
+        supervisor_name: "Emily Davis",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -280,11 +308,11 @@ export default class Employee extends Vue {
       {
         id: 4,
         department_code: "D004",
-        name: "Information Technology",
+        department_name: "Information Technology",
         description: "IT infrastructure and support",
-        placement: "Amora Ubud",
-        manager: "David Wilson",
-        supervisor: "Lisa Anderson",
+        placement_name: "Amora Ubud",
+        manager_name: "David Wilson",
+        supervisor_name: "Lisa Anderson",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -294,11 +322,11 @@ export default class Employee extends Vue {
       {
         id: 5,
         department_code: "D005",
-        name: "Marketing",
+        department_name: "Marketing",
         description: "Brand management and promotion",
-        placement: "Amora Canggu",
-        manager: "Jennifer Garcia",
-        supervisor: "Kevin Martinez",
+        placement_name: "Amora Canggu",
+        manager_name: "Jennifer Garcia",
+        supervisor_name: "Kevin Martinez",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -308,11 +336,11 @@ export default class Employee extends Vue {
       {
         id: 6,
         department_code: "D006",
-        name: "Sales",
+        department_name: "Sales",
         description: "Sales and business development",
-        placement: "Amora Canggu",
-        manager: "Thomas Wright",
-        supervisor: "Patricia Hall",
+        placement_name: "Amora Canggu",
+        manager_name: "Thomas Wright",
+        supervisor_name: "Patricia Hall",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -322,11 +350,11 @@ export default class Employee extends Vue {
       {
         id: 7,
         department_code: "D007",
-        name: "Operations",
+        department_name: "Operations",
         description: "Hotel operations management",
-        placement: "Amora Canggu",
-        manager: "Charles Lopez",
-        supervisor: "Nancy Young",
+        placement_name: "Amora Canggu",
+        manager_name: "Charles Lopez",
+        supervisor_name: "Nancy Young",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -336,11 +364,11 @@ export default class Employee extends Vue {
       {
         id: 8,
         department_code: "D008",
-        name: "Front Office",
+        department_name: "Front Office",
         description: "Reception, concierge, and guest services",
-        placement: "Amora Ubud",
-        manager: "Daniel Lee",
-        supervisor: "Susan Clark",
+        placement_name: "Amora Ubud",
+        manager_name: "Daniel Lee",
+        supervisor_name: "Susan Clark",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -350,11 +378,11 @@ export default class Employee extends Vue {
       {
         id: 9,
         department_code: "D009",
-        name: "Housekeeping",
+        department_name: "Housekeeping",
         description: "Room and public area cleaning and maintenance",
-        placement: "Amora Ubud",
-        manager: "Jessica Walker",
-        supervisor: "Brian Turner",
+        placement_name: "Amora Ubud",
+        manager_name: "Jessica Walker",
+        supervisor_name: "Brian Turner",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -364,11 +392,11 @@ export default class Employee extends Vue {
       {
         id: 10,
         department_code: "D010",
-        name: "Food & Beverage",
+        department_name: "Food & Beverage",
         description: "Restaurant, bar, and catering operations",
-        placement: "Amora Canggu",
-        manager: "Richard Baker",
-        supervisor: "Elizabeth Scott",
+        placement_name: "Amora Canggu",
+        manager_name: "Richard Baker",
+        supervisor_name: "Elizabeth Scott",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -378,11 +406,11 @@ export default class Employee extends Vue {
       {
         id: 11,
         department_code: "D011",
-        name: "Engineering",
+        department_name: "Engineering",
         description: "Facility maintenance and repairs",
-        placement: "Amora Ubud",
-        manager: "Andrew Miller",
-        supervisor: "Laura Nelson",
+        placement_name: "Amora Ubud",
+        manager_name: "Andrew Miller",
+        supervisor_name: "Laura Nelson",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -392,11 +420,11 @@ export default class Employee extends Vue {
       {
         id: 12,
         department_code: "D012",
-        name: "Security",
+        department_name: "Security",
         description: "Safety and security operations",
-        placement: "Amora Canggu",
-        manager: "James Carter",
-        supervisor: "Maria Gonzalez",
+        placement_name: "Amora Canggu",
+        manager_name: "James Carter",
+        supervisor_name: "Maria Gonzalez",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -406,11 +434,11 @@ export default class Employee extends Vue {
       {
         id: 13,
         department_code: "D013",
-        name: "Spa & Wellness",
+        department_name: "Spa & Wellness",
         description: "Spa services and wellness programs",
-        placement: "Amora Ubud",
-        manager: "Michelle Adams",
-        supervisor: "Samuel Green",
+        placement_name: "Amora Ubud",
+        manager_name: "Michelle Adams",
+        supervisor_name: "Samuel Green",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -420,11 +448,11 @@ export default class Employee extends Vue {
       {
         id: 14,
         department_code: "D014",
-        name: "Events & Conferences",
+        department_name: "Events & Conferences",
         description: "Event planning and execution",
-        placement: "Amora Canggu",
-        manager: "Christopher Hill",
-        supervisor: "Rebecca White",
+        placement_name: "Amora Canggu",
+        manager_name: "Christopher Hill",
+        supervisor_name: "Rebecca White",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -434,11 +462,11 @@ export default class Employee extends Vue {
       {
         id: 15,
         department_code: "D015",
-        name: "Training & Development",
+        department_name: "Training & Development",
         description: "Staff training and career development",
-        placement: "Amora Ubud",
-        manager: "Jonathan Evans",
-        supervisor: "Amanda Parker",
+        placement_name: "Amora Ubud",
+        manager_name: "Jonathan Evans",
+        supervisor_name: "Amanda Parker",
         status: false,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -450,11 +478,11 @@ export default class Employee extends Vue {
       {
         id: 1,
         position_code: "P001",
-        name: "Chief Executive Officer",
+        position_name: "Chief Executive Officer",
         description: "Overall company leadership and strategic direction",
         level: "1",
-        department: "Executive",
-        placement: "Amora Ubud",
+        department_name: "Executive",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -464,12 +492,12 @@ export default class Employee extends Vue {
       {
         id: 2,
         position_code: "P002",
-        name: "Chief Operating Officer",
+        position_name: "Chief Operating Officer",
         description:
           "Oversees daily operations and execution of strategic plans",
         level: "1",
-        department: "Executive",
-        placement: "Amora Ubud",
+        department_name: "Executive",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -479,11 +507,11 @@ export default class Employee extends Vue {
       {
         id: 3,
         position_code: "P003",
-        name: "Chief Financial Officer",
+        position_name: "Chief Financial Officer",
         description: "Financial planning, management, and reporting",
         level: "1",
         department: "Finance",
-        placement: "Amora Ubud",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -493,11 +521,11 @@ export default class Employee extends Vue {
       {
         id: 4,
         position_code: "P004",
-        name: "HR Director",
+        position_name: "HR Director",
         description: "Oversees human resources functions and strategy",
         level: "2",
-        department: "Human Resources",
-        placement: "Amora Ubud",
+        department_name: "Human Resources",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -507,11 +535,11 @@ export default class Employee extends Vue {
       {
         id: 5,
         position_code: "P005",
-        name: "IT Director",
+        position_name: "IT Director",
         description: "Leads IT strategy and operations",
         level: "2",
-        department: "Information Technology",
-        placement: "Amora Ubud",
+        department_name: "Information Technology",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -521,12 +549,12 @@ export default class Employee extends Vue {
       {
         id: 6,
         position_code: "P006",
-        name: "Marketing Director",
+        position_name: "Marketing Director",
         description:
           "Responsible for marketing strategies and brand management",
         level: "2",
-        department: "Marketing",
-        placement: "Amora Canggu",
+        department_name: "Marketing",
+        placement_name: "Amora Canggu",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -536,11 +564,11 @@ export default class Employee extends Vue {
       {
         id: 7,
         position_code: "P007",
-        name: "Operations Manager",
+        position_name: "Operations Manager",
         description: "Manages daily hotel operations and staff",
         level: "3",
-        department: "Operations",
-        placement: "Amora Canggu",
+        department_name: "Operations",
+        placement_name: "Amora Canggu",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -550,11 +578,11 @@ export default class Employee extends Vue {
       {
         id: 8,
         position_code: "P008",
-        name: "Front Office Manager",
+        position_name: "Front Office Manager",
         description: "Supervises reception, concierge, and guest services",
         level: "3",
-        department: "Front Office",
-        placement: "Amora Canggu",
+        department_name: "Front Office",
+        placement_name: "Amora Canggu",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -564,12 +592,12 @@ export default class Employee extends Vue {
       {
         id: 9,
         position_code: "P009",
-        name: "Housekeeping Manager",
+        position_name: "Housekeeping Manager",
         description:
           "Oversees cleaning and maintenance of rooms and public areas",
         level: "3",
-        department: "Housekeeping",
-        placement: "Amora Ubud",
+        department_name: "Housekeeping",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -579,11 +607,11 @@ export default class Employee extends Vue {
       {
         id: 10,
         position_code: "P010",
-        name: "Executive Chef",
+        position_name: "Executive Chef",
         description: "Leads culinary team and menu development",
         level: "3",
-        department: "Food & Beverage",
-        placement: "Amora Ubud",
+        department_name: "Food & Beverage",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -593,11 +621,11 @@ export default class Employee extends Vue {
       {
         id: 11,
         position_code: "P011",
-        name: "HR Manager",
+        position_name: "HR Manager",
         description: "Manages recruitment, training, and employee relations",
         level: "3",
-        department: "Human Resources",
-        placement: "Amora Canggu",
+        department_name: "Human Resources",
+        placement_name: "Amora Canggu",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -607,11 +635,11 @@ export default class Employee extends Vue {
       {
         id: 12,
         position_code: "P012",
-        name: "IT Manager",
+        position_name: "IT Manager",
         description: "Manages IT infrastructure and support",
         level: "3",
-        department: "Information Technology",
-        placement: "Amora Canggu",
+        department_name: "Information Technology",
+        placement_name: "Amora Canggu",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -621,11 +649,11 @@ export default class Employee extends Vue {
       {
         id: 13,
         position_code: "P013",
-        name: "Accounting Manager",
+        position_name: "Accounting Manager",
         description: "Oversees accounting functions and financial reporting",
         level: "3",
-        department: "Finance",
-        placement: "Amora Ubud",
+        department_name: "Finance",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -635,11 +663,11 @@ export default class Employee extends Vue {
       {
         id: 14,
         position_code: "P014",
-        name: "Front Desk Supervisor",
+        position_name: "Front Desk Supervisor",
         description: "Supervises front desk staff and operations",
         level: "4",
-        department: "Front Office",
-        placement: "Amora Ubud",
+        department_name: "Front Office",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -649,11 +677,11 @@ export default class Employee extends Vue {
       {
         id: 15,
         position_code: "P015",
-        name: "Restaurant Manager",
+        position_name: "Restaurant Manager",
         description: "Manages restaurant operations and staff",
         level: "4",
-        department: "Food & Beverage",
-        placement: "Amora Canggu",
+        department_name: "Food & Beverage",
+        placement_name: "Amora Canggu",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -663,11 +691,11 @@ export default class Employee extends Vue {
       {
         id: 16,
         position_code: "P016",
-        name: "HR Specialist",
+        position_name: "HR Specialist",
         description: "Handles recruitment and employee relations",
         level: "4",
-        department: "Human Resources",
-        placement: "Amora Ubud",
+        department_name: "Human Resources",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -677,11 +705,11 @@ export default class Employee extends Vue {
       {
         id: 17,
         position_code: "P017",
-        name: "IT Support Specialist",
+        position_name: "IT Support Specialist",
         description: "Provides technical support and troubleshooting",
         level: "4",
-        department: "Information Technology",
-        placement: "Amora Canggu",
+        department_name: "Information Technology",
+        placement_name: "Amora Canggu",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -691,11 +719,11 @@ export default class Employee extends Vue {
       {
         id: 18,
         position_code: "P018",
-        name: "Accountant",
+        position_name: "Accountant",
         description: "Handles financial transactions and reporting",
         level: "4",
-        department: "Finance",
-        placement: "Amora Canggu",
+        department_name: "Finance",
+        placement_name: "Amora Canggu",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -705,11 +733,11 @@ export default class Employee extends Vue {
       {
         id: 19,
         position_code: "P019",
-        name: "Front Desk Agent",
+        position_name: "Front Desk Agent",
         description: "Handles check-in/check-out and guest inquiries",
         level: "5",
-        department: "Front Office",
-        placement: "Amora Ubud",
+        department_name: "Front Office",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -719,11 +747,11 @@ export default class Employee extends Vue {
       {
         id: 20,
         position_code: "P020",
-        name: "Server",
+        position_name: "Server",
         description: "Provides food and beverage service to guests",
         level: "5",
-        department: "Food & Beverage",
-        placement: "Amora Ubud",
+        department_name: "Food & Beverage",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -733,11 +761,11 @@ export default class Employee extends Vue {
       {
         id: 21,
         position_code: "P021",
-        name: "Housekeeper",
+        position_name: "Housekeeper",
         description: "Cleans and maintains guest rooms",
         level: "5",
-        department: "Housekeeping",
-        placement: "Amora Canggu",
+        department_name: "Housekeeping",
+        placement_name: "Amora Canggu",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -747,11 +775,11 @@ export default class Employee extends Vue {
       {
         id: 22,
         position_code: "P022",
-        name: "Marketing Coordinator",
+        position_name: "Marketing Coordinator",
         description: "Implements marketing campaigns and social media",
         level: "4",
-        department: "Marketing",
-        placement: "Amora Ubud",
+        department_name: "Marketing",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -761,11 +789,11 @@ export default class Employee extends Vue {
       {
         id: 23,
         position_code: "P023",
-        name: "Sales Executive",
+        position_name: "Sales Executive",
         description: "Handles client relationships and sales",
         level: "4",
-        department: "Sales",
-        placement: "Amora Canggu",
+        department_name: "Sales",
+        placement_name: "Amora Canggu",
         status: false,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -775,11 +803,11 @@ export default class Employee extends Vue {
       {
         id: 24,
         position_code: "P024",
-        name: "Security Officer",
+        position_name: "Security Officer",
         description: "Ensures safety and security of premises",
         level: "5",
-        department: "Security",
-        placement: "Amora Ubud",
+        department_name: "Security",
+        placement_name: "Amora Ubud",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -789,11 +817,11 @@ export default class Employee extends Vue {
       {
         id: 25,
         position_code: "P025",
-        name: "Maintenance Technician",
+        position_name: "Maintenance Technician",
         description: "Performs repairs and preventive maintenance",
         level: "5",
-        department: "Engineering",
-        placement: "Amora Canggu",
+        department_name: "Engineering",
+        placement_name: "Amora Canggu",
         status: true,
         created_at: "2023-01-01 08:00:00",
         created_by: "Admin System",
@@ -805,9 +833,9 @@ export default class Employee extends Vue {
       {
         id: 1,
         placement_code: "PL001",
-        name: "Amora Ubud",
-        country: "Indonesia",
-        city: "Bali",
+        placement_name: "Amora Ubud",
+        country_name: "Indonesia",
+        city_name: "Bali",
         address: "Jl. Raya Ubud No. 88, Ubud, Gianyar, Bali 80571",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -818,9 +846,9 @@ export default class Employee extends Vue {
       {
         id: 2,
         placement_code: "PL002",
-        name: "Amora Canggu",
-        country: "Indonesia",
-        city: "Bali",
+        placement_name: "Amora Canggu",
+        country_name: "Indonesia",
+        city_name: "Bali",
         address:
           "Jl. Pantai Batu Bolong No. 99, Canggu, Kuta Utara, Badung, Bali 80361",
         status: true,
@@ -832,9 +860,9 @@ export default class Employee extends Vue {
       {
         id: 3,
         placement_code: "PL003",
-        name: "Amora Seminyak",
-        country: "Indonesia",
-        city: "Bali",
+        placement_name: "Amora Seminyak",
+        country_name: "Indonesia",
+        city_name: "Bali",
         address: "Jl. Kayu Aya No. 123, Seminyak, Kuta, Badung, Bali 80361",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -845,9 +873,9 @@ export default class Employee extends Vue {
       {
         id: 4,
         placement_code: "PL004",
-        name: "Amora Nusa Dua",
-        country: "Indonesia",
-        city: "Bali",
+        placement_name: "Amora Nusa Dua",
+        country_name: "Indonesia",
+        city_name: "Bali",
         address: "Jl. Nusa Dua No. 45, BTDC, Nusa Dua, Bali 80363",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -858,9 +886,9 @@ export default class Employee extends Vue {
       {
         id: 5,
         placement_code: "PL005",
-        name: "Amora Jakarta",
-        country: "Indonesia",
-        city: "Jakarta",
+        placement_name: "Amora Jakarta",
+        country_name: "Indonesia",
+        city_name: "Jakarta",
         address: "Jl. Jendral Sudirman Kav. 52-53, Jakarta Selatan 12190",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -871,9 +899,9 @@ export default class Employee extends Vue {
       {
         id: 6,
         placement_code: "PL006",
-        name: "Amora Yogyakarta",
-        country: "Indonesia",
-        city: "Yogyakarta",
+        placement_name: "Amora Yogyakarta",
+        country_name: "Indonesia",
+        city_name: "Yogyakarta",
         address: "Jl. Malioboro No. 77, Yogyakarta 55271",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -884,9 +912,9 @@ export default class Employee extends Vue {
       {
         id: 7,
         placement_code: "PL007",
-        name: "Amora Bandung",
-        country: "Indonesia",
-        city: "Bandung",
+        placement_name: "Amora Bandung",
+        country_name: "Indonesia",
+        city_name: "Bandung",
         address: "Jl. Asia Afrika No. 100, Bandung 40112",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -897,9 +925,9 @@ export default class Employee extends Vue {
       {
         id: 8,
         placement_code: "PL008",
-        name: "Amora Surabaya",
-        country: "Indonesia",
-        city: "Surabaya",
+        placement_name: "Amora Surabaya",
+        country_name: "Indonesia",
+        city_name: "Surabaya",
         address: "Jl. Embong Malang No. 55, Surabaya 60261",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -910,9 +938,9 @@ export default class Employee extends Vue {
       {
         id: 9,
         placement_code: "PL009",
-        name: "Amora Makassar",
-        country: "Indonesia",
-        city: "Makassar",
+        placement_name: "Amora Makassar",
+        country_name: "Indonesia",
+        city_name: "Makassar",
         address: "Jl. Penghibur No. 33, Makassar 90111",
         status: false,
         created_at: "2023-01-01 08:00:00",
@@ -923,9 +951,9 @@ export default class Employee extends Vue {
       {
         id: 10,
         placement_code: "PL010",
-        name: "Amora Singapore",
-        country: "Singapore",
-        city: "Singapore",
+        placement_name: "Amora Singapore",
+        country_name: "Singapore",
+        city_name: "Singapore",
         address: "88 Orchard Road, Singapore 238890",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -936,9 +964,9 @@ export default class Employee extends Vue {
       {
         id: 11,
         placement_code: "PL011",
-        name: "Amora Kuala Lumpur",
-        country: "Malaysia",
-        city: "Kuala Lumpur",
+        placement_name: "Amora Kuala Lumpur",
+        country_name: "Malaysia",
+        city_name: "Kuala Lumpur",
         address: "123 Jalan Bukit Bintang, Kuala Lumpur 55100",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -949,9 +977,9 @@ export default class Employee extends Vue {
       {
         id: 12,
         placement_code: "PL012",
-        name: "Amora Bangkok",
-        country: "Thailand",
-        city: "Bangkok",
+        placement_name: "Amora Bangkok",
+        country_name: "Thailand",
+        city_name: "Bangkok",
         address: "789 Sukhumvit Road, Watthana, Bangkok 10110",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -962,9 +990,9 @@ export default class Employee extends Vue {
       {
         id: 13,
         placement_code: "PL013",
-        name: "Amora Phuket",
-        country: "Thailand",
-        city: "Phuket",
+        placement_name: "Amora Phuket",
+        country_name: "Thailand",
+        city_name: "Phuket",
         address: "45 Patong Beach Road, Patong, Phuket 83150",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -975,9 +1003,9 @@ export default class Employee extends Vue {
       {
         id: 14,
         placement_code: "PL014",
-        name: "Amora Manila",
-        country: "Philippines",
-        city: "Manila",
+        placement_name: "Amora Manila",
+        country_name: "Philippines",
+        city_name: "Manila",
         address: "567 Makati Avenue, Makati City, Manila 1200",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -988,9 +1016,9 @@ export default class Employee extends Vue {
       {
         id: 15,
         placement_code: "PL015",
-        name: "Amora Ho Chi Minh",
-        country: "Vietnam",
-        city: "Ho Chi Minh",
+        placement_name: "Amora Ho Chi Minh",
+        country_name: "Vietnam",
+        city_name: "Ho Chi Minh",
         address: "321 Nguyen Hue Boulevard, District 1, Ho Chi Minh City",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -1001,9 +1029,9 @@ export default class Employee extends Vue {
       {
         id: 16,
         placement_code: "PL016",
-        name: "Amora Hong Kong",
-        country: "Hong Kong",
-        city: "Hong Kong",
+        placement_name: "Amora Hong Kong",
+        country_name: "Hong Kong",
+        city_name: "Hong Kong",
         address: "88 Nathan Road, Tsim Sha Tsui, Kowloon, Hong Kong",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -1014,9 +1042,9 @@ export default class Employee extends Vue {
       {
         id: 17,
         placement_code: "PL017",
-        name: "Amora Tokyo",
-        country: "Japan",
-        city: "Tokyo",
+        placement_name: "Amora Tokyo",
+        country_name: "Japan",
+        city_name: "Tokyo",
         address: "1-1-1 Roppongi, Minato-ku, Tokyo 106-0032",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -1027,9 +1055,9 @@ export default class Employee extends Vue {
       {
         id: 18,
         placement_code: "PL018",
-        name: "Amora Sydney",
-        country: "Australia",
-        city: "Sydney",
+        placement_name: "Amora Sydney",
+        country_name: "Australia",
+        city_name: "Sydney",
         address: "123 George Street, Sydney, NSW 2000",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -1040,9 +1068,9 @@ export default class Employee extends Vue {
       {
         id: 19,
         placement_code: "PL019",
-        name: "Amora Melbourne",
-        country: "Australia",
-        city: "Melbourne",
+        placement_name: "Amora Melbourne",
+        country_name: "Australia",
+        city_name: "Melbourne",
         address: "456 Collins Street, Melbourne, VIC 3000",
         status: true,
         created_at: "2023-01-01 08:00:00",
@@ -1053,9 +1081,9 @@ export default class Employee extends Vue {
       {
         id: 20,
         placement_code: "PL020",
-        name: "Amora Auckland",
-        country: "New Zealand",
-        city: "Auckland",
+        placement_name: "Amora Auckland",
+        country_name: "New Zealand",
+        city_name: "Auckland",
         address: "789 Queen Street, Auckland 1010",
         status: false,
         created_at: "2023-01-01 08:00:00",
@@ -1251,7 +1279,7 @@ export default class Employee extends Vue {
           const newPosition = {
             id: formData.id,
             position_code: formData.position_code,
-            name: formData.name,
+            position_name: formData.position_name,
             description: formData.description,
             level: formData.level,
             department: formData.department,
@@ -1271,11 +1299,11 @@ export default class Employee extends Vue {
           const newDepartment = {
             id: formData.id,
             department_code: formData.department_code,
-            name: formData.name,
+            department_name: formData.department_name,
             description: formData.description,
             placement: formData.placement,
-            manager: formData.manager,
-            supervisor: formData.supervisor,
+            manager_name: formData.manager_name,
+            supervisor_name: formData.supervisor_name,
             status: formData.status ? "A" : "I",
             created_at: formatDateTimeUTC(new Date()),
             created_by: "Current User",
@@ -1290,9 +1318,9 @@ export default class Employee extends Vue {
           const newPlacement = {
             id: formData.id,
             placement_code: formData.placement_code,
-            name: formData.name,
-            country: formData.country,
-            city: formData.city,
+            placement_name: formData.placement_name,
+            country_name: formData.country_name,
+            city_name: formData.city_name,
             address: formData.address,
             status: formData.status ? "A" : "I",
             created_at: formatDateTimeUTC(new Date()),
@@ -1307,8 +1335,7 @@ export default class Employee extends Vue {
       }
 
       await this.$nextTick();
-      this.loadDataGrid();
-      this.showForm = false;
+      await this.loadDataGrid();
     } catch (error) {
       getError(error);
     }
@@ -1356,7 +1383,7 @@ export default class Employee extends Vue {
             this.rowPositionData[iPos] = {
               ...this.rowPositionData[iPos],
               position_code: this.rowPositionData[iPos].position_code,
-              name: this.rowPositionData[iPos].name,
+              position_name: this.rowPositionData[iPos].position_name,
               description: this.rowPositionData[iPos].description,
               level: this.rowPositionData[iPos].level,
               department: this.rowPositionData[iPos].department,
@@ -1377,11 +1404,11 @@ export default class Employee extends Vue {
             this.rowDepartmentData[iDep] = {
               ...this.rowDepartmentData[iDep],
               department_code: this.rowDepartmentData[iDep].department_code,
-              name: this.rowDepartmentData[iDep].name,
+              department_name: this.rowDepartmentData[iDep].department_name,
               description: this.rowDepartmentData[iDep].description,
               placement: this.rowDepartmentData[iDep].placement,
-              manager: this.rowDepartmentData[iDep].manager,
-              supervisor: this.rowDepartmentData[iDep].supervisor,
+              manager_name: this.rowDepartmentData[iDep].manager_name,
+              supervisor_name: this.rowDepartmentData[iDep].supervisor_name,
               status: this.rowDepartmentData[iDep].status ? "A" : "I",
               updated_at: formatDateTimeUTC(new Date()),
               updated_by: "Current User",
@@ -1400,9 +1427,9 @@ export default class Employee extends Vue {
             this.rowPlacementData[iPlc] = {
               ...this.rowPlacementData[iPlc],
               placement_code: this.rowPlacementData[iPlc].placement_code,
-              name: this.rowPlacementData[iPlc].name,
-              country: this.rowPlacementData[iPlc].country,
-              city: this.rowPlacementData[iPlc].city,
+              placement_name: this.rowPlacementData[iPlc].placement_name,
+              country_name: this.rowPlacementData[iPlc].country_name,
+              city_name: this.rowPlacementData[iPlc].city_name,
               address: this.rowPlacementData[iPlc].address,
               status: this.rowPlacementData[iPlc].status ? "A" : "I",
               updated_at: formatDateTimeUTC(new Date()),
@@ -1511,139 +1538,126 @@ export default class Employee extends Vue {
   }
 
   populateForm(params: any) {
-    this.$nextTick(() => {
-      switch (this.dataType) {
-        case "POSITION":
-          this.$refs.positionFormElement = {
-            id: params.id,
-            position_code: params.position_code,
-            name: params.name,
-            description: params.description,
-            level: params.level,
-            department: params.department,
-            placement: params.placement,
-            status: params.status ? "A" : "I",
-          };
-          break;
-        case "DEPARTMENT":
-          this.$refs.departmentFormElement = {
-            id: params.id,
-            department_code: params.department_code,
-            name: params.name,
-            description: params.description,
-            placement: params.placement,
-            manager: params.manager,
-            supervisor: params.supervisor,
-            status: params.status ? "A" : "I",
-          };
-          break;
-        case "PLACEMENT":
-          this.$refs.placementFormElement = {
-            id: params.id,
-            placement_code: params.placement_code,
-            name: params.name,
-            country: params.country,
-            city: params.city,
-            address: params.address,
-            status: params.status ? "A" : "I",
-          };
-          break;
-      }
-    });
+    switch (this.dataType) {
+      case "POSITION":
+        return {
+          id: params.id,
+          position_code: params.position_code,
+          position_name: params.position_name,
+          description: params.description,
+          level: params.level,
+          department_code: params.department_code,
+          department_name: params.department_name,
+          placement_code: params.placement_code,
+          placement_name: params.placement_name,
+          status: params.status ? "A" : "I",
+        };
+      case "DEPARTMENT":
+        return {
+          id: params.id,
+          department_code: params.department_code,
+          department_name: params.department_name,
+          description: params.description,
+          placement_code: params.placement_code,
+          placement_name: params.placement_name,
+          manager_id: params.manager_id,
+          manager_name: params.manager_name,
+          supervisor_id: params.supervisor_id,
+          supervisor_name: params.supervisor_name,
+          status: params.status ? "A" : "I",
+        };
+      case "PLACEMENT":
+        return {
+          id: params.id,
+          placement_code: params.placement_code,
+          placement_name: params.placement_name,
+          country_code: params.country_code,
+          country_name: params.country_name,
+          city_code: params.city_code,
+          city_name: params.city_name,
+          address: params.address,
+          status: params.status ? "A" : "I",
+        };
+    }
   }
 
-  formatFormData(params: any, type: string): any {
-    let formatted: any;
-    switch (type) {
+  formatData(params: any): any {
+    switch (this.dataType) {
       case "POSITION":
-        formatted = this.formatPositionData(params);
-        break;
+        return {
+          id: params.id,
+          position_code: params.position_code,
+          position_name: params.position_name,
+          description: params.description,
+          level: params.level,
+          department_code: params.department_code,
+          department_name: params.department_name,
+          placement_code: params.placement_code,
+          placement_name: params.placement_name,
+          status: params.status === "A",
+          created_at: params.id
+            ? undefined
+            : new Date().toISOString().split("T")[0] +
+              " " +
+              new Date().toTimeString().split(" ")[0],
+          created_by: params.id ? undefined : "Current User",
+          updated_at:
+            new Date().toISOString().split("T")[0] +
+            " " +
+            new Date().toTimeString().split(" ")[0],
+          updated_by: "Current User",
+        };
       case "DEPARTMENT":
-        formatted = this.formatDepartmentData(params);
-        break;
+        return {
+          id: params.id,
+          department_code: params.department_code,
+          department_name: params.department_name,
+          description: params.description,
+          placement_code: params.placement_code,
+          placement_name: params.placement_name,
+          manager_id: params.manager_id,
+          manager_name: params.manager_name,
+          supervisor_id: params.supervisor_id,
+          supervisor_name: params.supervisor_name,
+          status: params.status === "A",
+          created_at: params.id
+            ? undefined
+            : new Date().toISOString().split("T")[0] +
+              " " +
+              new Date().toTimeString().split(" ")[0],
+          created_by: params.id ? undefined : "Current User",
+          updated_at:
+            new Date().toISOString().split("T")[0] +
+            " " +
+            new Date().toTimeString().split(" ")[0],
+          updated_by: "Current User",
+        };
       case "PLACEMENT":
-        formatted = this.formatPlacement(params);
-        break;
+        return {
+          id: params.id,
+          placement_code: params.placement_code,
+          placement_name: params.placement_name,
+          country_code: params.country_code,
+          country_name: params.country_name,
+          city_code: params.city_code,
+          city_name: params.city_name,
+          address: params.address,
+          status: params.status === "A",
+          created_at: params.id
+            ? undefined
+            : new Date().toISOString().split("T")[0] +
+              " " +
+              new Date().toTimeString().split(" ")[0],
+          created_by: params.id ? undefined : "Current User",
+          updated_at:
+            new Date().toISOString().split("T")[0] +
+            " " +
+            new Date().toTimeString().split(" ")[0],
+          updated_by: "Current User",
+        };
       default:
         throw new Error("Unknown form type");
     }
-
-    if (params.id) {
-      formatted.id = params.id;
-    }
-
-    return formatted;
-  }
-
-  formatPositionData(params: any) {
-    return {
-      id: params.id,
-      position_code: params.posiditon_code,
-      name: params.name,
-      description: params.description,
-      level: params.level,
-      department: params.department,
-      placement: params.placement,
-      status: params.status === "A",
-      created_at: params.id
-        ? undefined
-        : new Date().toISOString().split("T")[0] +
-          " " +
-          new Date().toTimeString().split(" ")[0],
-      created_by: params.id ? undefined : "Current User",
-      updated_at:
-        new Date().toISOString().split("T")[0] +
-        " " +
-        new Date().toTimeString().split(" ")[0],
-      updated_by: "Current User",
-    };
-  }
-
-  formatDepartmentData(params: any) {
-    return {
-      id: params.id,
-      department_code: params.department_code,
-      name: params.name,
-      description: params.description,
-      placement: params.placement,
-      manager: params.manager,
-      supervisor: params.supervisor,
-      status: params.status === "A",
-      created_at: params.id
-        ? undefined
-        : new Date().toISOString().split("T")[0] +
-          " " +
-          new Date().toTimeString().split(" ")[0],
-      created_by: params.id ? undefined : "Current User",
-      updated_at:
-        new Date().toISOString().split("T")[0] +
-        " " +
-        new Date().toTimeString().split(" ")[0],
-      updated_by: "Current User",
-    };
-  }
-
-  formatPlacement(params: any) {
-    return {
-      id: params.id,
-      placement_code: params.placement_code,
-      name: params.name,
-      country: params.country,
-      city: params.city,
-      address: params.address,
-      status: params.status === "A",
-      created_at: params.id
-        ? undefined
-        : new Date().toISOString().split("T")[0] +
-          " " +
-          new Date().toTimeString().split(" ")[0],
-      created_by: params.id ? undefined : "Current User",
-      updated_at:
-        new Date().toISOString().split("T")[0] +
-        " " +
-        new Date().toTimeString().split(" ")[0],
-      updated_by: "Current User",
-    };
   }
 
   getDataType(params: any): string {
@@ -1672,11 +1686,11 @@ export default class Employee extends Vue {
   getFormElementByType(type: string): any {
     switch (type) {
       case "POSITION":
-        return this.$refs.positionFormElement;
+        return this.positionFormElement;
       case "DEPARTMENT":
-        return this.$refs.departmentFormElement;
+        return this.departmentFormElement;
       case "PLACEMENT":
-        return this.$refs.placementFormElement;
+        return this.placementFormElement;
       default:
         console.info(`Unknown form type: ${type}`);
         return null;

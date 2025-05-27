@@ -18,7 +18,7 @@
             id="PositionCode"
             class="row mb-1"
             :label="$t('labels.payroll.employee.code')"
-            v-model="form.positionCode"
+            v-model="form.position_code"
           />
         </div>
         <div class="col-md-4">
@@ -29,7 +29,7 @@
             id="PositionName"
             class="row mb-1"
             :label="$t('labels.payroll.employee.positionName')"
-            v-model="form.name"
+            v-model="form.position_name"
           />
         </div>
         <div class="col-md-4">
@@ -65,7 +65,7 @@
             name="positionDepartment"
             labelName="name"
             keyName="code"
-            v-model="form.department"
+            v-model="form.department_code"
             :label="$t('labels.payroll.employee.department')"
             :options="positionDepartmentOptions"
             :columnOptions="columnOptions"
@@ -82,7 +82,7 @@
             name="positionPlacement"
             labelName="name"
             keyName="code"
-            v-model="form.placement"
+            v-model="form.placement_code"
             :label="$t('labels.payroll.employee.placement')"
             :options="positionPlacementOptions"
             :columnOptions="columnOptions"
