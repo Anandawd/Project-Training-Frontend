@@ -241,7 +241,7 @@ export default class Organizaation extends Vue {
           }
           break;
         case "DEPARTMENT":
-          const department = this.rowPositionData.find(
+          const department = this.rowDepartmentData.find(
             (item: any) => item.id === params.id
           );
 
@@ -252,7 +252,7 @@ export default class Organizaation extends Vue {
           }
           break;
         case "PLACEMENT":
-          const placement = this.rowPositionData.find(
+          const placement = this.rowPlacementData.find(
             (item: any) => item.id === params.id
           );
 
@@ -1113,8 +1113,6 @@ export default class Organizaation extends Vue {
 
   async insertData(formData: any) {
     try {
-      formData.id = this.generateUniqueId(this.dataType);
-
       // for real implementation
       // if (formType === "position") {
       //   const { status2 } = await organizationAPI.InsertPosition(formData);
@@ -1145,6 +1143,8 @@ export default class Organizaation extends Vue {
       //   }
       // }
 
+      formData.id = this.generateUniqueId(this.dataType);
+
       // for demo
       switch (this.dataType) {
         case "POSITION":
@@ -1161,20 +1161,17 @@ export default class Organizaation extends Vue {
             position_name: formData.position_name,
             description: formData.description,
             level: formData.level,
-            department_code: selectedDepartment.code,
-            department_name: selectedDepartment.name,
-            placement_code: pSelectedPlacement.code,
-            placement_name: pSelectedPlacement.name,
-            status: formData.status ? "A" : "I",
+            department_code: selectedDepartment ? selectedDepartment.code : "",
+            department_name: selectedDepartment ? selectedDepartment.name : "",
+            placement_code: pSelectedPlacement ? pSelectedPlacement.code : "",
+            placement_name: pSelectedPlacement ? pSelectedPlacement.name : "",
+            status: formData.status === "A",
             created_at: formatDateTimeUTC(new Date()),
             created_by: "Current User",
             updated_at: formatDateTimeUTC(new Date()),
             updated_by: "Current User",
           };
-
           this.rowPositionData.push(newPosition);
-
-          console.log("insertData position", this.rowPositionData);
 
           getToastSuccess(this.$t("messages.employee.success.savePosition"));
           break;
@@ -1195,13 +1192,13 @@ export default class Organizaation extends Vue {
             department_code: formData.department_code,
             department_name: formData.department_name,
             description: formData.description,
-            placement_code: dSelectedPlacement.code,
-            placement_name: dSelectedPlacement.name,
-            manager_id: selectedManager.code,
-            manager_name: selectedManager.name,
-            supervisor_id: selectedSupervisor.code,
-            supervisor_name: selectedSupervisor.name,
-            status: formData.status ? "A" : "I",
+            placement_code: dSelectedPlacement ? dSelectedPlacement.code : "",
+            placement_name: dSelectedPlacement ? dSelectedPlacement.name : "",
+            manager_id: selectedManager ? selectedManager.code : "",
+            manager_name: selectedManager ? selectedManager.name : "",
+            supervisor_id: selectedSupervisor ? selectedSupervisor.code : "",
+            supervisor_name: selectedSupervisor ? selectedSupervisor.name : "",
+            status: formData.status === "A",
             created_at: formatDateTimeUTC(new Date()),
             created_by: "Current User",
             updated_at: formatDateTimeUTC(new Date()),
@@ -1212,10 +1209,10 @@ export default class Organizaation extends Vue {
           getToastSuccess(this.$t("messages.employee.success.saveDepartment"));
           break;
         case "PLACEMENT":
-          const selectedCountry = this.supervisorOptions.find(
+          const selectedCountry = this.countryOptions.find(
             (item: any) => item.code === formData.country_code
           );
-          const selectedCity = this.supervisorOptions.find(
+          const selectedCity = this.cityOptions.find(
             (item: any) => item.code === formData.city_code
           );
 
@@ -1223,12 +1220,12 @@ export default class Organizaation extends Vue {
             id: formData.id,
             placement_code: formData.placement_code,
             placement_name: formData.placement_name,
-            country_code: selectedCountry.code,
-            country_name: selectedCountry.name,
-            city_code: selectedCity.code,
-            city_name: selectedCity.name,
+            country_code: selectedCountry ? selectedCountry.code : "",
+            country_name: selectedCountry ? selectedCountry.name : "",
+            city_code: selectedCity ? selectedCity.code : "",
+            city_name: selectedCity ? selectedCity.name : "",
             address: formData.address,
-            status: formData.status ? "A" : "I",
+            status: formData.status === "A",
             created_at: formatDateTimeUTC(new Date()),
             created_by: "Current User",
             updated_at: formatDateTimeUTC(new Date()),
@@ -1286,17 +1283,28 @@ export default class Organizaation extends Vue {
             (item: any) => item.id === formData.id
           );
           if (iPos !== -1) {
+            const selectedDepartment = this.departmentOptions.find(
+              (item: any) => item.code === formData.department_code
+            );
+            const pSelectedPlacement = this.placementOptions.find(
+              (item: any) => item.code === formData.placement_code
+            );
+
             this.rowPositionData[iPos] = {
               ...this.rowPositionData[iPos],
-              position_code: this.rowPositionData[iPos].position_code,
-              position_name: this.rowPositionData[iPos].position_name,
-              description: this.rowPositionData[iPos].description,
-              level: this.rowPositionData[iPos].level,
-              department_code: this.rowPositionData[iPos].department_code,
-              department_name: this.rowPositionData[iPos].department_name,
-              placement_code: this.rowPositionData[iPos].placement_code,
-              placement_name: this.rowPositionData[iPos].placement_name,
-              status: this.rowPositionData[iPos].status ? "A" : "I",
+              position_code: formData.position_code,
+              position_name: formData.position_name,
+              description: formData.description,
+              level: formData.level,
+              department_code: formData.department_code,
+              department_name: selectedDepartment
+                ? selectedDepartment.name
+                : this.rowPositionData[iPos].department_name,
+              placement_code: formData.placement_code,
+              placement_name: pSelectedPlacement
+                ? pSelectedPlacement.name
+                : this.rowPositionData[iPos].placement_name,
+              status: formData.status === "A",
               updated_at: formatDateTimeUTC(new Date()),
               updated_by: "Current User",
             };
@@ -1308,19 +1316,35 @@ export default class Organizaation extends Vue {
           const iDep = this.rowPositionData.findIndex(
             (item: any) => item.id === formData.id
           );
+
+          const dSelectedPlacement = this.placementOptions.find(
+            (item: any) => item.code === formData.placement_code
+          );
+          const selectedManager = this.managerOptions.find(
+            (item: any) => item.code === formData.manager_code
+          );
+          const selectedSupervisor = this.supervisorOptions.find(
+            (item: any) => item.code === formData.supervisor_code
+          );
           if (iDep !== -1) {
             this.rowDepartmentData[iDep] = {
               ...this.rowDepartmentData[iDep],
-              department_code: this.rowDepartmentData[iDep].department_code,
-              department_name: this.rowDepartmentData[iDep].department_name,
-              description: this.rowDepartmentData[iDep].description,
-              placement_code: this.rowDepartmentData[iDep].placement_code,
-              placement_name: this.rowDepartmentData[iDep].placement_name,
-              manager_id: this.rowDepartmentData[iDep].manager_id,
-              manager_name: this.rowDepartmentData[iDep].manager_name,
-              supervisor_id: this.rowDepartmentData[iDep].supervisor_id,
-              supervisor_name: this.rowDepartmentData[iDep].supervisor_name,
-              status: this.rowDepartmentData[iDep].status ? "A" : "I",
+              department_code: formData.department_code,
+              department_name: formData.department_name,
+              description: formData.description,
+              placement_code: formData.placement_code,
+              placement_name: dSelectedPlacement
+                ? dSelectedPlacement.name
+                : this.rowDepartmentData[iDep].placement_name,
+              manager_id: formData.manager_code,
+              manager_name: selectedManager
+                ? selectedManager.name
+                : this.rowDepartmentData[iDep].manager_name,
+              supervisor_id: formData.supervisor_code,
+              supervisor_name: selectedSupervisor
+                ? selectedSupervisor.name
+                : this.rowDepartmentData[iDep].supervisor_name,
+              status: formData.status === "A",
               updated_at: formatDateTimeUTC(new Date()),
               updated_by: "Current User",
             };
@@ -1334,17 +1358,29 @@ export default class Organizaation extends Vue {
           const iPlc = this.rowPositionData.findIndex(
             (item: any) => item.id === formData.id
           );
+
+          const selectedCountry = this.countryOptions.find(
+            (item: any) => item.code === formData.country_code
+          );
+          const selectedCity = this.cityOptions.find(
+            (item: any) => item.code === formData.city_code
+          );
+
           if (iDep !== -1) {
             this.rowPlacementData[iPlc] = {
               ...this.rowPlacementData[iPlc],
-              placement_code: this.rowPlacementData[iPlc].placement_code,
-              placement_name: this.rowPlacementData[iPlc].placement_name,
-              country_code: this.rowPlacementData[iPlc].country_code,
-              country_name: this.rowPlacementData[iPlc].country_name,
-              city_code: this.rowPlacementData[iPlc].city_code,
-              city_name: this.rowPlacementData[iPlc].city_name,
-              address: this.rowPlacementData[iPlc].address,
-              status: this.rowPlacementData[iPlc].status ? "A" : "I",
+              placement_code: formData.placement_code,
+              placement_name: formData.placement_name,
+              country_code: formData.country_code,
+              country_name: selectedCountry
+                ? selectedCountry.name
+                : this.rowPlacementData[iPlc].country_name,
+              city_code: formData.city_code,
+              city_name: selectedCity
+                ? selectedCity.name
+                : this.rowPlacementData[iPlc].city_name,
+              address: formData.address,
+              status: formData.status === "A",
               updated_at: formatDateTimeUTC(new Date()),
               updated_by: "Current User",
             };
@@ -1433,18 +1469,19 @@ export default class Organizaation extends Vue {
     let maxId = 0;
     if (formType === "POSITION") {
       maxId =
-        Math.max(...this.rowPositionData.map((item: any) => item.id || 0), 0) +
-        1;
+        this.rowPositionData.length > 0
+          ? Math.max(...this.rowPositionData.map((item: any) => item.id || 0))
+          : 0;
     } else if (formType === "DEPARTMENT") {
       maxId =
-        Math.max(
-          ...this.rowDepartmentData.map((item: any) => item.id || 0),
-          0
-        ) + 1;
+        this.rowDepartmentData.length > 0
+          ? Math.max(...this.rowDepartmentData.map((item: any) => item.id || 0))
+          : 0;
     } else if (formType === "PLACEMENT") {
       maxId =
-        Math.max(...this.rowPlacementData.map((item: any) => item.id || 0), 0) +
-        1;
+        this.rowPlacementData.length > 0
+          ? Math.max(...this.rowPlacementData.map((item: any) => item.id || 0))
+          : 0;
     }
     return maxId + 1;
   }
@@ -1506,18 +1543,7 @@ export default class Organizaation extends Vue {
           department_name: params.department_name,
           placement_code: params.placement_code,
           placement_name: params.placement_name,
-          status: params.status === "A",
-          created_at: params.id
-            ? undefined
-            : new Date().toISOString().split("T")[0] +
-              " " +
-              new Date().toTimeString().split(" ")[0],
-          created_by: params.id ? undefined : "Current User",
-          updated_at:
-            new Date().toISOString().split("T")[0] +
-            " " +
-            new Date().toTimeString().split(" ")[0],
-          updated_by: "Current User",
+          status: params.status,
         };
       case "DEPARTMENT":
         return {
@@ -1531,18 +1557,7 @@ export default class Organizaation extends Vue {
           manager_name: params.manager_name,
           supervisor_id: params.supervisor_id,
           supervisor_name: params.supervisor_name,
-          status: params.status === "A",
-          created_at: params.id
-            ? undefined
-            : new Date().toISOString().split("T")[0] +
-              " " +
-              new Date().toTimeString().split(" ")[0],
-          created_by: params.id ? undefined : "Current User",
-          updated_at:
-            new Date().toISOString().split("T")[0] +
-            " " +
-            new Date().toTimeString().split(" ")[0],
-          updated_by: "Current User",
+          status: params.status,
         };
       case "PLACEMENT":
         return {
@@ -1554,18 +1569,7 @@ export default class Organizaation extends Vue {
           city_code: params.city_code,
           city_name: params.city_name,
           address: params.address,
-          status: params.status === "A",
-          created_at: params.id
-            ? undefined
-            : new Date().toISOString().split("T")[0] +
-              " " +
-              new Date().toTimeString().split(" ")[0],
-          created_by: params.id ? undefined : "Current User",
-          updated_at:
-            new Date().toISOString().split("T")[0] +
-            " " +
-            new Date().toTimeString().split(" ")[0],
-          updated_by: "Current User",
+          status: params.status,
         };
       default:
         throw new Error("Unknown form type");
@@ -1594,20 +1598,5 @@ export default class Organizaation extends Vue {
 
     return "POSITION";
   }
-
-  // getFormElementByType(type: string): any {
-  //   switch (type) {
-  //     case "POSITION":
-  //       return this.positionFormElement;
-  //     case "DEPARTMENT":
-  //       return this.departmentFormElement;
-  //     case "PLACEMENT":
-  //       return this.placementFormElement;
-  //     default:
-  //       console.info(`Unknown form type: ${type}`);
-  //       return null;
-  //   }
-  // }
-
   // GETTER AND SETTER =======================================================
 }
