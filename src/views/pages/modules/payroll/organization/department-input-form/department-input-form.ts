@@ -67,11 +67,14 @@ export default class InputForm extends Vue {
     this.form = {
       // Category tab
       department_code: "",
-      name: "",
+      department_name: "",
       description: "",
-      placement: "",
-      manager: "",
-      supervisor: "",
+      placement_code: "",
+      placement_name: "",
+      manager_id: "",
+      manager_name: "",
+      supervisor_id: "",
+      supervisor_name: "",
       status: "A",
       id: undefined,
     };

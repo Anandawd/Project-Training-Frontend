@@ -96,7 +96,7 @@ export default class InputForm extends Vue {
     this.$emit("close");
   }
 
-  onInvalidSubmit({ errors }: any) {
+  onInvalidSubmit() {
     focusOnInvalid();
   }
 

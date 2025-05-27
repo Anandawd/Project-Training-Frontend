@@ -6,7 +6,7 @@
         title="Insert Position"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('', $global.modeData.insert, 'POSITION')"
+        @click="handleShowForm('POSITION', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insertPosition') }}
@@ -15,7 +15,7 @@
         title="Insert Department"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('', $global.modeData.insert, 'DEPARTMENT')"
+        @click="handleShowForm('DEPARTMENT', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insertDepartment') }}
@@ -24,7 +24,7 @@
         title="Insert Placement"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('', $global.modeData.insert, 'PLACEMENT')"
+        @click="handleShowForm('PLACEMENT', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insertPlacement') }}
@@ -34,7 +34,7 @@
     <!-- insert form -->
     <transition name="fade" mode="out-in">
       <position-input-form
-        ref="positionFormElement"
+        ref="inputFormElement"
         v-if="showForm && dataType  === 'POSITION'"
         class="px-2"
         :modeData="modeData"

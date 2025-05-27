@@ -29,10 +29,6 @@ import * as Yup from "yup";
       type: Array,
       default: (): any[] => [],
     },
-    // cityOptions: {
-    //   type: Object,
-    //   default: (): Record<string, any[]> => ({}),
-    // },
   },
   emits: ["save", "close"],
 })
@@ -65,9 +61,11 @@ export default class InputForm extends Vue {
     await this.$nextTick();
     this.form = {
       placement_code: "",
-      name: "",
-      country: "",
-      city: "",
+      placement_name: "",
+      country_code: "",
+      country_name: "",
+      city_code: "",
+      city_name: "",
       address: "",
       status: "A",
       id: undefined,

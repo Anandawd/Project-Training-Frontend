@@ -1,5 +1,6 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import Checklist from "@/components/ag_grid-framework/checklist.vue";
+import { formatDateTime } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -77,7 +78,7 @@ export default class DocumentTableComponent extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.employee.positionName"),
-        field: "name",
+        field: "position_name",
         width: 200,
         enableRowGroup: true,
       },
@@ -89,26 +90,28 @@ export default class DocumentTableComponent extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.employee.level"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "level",
         width: 100,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.department"),
-        field: "department",
+        field: "department_name",
         width: 200,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.placement"),
-        field: "placement",
+        field: "placement_name",
         width: 200,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.status"),
         headerClass: "align-header-center",
-        cellClass: "ag-cell-center-checkbox",
+        cellClass: "text-center",
         field: "status",
         width: 100,
         enableRowGroup: true,
@@ -121,9 +124,12 @@ export default class DocumentTableComponent extends Vue {
         field: "updated_at",
         width: 120,
         enableRowGroup: true,
+        valueFormatter: formatDateTime,
       },
       {
         headerName: this.$t("commons.table.updatedBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "updated_by",
         width: 120,
         enableRowGroup: true,
@@ -135,6 +141,7 @@ export default class DocumentTableComponent extends Vue {
         field: "created_at",
         width: 120,
         enableRowGroup: true,
+        valueFormatter: formatDateTime,
       },
       {
         headerName: this.$t("commons.table.createdBy"),

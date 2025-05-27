@@ -1,5 +1,6 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import Checklist from "@/components/ag_grid-framework/checklist.vue";
+import { formatDateTime } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -77,19 +78,19 @@ export default class DocumentTableComponent extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.employee.placementName"),
-        field: "name",
+        field: "placement_name",
         width: 200,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.country"),
-        field: "country",
+        field: "country_name",
         width: 150,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.city"),
-        field: "city",
+        field: "city_name",
         width: 150,
         enableRowGroup: true,
       },
@@ -102,7 +103,7 @@ export default class DocumentTableComponent extends Vue {
       {
         headerName: this.$t("commons.table.status"),
         headerClass: "align-header-center",
-        cellClass: "ag-cell-center-checkbox",
+        cellClass: "text-center",
         field: "status",
         width: 100,
         enableRowGroup: true,
@@ -115,6 +116,7 @@ export default class DocumentTableComponent extends Vue {
         field: "updated_at",
         width: 120,
         enableRowGroup: true,
+        valueFormatter: formatDateTime,
       },
       {
         headerName: this.$t("commons.table.updatedBy"),
@@ -131,6 +133,7 @@ export default class DocumentTableComponent extends Vue {
         field: "created_at",
         width: 120,
         enableRowGroup: true,
+        valueFormatter: formatDateTime,
       },
       {
         headerName: this.$t("commons.table.createdBy"),

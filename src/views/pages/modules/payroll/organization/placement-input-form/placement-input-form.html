@@ -29,33 +29,37 @@
             id="PlacementName"
             class="row mb-1"
             :label="$t('labels.payroll.employee.placementName')"
-            v-model="form.name"
+            v-model="form.placement_name"
           />
         </div>
         <div class="col-md-4">
           <c-select
+            filter
             offset="right"
             class="row mb-1"
-            name="PlacementCountry"
+            name="CountryCode"
             labelName="name"
+            selectType="column"
             keyName="code"
-            v-model="form.country"
+            v-model="form.country_code"
             :label="$t('labels.payroll.employee.country')"
-            :options="placementCountryOptions"
+            :options="countryOptions"
             :columnOptions="columnOptions"
           >
           </c-select>
         </div>
         <div class="col-md-4">
           <c-select
+            filter
             offset="right"
             class="row mb-1"
-            name="PlacementCity"
+            name="CityCode"
+            selectType="column"
             labelName="name"
             keyName="code"
-            v-model="form.city"
+            v-model="form.city_code"
             :label="$t('labels.payroll.employee.city')"
-            :options="placementCityOptions"
+            :options="cityOptions"
             :columnOptions="columnOptions"
           >
           </c-select>
@@ -63,8 +67,8 @@
         <div class="col-md-4">
           <c-input
             type="textarea"
-            name="PlacementAddress"
-            id="PlacementAddress"
+            name="Address"
+            id="Address"
             class="row mb-1"
             :label="$t('labels.payroll.employee.address')"
             v-model="form.address"
