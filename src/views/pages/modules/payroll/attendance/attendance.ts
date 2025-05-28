@@ -29,6 +29,7 @@ import CInputForm from "./attendance-input-form/attendance-input-form.vue";
 export default class Employee extends Vue {
   // data
   public rowData: any = [];
+  public filteredData: any = [];
   public deleteParam: any;
 
   // options data
@@ -48,10 +49,13 @@ export default class Employee extends Vue {
 
   // filter
   public searchOptions: any;
+  public currentDateFilter: string = new Date().toISOString().split("T")[0];
   searchDefault: any = {
     index: 0,
     text: "",
     filter: [0],
+    dateFrom: new Date().toISOString().split("T")[0],
+    dateTo: new Date().toISOString().split("T")[0],
   };
 
   // AG GRID VARIABLE
@@ -71,7 +75,6 @@ export default class Employee extends Vue {
   agGridSetting: any;
 
   // RECYCLE LIFE FUNCTION =======================================================
-
   created(): void {
     this.loadData();
   }
@@ -97,7 +100,7 @@ export default class Employee extends Vue {
       {
         headerName: this.$t("commons.table.action"),
         headerClass: "align-header-center",
-        field: "Code",
+        field: "id",
         enableRowGroup: false,
         resizable: false,
         filter: false,
@@ -345,6 +348,7 @@ export default class Employee extends Vue {
     try {
       this.loadMockData();
       this.loadDropdown();
+      this.loadDataGrid(this.searchDefault);
     } catch (error) {
       getError(error);
     }
@@ -362,7 +366,15 @@ export default class Employee extends Vue {
       this.rowData = data;
       */
 
-      let filteredData = [...this.rowData];
+      // Filter berdasarkan tanggal terlebih dahulu
+      let dateFilteredData = this.filterByDateRange(
+        this.rowData,
+        search.dateFrom,
+        search.dateTo
+      );
+
+      // Kemudian filter berdasarkan kriteria lain
+      let filteredData = [...dateFilteredData];
 
       if (search.text && search.text.trim()) {
         let searchText = search.text.toLowerCase().trim();
@@ -406,6 +418,8 @@ export default class Employee extends Vue {
         }
       }
 
+      // Simpan data yang sudah difilter untuk summary
+      this.filteredData = filteredData;
       if (this.gridApi) {
         this.gridApi.setRowData(filteredData);
       }
@@ -732,6 +746,30 @@ export default class Employee extends Vue {
       status: params.status,
       remark: params.remark,
     };
+  }
+
+  filterByDateRange(data: any[], dateFrom: string, dateTo: string) {
+    if (!dateFrom && !dateTo) return data;
+
+    return data.filter((item: any) => {
+      if (!item.date) return false;
+
+      // Konversi format tanggal jika perlu
+      let itemDate = item.date;
+      if (itemDate.includes("/")) {
+        // Format DD/MM/YYYY ke YYYY-MM-DD
+        const parts = itemDate.split("/");
+        itemDate = `${parts[2]}-${parts[1].padStart(
+          2,
+          "0"
+        )}-${parts[0].padStart(2, "0")}`;
+      }
+
+      const from = dateFrom || "1900-01-01";
+      const to = dateTo || "2099-12-31";
+
+      return itemDate >= from && itemDate <= to;
+    });
   }
 
   // GETTER AND SETTER =======================================================

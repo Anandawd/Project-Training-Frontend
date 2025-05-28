@@ -107,15 +107,17 @@ export default class InputForm extends Vue {
   }
 
   onSave() {
-    const totalWorkingHours = this.form.check_out - this.form.check_in;
-    let totalOvertime = 0;
-    if (totalWorkingHours > this.form.default_working_hours) {
-      totalOvertime = totalWorkingHours - this.form.default_working_hours;
+    const { totalWorkingHours, totalOvertime } = this.calculateWorkingHours();
+
+    let finalStatus = this.form.status;
+    if (!finalStatus && this.form.check_in) {
+      finalStatus = this.determineStatusByCheckIn();
     }
     const formData = {
       ...this.form,
       working_hours: totalWorkingHours ? totalWorkingHours : 0,
       overtime: totalOvertime,
+      status: finalStatus,
     };
     this.$emit("save", formData);
   }
@@ -154,10 +156,63 @@ export default class InputForm extends Vue {
     }
   }
 
+  calculateWorkingHours() {
+    if (!this.form.check_in || !this.form.check_out) {
+      return { totalWorkingHours: 0, totalOvertime: 0 };
+    }
+
+    const checkInMinutes = this.timeStringToMinutes(this.form.check_in);
+    const checkOutMinutes = this.timeStringToMinutes(this.form.check_out);
+
+    let totalMinutes = checkOutMinutes - checkInMinutes;
+
+    if (totalMinutes < 0) {
+      totalMinutes += 24 * 60;
+    }
+
+    // Konversi ke jam (desimal)
+    const totalWorkingHours = Number((totalMinutes / 60).toFixed(2));
+
+    // Hitung overtime
+    let totalOvertime = 0;
+    const defaultHours = this.form.default_working_hours || 8;
+
+    if (totalWorkingHours > defaultHours) {
+      totalOvertime = Number((totalWorkingHours - defaultHours).toFixed(2));
+    }
+
+    return { totalWorkingHours, totalOvertime };
+  }
+
+  timeStringToMinutes(timeString: string): number {
+    const [hours, minutes] = timeString.split(":").map(Number);
+    return hours * 60 + minutes;
+  }
+
+  determineStatusByCheckIn(): string {
+    if (!this.form.check_in) return "PRESENT";
+    // Asumsi jam kerja normal dimulai 08:00
+
+    const standardStartTime = "08:00";
+    const checkInMinutes = this.timeStringToMinutes(this.form.check_in);
+    const standardMinutes = this.timeStringToMinutes(standardStartTime);
+
+    // Jika terlambat lebih dari 15 menit, status LATE
+    if (checkInMinutes > standardMinutes + 15) {
+      return "LATE";
+    }
+
+    return "PRESENT";
+  }
+
   // validation
   get schema() {
     return Yup.object().shape({
       SelectEmployee: Yup.string().required(),
+      Date: Yup.date().required(),
+      CheckIn: Yup.string().required(),
+      CheckOut: Yup.string().required(),
+      Status: Yup.string().required(),
     });
   }
 
@@ -171,5 +226,13 @@ export default class InputForm extends Vue {
         `${this.$route.meta.pageTitle}`
       )}`;
     }
+  }
+
+  get calculatedWorkingHours() {
+    return this.calculateWorkingHours().totalWorkingHours;
+  }
+
+  get calculatedOvertime() {
+    return this.calculateWorkingHours().totalOvertime;
   }
 }
