@@ -23,52 +23,24 @@ import * as Yup from "yup";
       type: Number,
       require: true,
     },
+    employeeOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    statusOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
   },
   emits: ["save", "close"],
 })
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
-  public isSave: boolean = false;
+  employeeOptions!: any[];
+  statusOptions!: any[];
 
-  public defaultForm: any = {};
   public form: any = reactive({});
-  public formDetail: any = reactive({});
-
-  employeeOptions: any = [
-    {
-      SubGroupName: "Placement",
-      code: "P001",
-      name: "Amora Ubud",
-    },
-    {
-      SubGroupName: "Placement",
-      code: "P001",
-      name: "Amora Canggu",
-    },
-  ];
-  statusOptions: any = [
-    {
-      SubGroupName: "Status",
-      code: "PRESENT",
-      name: "Present",
-    },
-    {
-      SubGroupName: "Status",
-      code: "LATE",
-      name: "Late",
-    },
-    {
-      SubGroupName: "Status",
-      code: "ABSENT",
-      name: "Absent",
-    },
-    {
-      SubGroupName: "Status",
-      code: "LEAVE",
-      name: "Leave",
-    },
-  ];
 
   columnOptions = [
     {
@@ -85,17 +57,43 @@ export default class InputForm extends Vue {
     },
   ];
 
+  columnEmployeeOptions = [
+    {
+      field: "name",
+      label: "name",
+      align: "left",
+      width: "200",
+      filter: true,
+    },
+    {
+      field: "employee_id",
+      label: "code",
+      align: "right",
+      width: "100",
+    },
+  ];
+
   // actions
   async resetForm() {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      placement: "",
-      periodName: "",
-      periodType: "",
-      startDate: "",
-      endDate: "",
-      paymentDate: "",
+      id: null,
+      employee_id: "",
+      employee_name: "",
+      department_code: "",
+      department_name: "",
+      position_code: "",
+      position_name: "",
+      current_schedule_code: "",
+      current_schedule_name: "",
+      date: new Date().toISOString().split("T")[0],
+      check_in: "",
+      check_out: "",
+      default_working_hours: 0,
+      working_hours: 0,
+      overtime: 0,
+      status: "",
       remark: "",
     };
   }
@@ -109,7 +107,17 @@ export default class InputForm extends Vue {
   }
 
   onSave() {
-    this.$emit("save", this.form);
+    const totalWorkingHours = this.form.check_out - this.form.check_in;
+    let totalOvertime = 0;
+    if (totalWorkingHours > this.form.default_working_hours) {
+      totalOvertime = totalWorkingHours - this.form.default_working_hours;
+    }
+    const formData = {
+      ...this.form,
+      working_hours: totalWorkingHours ? totalWorkingHours : 0,
+      overtime: totalOvertime,
+    };
+    this.$emit("save", formData);
   }
 
   checkForm() {
@@ -124,15 +132,32 @@ export default class InputForm extends Vue {
     focusOnInvalid();
   }
 
+  onEmployeeChange() {
+    if (this.form.employee_id) {
+      const selectedEmployee = this.employeeOptions.find(
+        (emp: any) => emp.employee_id === this.form.employee_id
+      );
+
+      if (selectedEmployee) {
+        this.form.employee_name = selectedEmployee.name;
+        this.form.department_code = selectedEmployee.department_code;
+        this.form.department_name = selectedEmployee.department_name;
+        this.form.position_code = selectedEmployee.position_code;
+        this.form.position_name = selectedEmployee.position_name;
+        this.form.current_schedule_code =
+          selectedEmployee.current_schedule_code;
+        this.form.current_schedule_name =
+          selectedEmployee.current_schedule_name;
+        this.form.default_working_hours =
+          selectedEmployee.default_working_hours;
+      }
+    }
+  }
+
   // validation
   get schema() {
     return Yup.object().shape({
-      placement: Yup.string().required("Placement is required"),
-      periodName: Yup.string().required("Period name is required"),
-      periodType: Yup.string().required("Period type is required"),
-      startDate: Yup.string().required("Start date is required"),
-      endDate: Yup.string().required("End date is required"),
-      paymentDate: Yup.string().required("Payment date is required"),
+      SelectEmployee: Yup.string().required(),
     });
   }
 
@@ -143,10 +168,6 @@ export default class InputForm extends Vue {
       )}`;
     } else if (this.modeData === $global.modeData.edit) {
       return `${this.$t("commons.update")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
-      )}`;
-    } else if (this.modeData === $global.modeData.duplicate) {
-      return `${this.$t("commons.duplicate")} ${this.$t(
         `${this.$route.meta.pageTitle}`
       )}`;
     }

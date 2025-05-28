@@ -113,6 +113,7 @@
         "leaveApprovals": "Leave Approvals",
         "workSchedule": "Work Schedule",
         "holidayCalender": "Holiday Calender",
+        "attendanceInformation": "AttendanceInformation",
         "selectEmployee": "Select Employee",
         "checkIn": "Check In",
         "checkOut": "Check Out",
@@ -2268,11 +2269,24 @@
         "benefitDelete": "Are you sure you want to delete this employee benefit?",
         "cancelChanges": "You have unsaved changes. Are you sure you want to cancel?",
         "approveSalaryAdjustment": "Are you sure you want to approve this salary adjustment?"
+      }
+    },
+    "attendance": {
+      "success": {
+        "saveAttendance": "Attendance record has been successfully saved",
+        "deleteAttendance": "Attendace record has been successfully removed",
+        "updateAttendance": "Attendance record has been successfully updated"
       },
-      "confirmDeleteEmployee": "Are you sure you want to delete this employee?",
-      "saveEmployeeSuccess": "Employee added successfully",
-      "updateEmployeeSuccess": "Employee updated successfully",
-      "deleteEmployeeSuccess": "Employee has been removed successfully"
+      "error": {
+        "deleteAttendance": "Failed to delete attendance record",
+        "attendanceNotFound": "Attendance record not found in the system"
+      },
+      "warning": {
+        "leaveBalance": "Employee has insufficient leave balance"
+      },
+      "confirm": {
+        "deleteAttendance": "Are you sure you want to delete this attendance record?"
+      }
     },
     "payroll": {
       "confirmBulkApprove": "Are you sure you want to approve all selected payroll records?",
@@ -4484,10 +4498,10 @@
         "laundry": "Laundry",
         "room": "Room",
         "inactive": "Inactive",
-        "showPresent": "Show Present",
-        "showLate": "Show Late",
-        "showAbsent": "Show Absent",
-        "showLeave": "Show Leave",
+        "present": "Present",
+        "late": "Late",
+        "absent": "Absent",
+        "leave": "Leave",
         "approved": "Approved",
         "rejected": "Rejected",
         "pending": "Pending",
@@ -4585,7 +4599,6 @@
       "bookingNumber": "Booking Number",
       "parent": "Parent"
     },
-
     "invite": "Invite",
     "expand": "Expand",
     "collapse": "Collapse",

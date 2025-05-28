@@ -40,7 +40,6 @@ export default class InputForm extends Vue {
   employeeOptions!: any[];
   adjustmentReasonOptions!: any[];
 
-  public defaultForm: any = {};
   public form: any = reactive({});
 
   columnOptions = [
@@ -98,7 +97,6 @@ export default class InputForm extends Vue {
             100
           : 0,
     };
-    console.log("onSave formData", formData);
     this.$emit("save", formData);
   }
 

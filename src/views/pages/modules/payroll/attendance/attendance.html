@@ -3,19 +3,21 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
+        disabled
         title="Export Attendance"
         type="button"
         class="btn btn-warning mr-1"
-        @click="handleShowForm('', $global.modeData.insert)"
+        @click="handleShowForm('EXPORT', $global.modeData.insert)"
       >
         <i class="fa fa-file-export mr-1" aria-hidden="true"></i>{{
         $t('buttons.export') }}
       </button>
       <button
+        disabled
         title="Import Attendance"
         type="button"
         class="btn btn-secondary mr-1"
-        @click="handleShowForm('', $global.modeData.insert)"
+        @click="handleShowForm('IMPORT', $global.modeData.insert)"
       >
         <i class="fa fa-file-import mr-1" aria-hidden="true"></i>{{
         $t('buttons.import') }}
@@ -24,7 +26,7 @@
         title="Insert Attendance"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('', $global.modeData.insert)"
+        @click="handleShowForm('INSERT', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insert') }}
@@ -32,17 +34,18 @@
     </div>
 
     <!-- insert form -->
-    <transition>
-      <div class="px-2">
-        <c-input-form
-          ref="inputFormElement"
-          v-show="showForm"
-          :schema="schema"
-          :modeData="modeData"
-          @save="handleSave"
-          @close="showForm=false"
-        />
-      </div>
+    <transition name="fade">
+      <c-input-form
+        class="px-2"
+        ref="inputFormElement"
+        v-show="showForm"
+        :employeeOptions="employeeOptions"
+        :statusOptions="statusOptions"
+        :schema="schema"
+        :modeData="modeData"
+        @save="handleSave"
+        @close="showForm=false"
+      />
     </transition>
 
     <!-- filter -->
@@ -62,7 +65,7 @@
               id="all"
               v-model="search.filter[0]"
               value="0"
-              @change="onRefresh"
+              @change="refreshData(search)"
             />
             <label for="all">{{ $t('commons.filter.checkList.all') }}</label>
           </div>
@@ -70,56 +73,54 @@
             <input
               class="mr-1"
               type="radio"
-              name="showPresent"
-              id="showPresent"
+              name="present"
+              id="present"
               v-model="search.filter[0]"
               value="1"
-              @change="onRefresh"
+              @change="refreshData(search)"
             />
-            <label for="showPresent"
-              >{{ $t('commons.filter.checkList.showPresent') }}</label
+            <label for="present"
+              >{{ $t('commons.filter.checkList.present') }}</label
             >
           </div>
           <div class="checklist">
             <input
               class="mr-1"
               type="radio"
-              name="showLate"
-              id="showLate"
+              name="late"
+              id="late"
               v-model="search.filter[0]"
               value="2"
-              @change="onRefresh"
+              @change="refreshData(search)"
             />
-            <label for="showLate"
-              >{{ $t('commons.filter.checkList.showLate') }}</label
-            >
+            <label for="late">{{ $t('commons.filter.checkList.late') }}</label>
           </div>
           <div class="checklist">
             <input
               class="mr-1"
               type="radio"
-              name="showAbsent"
-              id="showAbsent"
+              name="absent"
+              id="absent"
               v-model="search.filter[0]"
               value="3"
-              @change="onRefresh"
+              @change="refreshData(search)"
             />
-            <label for="showAbsent"
-              >{{ $t('commons.filter.checkList.showAbsent') }}</label
+            <label for="absent"
+              >{{ $t('commons.filter.checkList.absent') }}</label
             >
           </div>
           <div class="checklist">
             <input
               class="mr-1"
               type="radio"
-              name="showLeave"
-              id="showLeave"
+              name="leave"
+              id="leave"
               v-model="search.filter[0]"
               value="4"
               @change="onRefresh"
             />
-            <label for="showLeave"
-              >{{ $t('commons.filter.checkList.showLeave') }}</label
+            <label for="leave"
+              >{{ $t('commons.filter.checkList.leave') }}</label
             >
           </div>
         </div>
@@ -211,12 +212,10 @@
       v-show="showDialog"
       dialogTitle="Confirm"
       size="sm"
-      @confirm="deleteData"
+      @confirm="confirmAction"
       @cancel="showDialog=false"
     >
-      <template #body> Are you sure to delete this data? </template>
+      <template #body>{{dialogMessage}}</template>
     </c-dialog>
-
-    <!-- modal -->
   </div>
 </section>
