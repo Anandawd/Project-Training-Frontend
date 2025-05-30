@@ -16,6 +16,7 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
+import AttendanceImportExport from "./attendance-import-export/attendance-import-export.vue";
 import CInputForm from "./attendance-input-form/attendance-input-form.vue";
 
 @Options({
@@ -26,9 +27,10 @@ import CInputForm from "./attendance-input-form/attendance-input-form.vue";
     CDialog,
     CInputForm,
     CDatepicker,
+    AttendanceImportExport,
   },
 })
-export default class Employee extends Vue {
+export default class Attendance extends Vue {
   // data
   public rowData: any = [];
   public filteredData: any = [];
@@ -44,6 +46,7 @@ export default class Employee extends Vue {
   public modeData: any;
   public showForm: boolean = false;
   public inputFormElement: any = ref();
+  public importExportElement: any = ref();
 
   // dialog
   public showDialog: boolean = false;
@@ -147,6 +150,12 @@ export default class Employee extends Vue {
       {
         headerName: this.$t("commons.table.payroll.employee.position"),
         field: "position_name",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.placement"),
+        field: "placement_name",
         width: 120,
         enableRowGroup: true,
       },
@@ -309,10 +318,19 @@ export default class Employee extends Vue {
     this.showForm = true;
   }
 
+  handleShowModal(params: any, mode: any) {
+    if (params === "EXPORT") {
+      this.importExportElement.showExport();
+      return;
+    }
+    if (params === "IMPORT") {
+      this.importExportElement.showImport();
+      return;
+    }
+  }
+
   handleSave(formData: any) {
-    console.log("formData sebelum", formData);
     const formattedData = this.formatData(formData);
-    console.log("formData setelah", formattedData);
 
     if (this.modeData === $global.modeData.insert) {
       this.insertData(formattedData).then(() => {
@@ -362,26 +380,6 @@ export default class Employee extends Vue {
   }
 
   onRefresh() {
-    this.loadDataGrid(this.searchDefault);
-  }
-
-  navigateDate(direction: number) {
-    const currentDateObj = new Date(this.currentDate);
-    currentDateObj.setDate(currentDateObj.getDate() + direction);
-    const newDate = currentDateObj.toISOString().split("T")[0];
-
-    this.currentDate = newDate;
-    this.searchDefault.currentDate = newDate;
-
-    this.$nextTick(() => {
-      this.loadDataGrid(this.searchDefault);
-    });
-  }
-
-  goToToday() {
-    const today = new Date().toISOString().split("T")[0];
-    this.currentDate = today;
-    this.searchDefault.currentDate = today;
     this.loadDataGrid(this.searchDefault);
   }
 
@@ -912,6 +910,26 @@ export default class Employee extends Vue {
       month: "long",
       day: "numeric",
     });
+  }
+
+  navigateDate(direction: number) {
+    const currentDateObj = new Date(this.currentDate);
+    currentDateObj.setDate(currentDateObj.getDate() + direction);
+    const newDate = currentDateObj.toISOString().split("T")[0];
+
+    this.currentDate = newDate;
+    this.searchDefault.currentDate = newDate;
+
+    this.$nextTick(() => {
+      this.loadDataGrid(this.searchDefault);
+    });
+  }
+
+  goToToday() {
+    const today = new Date().toISOString().split("T")[0];
+    this.currentDate = today;
+    this.searchDefault.currentDate = today;
+    this.loadDataGrid(this.searchDefault);
   }
 
   // GETTER AND SETTER =======================================================

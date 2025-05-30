@@ -1,0 +1,229 @@
+<section class="content">
+  <!-- Export Modal -->
+  <c-modal
+    v-show="showExportModal"
+    :title="$t('title.exportAttendance')"
+    size="md"
+    @close="showExportModal = false"
+    @save="handleExport"
+  >
+    <div class="row">
+      <div class="col-md-12">
+        <c-select
+          required
+          offset="right"
+          class="mb-3"
+          name="exportFormat"
+          labelName="name"
+          keyName="code"
+          v-model="exportForm.format"
+          :label="$t('labels.payroll.attendance.exportFormat')"
+          :options="exportFormatOptions"
+        />
+      </div>
+      <div class="col-md-6">
+        <c-datepicker
+          required
+          id="exportStartDate"
+          customLabelClass="col-4"
+          :label="$t('labels.payroll.attendance.startDate')"
+          type="date"
+          valueType="YYYY-MM-DD"
+          format="DD/MM/YYYY"
+          name="startDate"
+          v-model="exportForm.startDate"
+        />
+      </div>
+      <div class="col-md-6">
+        <c-datepicker
+          required
+          id="exportEndDate"
+          customLabelClass="col-4"
+          :label="$t('labels.payroll.attendance.endDate')"
+          type="date"
+          valueType="YYYY-MM-DD"
+          format="DD/MM/YYYY"
+          name="endDate"
+          v-model="exportForm.endDate"
+        />
+      </div>
+      <div class="col-md-12">
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            v-model="exportForm.includeTemplate"
+            id="includeTemplate"
+          />
+          <label class="form-check-label" for="includeTemplate">
+            {{ $t('labels.payroll.attendance.includeImportTemplate') }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </c-modal>
+
+  <!-- Import Modal -->
+  <c-modal
+    v-show="showImportModal"
+    :title="$t('title.importAttendance')"
+    size="lg"
+    @close="handleCloseImport"
+    @save="handleImport"
+  >
+    <div class="row" v-if="!importData.length">
+      <div class="col-md-12">
+        <div class="mb-3">
+          <label class="form-label"
+            >{{ $t('labels.payroll.attendance.selectFile') }}</label
+          >
+          <input
+            type="file"
+            class="form-control"
+            ref="fileInput"
+            @change="handleFileSelect"
+            accept=".xlsx,.xls,.csv"
+          />
+          <small class="form-text text-muted">
+            {{ $t('labels.payroll.attendance.supportedFormats') }}: .xlsx, .xls,
+            .csv
+          </small>
+        </div>
+
+        <div class="alert alert-info">
+          <h6>{{ $t('labels.payroll.attendance.importInstructions') }}:</h6>
+          <ul class="mb-0">
+            <li>{{ $t('labels.payroll.attendance.importInstruction1') }}</li>
+            <li>{{ $t('labels.payroll.attendance.importInstruction2') }}</li>
+            <li>{{ $t('labels.payroll.attendance.importInstruction3') }}</li>
+          </ul>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            @click="downloadTemplate"
+          >
+            <i class="fa fa-download mr-1"></i>
+            {{ $t('buttons.downloadTemplate') }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Data -->
+    <div v-if="importData.length">
+      <div class="mb-3">
+        <div class="alert alert-success">
+          <strong>{{ $t('labels.previewData') }}:</strong>
+          {{ importData.length }} {{ $t('labels.recordsFound') }}
+        </div>
+      </div>
+
+      <div class="table-responsive" style="max-height: 400px">
+        <table class="table table-sm table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>{{ $t('labels.status') }}</th>
+              <th>{{ $t('labels.payroll.employee.employeeId') }}</th>
+              <th>{{ $t('labels.payroll.employee.employeeName') }}</th>
+              <th>{{ $t('labels.date') }}</th>
+              <th>{{ $t('labels.payroll.attendance.checkIn') }}</th>
+              <th>{{ $t('labels.payroll.attendance.checkOut') }}</th>
+              <th>{{ $t('labels.payroll.attendance.status') }}</th>
+              <th>{{ $t('labels.remark') }}</th>
+              <th>{{ $t('labels.errors') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(item, index) in importData"
+              :key="index"
+              :class="{
+                  'table-danger': item.hasErrors,
+                  'table-warning': item.hasWarnings,
+                  'table-success': !item.hasErrors && !item.hasWarnings
+                }"
+            >
+              <td>
+                <i
+                  :class="{
+                      'fa fa-check text-success': !item.hasErrors && !item.hasWarnings,
+                      'fa fa-exclamation-triangle text-warning': item.hasWarnings,
+                      'fa fa-times text-danger': item.hasErrors
+                    }"
+                ></i>
+              </td>
+              <td>{{ item.employee_id }}</td>
+              <td>{{ item.employee_name }}</td>
+              <td>{{ item.date }}</td>
+              <td>{{ item.check_in }}</td>
+              <td>{{ item.check_out }}</td>
+              <td>{{ item.status }}</td>
+              <td>{{ item.remark }}</td>
+              <td>
+                <small class="text-danger" v-if="item.errors">
+                  {{ item.errors.join(', ') }}
+                </small>
+                <small class="text-warning" v-if="item.warnings">
+                  {{ item.warnings.join(', ') }}
+                </small>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-3">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="text-success">
+              <strong>{{ validRecords }}</strong> {{ $t('labels.validRecords')
+              }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="text-warning">
+              <strong>{{ warningRecords }}</strong> {{
+              $t('labels.warningRecords') }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="text-danger">
+              <strong>{{ errorRecords }}</strong> {{ $t('labels.errorRecords')
+              }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </c-modal>
+
+  <!-- Progress Modal -->
+  <c-modal
+    v-show="showProgressModal"
+    :title="$t('title.processingImport')"
+    size="md"
+    :closable="false"
+  >
+    <div class="text-center">
+      <div class="spinner-border text-primary mb-3" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p>
+        {{ $t('messages.processingRecords') }}: {{ processedCount }} / {{
+        totalCount }}
+      </p>
+      <div class="progress">
+        <div
+          class="progress-bar"
+          role="progressbar"
+          :style="{ width: progressPercentage + '%' }"
+        >
+          {{ progressPercentage }}%
+        </div>
+      </div>
+    </div>
+  </c-modal>
+</section>

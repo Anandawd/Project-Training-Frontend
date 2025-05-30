@@ -3,21 +3,19 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
-        disabled
         title="Export Attendance"
         type="button"
         class="btn btn-warning mr-1"
-        @click="handleShowForm('EXPORT', $global.modeData.insert)"
+        @click="handleShowModal('EXPORT', $global.modeData.insert)"
       >
         <i class="fa fa-file-export mr-1" aria-hidden="true"></i>{{
         $t('buttons.export') }}
       </button>
       <button
-        disabled
         title="Import Attendance"
         type="button"
         class="btn btn-secondary mr-1"
-        @click="handleShowForm('IMPORT', $global.modeData.insert)"
+        @click="handleShowModal('IMPORT', $global.modeData.insert)"
       >
         <i class="fa fa-file-import mr-1" aria-hidden="true"></i>{{
         $t('buttons.import') }}
@@ -47,6 +45,15 @@
         @close="showForm=false"
       />
     </transition>
+
+    <attendance-import-export
+      ref="importExportElement"
+      :employeeOptions="employeeOptions"
+      :statusOptions="statusOptions"
+      :attendanceData="rowData"
+      @imported="handleImported"
+      @exported="handleExported"
+    />
 
     <!-- filter -->
     <c-search-filter

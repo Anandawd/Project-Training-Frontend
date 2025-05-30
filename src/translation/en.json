@@ -137,7 +137,12 @@
         "type": "Type",
         "previousDay": "Previous Day",
         "nextDay": "Next Day",
-        "today": "Today"
+        "today": "Today",
+        "selectFile": "Select File",
+        "exportFormat": "Export Format",
+        "supportedFormats": "Supported Format",
+        "importInstructions": "Import Instructions",
+        "includeImportTemplate": "Include Import Template"
       },
       "payroll": {
         "payroll": "Payroll",
@@ -1699,6 +1704,8 @@
     "legalDocument": "Legal Document",
     "attendanceAndLeave": "Attendance & Leave",
     "attendance": "Attendance",
+    "exportAttendance": "Export Attendance",
+    "importAttendance": "Import Attendance",
     "attendanceSummary": "Attendance Summary",
     "fingerprintEnrollment": "Fingerprint Enrollment",
     "enrollment": "Enrollment",
@@ -2527,6 +2534,7 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "downloadTemplate": "Download Template",
     "requestAdjustment": "Request Adjustment",
     "setAsInProgress": "Set as In Progress",
     "setAsDone": "Set as Done",
