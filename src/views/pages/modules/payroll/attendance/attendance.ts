@@ -78,9 +78,16 @@ export default class Employee extends Vue {
 
   // RECYCLE LIFE FUNCTION =======================================================
   created(): void {
-    this.currentDate = new Date().toISOString().split("T")[0];
-    this.searchDefault.currentDate = this.currentDate;
+    const today = new Date().toISOString().split("T")[0];
+    this.currentDate = today;
+    this.searchDefault.currentDate = today;
     this.loadData();
+  }
+
+  mounted(): void {
+    this.$nextTick(() => {
+      this.loadDataGrid(this.searchDefault);
+    });
   }
 
   beforeMount(): void {
@@ -339,14 +346,19 @@ export default class Employee extends Vue {
   }
 
   refreshData(search: any) {
-    this.searchOptions = { ...search };
-    this.currentDate = search.currentDate;
+    if (search.currentDate) {
+      this.currentDate = search.currentDate;
+      this.searchDefault.currentDate = search.currentDate;
+    }
     this.loadDataGrid(search);
   }
 
   onDateFilterChange(search: any) {
-    this.currentDate = search.currentDate;
-    this.refreshData(search);
+    if (search.currentDate) {
+      this.currentDate = search.currentDate;
+      this.searchDefault.currentDate = search.currentDate;
+      this.refreshData(search);
+    }
   }
 
   onRefresh() {
@@ -356,15 +368,20 @@ export default class Employee extends Vue {
   navigateDate(direction: number) {
     const currentDateObj = new Date(this.currentDate);
     currentDateObj.setDate(currentDateObj.getDate() + direction);
-    this.currentDate = currentDateObj.toISOString().split("T")[0];
+    const newDate = currentDateObj.toISOString().split("T")[0];
 
-    this.searchDefault.currentDate = this.currentDate;
-    this.loadDataGrid(this.searchDefault);
+    this.currentDate = newDate;
+    this.searchDefault.currentDate = newDate;
+
+    this.$nextTick(() => {
+      this.loadDataGrid(this.searchDefault);
+    });
   }
 
   goToToday() {
-    this.currentDate = new Date().toISOString().split("T")[0];
-    this.searchDefault.currentDate = this.currentDate;
+    const today = new Date().toISOString().split("T")[0];
+    this.currentDate = today;
+    this.searchDefault.currentDate = today;
     this.loadDataGrid(this.searchDefault);
   }
 
@@ -373,7 +390,7 @@ export default class Employee extends Vue {
     try {
       this.loadMockData();
       this.loadDropdown();
-      this.loadDataGrid(this.searchDefault);
+      // this.loadDataGrid(this.searchDefault);
     } catch (error) {
       getError(error);
     }
@@ -392,13 +409,10 @@ export default class Employee extends Vue {
       this.rowData = data;
       */
 
-      // Filter berdasarkan tanggal terlebih dahulu
-      let dateFilteredData = this.filterByDate(
-        this.rowData,
-        search.currentDate
-      );
+      const filterDate = search.currentDate || this.currentDate;
 
-      // Kemudian filter berdasarkan kriteria lain
+      let dateFilteredData = this.filterByDate(this.rowData, filterDate);
+
       let filteredData = [...dateFilteredData];
 
       if (search.text && search.text.trim()) {
@@ -443,7 +457,6 @@ export default class Employee extends Vue {
         }
       }
 
-      // Simpan data yang sudah difilter untuk summary
       this.filteredData = filteredData;
       if (this.gridApi) {
         this.gridApi.setRowData(filteredData);
