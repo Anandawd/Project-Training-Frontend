@@ -1,5 +1,6 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
+import CDatepicker from "@/components/datepicker/datepicker.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
 import { formatDate, formatDateTimeUTC } from "@/utils/format";
@@ -24,6 +25,7 @@ import CInputForm from "./attendance-input-form/attendance-input-form.vue";
     CModal,
     CDialog,
     CInputForm,
+    CDatepicker,
   },
 })
 export default class Employee extends Vue {
@@ -31,6 +33,7 @@ export default class Employee extends Vue {
   public rowData: any = [];
   public filteredData: any = [];
   public deleteParam: any;
+  public currentDate: string = new Date().toISOString().split("T")[0];
 
   // options data
   public employeeOptions: any = [];
@@ -54,8 +57,7 @@ export default class Employee extends Vue {
     index: 0,
     text: "",
     filter: [0],
-    dateFrom: new Date().toISOString().split("T")[0],
-    dateTo: new Date().toISOString().split("T")[0],
+    currentDate: new Date().toISOString().split("T")[0],
   };
 
   // AG GRID VARIABLE
@@ -76,6 +78,8 @@ export default class Employee extends Vue {
 
   // RECYCLE LIFE FUNCTION =======================================================
   created(): void {
+    this.currentDate = new Date().toISOString().split("T")[0];
+    this.searchDefault.currentDate = this.currentDate;
     this.loadData();
   }
 
@@ -336,10 +340,31 @@ export default class Employee extends Vue {
 
   refreshData(search: any) {
     this.searchOptions = { ...search };
+    this.currentDate = search.currentDate;
     this.loadDataGrid(search);
   }
 
+  onDateFilterChange(search: any) {
+    this.currentDate = search.currentDate;
+    this.refreshData(search);
+  }
+
   onRefresh() {
+    this.loadDataGrid(this.searchDefault);
+  }
+
+  navigateDate(direction: number) {
+    const currentDateObj = new Date(this.currentDate);
+    currentDateObj.setDate(currentDateObj.getDate() + direction);
+    this.currentDate = currentDateObj.toISOString().split("T")[0];
+
+    this.searchDefault.currentDate = this.currentDate;
+    this.loadDataGrid(this.searchDefault);
+  }
+
+  goToToday() {
+    this.currentDate = new Date().toISOString().split("T")[0];
+    this.searchDefault.currentDate = this.currentDate;
     this.loadDataGrid(this.searchDefault);
   }
 
@@ -361,16 +386,16 @@ export default class Employee extends Vue {
         Index: search.index,
         Text: search.text,
         IndexCheckBox: search.filter[0],
+        Date: search.currentDate
       };
-      const { data } = await salaryAdjustmentAPI.GetSalaryAdjustmentList(params);
+      const { data } = await attendanceAPI.GetAttendanceList(params);
       this.rowData = data;
       */
 
       // Filter berdasarkan tanggal terlebih dahulu
-      let dateFilteredData = this.filterByDateRange(
+      let dateFilteredData = this.filterByDate(
         this.rowData,
-        search.dateFrom,
-        search.dateTo
+        search.currentDate
       );
 
       // Kemudian filter berdasarkan kriteria lain
@@ -430,46 +455,134 @@ export default class Employee extends Vue {
 
   async loadMockData() {
     this.rowData = [
+      // Hari ini
       {
         id: 1,
-        date: "01/02/2025",
+        date: new Date().toISOString().split("T")[0],
+        employee_id: "EMP001",
         employee_name: "John Doe",
         department_name: "IT",
         position_name: "Staff",
-        current_schedule: "Regular",
+        current_schedule_name: "Regular",
         check_in: "08:00",
         check_out: "16:00",
         working_hours: "8",
         overtime: "0",
         status: "PRESENT",
+        remark: "",
       },
       {
         id: 2,
-        date: "01/02/2025",
-        employee_name: "John Smith",
+        date: new Date().toISOString().split("T")[0],
+        employee_id: "EMP002",
+        employee_name: "Jane Smith",
         department_name: "Marketing",
         position_name: "Staff",
-        current_schedule: "Regular",
-        check_in: "08:00",
+        current_schedule_name: "Regular",
+        check_in: "08:15",
         check_out: "16:00",
-        working_hours: "8",
+        working_hours: "7.75",
         overtime: "0",
-        status: "PRESENT",
+        status: "LATE",
+        remark: "Terlambat 15 menit",
       },
       {
         id: 3,
-        date: "01/02/2025",
-        employee_name: "Lukas Graham",
-        department_code: "IT",
+        date: new Date().toISOString().split("T")[0],
+        employee_id: "EMP003",
+        employee_name: "Robert Johnson",
+        department_name: "Finance",
+        position_name: "Manager",
+        current_schedule_name: "Regular",
+        check_in: "",
+        check_out: "",
+        working_hours: "0",
+        overtime: "0",
+        status: "LEAVE",
+        remark: "Cuti tahunan",
+      },
+      {
+        id: 4,
+        date: new Date().toISOString().split("T")[0],
+        employee_id: "EMP004",
+        employee_name: "Emily Davis",
         department_name: "IT",
-        position_code: "Staff",
         position_name: "Staff",
-        current_schedule: "Regular",
+        current_schedule_name: "Regular",
+        check_in: "",
+        check_out: "",
+        working_hours: "0",
+        overtime: "0",
+        status: "ABSENT",
+        remark: "Sakit",
+      },
+      {
+        id: 5,
+        date: new Date().toISOString().split("T")[0],
+        employee_id: "EMP005",
+        employee_name: "Michael Wilson",
+        department_name: "IT",
+        position_name: "Staff",
+        current_schedule_name: "Regular",
+        check_in: "07:45",
+        check_out: "17:30",
+        working_hours: "9.75",
+        overtime: "1.75",
+        status: "PRESENT",
+        remark: "Lembur project",
+      },
+      // Kemarin
+      {
+        id: 6,
+        date: new Date(Date.now() - 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0],
+        employee_id: "EMP001",
+        employee_name: "John Doe",
+        department_name: "IT",
+        position_name: "Staff",
+        current_schedule_name: "Regular",
         check_in: "08:00",
         check_out: "16:00",
         working_hours: "8",
         overtime: "0",
         status: "PRESENT",
+        remark: "",
+      },
+      {
+        id: 7,
+        date: new Date(Date.now() - 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0],
+        employee_id: "EMP002",
+        employee_name: "Jane Smith",
+        department_name: "Marketing",
+        position_name: "Staff",
+        current_schedule_name: "Regular",
+        check_in: "08:00",
+        check_out: "16:00",
+        working_hours: "8",
+        overtime: "0",
+        status: "PRESENT",
+        remark: "",
+      },
+      // Besok (untuk testing)
+      {
+        id: 8,
+        date: new Date(Date.now() + 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0],
+        employee_id: "EMP001",
+        employee_name: "John Doe",
+        department_name: "IT",
+        position_name: "Staff",
+        current_schedule_name: "Regular",
+        check_in: "08:00",
+        check_out: "16:00",
+        working_hours: "8",
+        overtime: "0",
+        status: "PRESENT",
+        remark: "",
       },
     ];
   }
@@ -478,11 +591,11 @@ export default class Employee extends Vue {
     try {
       /*
           const promises = [
-            salaryAdjustmentAPI.GetEmployeeOptions().then(response => {
+            attendanceAPI.GetEmployeeOptions().then(response => {
               this.employeeOptions = response.data;
             }),
-            salaryAdjustmentAPI.GetAdjustmentReasonOptions().then(response => {
-              this.adjustmentReasonOptions = response.data;
+            attendanceAPI.GetStatusOptions().then(response => {
+              this.statusOptions = response.data;
             }),
           ];
     
@@ -573,9 +686,10 @@ export default class Employee extends Vue {
   async loadEditData(params: any) {
     try {
       /*
-      const { data } = await salaryAdjustmentAPI.GetSalaryAdjustment(id);
+      const { data } = await attendanceAPI.GetAttendance(id);
       this.populateForm(data);
       */
+
       const attendance = this.rowData.find((item: any) => item.id === params);
 
       if (attendance) {
@@ -593,7 +707,7 @@ export default class Employee extends Vue {
   async insertData(formData: any) {
     try {
       /*
-      const { status2 } = await salaryAdjustmentAPI.InsertSalaryAdjustment(formData);
+      const { status2 } = await attendanceAPI.InsertAttendance(formData);
       if (status2.status == 0) {
         getToastSuccess(this.$t("messages.saveSuccess"));
         this.showForm = false;
@@ -642,7 +756,7 @@ export default class Employee extends Vue {
   async updateData(formData: any) {
     try {
       /*
-      const { status2 } = await salaryAdjustmentAPI.UpdateSalaryAdjustment(formData);
+      const { status2 } = await attendanceAPI.UpdateAttendance(formData);
       if (status2.status == 0) {
         this.loadDataGrid(this.searchDefault);
         this.showForm = false;
@@ -682,7 +796,7 @@ export default class Employee extends Vue {
   async deleteData() {
     try {
       /*
-      const { status2 } = await salaryAdjustmentAPI.DeleteSalaryAdjustment(this.deleteParam);
+      const { status2 } = await attendanceAPI.DeleteAttendance(this.deleteParam);
       if (status2.status == 0) {
         this.loadDataGrid(this.searchDefault);
         getToastSuccess(this.$t("messages.deleteSuccess"));
@@ -748,27 +862,42 @@ export default class Employee extends Vue {
     };
   }
 
-  filterByDateRange(data: any[], dateFrom: string, dateTo: string) {
-    if (!dateFrom && !dateTo) return data;
+  filterByDate(data: any[], targetDate: string) {
+    if (!targetDate) return data;
 
     return data.filter((item: any) => {
       if (!item.date) return false;
+      return item.date === targetDate;
+    });
+  }
 
-      // Konversi format tanggal jika perlu
-      let itemDate = item.date;
-      if (itemDate.includes("/")) {
-        // Format DD/MM/YYYY ke YYYY-MM-DD
-        const parts = itemDate.split("/");
-        itemDate = `${parts[2]}-${parts[1].padStart(
-          2,
-          "0"
-        )}-${parts[0].padStart(2, "0")}`;
-      }
+  formatDisplayDate(dateString: string): string {
+    if (!dateString) {
+      return new Date().toLocaleDateString("id-ID", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    }
 
-      const from = dateFrom || "1900-01-01";
-      const to = dateTo || "2099-12-31";
+    const date = new Date(dateString);
 
-      return itemDate >= from && itemDate <= to;
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return new Date().toLocaleDateString("id-ID", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    }
+
+    return date.toLocaleDateString("id-ID", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   }
 
@@ -777,7 +906,31 @@ export default class Employee extends Vue {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
   }
 
-  get isRunPayrollDisabled(): boolean {
-    return !this.rowData.some((item: any) => item.status === "Draft");
+  get summaryData() {
+    const summary = {
+      present: 0,
+      late: 0,
+      absent: 0,
+      leave: 0,
+    };
+
+    this.filteredData.forEach((item: any) => {
+      switch (item.status) {
+        case "PRESENT":
+          summary.present++;
+          break;
+        case "LATE":
+          summary.late++;
+          break;
+        case "ABSENT":
+          summary.absent++;
+          break;
+        case "LEAVE":
+          summary.leave++;
+          break;
+      }
+    });
+
+    return summary;
   }
 }

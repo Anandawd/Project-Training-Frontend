@@ -134,7 +134,10 @@
         "legend": "Legend",
         "code": "Code",
         "name": "Name",
-        "type": "Type"
+        "type": "Type",
+        "previousDay": "Previous Day",
+        "nextDay": "Next Day",
+        "today": "Today"
       },
       "payroll": {
         "payroll": "Payroll",
@@ -1676,6 +1679,7 @@
   },
   "title": {
     "t11": "t11",
+    "date": "Date",
     "employee": "Employee",
     "insertDocument": "Insert Document",
     "updateDocument": "Update Document",
