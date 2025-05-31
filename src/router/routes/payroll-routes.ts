@@ -148,37 +148,19 @@ export default [
     },
   },
   {
-    path: "leave-requests",
-    name: "LeaveRequests",
+    path: "leave",
+    name: "Leave",
     component: () =>
       import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/leave-requests/leave-requests.vue"
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/leave/leave.vue"
       ),
     meta: {
-      pageTitle: "title.leaveRequests",
+      pageTitle: "title.leave",
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
         { title: "title.home", url: "/" },
         { title: "title.attendance" },
-        { title: "title.leaveRequests", active: true },
-      ],
-      menu: getRouterMenu(menu, 1),
-    },
-  },
-  {
-    path: "leave-approvals",
-    name: "LeaveApprovals",
-    component: () =>
-      import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/leave-approvals/leave-approvals.vue"
-      ),
-    meta: {
-      pageTitle: "title.leaveApprovals",
-      icon: getIconFromMenu(menu, 1),
-      breadcrumb: [
-        { title: "title.home", url: "/" },
-        { title: "title.attendance" },
-        { title: "title.leaveApprovals", active: true },
+        { title: "title.leave", active: true },
       ],
       menu: getRouterMenu(menu, 1),
     },

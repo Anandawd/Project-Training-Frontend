@@ -113,7 +113,7 @@
         "leaveApprovals": "Leave Approvals",
         "workSchedule": "Work Schedule",
         "holidayCalender": "Holiday Calender",
-        "attendanceInformation": "AttendanceInformation",
+        "attendanceInformation": "Attendance Information",
         "selectEmployee": "Select Employee",
         "checkIn": "Check In",
         "checkOut": "Check Out",
@@ -1737,6 +1737,7 @@
   },
   "title": {
     "t11": "t11",
+    "leave": "Leave",
     "enrollmentProgress": "Enrollment Progress",
     "date": "Date",
     "employee": "Employee",
@@ -2350,7 +2351,14 @@
         "deviceTest": "Device {deviceName} tested successfully",
         "deviceSync": "Device synchronization completed successfully",
         "enrollmentCompleted": "Fingerprint enrollment completed successfully",
-        "fingerprintVerified": "Fingerprint verified successfully"
+        "fingerprintVerified": "Fingerprint verified successfully",
+        "quickVerifyStarted": "Quick verification started...",
+        "quickVerified": "Quick verification completed for {employeeName}",
+        "fullVerifyStarted": "Full verification started...",
+        "fullVerified": "Full verification completed for {employeeName}",
+        "verifyStep1": "Step 1: Template verification...",
+        "verifyStep2": "Step 2: Quality check...",
+        "verifyStep3": "Step 3: Final validation..."
       },
       "error": {
         "deleteAttendance": "Failed to delete attendance record",

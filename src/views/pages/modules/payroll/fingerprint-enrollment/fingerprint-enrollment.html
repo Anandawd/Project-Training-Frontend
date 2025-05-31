@@ -3,6 +3,7 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
+        disabled
         title="Device Settings"
         type="button"
         class="btn btn-warning mr-1"
@@ -220,41 +221,6 @@
         ></ag-grid-vue>
       </div>
     </div>
-
-    <!-- progress modal -->
-    <!-- <c-modal
-      v-show="showEnrollmentProgress"
-      :title="$t('title.enrollmentProgress')"
-      size="md"
-    >
-      <div class="text-center">
-        <div class="mb-3">
-          <i
-            class="fa fa-fingerprint"
-            style="font-size: 64px; color: #007bff"
-          ></i>
-        </div>
-        <h5>{{enrollmentProgress.message}}</h5>
-        <div class="progress mb-3">
-          <div
-            class="progress-bar"
-            :style="{width: enrollmentProgress.percentage + '%'}"
-            :class="enrollmentProgress.success ? 'bg-success' : 'bg-primary'"
-          >
-            {{enrollmentProgress.percentage}}%
-          </div>
-        </div>
-
-        <p class="text-muted">{{enrollmentProgress.step}}</p>
-        <button
-          v-if="enrollmentProgress.success"
-          class="btn btn-success"
-          @click="showEnrollmentProgress = false"
-        >
-          <i class="fa fa-check mr-1"></i>{{$t('buttons.close')}}
-        </button>
-      </div>
-    </c-modal> -->
 
     <!-- dialog -->
     <c-dialog

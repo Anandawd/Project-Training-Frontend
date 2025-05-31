@@ -74,6 +74,7 @@ export default class InputForm extends Vue {
     templateCount: 0,
     success: false,
   };
+  public fingerOptions: any;
 
   columnEmployeeOptions = [
     {
@@ -90,18 +91,20 @@ export default class InputForm extends Vue {
     },
   ];
 
-  fingerOptions = [
-    { value: 0, label: "Left Thumb" },
-    { value: 1, label: "Left Index" },
-    { value: 2, label: "Left Middle" },
-    { value: 3, label: "Left Ring" },
-    { value: 4, label: "Left Pinky" },
-    { value: 5, label: "Right Thumb" },
-    { value: 6, label: "Right Index" },
-    { value: 7, label: "Right Middle" },
-    { value: 8, label: "Right Ring" },
-    { value: 9, label: "Right Pinky" },
-  ];
+  beforeMount(): void {
+    this.fingerOptions = [
+      { value: 0, label: this.$t("labels.payroll.attendance.leftThumb") },
+      { value: 1, label: this.$t("labels.payroll.attendance.leftIndex") },
+      { value: 2, label: this.$t("labels.payroll.attendance.leftMiddle") },
+      { value: 3, label: this.$t("labels.payroll.attendance.leftRing") },
+      { value: 4, label: this.$t("labels.payroll.attendance.leftPinky") },
+      { value: 5, label: this.$t("labels.payroll.attendance.rightThumb") },
+      { value: 6, label: this.$t("labels.payroll.attendance.rightIndex") },
+      { value: 7, label: this.$t("labels.payroll.attendance.rightMiddle") },
+      { value: 8, label: this.$t("labels.payroll.attendance.rightRing") },
+      { value: 9, label: this.$t("labels.payroll.attendance.rightPinky") },
+    ];
+  }
 
   // actions
   async resetForm() {
