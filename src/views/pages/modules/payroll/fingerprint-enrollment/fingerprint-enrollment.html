@@ -12,15 +12,6 @@
         $t('buttons.deviceSettings') }}
       </button>
       <button
-        title="Export Data"
-        type="button"
-        class="btn btn-warning mr-1"
-        @click="handleExport"
-      >
-        <i class="fa fa-file-export mr-1" aria-hidden="true"></i>{{
-        $t('buttons.export') }}
-      </button>
-      <button
         title="Sync Device"
         type="button"
         class="btn btn-primary mr-1"
@@ -53,7 +44,6 @@
         :modeData="modeData"
         @save="handleSave"
         @close="showForm=false"
-        @enrollmentProgress="handleEnrollmentProgress"
       />
     </transition>
 
@@ -73,7 +63,7 @@
               id="all"
               v-model="search.filter[0]"
               value="0"
-              @change="onRefresh"
+              @change="refreshData(search)"
             />
             <label for="all">{{ $t('commons.filter.checkList.all') }}</label>
           </div>
@@ -85,7 +75,7 @@
               id="showEnrolled"
               v-model="search.filter[0]"
               value="1"
-              @change="onRefresh"
+              @change="refreshData(search)"
             />
             <label for="showEnrolled"
               >{{ $t('commons.filter.checkList.enrolled') }}</label
@@ -99,7 +89,7 @@
               id="showNotEnrolled"
               v-model="search.filter[0]"
               value="2"
-              @change="onRefresh"
+              @change="refreshData(search)"
             />
             <label for="showNotEnrolled"
               >{{ $t('commons.filter.checkList.notEnrolled') }}</label
@@ -113,10 +103,24 @@
               id="showPending"
               v-model="search.filter[0]"
               value="3"
-              @change="onRefresh"
+              @change="refreshData(search)"
             />
-            <label for="showAbsent"
+            <label for="showPending"
               >{{ $t('commons.filter.checkList.pending') }}</label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showFailed"
+              id="showFailed"
+              v-model="search.filter[0]"
+              value="4"
+              @change="refreshData(search)"
+            />
+            <label for="shoFailed"
+              >{{ $t('commons.filter.checkList.failed') }}</label
             >
           </div>
         </div>
@@ -130,7 +134,7 @@
       </div>
       <div class="card-body">
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="info-box bg-success">
               <div class="info-box-content">
                 <span class="info-box-text"
@@ -142,7 +146,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <div class="info-box bg-warning">
               <div class="info-box-content">
                 <span class="info-box-text"
@@ -152,7 +156,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <div class="info-box bg-danger">
               <div class="info-box-content">
                 <span class="info-box-text"
@@ -164,13 +168,23 @@
               </div>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <div class="info-box bg-info">
               <div class="info-box-content">
                 <span class="info-box-text"
                   >{{$t('labels.payroll.attendance.pending')}}</span
                 >
                 <span class="info-box-number">{{summaryData.pending}}</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="info-box bg-info">
+              <div class="info-box-content">
+                <span class="info-box-text"
+                  >{{$t('labels.payroll.attendance.failed')}}</span
+                >
+                <span class="info-box-number">{{summaryData.failed}}</span>
               </div>
             </div>
           </div>
@@ -208,7 +222,7 @@
     </div>
 
     <!-- progress modal -->
-    <c-modal
+    <!-- <c-modal
       v-show="showEnrollmentProgress"
       :title="$t('title.enrollmentProgress')"
       size="md"
@@ -240,7 +254,7 @@
           <i class="fa fa-check mr-1"></i>{{$t('buttons.close')}}
         </button>
       </div>
-    </c-modal>
+    </c-modal> -->
 
     <!-- dialog -->
     <c-dialog

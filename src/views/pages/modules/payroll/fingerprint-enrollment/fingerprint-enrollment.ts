@@ -2,7 +2,7 @@ import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
-import { formatDateTime } from "@/utils/format";
+import { formatDateTime, formatDateTimeUTC } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -28,25 +28,29 @@ interface FingerprintDevice {
   maxUsers: number;
 }
 
-interface EmployeeEnrollment {
-  id: number;
-  employee_id: string;
-  employee_name: string;
-  department_code: string;
-  department_name: string;
-  position_code: string;
-  position_name: string;
-  placement_code: string;
-  placement_name: string;
-  fingerprint_id?: string;
-  enrollment_date?: Date;
-  enrollment_status: "ENROLLED" | "NOT_ENROLLED" | "PENDING" | "FAILED";
-  device_id?: string;
-  device_name?: string;
-  last_verified?: Date;
-  template_count: number;
-  remark?: string;
-}
+// interface EmployeeEnrollment {
+//   id: number;
+//   employee_id: string;
+//   employee_name: string;
+//   department_code: string;
+//   department_name: string;
+//   position_code: string;
+//   position_name: string;
+//   placement_code: string;
+//   placement_name: string;
+//   fingerprint_id?: string;
+//   enrollment_date?: Date;
+//   enrollment_status: string; // "ENROLLED" | "NOT_ENROLLED" | "PENDING" | "FAILED"
+//   device_id?: string;
+//   device_name?: string;
+//   last_verified?: Date;
+//   template_count: number;
+//   remark?: string;
+//   updated_at: Date;
+//   updated_by: string;
+//   created_at: Date;
+//   created_by: string;
+// }
 
 interface EnrollmentProgress {
   message: string;
@@ -66,8 +70,8 @@ interface EnrollmentProgress {
 })
 export default class FingerprintEnrollment extends Vue {
   // data
-  public rowData: EmployeeEnrollment[] = [];
-  public filteredData: EmployeeEnrollment[] = [];
+  public rowData: any = [];
+  public filteredData: any = [];
   public devices: FingerprintDevice[] = [];
   public deleteParam: any;
 
@@ -139,7 +143,6 @@ export default class FingerprintEnrollment extends Vue {
     this.gridOptions = {
       actionGrid: {
         menu: true,
-        edit: true,
         delete: true,
       },
       rowHeight: $global.agGrid.rowHeightDefault,
@@ -159,7 +162,7 @@ export default class FingerprintEnrollment extends Vue {
         sortable: false,
         cellRenderer: "actionGrid",
         colId: "params",
-        width: 100,
+        width: 80,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.employeeId"),
@@ -328,7 +331,14 @@ export default class FingerprintEnrollment extends Vue {
         action: () => this.handleReEnroll(this.paramsData),
       },
       {
-        name: this.$t("commons.contextMenu.verify"),
+        name: this.$t("commons.contextMenu.delete"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("delete_icon24"),
+        action: () => this.handleDelete(this.paramsData),
+      },
+      "separator",
+      {
+        name: this.$t("commons.contextMenu.quickVerify"),
         disabled:
           !this.paramsData ||
           this.paramsData.enrollment_status !== "ENROLLED" ||
@@ -337,10 +347,13 @@ export default class FingerprintEnrollment extends Vue {
         action: () => this.handleVerify(this.paramsData),
       },
       {
-        name: this.$t("commons.contextMenu.delete"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("delete_icon24"),
-        action: () => this.handleDelete(this.paramsData),
+        name: this.$t("commons.contextMenu.fullVerify"),
+        disabled:
+          !this.paramsData ||
+          this.paramsData.enrollment_status !== "ENROLLED" ||
+          !this.deviceConnected,
+        icon: generateIconContextMenuAgGrid("detail_icon24"),
+        action: () => this.handleVerify(this.paramsData),
       },
     ];
     return result;
@@ -375,6 +388,7 @@ export default class FingerprintEnrollment extends Vue {
         this.loadEditData(params.id);
       }
     });
+
     this.showForm = true;
   }
 
@@ -382,7 +396,7 @@ export default class FingerprintEnrollment extends Vue {
     const formattedData = this.formatData(formData);
     console.log("handleSave", formattedData);
     if (this.modeData == $global.modeData.insert) {
-      this.enrollFingerprint(formattedData).then(() => {
+      this.insertData(formattedData).then(() => {
         this.showForm = false;
       });
     } else {
@@ -392,18 +406,16 @@ export default class FingerprintEnrollment extends Vue {
     }
   }
 
-  handleEdit(formData: any) {
-    this.handleShowForm(formData, $global.modeData.edit);
-  }
-
   handleDelete(params: any) {
     this.deleteParam = params.id;
     this.dialogMessage = this.$t(
-      "messages.attendance.delete.deleteFingerprintEnrollment"
+      "messages.attendance.confirm.deleteFingerprintEnrollment"
     );
     this.dialogAction = "delete";
     this.showDialog = true;
   }
+
+  handleMenu() {}
 
   handleReEnroll(params: any) {
     this.dialogTitle = this.$t("messages.attendance.confirm.reEnrollTitle");
@@ -414,7 +426,6 @@ export default class FingerprintEnrollment extends Vue {
       }
     );
     this.dialogAction = "re-enroll";
-    this.deleteParam = params;
     this.showDialog = true;
   }
 
@@ -426,14 +437,9 @@ export default class FingerprintEnrollment extends Vue {
     if (this.dialogAction === "delete") {
       this.deleteData();
     } else if (this.dialogAction === "re-enroll") {
-      this.reEnrollFingerprint(this.deleteData);
+      this.handleShowForm(this.paramsData, $global.modeData.edit);
     }
     this.showDialog = false;
-  }
-
-  handleEnrollmentProgress(progress: EnrollmentProgress) {
-    this.enrollmentProgress = progress;
-    this.showEnrollmentProgress = true;
   }
 
   refreshData(search: any) {
@@ -444,6 +450,7 @@ export default class FingerprintEnrollment extends Vue {
   onRefresh() {
     this.loadDataGrid(this.searchDefault);
   }
+
   // API REQUEST =======================================================
   async loadData() {
     try {
@@ -566,6 +573,7 @@ export default class FingerprintEnrollment extends Vue {
     ];
 
     this.rowData = [
+      // Employee yang sudah enrolled
       {
         id: 1,
         employee_id: "EMP001",
@@ -587,33 +595,6 @@ export default class FingerprintEnrollment extends Vue {
       },
       {
         id: 2,
-        employee_id: "EMP002",
-        employee_name: "Jane Smith",
-        department_code: "HR",
-        department_name: "Human Resources",
-        position_code: "MANAGER",
-        position_name: "Manager",
-        placement_code: "AMORA_UBUD",
-        placement_name: "Amora Ubud",
-        enrollment_status: "NOT_ENROLLED",
-        template_count: 0,
-      },
-      {
-        id: 3,
-        employee_id: "EMP003",
-        employee_name: "Mike Johnson",
-        department_code: "FINANCE",
-        department_name: "Finance",
-        position_code: "STAFF",
-        position_name: "Staff",
-        placement_code: "AMORA_UBUD",
-        placement_name: "Amora Ubud",
-        enrollment_status: "PENDING",
-        template_count: 0,
-        remark: "Enrollment in progress",
-      },
-      {
-        id: 4,
         employee_id: "EMP004",
         employee_name: "Sarah Wilson",
         department_code: "IT",
@@ -629,6 +610,81 @@ export default class FingerprintEnrollment extends Vue {
         device_name: "Backup Scanner - Office",
         last_verified: new Date("2025-01-29"),
         template_count: 2,
+        remark: "Enrolled successfully",
+      },
+
+      // Employee yang belum enrolled
+      {
+        id: 3,
+        employee_id: "EMP002",
+        employee_name: "Jane Smith",
+        department_code: "HR",
+        department_name: "Human Resources",
+        position_code: "MANAGER",
+        position_name: "Manager",
+        placement_code: "AMORA_UBUD",
+        placement_name: "Amora Ubud",
+        enrollment_status: "NOT_ENROLLED",
+        template_count: 0,
+        remark: "Waiting for enrollment",
+      },
+      {
+        id: 4,
+        employee_id: "EMP003",
+        employee_name: "Mike Johnson",
+        department_code: "FINANCE",
+        department_name: "Finance",
+        position_code: "STAFF",
+        position_name: "Staff",
+        placement_code: "AMORA_UBUD",
+        placement_name: "Amora Ubud",
+        enrollment_status: "NOT_ENROLLED",
+        template_count: 0,
+        remark: "New employee",
+      },
+      {
+        id: 5,
+        employee_id: "EMP005",
+        employee_name: "Alex Brown",
+        department_code: "MARKETING",
+        department_name: "Marketing",
+        position_code: "STAFF",
+        position_name: "Staff",
+        placement_code: "AMORA_UBUD",
+        placement_name: "Amora Ubud",
+        enrollment_status: "NOT_ENROLLED",
+        template_count: 0,
+        remark: "Waiting for enrollment",
+      },
+      {
+        id: 6,
+        employee_id: "EMP006",
+        employee_name: "Lisa Anderson",
+        department_code: "HR",
+        department_name: "Human Resources",
+        position_code: "STAFF",
+        position_name: "Staff",
+        placement_code: "AMORA_UBUD",
+        placement_name: "Amora Ubud",
+        enrollment_status: "NOT_ENROLLED",
+        template_count: 0,
+        remark: "New hire",
+      },
+
+      // Employee dengan status pending untuk testing
+      {
+        id: 7,
+        employee_id: "EMP007",
+        employee_name: "David Chen",
+        department_code: "IT",
+        department_name: "Information Technology",
+        position_code: "STAFF",
+        position_name: "Staff",
+        placement_code: "AMORA_UBUD",
+        placement_name: "Amora Ubud",
+        enrollment_status: "PENDING",
+        template_count: 0,
+        remark: "Enrollment in progress",
       },
     ];
   }
@@ -648,87 +704,78 @@ export default class FingerprintEnrollment extends Vue {
       await Promise.all(promises);
       */
 
-      this.employeeOptions = this.rowData
-        .filter((item) => item.enrollment_status === "NOT_ENROLLED")
-        .map((item) => ({
-          employee_id: item.employee_id,
-          name: item.employee_name,
-          department_code: item.department_code,
-          department_name: item.department_name,
-          position_code: item.position_code,
-          position_name: item.position_name,
-          placement_code: item.placement_code,
-          placement_name: item.placement_name,
-        }));
+      // Employee yang belum di-enroll
+      const enrolledEmployeeIds = this.rowData
+        .filter((item: any) => item.enrollment_status === "ENROLLED")
+        .map((item: any) => item.employee_id);
+
+      // Mock data employee (bisa diganti dengan API call)
+      const allEmployees = [
+        {
+          employee_id: "EMP001",
+          name: "John Doe",
+          department_code: "IT",
+          department_name: "Information Technology",
+          position_code: "STAFF",
+          position_name: "Staff",
+          placement_code: "AMORA_UBUD",
+          placement_name: "Amora Ubud",
+        },
+        {
+          employee_id: "EMP002",
+          name: "Jane Smith",
+          department_code: "HR",
+          department_name: "Human Resources",
+          position_code: "MANAGER",
+          position_name: "Manager",
+          placement_code: "AMORA_UBUD",
+          placement_name: "Amora Ubud",
+        },
+        {
+          employee_id: "EMP003",
+          name: "Mike Johnson",
+          department_code: "FINANCE",
+          department_name: "Finance",
+          position_code: "STAFF",
+          position_name: "Staff",
+          placement_code: "AMORA_UBUD",
+          placement_name: "Amora Ubud",
+        },
+        {
+          employee_id: "EMP004",
+          name: "Sarah Wilson",
+          department_code: "IT",
+          department_name: "Information Technology",
+          position_code: "SUPERVISOR",
+          position_name: "Supervisor",
+          placement_code: "AMORA_UBUD",
+          placement_name: "Amora Ubud",
+        },
+        {
+          employee_id: "EMP005",
+          name: "Alex Brown",
+          department_code: "MARKETING",
+          department_name: "Marketing",
+          position_code: "STAFF",
+          position_name: "Staff",
+          placement_code: "AMORA_UBUD",
+          placement_name: "Amora Ubud",
+        },
+      ];
+
+      // Filter employee yang belum enrolled
+      this.employeeOptions = allEmployees.filter(
+        (emp) => !enrolledEmployeeIds.includes(emp.employee_id)
+      );
     } catch (error) {
       getError(error);
-    }
-  }
-
-  async enrollFingerprint(formData: any) {
-    try {
-      this.handleEnrollmentProgress({
-        message: this.$t("messages.attendance.enrollment.starting"),
-        step: this.$t("messages.attendance.enrollment.preparing"),
-        percentage: 0,
-        success: false,
-      });
-
-      setTimeout(() => {
-        this.handleEnrollmentProgress({
-          message: this.$t("messages.attendance.enrollment.scanning"),
-          step: this.$t("messages.attendance.enrollment.placeFinger"),
-          percentage: 33,
-          success: false,
-        });
-      }, 1000);
-
-      setTimeout(() => {
-        this.handleEnrollmentProgress({
-          message: this.$t("messages.attendance.enrollment.processing"),
-          step: this.$t("messages.attendance.enrollment.creatingTemplate"),
-          percentage: 66,
-          success: false,
-        });
-      }, 3000);
-
-      setTimeout(() => {
-        this.handleEnrollmentProgress({
-          message: this.$t("messages.attendance.enrollment.completed"),
-          step: this.$t("messages.attendance.enrollment.success"),
-          percentage: 100,
-          success: true,
-        });
-
-        const employeeIndex = this.rowData.findIndex(
-          (item) => item.employee_id === formData.employee_id
-        );
-
-        if (employeeIndex !== -1) {
-          this.rowData[employeeIndex] = {
-            ...this.rowData[employeeIndex],
-            fingerprint_id: `FP${Date.now()}`,
-            enrollment_date: new Date(),
-            enrollment_status: "ENROLLED",
-            device_id: formData.device_id,
-            device_name: formData.device_name,
-            template_count: 3,
-            remark: formData.remark,
-          };
-        }
-        this.loadDataGrid(this.searchDefault);
-        getToastSuccess(this.$t("messages.attendance.success.enrolled"));
-      }, 5000);
-    } catch (error) {
-      getError(error);
-      this.showEnrollmentProgress = false;
     }
   }
 
   async reEnrollFingerprint(params: any) {
     try {
       const employeeIndex = this.rowData.findIndex(
-        (item) => item.id === params.id
+        (item: any) => item.id === params.id
       );
       if (employeeIndex !== -1) {
         this.rowData[employeeIndex] = {
@@ -751,7 +798,7 @@ export default class FingerprintEnrollment extends Vue {
     try {
       // Simulate fingerprint verification
       const employeeIndex = this.rowData.findIndex(
-        (item) => item.id === params.id
+        (item: any) => item.id === params.id
       );
       if (employeeIndex !== -1) {
         this.rowData[employeeIndex].last_verified = new Date();
@@ -764,49 +811,58 @@ export default class FingerprintEnrollment extends Vue {
     }
   }
 
-  // async insertData(formData: any) {
-  //   try {
-  //     /*
-  //     const { status2 } = await salaryAdjustmentAPI.InsertSalaryAdjustment(formData);
-  //     if (status2.status == 0) {
-  //       getToastSuccess(this.$t("messages.saveSuccess"));
-  //       this.showForm = false;
-  //       this.loadDataGrid(this.searchDefault);
-  //     }
-  //     */
+  async insertData(formData: any) {
+    try {
+      /*
+      const { status2 } = await salaryAdjustmentAPI.InsertSalaryAdjustment(formData);
+      if (status2.status == 0) {
+        getToastSuccess(this.$t("messages.saveSuccess"));
+        this.showForm = false;
+        this.loadDataGrid(this.searchDefault);
+      }
+      */
 
-  //     const newId = Math.max(...this.rowData.map((adj: any) => adj.id)) + 1;
+      const newId =
+        Math.max(...this.rowData.map((item: any) => item.id), 0) + 1;
 
-  //     const newAdjustment = {
-  //       id: newId,
-  //       employee_id: formData.employee_id,
-  //       employee_name: formData.employee_name,
-  //       department_code: formData.department_code,
-  //       department_name: formData.department_name,
-  //       position_code: formData.position_code,
-  //       position_name: formData.position_name,
-  //       effective_date: formData.effective_date,
-  //       current_salary: formData.current_salary,
-  //       new_salary: formData.new_salary,
-  //       status: "PENDING",
-  //       remark: formData.remark || "",
-  //       created_at: formatDateTimeUTC(new Date()),
-  //       created_by: "Current User",
-  //       updated_at: formatDateTimeUTC(new Date()),
-  //       updated_by: "Current User",
-  //     };
+      const newEnrollment = {
+        id: newId,
+        employee_id: formData.employee_id,
+        employee_name: formData.employee_name,
+        department_code: formData.department_code,
+        department_name: formData.department_name,
+        position_code: formData.position_code,
+        position_name: formData.position_name,
+        placement_code: formData.placement_code,
+        placement_name: formData.placement_name,
+        fingerprint_id: `FP${Date.now()}`,
+        device_id: formData.device_id,
+        device_name: formData.device_name,
+        device_model: formData.device_model,
+        device_ip: formData.device_ip,
+        enrollment_date: formData.enrollment_date,
+        enrollment_status: formData.enrollment_status,
+        template_count: formData.template_count,
+        finger_index: formData.finger_index,
+        quality_level: formData.quality_level,
+        last_verified: formData.last_verified,
+        remark: formData.remark,
+        created_at: formatDateTimeUTC(new Date()),
+        created_by: "Current User",
+        updated_at: formatDateTimeUTC(new Date()),
+        updated_by: "Current User",
+      };
 
-  //     this.rowData.push(newAdjustment);
-  //     this.searchDefault.filter = [1];
+      this.rowData.push(newEnrollment);
 
-  //     await this.$nextTick();
-  //     await this.loadDataGrid(this.searchDefault);
+      await this.$nextTick();
+      await this.loadDataGrid(this.searchDefault);
 
-  //     this.$t("messages.employee.success.saveSalaryAdjustment");
-  //   } catch (error) {
-  //     getError(error);
-  //   }
-  // }
+      getToastSuccess(this.$t("messages.attendance.success.enrolled"));
+    } catch (error) {
+      getError(error);
+    }
+  }
 
   async updateData(formData: any) {
     try {
@@ -825,7 +881,13 @@ export default class FingerprintEnrollment extends Vue {
       if (index !== -1) {
         this.rowData[index] = {
           ...this.rowData[index],
-          ...formData,
+          device_id: formData.device_id,
+          device_name: formData.device_name,
+          remark: formData.remark,
+          template_count:
+            formData.template_count || this.rowData[index].template_count,
+          updated_at: formatDateTimeUTC(new Date()),
+          updated_by: "Current User",
         };
       }
 
@@ -917,6 +979,9 @@ export default class FingerprintEnrollment extends Vue {
       device_ip: params.device_ip,
       finger_index: parseInt(params.finger_index),
       quality_level: params.quality_level,
+      enrollment_date: formatDateTimeUTC(params.enrollment_date),
+      enrollment_status: params.enrollment_status,
+      template_count: params.template_count,
       remark: params.remark,
     };
   }
@@ -938,6 +1003,9 @@ export default class FingerprintEnrollment extends Vue {
       device_ip: params.device_ip,
       finger_index: params.finger_index,
       quality_level: params.quality_level,
+      enrollment_date: params.enrollment_date,
+      enrollment_status: params.enrollment_status,
+      template_count: params.template_count,
       remark: params.remark,
     };
   }

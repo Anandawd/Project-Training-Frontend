@@ -56,7 +56,7 @@ interface FingerprintDevice {
       default: (): FingerprintDevice[] => [],
     },
   },
-  emits: ["save", "close", "enrollmentProgress"],
+  emits: ["save", "close"],
 })
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
@@ -162,22 +162,12 @@ export default class InputForm extends Vue {
     if (this.enrollmentInProgress) {
       this.stopEnrollment();
     }
+    this.resetEnrollmentProgress();
     this.$emit("close");
   }
 
   onInvalidSubmit() {
     focusOnInvalid();
-  }
-
-  resetEnrollmentProgress() {
-    this.enrollmentProgress = {
-      message: "",
-      step: "",
-      percentage: 0,
-      templateCount: 0,
-      success: false,
-    };
-    this.enrollmentInProgress = false;
   }
 
   onEmployeeChange() {
@@ -214,12 +204,22 @@ export default class InputForm extends Vue {
     this.resetEnrollmentProgress();
   }
 
+  resetEnrollmentProgress() {
+    this.enrollmentProgress = {
+      message: "",
+      step: "",
+      percentage: 0,
+      templateCount: 0,
+      success: false,
+    };
+    this.enrollmentInProgress = false;
+  }
+
   async startEnrollment() {
     if (!this.canStartEnrollment) {
       getToastError(this.$t("messages.attendance.error.cannotStartEnrollment"));
       return;
     }
-
     this.enrollmentInProgress = true;
     this.resetEnrollmentProgress();
 
@@ -353,7 +353,6 @@ export default class InputForm extends Vue {
 
   updateEnrollmentProgress(progress: EnrollmentProgress) {
     this.enrollmentProgress = { ...progress };
-    this.$emit("enrollmentProgress", progress);
   }
 
   // HELPER FUNCTIONS

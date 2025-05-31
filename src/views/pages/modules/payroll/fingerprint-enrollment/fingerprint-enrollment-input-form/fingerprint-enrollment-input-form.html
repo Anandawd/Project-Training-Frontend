@@ -280,9 +280,23 @@
                             :class="scannerIconClass"
                           ></i>
                         </div>
-                        <div class="scanner-status">
+
+                        <!-- status before enrollment -->
+                        <div
+                          class="scanner-status"
+                          v-show="enrollmentProgress.percentage <= 0"
+                        >
                           <h6>{{scannerStatusMessage}}</h6>
                           <p class="mb-0">{{scannerInstructionMessage}}</p>
+                        </div>
+
+                        <!-- status in enrollment -->
+                        <div
+                          class="scanner-status"
+                          v-show="enrollmentProgress.percentage > 0"
+                        >
+                          <h6>{{enrollmentProgress.step}}</h6>
+                          <p class="mb-0">{{enrollmentProgress.message}}</p>
                         </div>
                       </div>
 
@@ -316,7 +330,7 @@
                         <button
                           type="button"
                           class="btn btn-primary btn-block"
-                          :disabled="!canStartEnrollment"
+                          :disabled="!canStartEnrollment || enrollmentProgress.percentage > 0"
                           @click="startEnrollment"
                           v-show="!enrollmentInProgress"
                         >

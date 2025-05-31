@@ -146,7 +146,7 @@
         "totalEmployees": "Total Employees",
         "enrolled": "Enrolled",
         "notEnrolled": "Not Enrolled",
-        "pending": "Failed",
+        "pending": "Pending",
         "fingerprintId": "Fingerprint ID",
         "enrollmentDate": "Enrollment Date",
         "device": "Device",
@@ -2369,7 +2369,7 @@
         "reEnrollTitle": "Re-Enroll Fingerprint",
         "reEnrollMessage": "Are you sure you want to re-enroll fingerprint for {employeeName}? This will overwrite the existing template.",
         "deleteTitleFingerprint": "Delete Enrollment",
-        "deleteMessageFingerprint": "Are you sure you want to delete fingerprint enrollment for {employeeName}? This action cannot be undone."
+        "deleteFingerprintEnrollment": "Are you sure you want to delete fingerprint enrollment for {employeeName}? This action cannot be undone."
       },
       "enrollment": {
         "starting": "Starting enrollment...",
@@ -4039,7 +4039,8 @@
     "contextMenu": {
       "enroll": "Enroll",
       "reEnroll": "Re-enroll",
-      "verify": "Verify",
+      "quickVerify": "Quick Verify",
+      "fullVerify": "Full Verify",
       "approve": "Approve",
       "reject": "Reject",
       "downloadPayslip": "Download Payslip",
@@ -4634,7 +4635,8 @@
         "expiringSoon": "Expiring Soon",
         "expired": "Expired",
         "enrolled": "Enrolled",
-        "notEnrolled": "Not Enrolled"
+        "notEnrolled": "Not Enrolled",
+        "failed": "Failed"
       },
       "select": {
         "buildingFloor": "Building/Floor",
