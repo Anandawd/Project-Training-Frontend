@@ -3,33 +3,62 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
-        title="Insert Employee"
+        title="Device Settings"
+        type="button"
+        class="btn btn-warning mr-1"
+        @click="showDeviceSettings"
+      >
+        <i class="fa fa-cog mr-1" aria-hidden="true"></i>{{
+        $t('buttons.deviceSettings') }}
+      </button>
+      <button
+        title="Export Data"
+        type="button"
+        class="btn btn-warning mr-1"
+        @click="handleExport"
+      >
+        <i class="fa fa-file-export mr-1" aria-hidden="true"></i>{{
+        $t('buttons.export') }}
+      </button>
+      <button
+        title="Sync Device"
+        type="button"
+        class="btn btn-primary mr-1"
+        @click="handleSync"
+      >
+        <i class="fa fa-sync mr-1" aria-hidden="true"></i>{{
+        $t('buttons.syncDevice') }}
+      </button>
+      <button
+        title="Enroll Employee"
         type="button"
         class="btn btn-primary mr-1"
         @click="handleShowForm('', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
-        $t('buttons.insert') }}
+        $t('buttons.enrollEmployee') }}
       </button>
     </div>
 
     <!-- insert form -->
     <transition>
-      <div class="px-2">
-        <c-input-form
-          ref="inputFormElement"
-          v-show="showForm"
-          :schema="schema"
-          :modeData="modeData"
-          @save="handleSave"
-          @close="showForm=false"
-        />
-      </div>
+      <c-input-form
+        class="px-2"
+        ref="inputFormElement"
+        v-show="showForm"
+        :employeeOptions="employeeOptions"
+        :deviceConnected="deviceConnected"
+        :devices="devices"
+        :schema="schema"
+        :modeData="modeData"
+        @save="handleSave"
+        @close="showForm=false"
+        @enrollmentProgress="handleEnrollmentProgress"
+      />
     </transition>
 
     <!-- filter -->
     <c-search-filter
-      date-range
       :options="searchOptions"
       :searchDefault="searchDefault"
       @search="refreshData"
@@ -52,66 +81,107 @@
             <input
               class="mr-1"
               type="radio"
-              name="showPresent"
-              id="showPresent"
+              name="showEnrolled"
+              id="showEnrolled"
               v-model="search.filter[0]"
               value="1"
               @change="onRefresh"
             />
-            <label for="showPresent"
-              >{{ $t('commons.filter.checkList.showPresent') }}</label
+            <label for="showEnrolled"
+              >{{ $t('commons.filter.checkList.enrolled') }}</label
             >
           </div>
           <div class="checklist">
             <input
               class="mr-1"
               type="radio"
-              name="showLate"
-              id="showLate"
+              name="showNotEnrolled"
+              id="showNotEnrolled"
               v-model="search.filter[0]"
               value="2"
               @change="onRefresh"
             />
-            <label for="showLate"
-              >{{ $t('commons.filter.checkList.showLate') }}</label
+            <label for="showNotEnrolled"
+              >{{ $t('commons.filter.checkList.notEnrolled') }}</label
             >
           </div>
           <div class="checklist">
             <input
               class="mr-1"
               type="radio"
-              name="showAbsent"
-              id="showAbsent"
+              name="showPending"
+              id="showPending"
               v-model="search.filter[0]"
               value="3"
               @change="onRefresh"
             />
             <label for="showAbsent"
-              >{{ $t('commons.filter.checkList.showAbsent') }}</label
-            >
-          </div>
-          <div class="checklist">
-            <input
-              class="mr-1"
-              type="radio"
-              name="showLeave"
-              id="showLeave"
-              v-model="search.filter[0]"
-              value="4"
-              @change="onRefresh"
-            />
-            <label for="showLeave"
-              >{{ $t('commons.filter.checkList.showLeave') }}</label
+              >{{ $t('commons.filter.checkList.pending') }}</label
             >
           </div>
         </div>
       </template>
     </c-search-filter>
 
+    <!-- summary -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{{$t('title.summary')}}</h3>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="info-box bg-success">
+              <div class="info-box-content">
+                <span class="info-box-text"
+                  >{{$t('labels.payroll.attendance.totalEmployees')}}</span
+                >
+                <span class="info-box-number"
+                  >{{summaryData.total_employees}}</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="info-box bg-warning">
+              <div class="info-box-content">
+                <span class="info-box-text"
+                  >{{$t('labels.payroll.attendance.enrolled')}}</span
+                >
+                <span class="info-box-number">{{summaryData.enrolled}}</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="info-box bg-danger">
+              <div class="info-box-content">
+                <span class="info-box-text"
+                  >{{$t('labels.payroll.attendance.notEnrolled')}}</span
+                >
+                <span class="info-box-number"
+                  >{{summaryData.not_enrolled}}</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="info-box bg-info">
+              <div class="info-box-content">
+                <span class="info-box-text"
+                  >{{$t('labels.payroll.attendance.pending')}}</span
+                >
+                <span class="info-box-number">{{summaryData.pending}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- table -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">{{$t('title.enrollment')}}</h3>
+        <h3 class="card-title">{{$t('title.fingerprintEnrollment')}}</h3>
       </div>
       <div class="card-body">
         <ag-grid-vue
@@ -137,17 +207,50 @@
       </div>
     </div>
 
+    <!-- progress modal -->
+    <c-modal
+      v-show="showEnrollmentProgress"
+      :title="$t('title.enrollmentProgress')"
+      size="md"
+    >
+      <div class="text-center">
+        <div class="mb-3">
+          <i
+            class="fa fa-fingerprint"
+            style="font-size: 64px; color: #007bff"
+          ></i>
+        </div>
+        <h5>{{enrollmentProgress.message}}</h5>
+        <div class="progress mb-3">
+          <div
+            class="progress-bar"
+            :style="{width: enrollmentProgress.percentage + '%'}"
+            :class="enrollmentProgress.success ? 'bg-success' : 'bg-primary'"
+          >
+            {{enrollmentProgress.percentage}}%
+          </div>
+        </div>
+
+        <p class="text-muted">{{enrollmentProgress.step}}</p>
+        <button
+          v-if="enrollmentProgress.success"
+          class="btn btn-success"
+          @click="showEnrollmentProgress = false"
+        >
+          <i class="fa fa-check mr-1"></i>{{$t('buttons.close')}}
+        </button>
+      </div>
+    </c-modal>
+
     <!-- dialog -->
     <c-dialog
       v-show="showDialog"
       dialogTitle="Confirm"
       size="sm"
-      @confirm="deleteData"
+      @confirm="confirmAction"
       @cancel="showDialog=false"
     >
-      <template #body> Are you sure to delete this data? </template>
+      <template #body>{{dialogMessage}}</template>
     </c-dialog>
-
-    <!-- modal -->
   </div>
 </section>

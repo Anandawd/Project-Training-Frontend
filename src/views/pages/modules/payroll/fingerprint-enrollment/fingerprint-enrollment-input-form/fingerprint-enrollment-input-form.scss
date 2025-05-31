@@ -1,0 +1,124 @@
+.finger-selection {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  background: #f8f9fa;
+}
+
+.finger-option {
+  padding: 10px 5px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.finger-option:hover {
+  border-color: #007bff;
+  background: #e3f2fd;
+}
+
+.finger-option.selected {
+  border-color: #007bff;
+  background: #007bff;
+  color: white;
+}
+
+.enrollment-scanner {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+}
+
+.enrollment-scanner.connected {
+  border-color: #28a745;
+}
+
+.enrollment-scanner.scanning {
+  border-color: #007bff;
+  animation: pulse 2s infinite;
+}
+
+.enrollment-scanner.success {
+  border-color: #28a745;
+}
+
+.enrollment-scanner.error {
+  border-color: #dc3545;
+}
+
+@keyframes pulse {
+  0% {
+    border-color: #007bff;
+  }
+  50% {
+    border-color: #0056b3;
+  }
+  100% {
+    border-color: #007bff;
+  }
+}
+
+.scanner-header {
+  background: #f8f9fa;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.scanner-body {
+  padding: 20px;
+}
+
+.scanner-display {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.fingerprint-icon {
+  font-size: 64px;
+  margin-bottom: 15px;
+  color: #6c757d;
+}
+
+.fingerprint-icon.scanning {
+  color: #007bff;
+  animation: scan 1.5s infinite;
+}
+
+.fingerprint-icon.success {
+  color: #28a745;
+}
+
+.fingerprint-icon.error {
+  color: #dc3545;
+}
+
+@keyframes scan {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.scanner-status h6 {
+  color: #495057;
+  margin-bottom: 10px;
+}
+
+.scanner-status p {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.template-status {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.scanner-controls {
+  margin-top: 20px;
+}

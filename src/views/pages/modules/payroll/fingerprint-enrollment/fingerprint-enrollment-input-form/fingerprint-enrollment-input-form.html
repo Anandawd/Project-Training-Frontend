@@ -9,102 +9,360 @@
   <div class="card">
     <div class="card-header">{{title}}</div>
     <div class="card-body">
-      <!-- form -->
-      <div class="row mb-3">
-        <div class="col-md-4">
-          <c-select
-            required
-            offset="right"
-            class="row mb-1"
-            selectType="column"
-            name="selectedEmployee"
-            labelName="name"
-            keyName="code"
-            v-model="form.selected_employee"
-            :label="$t('labels.payroll.attendance.selectEmployee')"
-            :columnOptions="columnOptions"
-            :options="employeeOptions"
-          />
+      <!-- form accordian -->
+      <div id="parrentAccordion" class="accordion">
+        <!-- employee information -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemEmployeeInformationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#employeeInformation"
+              aria-controls="employeeInformation"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.attendance.employeeInformation')}}
+            </button>
+          </h6>
+          <div
+            id="employeeInformation"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="employeeInformationHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="SelectEmployee"
+                    labelName="name"
+                    keyName="employee_id"
+                    v-model="form.employee_id"
+                    :label="$t('labels.payroll.attendance.selectEmployee')"
+                    :columnOptions="columnEmployeeOptions"
+                    :options="employeeOptions"
+                    @change="onEmployeeChange"
+                    :disabled="modeData === $global.modeData.edit"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-6">
+                  <c-input
+                    disabled
+                    type="text"
+                    name="Department"
+                    id="Department"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.department')"
+                    v-model="form.department_name"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <c-input
+                    disabled
+                    name="Position"
+                    id="Position"
+                    class="row mb-1"
+                    type="text"
+                    v-model="form.position_name"
+                    :label="$t('labels.payroll.employee.position')"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <c-input
+                    disabled
+                    name="Placement"
+                    id="Placement"
+                    class="row mb-1"
+                    type="text"
+                    v-model="form.placement_name"
+                    :label="$t('labels.payroll.employee.placement')"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-md-4">
-          <c-input
-            disabled
-            id="department"
-            class="row mb-1"
-            type="text"
-            name="department"
-            v-model="form.employee_department"
-            :label="$t('labels.payroll.employee.department')"
-          />
+
+        <!-- Device Selection -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemDeviceSelectionHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#deviceSelection"
+              aria-controls="deviceSelection"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.attendance.deviceSelection')}}
+            </button>
+          </h6>
+          <div
+            id="deviceSelection"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="deviceSelectionHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-3"
+                    name="SelectedDevice"
+                    labelName="name"
+                    keyName="id"
+                    v-model="form.device_id"
+                    :label="$t('labels.payroll.attendance.selectDevice')"
+                    :options="connectedDevices"
+                    @change="onDeviceChange"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <c-input
+                    disabled
+                    type="text"
+                    name="DeviceModel"
+                    id="DeviceModel"
+                    class="row mb-3"
+                    :label="$t('labels.payroll.attendance.deviceModel')"
+                    v-model="form.device_model"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <c-input
+                    disabled
+                    type="text"
+                    name="DeviceIp"
+                    id="DeviceIp"
+                    class="row mb-3"
+                    :label="$t('labels.payroll.attendance.deviceIp')"
+                    v-model="form.device_ip"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <div class="row mb-3">
+                    <div class="col-sm-3">
+                      <label
+                        class="form-label"
+                        style="font-size: 12px; font-weight: 700"
+                      >
+                        {{$t('labels.payroll.attendance.deviceStatus')}}
+                      </label>
+                    </div>
+                    <div class="col-sm-9 d-flex align-items-center">
+                      <span class="badge" :class="deviceStatusBadge">
+                        <i class="fa fa-circle mr-1"></i>
+                        {{deviceStatusText}}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-md-4">
-          <c-input
-            disabled
-            id="position"
-            class="row mb-1"
-            type="text"
-            name="position"
-            v-model="form.employee_position"
-            :label="$t('labels.payroll.employee.position')"
-          />
-        </div>
-        <div class="col-md-4 mb-1">
-          <c-datepicker
-            required
-            id="date"
-            customLabelClass="col-3"
-            :label="$t('labels.date')"
-            type="date"
-            valueType="YYYY-MM-DD"
-            format="DD/MM/YYYY"
-            name="date"
-            v-model="form.date"
-          />
-        </div>
-        <div class="col-md-4">
-          <c-input
-            required
-            id="checkIn"
-            class="row mb-1"
-            type="text"
-            name="checkIn"
-            v-model="form.employee_check_in"
-            :label="$t('labels.payroll.attendance.checkIn')"
-          />
-        </div>
-        <div class="col-md-4">
-          <c-input
-            required
-            id="checkOut"
-            class="row mb-1"
-            type="text"
-            name="checkOut"
-            v-model="form.employee_check_out"
-            :label="$t('labels.payroll.attendance.checkOut')"
-          />
-        </div>
-        <div class="col-md-4">
-          <c-select
-            required
-            offset="right"
-            class="row mb-1"
-            name="status"
-            labelName="name"
-            keyName="code"
-            v-model="form.employe_status"
-            :label="$t('labels.payroll.attendance.status')"
-            :options="statusOptions"
-          />
-        </div>
-        <div class="col-md-4 mb-1">
-          <c-input
-            id="remark"
-            class="row mb-1"
-            type="text"
-            name="remark"
-            v-model="form.remark"
-            :label="$t('labels.remark')"
-          />
+
+        <!-- fingerprint enrollment -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemFingerprintEnrollmentHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#fingerprintEnrollment"
+              aria-controls="fingerprintEnrollment"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.attendance.fingerprintEnrollment')}}
+            </button>
+          </h6>
+          <div
+            id="fingerprintEnrollment"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="fingerprintEnrollmentHeader"
+          >
+            <div class="accordion-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <!-- Enrollment Instructions -->
+                  <div class="card border-info mb-3">
+                    <div class="card-header bg-info text-white">
+                      <h6 class="mb-0">
+                        <i class="fa fa-info-circle mr-2"></i>
+                        {{$t('labels.payroll.attendance.enrollmentInstructions')}}
+                      </h6>
+                    </div>
+                    <div class="card-body">
+                      <ol class="mb-0">
+                        <li>
+                          {{$t('labels.payroll.attendance.instruction1')}}
+                        </li>
+                        <li>
+                          {{$t('labels.payroll.attendance.instruction2')}}
+                        </li>
+                        <li>
+                          {{$t('labels.payroll.attendance.instruction3')}}
+                        </li>
+                        <li>
+                          {{$t('labels.payroll.attendance.instruction4')}}
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+
+                  <!-- Enrollment Quality Settings -->
+                  <div class="form-group">
+                    <label class="form-label"
+                      >{{$t('labels.payroll.attendance.enrollmentQuality')}}</label
+                    >
+                    <select class="form-control" v-model="form.quality_level">
+                      <option value="1">
+                        {{$t('labels.payroll.attendance.qualityLow')}}
+                      </option>
+                      <option value="2" selected>
+                        {{$t('labels.payroll.attendance.qualityMedium')}}
+                      </option>
+                      <option value="3">
+                        {{$t('labels.payroll.attendance.qualityHigh')}}
+                      </option>
+                    </select>
+                  </div>
+
+                  <!-- Finger Selection -->
+                  <div class="form-group">
+                    <label class="form-label"
+                      >{{$t('labels.payroll.attendance.fingerSelection')}}</label
+                    >
+                    <div class="finger-selection">
+                      <div class="row text-center">
+                        <div
+                          class="col-2"
+                          v-for="finger in fingerOptions"
+                          :key="finger.value"
+                        >
+                          <div
+                            class="finger-option"
+                            :class="{'selected': form.finger_index === finger.value}"
+                            @click="form.finger_index = finger.value"
+                          >
+                            <i
+                              class="fa fa-hand-point-up"
+                              style="font-size: 24px"
+                            ></i>
+                            <small class="d-block">{{finger.label}}</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <!-- Enrollment Scanner Interface -->
+                  <div class="enrollment-scanner" :class="scannerStatusClass">
+                    <div class="scanner-header">
+                      <h5 class="mb-0">
+                        <i class="fa fa-fingerprint mr-2"></i>
+                        {{$t('labels.payroll.attendance.scanner')}}
+                      </h5>
+                    </div>
+                    <div class="scanner-body">
+                      <div class="scanner-display">
+                        <div class="fingerprint-icon">
+                          <i
+                            class="fa fa-fingerprint"
+                            :class="scannerIconClass"
+                          ></i>
+                        </div>
+                        <div class="scanner-status">
+                          <h6>{{scannerStatusMessage}}</h6>
+                          <p class="mb-0">{{scannerInstructionMessage}}</p>
+                        </div>
+                      </div>
+
+                      <!-- Progress Bar -->
+                      <div
+                        class="progress mb-3"
+                        v-show="enrollmentProgress.percentage > 0"
+                      >
+                        <div
+                          class="progress-bar"
+                          :class="enrollmentProgress.success ? 'bg-success' : 'bg-primary'"
+                          :style="{width: enrollmentProgress.percentage + '%'}"
+                        >
+                          {{enrollmentProgress.percentage}}%
+                        </div>
+                      </div>
+
+                      <!-- Template Count -->
+                      <div
+                        class="template-status"
+                        v-show="enrollmentProgress.templateCount > 0"
+                      >
+                        <small class="text-muted">
+                          {{$t('labels.payroll.attendance.templatesCollected')}}:
+                          {{enrollmentProgress.templateCount}}/3
+                        </small>
+                      </div>
+
+                      <!-- Scanner Controls -->
+                      <div class="scanner-controls">
+                        <button
+                          type="button"
+                          class="btn btn-primary btn-block"
+                          :disabled="!canStartEnrollment"
+                          @click="startEnrollment"
+                          v-show="!enrollmentInProgress"
+                        >
+                          <i class="fa fa-play mr-2"></i>
+                          {{$t('buttons.startEnrollment')}}
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-danger btn-block"
+                          @click="stopEnrollment"
+                          v-show="enrollmentInProgress"
+                        >
+                          <i class="fa fa-stop mr-2"></i>
+                          {{$t('buttons.stopEnrollment')}}
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-warning btn-block mt-2"
+                          @click="testFingerprint"
+                          v-show="enrollmentProgress.success"
+                          :disabled="!deviceConnected"
+                        >
+                          <i class="fa fa-vial mr-2"></i>
+                          {{$t('buttons.testFingerprint')}}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Additional Notes -->
+              <div class="row mt-3">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">{{$t('labels.remark')}}</label>
+                    <textarea
+                      class="form-control"
+                      rows="3"
+                      v-model="form.remark"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -114,7 +372,12 @@
           <i class="fa fa-times" aria-hidden="true"></i>
           {{$t('buttons.close')}}
         </button>
-        <button type="button" class="btn btn-primary px-3" @click="onSubmit">
+        <button
+          type="button"
+          class="btn btn-primary px-3"
+          @click="onSubmit"
+          :disabled="!enrollmentProgress.success"
+        >
           <i class="fa fa-save"></i>
           {{$t('buttons.save')}}
         </button>

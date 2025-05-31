@@ -140,9 +140,62 @@
         "today": "Today",
         "selectFile": "Select File",
         "exportFormat": "Export Format",
-        "supportedFormats": "Supported Format",
+        "supportedFormats": "Sbupported Format",
         "importInstructions": "Import Instructions",
-        "includeImportTemplate": "Include Import Template"
+        "includeImportTemplate": "Include Import Template",
+        "totalEmployees": "Total Employees",
+        "enrolled": "Enrolled",
+        "notEnrolled": "Not Enrolled",
+        "pending": "Failed",
+        "fingerprintId": "Fingerprint ID",
+        "enrollmentDate": "Enrollment Date",
+        "device": "Device",
+        "templateCount": "Template Count",
+        "lastVerified": "Last Verified",
+        "deviceSelection": "Device Selection",
+        "selectDevice": "Select Device",
+        "deviceModel": "Device Model",
+        "deviceIp": "Device IP",
+        "deviceStatus": "Device Status",
+        "enrollmentInstructions": "Enrollment Instructions",
+        "instruction1": "Make sure your finger is clean and dry",
+        "instruction2": "Place your finger flat on the scanner",
+        "instruction3": "Do not move your finger during scanning",
+        "instruction4": "Follow the instructions on screen",
+        "scanner": "Scanner",
+        "templatesCollected": "Templates Collected",
+        "deviceNotConnected": "Device Not Connected",
+        "connectDeviceFirst": "Connect Device First",
+        "noDeviceSelected": "No Device Selected",
+        "connected": "Connected",
+        "enrollmentQuality": "Enrollment Quality",
+        "qualityLow": "Low",
+        "qualityMedium": "Medium",
+        "qualityHigh": "High",
+        "qualityExcellent": "Excellent",
+        "fingerSelection": "Finger Selection",
+        "leftThumb": "Left Thumb",
+        "leftIndex": "Left Index",
+        "leftMiddle": "Left Middle",
+        "leftRing": "Left Ring",
+        "leftPinky": "Left Pinky",
+        "rightThumb": "Right Thumb",
+        "rightIndex": "Right Index",
+        "rightMiddle": "Right Middle",
+        "rightRing": "Right Ring",
+        "rightPinky": "Right Pinky",
+        "enrollmentCompleted": "Enrollment Completed",
+        "enrollmentSuccessMessage": "Fingerprint enrolled successfully",
+        "readyToEnroll": "Ready to Enroll",
+        "pressStartToBegin": "Press start button to begin enrollment",
+        "model": "Model",
+        "ipAddress": "IP Address",
+        "lastSync": "Last Sync",
+        "enrolledUsers": "Enrolled Users",
+        "failed": "Failed",
+        "enrollmentStatus": "Enrollment Status",
+        "disconnected": "Disconnected",
+        "enrollmentProcess": "Enrollment Process"
       },
       "payroll": {
         "payroll": "Payroll",
@@ -1684,6 +1737,7 @@
   },
   "title": {
     "t11": "t11",
+    "enrollmentProgress": "Enrollment Progress",
     "date": "Date",
     "employee": "Employee",
     "insertDocument": "Insert Document",
@@ -2285,18 +2339,58 @@
     "attendance": {
       "success": {
         "saveAttendance": "Attendance record has been successfully saved",
+        "deleteFingerprint": "Enrollment deleted successfully",
         "deleteAttendance": "Attendace record has been successfully removed",
-        "updateAttendance": "Attendance record has been successfully updated"
+        "updateFingerprint": "Enrollment updated successfully",
+        "updateAttendance": "Attendance record has been successfully updated",
+        "enrolled": "Fingerprint enrolled successfully",
+        "reEnrolled": "Fingerprint re-enrolled successfully",
+        "verified": "Fingerprint verified successfully",
+        "deviceConnected": "Device {deviceName} connected successfully",
+        "deviceTest": "Device {deviceName} tested successfully",
+        "deviceSync": "Device synchronization completed successfully",
+        "enrollmentCompleted": "Fingerprint enrollment completed successfully",
+        "fingerprintVerified": "Fingerprint verified successfully"
       },
       "error": {
         "deleteAttendance": "Failed to delete attendance record",
-        "attendanceNotFound": "Attendance record not found in the system"
+        "attendanceNotFound": "Attendance record not found in the system",
+        "noDeviceConnected": "No device connected",
+        "enrollmentNotCompleted": "Enrollment not completed yet",
+        "cannotStartEnrollment": "Cannot start enrollment. Please check requirements",
+        "enrollmentFailed": "Fingerprint enrollment failed",
+        "verificationFailed": "Fingerprint verification failed"
       },
       "warning": {
         "leaveBalance": "Employee has insufficient leave balance"
       },
       "confirm": {
-        "deleteAttendance": "Are you sure you want to delete this attendance record?"
+        "deleteAttendance": "Are you sure you want to delete this attendance record?",
+        "reEnrollTitle": "Re-Enroll Fingerprint",
+        "reEnrollMessage": "Are you sure you want to re-enroll fingerprint for {employeeName}? This will overwrite the existing template.",
+        "deleteTitleFingerprint": "Delete Enrollment",
+        "deleteMessageFingerprint": "Are you sure you want to delete fingerprint enrollment for {employeeName}? This action cannot be undone."
+      },
+      "enrollment": {
+        "starting": "Starting enrollment...",
+        "preparing": "Preparing scanner...",
+        "initializing": "Initializing enrollment...",
+        "preparingScanner": "Preparing scanner...",
+        "scanning": "Scanning fingerprint...",
+        "firstScan": "First scan in progress...",
+        "secondScan": "Second scan in progress...",
+        "thirdScan": "Final scan in progress...",
+        "processing": "Processing template...",
+        "creatingTemplate": "Creating fingerprint template...",
+        "placeFinger": "Please place your finger on the scanner",
+        "liftFinger": "Please lift your finger from the scanner",
+        "firstTemplate": "First template created successfully",
+        "secondTemplate": "Second template created successfully",
+        "completed": "Enrollment completed successfully",
+        "enrollmentSuccess": "Fingerprint enrollment successful",
+        "failed": "Enrollment failed",
+        "error": "An error occurred during enrollment",
+        "stopped": "Enrollment process stopped"
       }
     },
     "payroll": {
@@ -2534,6 +2628,12 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "testFingerprint": "Test Fingerprint",
+    "stopEnrollment": "Stop Enrollment",
+    "startEnrollment": "Start Enrollment",
+    "enrollEmployee": "Enroll Employee",
+    "deviceSettings": "Device Settings",
+    "syncDevice": "Sync Device",
     "downloadTemplate": "Download Template",
     "requestAdjustment": "Request Adjustment",
     "setAsInProgress": "Set as In Progress",
@@ -3252,7 +3352,12 @@
           "reason": "Reason",
           "name": "Name",
           "type": "Type",
-          "remark": "Remark"
+          "remark": "Remark",
+          "fingerprintId": "Fingerprint ID",
+          "enrollmentDate": "Enrollment Date",
+          "device": "Device",
+          "templateCount": "Template Count",
+          "lastVerified": "Last Verified"
         }
       },
       "reminderDate": "Reminder Date",
@@ -3932,6 +4037,9 @@
       "outstandingReal": "Outstanding Real"
     },
     "contextMenu": {
+      "enroll": "Enroll",
+      "reEnroll": "Re-enroll",
+      "verify": "Verify",
       "approve": "Approve",
       "reject": "Reject",
       "downloadPayslip": "Download Payslip",
@@ -4207,6 +4315,11 @@
           "valid": "Valid",
           "documentType": "Document Type",
           "fileName": "File Name"
+        },
+        "attendance": {
+          "enrolled": "Enrolled",
+          "notEnrolled": "Not Enrolled",
+          "pending": "Pending"
         },
         "payroll": {
           "monthly": "Monthly",
@@ -4519,7 +4632,9 @@
         "pending": "Pending",
         "valid": "Valid",
         "expiringSoon": "Expiring Soon",
-        "expired": "Expired"
+        "expired": "Expired",
+        "enrolled": "Enrolled",
+        "notEnrolled": "Not Enrolled"
       },
       "select": {
         "buildingFloor": "Building/Floor",
