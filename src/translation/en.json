@@ -195,7 +195,10 @@
         "failed": "Failed",
         "enrollmentStatus": "Enrollment Status",
         "disconnected": "Disconnected",
-        "enrollmentProcess": "Enrollment Process"
+        "enrollmentProcess": "Enrollment Process",
+        "totalLeaveQuota": "Total Leave Quota",
+        "remainingLeaveQuota": "Remaining Leave Quota",
+        "totalDays": "Total Days"
       },
       "payroll": {
         "payroll": "Payroll",
@@ -2636,6 +2639,7 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "requestLeave": "Request Leave",
     "testFingerprint": "Test Fingerprint",
     "stopEnrollment": "Stop Enrollment",
     "startEnrollment": "Start Enrollment",

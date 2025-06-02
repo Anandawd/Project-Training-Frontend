@@ -38,13 +38,15 @@
                     offset="right"
                     class="row mb-1"
                     selectType="column"
-                    name="selectEmployee"
+                    name="SelectEmployee"
                     labelName="name"
-                    keyName="code"
-                    v-model="form.selectEmployee"
+                    keyName="employee_id"
+                    v-model="form.employee_id"
                     :label="$t('labels.payroll.attendance.selectEmployee')"
-                    :columnOptions="columnOptions"
-                    :options="selectEmployeeOptions"
+                    :columnOptions="columnEmployeeOptions"
+                    :options="employeeOptions"
+                    @change="onEmployeeChange"
+                    :disabled="modeData === $global.modeData.edit"
                   >
                   </c-select>
                 </div>
@@ -52,44 +54,55 @@
                   <c-input
                     disabled
                     type="text"
-                    name="department"
-                    id="department"
+                    name="Department"
+                    id="Department"
                     class="row mb-1"
                     :label="$t('labels.payroll.employee.department')"
-                    v-model="form.employee_department"
+                    v-model="form.department_name"
                   />
                 </div>
                 <div class="col-md-4">
                   <c-input
                     disabled
-                    id="position"
+                    name="Position"
+                    id="Position"
                     class="row mb-1"
                     type="text"
-                    name="position"
-                    v-model="form.employee_position"
+                    v-model="form.position_name"
                     :label="$t('labels.payroll.employee.position')"
                   />
                 </div>
                 <div class="col-md-4">
                   <c-input
                     disabled
-                    id="quotaLeave"
+                    name="Placement"
+                    id="Placement"
                     class="row mb-1"
                     type="text"
-                    name="quotaLeave"
-                    v-model="form.total_quota_leave"
-                    :label="$t('labels.payroll.attendance.quotaLeave')"
+                    v-model="form.placement_name"
+                    :label="$t('labels.payroll.employee.placement')"
                   />
                 </div>
                 <div class="col-md-4">
                   <c-input
                     disabled
-                    id="remainingLeave"
+                    name="LeaveQuota"
+                    id="LeaveQuota"
                     class="row mb-1"
                     type="text"
-                    name="remainingLeave"
+                    v-model="form.total_quota_leave"
+                    :label="$t('labels.payroll.attendance.totalLeaveQuota')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    name="LeaveRemaining"
+                    id="LeaveRemaining"
+                    class="row mb-1"
+                    type="text"
                     v-model="form.total_remaining_leave"
-                    :label="$t('labels.payroll.attendance.remainingLeave')"
+                    :label="$t('labels.payroll.attendance.remainingLeaveQuota')"
                   />
                 </div>
               </div>
@@ -108,7 +121,7 @@
               aria-controls="leaveInformation"
               aria-expanded="false"
             >
-              {{$t('labels.payroll.employee.leaveInformation')}}
+              {{$t('labels.payroll.attendance.leaveInformation')}}
             </button>
           </h6>
           <div
@@ -123,10 +136,11 @@
                     required
                     offset="right"
                     class="row mb-1"
-                    name="leaveType"
+                    name="LeaveType"
                     labelName="name"
                     keyName="code"
-                    v-model="form.leave_type"
+                    v-model="form.leave_type_name"
+                    @change="onLeaveTypeChange"
                     :label="$t('labels.payroll.attendance.leaveType')"
                     :options="leaveTypeOptions"
                   >
@@ -135,20 +149,20 @@
                 <div class="col-md-4">
                   <c-input
                     required
-                    id="reason"
+                    name="Reason"
+                    id="Reason"
                     class="row mb-1"
                     type="text"
-                    name="reason"
                     v-model="form.reason"
                     :label="$t('labels.payroll.attendance.reason')"
                   />
                 </div>
                 <div class="col-md-4">
                   <c-input
-                    id="remark"
+                    name="Remark"
+                    id="Remark"
                     class="row mb-1"
                     type="text"
-                    name="remark"
                     v-model="form.remark"
                     :label="$t('labels.remark')"
                   />
@@ -156,27 +170,38 @@
                 <div class="col-md-4 mb-1">
                   <c-datepicker
                     required
-                    id="startDate"
+                    name="StartDate"
+                    id="StartDate"
                     customLabelClass="col-3"
                     :label="$t('labels.payroll.attendance.startDate')"
                     type="date"
                     valueType="YYYY-MM-DD"
                     format="DD/MM/YYYY"
-                    name="startDate"
                     v-model="form.start_date"
                   />
                 </div>
                 <div class="col-md-4 mb-1">
                   <c-datepicker
                     required
-                    id="endDate"
+                    name="EndDate"
+                    id="EndDate"
                     customLabelClass="col-3"
                     :label="$t('labels.payroll.attendance.endDate')"
                     type="date"
                     valueType="YYYY-MM-DD"
                     format="DD/MM/YYYY"
-                    name="endDate"
                     v-model="form.end_date"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    id="TotalDays"
+                    class="row mb-1"
+                    type="text"
+                    name="TotalDays"
+                    v-model="form.total_days"
+                    :label="$t('labels.payroll.attendance.totalDays')"
                   />
                 </div>
               </div>

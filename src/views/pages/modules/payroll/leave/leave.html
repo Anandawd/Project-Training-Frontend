@@ -3,28 +3,29 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
-        title="Insert Attendance"
+        title="Request Leave"
         type="button"
         class="btn btn-primary mr-1"
         @click="handleShowForm('', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
-        $t('buttons.insert') }}
+        $t('buttons.requestLeave') }}
       </button>
     </div>
 
     <!-- insert form -->
-    <transition>
-      <div class="px-2">
-        <c-input-form
-          ref="inputFormElement"
-          v-show="showForm"
-          :schema="schema"
-          :modeData="modeData"
-          @save="handleSave"
-          @close="showForm=false"
-        />
-      </div>
+    <transition name="fade">
+      <c-input-form
+        class="px-2"
+        ref="inputFormElement"
+        v-show="showForm"
+        :schema="schema"
+        :modeData="modeData"
+        :employeeOptions="employeeOptions"
+        :leaveTypeOptions="leaveTypeOptions"
+        @save="handleSave"
+        @close="showForm=false"
+      />
     </transition>
 
     <!-- filter -->
@@ -34,6 +35,73 @@
       :searchDefault="searchDefault"
       @search="refreshData"
     >
+      <template v-slot="{search}">
+        <div class="col-md-6 d-flex mb-md-4">
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="all"
+              id="all"
+              v-model="search.filter[0]"
+              value="0"
+              @change="refreshData(search)"
+            />
+            <label for="all">{{ $t('commons.filter.checkList.all') }}</label>
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showPending"
+              id="showPending"
+              v-model="search.filter[0]"
+              value="1"
+              @change="refreshData(search)"
+            />
+            <label for="showPending"
+              >{{ $t('commons.filter.checkList.pending') }}
+              <span class="badge px-2 py-1 bg-warning"
+                >{{summaryData.pending}}</span
+              >
+            </label>
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showApproved"
+              id="showApproved"
+              v-model="search.filter[0]"
+              value="2"
+              @change="refreshData(search)"
+            />
+            <label for="showApproved"
+              >{{ $t('commons.filter.checkList.approved') }}
+              <span class="badge px-2 py-1 bg-success"
+                >{{summaryData.approved}}</span
+              ></label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showRejected"
+              id="showRejected"
+              v-model="search.filter[0]"
+              value="3"
+              @change="refreshData(search)"
+            />
+            <label for="showRejected"
+              >{{ $t('commons.filter.checkList.rejected') }}
+              <span class="badge px-2 py-1 bg-danger"
+                >{{summaryData.rejected}}</span
+              ></label
+            >
+          </div>
+        </div>
+      </template>
     </c-search-filter>
 
     <!-- table -->
@@ -70,10 +138,10 @@
       v-show="showDialog"
       dialogTitle="Confirm"
       size="sm"
-      @confirm="deleteData"
+      @confirm="confirmAction"
       @cancel="showDialog=false"
     >
-      <template #body> Are you sure to delete this data? </template>
+      <template #body>{{dialogMessage}}</template>
     </c-dialog>
   </div>
 </section>

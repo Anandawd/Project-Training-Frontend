@@ -840,28 +840,6 @@ export default class FingerprintEnrollment extends Vue {
     }
   }
 
-  async reEnrollFingerprint(params: any) {
-    try {
-      const employeeIndex = this.rowData.findIndex(
-        (item: any) => item.id === params.id
-      );
-      if (employeeIndex !== -1) {
-        this.rowData[employeeIndex] = {
-          ...this.rowData[employeeIndex],
-          enrollment_date: new Date(),
-          last_verified: new Date(),
-          template_count: 3,
-          remark: "Re-enrolled successfully",
-        };
-      }
-
-      this.loadDataGrid(this.searchDefault);
-      getToastSuccess(this.$t("messages.attendance.success.reEnrolled"));
-    } catch (error) {
-      getError(error);
-    }
-  }
-
   async insertData(formData: any) {
     try {
       /*

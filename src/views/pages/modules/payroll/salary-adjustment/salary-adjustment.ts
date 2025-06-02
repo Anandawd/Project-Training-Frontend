@@ -777,7 +777,9 @@ export default class SalaryAdjustment extends Vue {
       await this.$nextTick();
       await this.loadDataGrid(this.searchDefault);
 
-      this.$t("messages.employee.success.saveSalaryAdjustment");
+      getToastSuccess(
+        this.$t("messages.employee.success.saveSalaryAdjustment")
+      );
     } catch (error) {
       getError(error);
     }
@@ -832,7 +834,9 @@ export default class SalaryAdjustment extends Vue {
       await this.$nextTick();
       await this.loadDataGrid(this.searchDefault);
 
-      this.$t("messages.employee.success.updateSalaryAdjustment");
+      getToastSuccess(
+        this.$t("messages.employee.success.updateSalaryAdjustment")
+      );
     } catch (error) {
       getError(error);
     }
