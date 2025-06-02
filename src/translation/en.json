@@ -2658,6 +2658,7 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "switchShift": "Switch Shift",
     "requestLeave": "Request Leave",
     "testFingerprint": "Test Fingerprint",
     "stopEnrollment": "Stop Enrollment",

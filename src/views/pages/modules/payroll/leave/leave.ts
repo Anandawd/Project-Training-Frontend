@@ -26,7 +26,7 @@ import CInputForm from "./leave-input-form/leave-input-form.vue";
     CInputForm,
   },
 })
-export default class Employee extends Vue {
+export default class Leave extends Vue {
   // data
   public rowData: any = [];
   public deleteParam: any;
