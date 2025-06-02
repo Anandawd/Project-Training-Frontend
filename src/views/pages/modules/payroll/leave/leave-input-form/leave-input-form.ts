@@ -3,6 +3,7 @@ import CInput from "@/components/input/input.vue";
 import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
 import $global from "@/utils/global";
+import { getToastError } from "@/utils/toast";
 import { focusOnInvalid } from "@/utils/validation";
 import { Form as CForm } from "vee-validate";
 import { reactive, ref } from "vue";
@@ -72,6 +73,15 @@ export default class InputForm extends Vue {
     },
   ];
 
+  mounted(): void {
+    this.$watch(
+      () => [this.form.start_date, this.form.end_date],
+      ([newStartDate, newEndDate]) => {
+        this.calculateTotalDays();
+      }
+    );
+  }
+
   // actions
   async resetForm() {
     this.inputFormValidation.resetForm();
@@ -91,8 +101,8 @@ export default class InputForm extends Vue {
       leave_type_name: "",
       leave_type_code: "",
       reason: "",
-      start_date: new Date(),
-      end_date: new Date(),
+      start_date: new Date().toISOString().split("T")[0],
+      end_date: new Date().toISOString().split("T")[0],
       total_days: 0,
       remark: "",
     };
@@ -154,15 +164,15 @@ export default class InputForm extends Vue {
   }
 
   onLeaveTypeChange() {
-    const selectedOptions = this.leaveTypeOptions.find(
-      (item: any) => item.code === this.form.leave_type_code
-    );
+    if (this.form.leave_type_code) {
+      const selectedLeaveType = this.leaveTypeOptions.find(
+        (item: any) => item.code === this.form.leave_type_code
+      );
 
-    if (selectedOptions) {
-      this.form.leave_type_code = selectedOptions.code;
-      this.form.leave_type_name = selectedOptions.name;
+      if (selectedLeaveType) {
+        this.form.leave_type_name = selectedLeaveType.name;
+      }
     } else {
-      this.form.leave_type_code = "";
       this.form.leave_type_name = "";
     }
   }
@@ -171,6 +181,65 @@ export default class InputForm extends Vue {
     if (this.form.start_date || this.form.end_date) {
       // menghitung total_days
     }
+  }
+
+  calculateTotalDays() {
+    if (this.form.start_date && this.form.end_date) {
+      const startDate = new Date(this.form.start_date);
+      const endDate = new Date(this.form.end_date);
+
+      if (endDate < startDate) {
+        this.form.end_date = this.form.start_date;
+        this.form.total_days = 1;
+        return;
+      }
+
+      const timeDifference = endDate.getTime() - startDate.getTime();
+      const dayDifference = Math.ceil(timeDifference / (1000 * 3600 * 24)) + 1;
+
+      this.form.total_days = dayDifference;
+
+      this.validateLeaveDays();
+    } else {
+      this.form.total_days = 0;
+    }
+  }
+
+  validateLeaveDays() {
+    if (
+      this.form.total_days > this.form.total_remaining_leave &&
+      this.form.total_remaining_leave > 0
+    ) {
+      getToastError(
+        this.$t("messages.attendance.error.insufficientLeaveBalance", {
+          requested: this.form.total_days,
+          available: this.form.total_remaining_leave,
+        })
+      );
+    }
+  }
+
+  // Helper untuk menghitung hari kerja (exclude weekend)
+  calculateWorkingDays(): number {
+    if (!this.form.start_date || !this.form.end_date) return 0;
+
+    const startDate = new Date(this.form.start_date);
+    const endDate = new Date(this.form.end_date);
+
+    let workingDays = 0;
+    let currentDate = new Date(startDate);
+
+    while (currentDate <= endDate) {
+      const dayOfWeek = currentDate.getDay();
+      // 0 = Sunday, 6 = Saturday
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+        workingDays++;
+      }
+
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return workingDays;
   }
 
   // validation
@@ -188,5 +257,14 @@ export default class InputForm extends Vue {
         `${this.$route.meta.pageTitle}`
       )}`;
     }
+  }
+
+  get isWeekendIncluded(): boolean {
+    // Untuk beberapa jenis cuti, weekend mungkin tidak dihitung
+    return !["T02", "T03", "T04"].includes(this.form.leave_type_code); // Sick, Maternity, Paternity leave
+  }
+
+  get remainingLeaveAfterRequest(): number {
+    return Math.max(0, this.form.total_remaining_leave - this.form.total_days);
   }
 }

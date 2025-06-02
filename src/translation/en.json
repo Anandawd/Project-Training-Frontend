@@ -196,9 +196,13 @@
         "enrollmentStatus": "Enrollment Status",
         "disconnected": "Disconnected",
         "enrollmentProcess": "Enrollment Process",
+        "totalDays": "Total Days",
+        "leaveSummary": "Leave Summary",
+        "requestedDays": "Requested Days",
+        "currentBalance": "Current Balance",
+        "balanceAfter": "Balance After",
         "totalLeaveQuota": "Total Leave Quota",
-        "remainingLeaveQuota": "Remaining Leave Quota",
-        "totalDays": "Total Days"
+        "remainingLeaveQuota": "Remaining Leave Quota"
       },
       "payroll": {
         "payroll": "Payroll",
@@ -2343,10 +2347,13 @@
     "attendance": {
       "success": {
         "saveAttendance": "Attendance record has been successfully saved",
+        "saveLeave": "Leave request has been successfully saved",
         "deleteFingerprint": "Enrollment deleted successfully",
         "deleteAttendance": "Attendace record has been successfully removed",
+        "deleteLeave": "Leave request has been successfully removed",
         "updateFingerprint": "Enrollment updated successfully",
         "updateAttendance": "Attendance record has been successfully updated",
+        "updateLeave": "Leave request has been successfully updated",
         "enrolled": "Fingerprint enrolled successfully",
         "reEnrolled": "Fingerprint re-enrolled successfully",
         "verified": "Fingerprint verified successfully",
@@ -2361,7 +2368,9 @@
         "fullVerified": "Full verification completed for {employeeName}",
         "verifyStep1": "Step 1: Template verification...",
         "verifyStep2": "Step 2: Quality check...",
-        "verifyStep3": "Step 3: Final validation..."
+        "verifyStep3": "Step 3: Final validation...",
+        "approveLeave": "Leave request approved successfully",
+        "rejectLeave": "Leave request rejected successfully"
       },
       "error": {
         "deleteAttendance": "Failed to delete attendance record",
@@ -2370,17 +2379,27 @@
         "enrollmentNotCompleted": "Enrollment not completed yet",
         "cannotStartEnrollment": "Cannot start enrollment. Please check requirements",
         "enrollmentFailed": "Fingerprint enrollment failed",
-        "verificationFailed": "Fingerprint verification failed"
+        "verificationFailed": "Fingerprint verification failed",
+        "invalidDateRange": "End date cannot be before start date",
+        "invalidTotalDays": "Total days must be greater than 0",
+        "insufficientLeaveBalance": "Insufficient leave balance. Requested: {requested}, Available: {available}",
+        "cannotDeleteApproved": "Cannot delete approved leave request",
+        "cannotApproveNonPending": "Can only approve pending requests",
+        "cannotRejectNonPending": "Can only reject pending requests"
       },
       "warning": {
-        "leaveBalance": "Employee has insufficient leave balance"
+        "lowLeaveBalance": "Low leave balance remaining: {remaining} days",
+        "noLeaveBalance": "No leave balance remaining"
       },
       "confirm": {
         "deleteAttendance": "Are you sure you want to delete this attendance record?",
+        "deleteLeave": "Are you sure you want to delete this leave request for {employeeName}?",
         "reEnrollTitle": "Re-Enroll Fingerprint",
         "reEnrollMessage": "Are you sure you want to re-enroll fingerprint for {employeeName}? This will overwrite the existing template.",
         "deleteTitleFingerprint": "Delete Enrollment",
-        "deleteFingerprintEnrollment": "Are you sure you want to delete fingerprint enrollment for {employeeName}? This action cannot be undone."
+        "deleteFingerprintEnrollment": "Are you sure you want to delete fingerprint enrollment for {employeeName}? This action cannot be undone.",
+        "approveLeave": "Approve {totalDays} day(s) leave for {employeeName}?",
+        "rejectLeave": "Reject leave request for {employeeName}?"
       },
       "enrollment": {
         "starting": "Starting enrollment...",

@@ -303,30 +303,34 @@ export default class Employee extends Vue {
       this.paramsData = null;
     }
 
+    const isPending = this.paramsData?.status === "PENDING";
+    const isApproved = this.paramsData?.status === "APPROVED";
+    const isRejected = this.paramsData?.status === "REJECTED";
+
     const result = [
       {
         name: this.$t("commons.contextMenu.update"),
-        disabled: !this.paramsData,
+        disabled: !this.paramsData || !isPending,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () =>
           this.handleShowForm(this.paramsData, $global.modeData.edit),
       },
       {
         name: this.$t("commons.contextMenu.delete"),
-        disabled: !this.paramsData || this.paramsData.status !== "PENDING",
+        disabled: !this.paramsData || !isPending,
         icon: generateIconContextMenuAgGrid("delete_icon24"),
         action: () => this.handleDelete(this.paramsData),
       },
       "separator",
       {
         name: this.$t("commons.contextMenu.approve"),
-        disabled: !this.paramsData || this.paramsData.status !== "PENDING",
+        disabled: !this.paramsData || isApproved || isRejected,
         icon: generateIconContextMenuAgGrid("approve_icon24"),
         action: () => this.handleApprove(this.paramsData),
       },
       {
         name: this.$t("commons.contextMenu.reject"),
-        disabled: !this.paramsData || this.paramsData.status !== "PENDING",
+        disabled: !this.paramsData || isApproved || isRejected,
         icon: generateIconContextMenuAgGrid("reject_icon24"),
         action: () => this.handleReject(this.paramsData),
       },
@@ -382,7 +386,11 @@ export default class Employee extends Vue {
 
   handleDelete(params: any) {
     this.deleteParam = params.id;
-    this.dialogMessage = this.$t("messages.attendance.delete.deleteLeave");
+    this.dialogMessage = this.$t("messages.attendance.confirm.deleteLeave", {
+      employeeName: params.employee_name,
+      leaveType: params.leave_type_name,
+      dates: `${params.start_date} - ${params.end_date}`,
+    });
     this.dialogAction = "delete";
     this.showDialog = true;
   }
@@ -398,7 +406,11 @@ export default class Employee extends Vue {
     }
 
     this.approveParam = params;
-    this.dialogMessage = this.$t("messages.attendance.confirm.approveLeave");
+    this.dialogMessage = this.$t("messages.attendance.confirm.approveLeave", {
+      employeeName: params.employee_name,
+      leaveType: params.leave_type_name,
+      totalDays: params.total_days,
+    });
     this.dialogAction = "approve";
     this.showDialog = true;
   }
@@ -412,18 +424,25 @@ export default class Employee extends Vue {
     }
 
     this.approveParam = params;
-    this.dialogMessage = this.$t("messages.attendance.confirm.rejectLeave");
+    this.dialogMessage = this.$t("messages.attendance.confirm.rejectLeave", {
+      employeeName: params.employee_name,
+      leaveType: params.leave_type_name,
+    });
     this.dialogAction = "reject";
     this.showDialog = true;
   }
 
   confirmAction() {
-    if (this.dialogAction === "delete") {
-      this.deleteData();
-    } else if (this.dialogAction === "approve") {
-      this.approveData();
-    } else if (this.dialogAction === "reject") {
-      this.rejectData();
+    switch (this.dialogAction) {
+      case "delete":
+        this.deleteData();
+        break;
+      case "approve":
+        this.approveData();
+        break;
+      case "reject":
+        this.rejectData();
+        break;
     }
     this.showDialog = false;
   }
@@ -450,12 +469,13 @@ export default class Employee extends Vue {
   async loadDataGrid(search: any = this.searchDefault) {
     try {
       /*
+      const leaveAPI = new LeaveAPI();
       let params = {
         Index: search.index,
         Text: search.text,
         IndexCheckBox: search.filter[0],
       };
-      const { data } = await salaryAdjustmentAPI.GetSalaryAdjustmentList(params);
+      const { data } = await leaveAPI.GetLeaveRequestList(params);
       this.rowData = data;
       */
 
@@ -512,8 +532,9 @@ export default class Employee extends Vue {
   async loadEditData(id: any) {
     try {
       /*
-      const { data } = await salaryAdjustmentAPI.GetSalaryAdjustment(id);
-      this.populateForm(data);
+      const leaveAPI = new LeaveAPI();
+      const { data } = await leaveAPI.GetLeaveRequest(id);
+      this.inputFormElement.form = this.populateForm(data);
       */
 
       const leave = this.rowData.find((item: any) => item.id === id);
@@ -542,48 +563,23 @@ export default class Employee extends Vue {
         position_name: "Staff",
         placement_code: "AMORA_UBUD",
         placement_name: "Amora Ubud",
-        fingerprint_id: "FP001",
         status: "PENDING",
         total_quota_leave: 12,
         total_remaining_leave: 10,
         leave_type_code: "T01",
         leave_type_name: "Annual Leave",
-        start_date: "2025-01-15",
-        end_date: "2025-01-15",
-        total_days: 1,
-        remark: "",
+        reason: "Family vacation",
+        start_date: "2025-02-15",
+        end_date: "2025-02-17",
+        total_days: 3,
+        remark: "Already booked flights",
         created_at: "2025-01-15",
-        created_by: "HR Manager",
+        created_by: "John Doe",
         updated_at: "2025-01-15",
-        updated_by: "HR Manager",
+        updated_by: "John Doe",
       },
       {
         id: 2,
-        employee_id: "EMP004",
-        employee_name: "Sarah Wilson",
-        department_code: "IT",
-        department_name: "Information Technology",
-        position_code: "SUPERVISOR",
-        position_name: "Supervisor",
-        placement_code: "AMORA_UBUD",
-        placement_name: "Amora Ubud",
-        status: "PENDING",
-        total_quota_leave: 12,
-        total_remaining_leave: 10,
-        leave_type_code: "T01",
-        leave_type_name: "Annual Leave",
-        start_date: "2025-01-15",
-        end_date: "2025-01-15",
-        total_days: 1,
-        remark: "",
-        created_at: "2025-01-15",
-        created_by: "HR Manager",
-        updated_at: "2025-01-15",
-        updated_by: "HR Manager",
-      },
-
-      {
-        id: 3,
         employee_id: "EMP002",
         employee_name: "Jane Smith",
         department_code: "HR",
@@ -592,18 +588,44 @@ export default class Employee extends Vue {
         position_name: "Manager",
         placement_code: "AMORA_UBUD",
         placement_name: "Amora Ubud",
-        status: "PENDING",
+        status: "APPROVED",
         total_quota_leave: 12,
-        total_remaining_leave: 10,
+        total_remaining_leave: 8,
+        leave_type_code: "T02",
+        leave_type_name: "Sick Leave",
+        reason: "Medical checkup",
+        start_date: "2025-01-20",
+        end_date: "2025-01-20",
+        total_days: 1,
+        remark: "Doctor appointment",
+        created_at: "2025-01-18",
+        created_by: "Jane Smith",
+        updated_at: "2025-01-19",
+        updated_by: "HR Manager",
+      },
+      {
+        id: 3,
+        employee_id: "EMP003",
+        employee_name: "Mike Johnson",
+        department_code: "FINANCE",
+        department_name: "Finance",
+        position_code: "STAFF",
+        position_name: "Staff",
+        placement_code: "AMORA_UBUD",
+        placement_name: "Amora Ubud",
+        status: "REJECTED",
+        total_quota_leave: 12,
+        total_remaining_leave: 12,
         leave_type_code: "T01",
         leave_type_name: "Annual Leave",
-        start_date: "2025-01-15",
-        end_date: "2025-01-15",
-        total_days: 1,
-        remark: "",
-        created_at: "2025-01-15",
-        created_by: "HR Manager",
-        updated_at: "2025-01-15",
+        reason: "Personal matters",
+        start_date: "2025-02-01",
+        end_date: "2025-02-05",
+        total_days: 5,
+        remark: "Insufficient notice period",
+        created_at: "2025-01-30",
+        created_by: "Mike Johnson",
+        updated_at: "2025-01-31",
         updated_by: "HR Manager",
       },
       {
@@ -732,12 +754,13 @@ export default class Employee extends Vue {
   async loadDropdown() {
     try {
       /*
+      const leaveAPI = new LeaveAPI();
       const promises = [
-        salaryAdjustmentAPI.GetEmployeeOptions().then(response => {
+        leaveAPI.GetEmployeeOptionsForLeave().then(response => {
           this.employeeOptions = response.data;
         }),
-        salaryAdjustmentAPI.GetAdjustmentReasonOptions().then(response => {
-          this.adjustmentReasonOptions = response.data;
+        leaveAPI.GetLeaveTypeOptions().then(response => {
+          this.leaveTypeOptions = response.data;
         }),
       ];
 
@@ -755,7 +778,7 @@ export default class Employee extends Vue {
           placement_code: "AMORA_UBUD",
           placement_name: "Amora Ubud",
           total_quota_leave: 12,
-          total_remaining_leave: 10,
+          total_remaining_leave: 0,
           SubGroupName: "Employee",
         },
         {
@@ -892,9 +915,10 @@ export default class Employee extends Vue {
   async insertData(formData: any) {
     try {
       /*
-      const { status2 } = await salaryAdjustmentAPI.InsertSalaryAdjustment(formData);
+      const leaveAPI = new LeaveAPI();
+      const { status2 } = await leaveAPI.InsertLeaveRequest(formData);
       if (status2.status == 0) {
-        getToastSuccess(this.$t("messages.saveSuccess"));
+        getToastSuccess(this.$t("messages.attendance.success.saveLeave"));
         this.showForm = false;
         this.loadDataGrid(this.searchDefault);
       }
@@ -942,11 +966,12 @@ export default class Employee extends Vue {
   async updateData(formData: any) {
     try {
       /*
-      const { status2 } = await salaryAdjustmentAPI.UpdateSalaryAdjustment(formData);
+      const leaveAPI = new LeaveAPI();
+      const { status2 } = await leaveAPI.UpdateLeaveRequest(formData);
       if (status2.status == 0) {
         this.loadDataGrid(this.searchDefault);
         this.showForm = false;
-        getToastSuccess(this.$t("messages.saveSuccess"));
+        getToastSuccess(this.$t("messages.attendance.success.updateLeave"));
       }
       */
 
@@ -980,10 +1005,11 @@ export default class Employee extends Vue {
   async deleteData() {
     try {
       /*
-      const { status2 } = await salaryAdjustmentAPI.DeleteSalaryAdjustment(this.deleteParam);
+      const leaveAPI = new LeaveAPI();
+      const { status2 } = await leaveAPI.DeleteLeaveRequest(this.deleteParam);
       if (status2.status == 0) {
         this.loadDataGrid(this.searchDefault);
-        getToastSuccess(this.$t("messages.deleteSuccess"));
+        getToastSuccess(this.$t("messages.attendance.success.deleteLeave"));
       }
       */
 
@@ -1002,10 +1028,11 @@ export default class Employee extends Vue {
   async approveData() {
     try {
       /*
-      const { status2 } = await salaryAdjustmentAPI.ApproveSalaryAdjustment({ id: this.deleteParam });
+      const leaveAPI = new LeaveAPI();
+      const { status2 } = await leaveAPI.ApproveLeaveRequest({ id: this.approveParam.id });
       if (status2.status == 0) {
         this.loadDataGrid(this.searchDefault);
-        getToastSuccess(this.$t("messages.salaryAdjustment.success.approve"));
+        getToastSuccess(this.$t("messages.attendance.success.approveLeave"));
       }
       */
 
@@ -1030,10 +1057,11 @@ export default class Employee extends Vue {
   async rejectData() {
     try {
       /*
-      const { status2 } = await salaryAdjustmentAPI.RejectSalaryAdjustment({ id: this.deleteParam });
+      const leaveAPI = new LeaveAPI();
+      const { status2 } = await leaveAPI.RejectLeaveRequest({ id: this.approveParam.id });
       if (status2.status == 0) {
         this.loadDataGrid(this.searchDefault);
-        getToastSuccess(this.$t("messages.salaryAdjustment.success.reject"));
+        getToastSuccess(this.$t("messages.attendance.success.rejectLeave"));
       }
       */
 
