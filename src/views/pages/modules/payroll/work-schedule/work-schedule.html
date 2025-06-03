@@ -13,11 +13,10 @@
         $t('buttons.export')}}
       </button>
       <button
-        :disabled="!paramData"
         title="Switch Shift"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowModal"
+        @click="handleShowModal('', $global.modePayroll.switchSchedule)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.switchShift') }}
@@ -231,10 +230,10 @@
     </div>
 
     <c-modal
-      v-show="showShiftModal"
+      v-show="showModal"
       :title="$t('title.switchShift')"
       size="md"
-      @close="showShiftModal = false"
+      @close="showModal = false"
     >
       <div v-if="selectedShiftData">
         <div class="row mb-3">
@@ -242,7 +241,7 @@
             <div class="alert alert-info">
               <h6 class="mb-2">
                 <i class="fa fa-user mr-2"></i>
-                {{$t('labels.payroll.workSchedule.selectedEmployee')}}
+                {{$t('labels.payroll.attendance.selectedEmployee')}}
               </h6>
               <div class="row">
                 <div class="col-md-6">
@@ -253,7 +252,7 @@
                 </div>
                 <div class="col-md-6">
                   <strong
-                    >{{$t('labels.payroll.workSchedule.selectedDay')}}:</strong
+                    >{{$t('labels.payroll.attendance.selectedDay')}}:</strong
                   >
                   {{selectedShiftData.dayName}}
                   ({{currentWeekData[selectedShiftData.dayIndex]?.date}})
@@ -266,7 +265,7 @@
         <div class="row mb-3">
           <div class="col-md-6">
             <label class="form-label"
-              >{{$t('labels.payroll.workSchedule.currentShift')}}</label
+              >{{$t('labels.payroll.attendance.currentShift')}}</label
             >
             <div class="current-shift-display">
               <span
@@ -381,7 +380,7 @@
         <button
           type="button"
           class="btn btn-secondary"
-          @click="showShiftModal = false"
+          @click="showModal = false"
         >
           <i class="fa fa-times mr-1"></i>
           {{$t('buttons.cancel')}}

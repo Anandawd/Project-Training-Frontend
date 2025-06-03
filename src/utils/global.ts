@@ -242,6 +242,7 @@ export default {
     deleteDeductions: 80,
     deleteStatutory: 81,
     deleteCategory: 82,
+    switchSchedule: 90,
   },
   modeBreakdown: {
     insert: "00",

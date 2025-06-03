@@ -23,49 +23,6 @@ interface Day {
   full_date: Date;
 }
 
-interface Shift {
-  id: number;
-  code: string;
-  name: string;
-  description: string;
-  color: number;
-  type_code: string;
-  type_name: string;
-  working_days: Array<number>;
-  default_start_time: string;
-  default_end_time: string;
-  default_break_duration: number;
-  is_24_hour: boolean;
-  is_crosses_midnight: boolean;
-  is_active: boolean;
-}
-
-interface EmployeeWorkSchedule {
-  id: number;
-  employee_id: string;
-  employee_name: string;
-  department_code: string;
-  department_name: string;
-  position_code: string;
-  position_name: string;
-  placement_code: string;
-  placement_name: string;
-  work_schedule_code: string;
-  work_schedule_name: string;
-  effective_date: Date;
-  end_date: Date;
-  working_days: Array<number>;
-  start_time: string;
-  end_time: string;
-  break_duration: number;
-  is_current: boolean;
-  remark: string;
-  updated_at: string;
-  updated_by: string;
-  created_at: string;
-  created_by: string;
-}
-
 @Options({
   components: {
     AgGridVue,
@@ -87,7 +44,6 @@ export default class WorkSchedule extends Vue {
   public employeeOptions: any = [];
   public workScheduleOptions: any = [];
   public workScheduleTypeOptions: any = [];
-  public shiftOptions: any = [];
 
   // form
   public form: any = {};
@@ -96,7 +52,9 @@ export default class WorkSchedule extends Vue {
   public inputFormElement: any = ref();
 
   // modal
-  public showShiftModal: boolean = false;
+  public modalForm: any = {};
+  public modalParam: any;
+  public showModal: boolean = false;
 
   // dialog
   public showDialog: boolean = false;
@@ -333,7 +291,11 @@ export default class WorkSchedule extends Vue {
         name: this.$t("commons.contextMenu.switchSchedule"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () => this.handleShowModal(this.paramsData),
+        action: () =>
+          this.handleShowModal(
+            this.paramsData,
+            $global.modePayroll.switchSchedule
+          ),
       },
       {
         name: this.$t("commons.contextMenu.detail"),
@@ -365,7 +327,6 @@ export default class WorkSchedule extends Vue {
     this.modeData = mode;
     this.$nextTick(() => {
       if (mode === $global.modeData.insert) {
-        console.log("masuk insert");
         this.inputFormElement.initialize();
       } else {
         this.loadEditData(params.id);
@@ -374,8 +335,19 @@ export default class WorkSchedule extends Vue {
     this.showForm = true;
   }
 
-  handleShowModal(params: any) {
-    this.showShiftModal = true;
+  async handleShowModal(params: any, mode: any) {
+    this.showModal = false;
+    await this.$nextTick();
+
+    this.modeData = mode;
+    this.$nextTick(() => {
+      if (mode === $global.modeData.insert) {
+        this.modalForm = {};
+      } else {
+        this.loadEditDataModal(params.id);
+      }
+    });
+    this.showModal = true;
   }
 
   handleShowDetail() {}
@@ -387,10 +359,12 @@ export default class WorkSchedule extends Vue {
       this.insertData(formattedData).then(() => {
         this.showForm = false;
       });
-    } else {
+    } else if (this.modeData === $global.modeData.edit) {
       this.updateData(formattedData).then(() => {
         this.showForm = false;
       });
+    } else if (this.modeData === $global.modePayroll.switchSchedule) {
+      this.switchSchedule(this.modalForm);
     }
   }
 
@@ -404,7 +378,7 @@ export default class WorkSchedule extends Vue {
       "messages.attendance.confirm.deleteWorkSchedule",
       {
         employeeName: params.employee_name,
-        scheduleName: params.work_schedule_name,
+        scbheduleName: params.work_schedule_name,
       }
     );
     this.dialogAction = "delete";
@@ -508,6 +482,27 @@ export default class WorkSchedule extends Vue {
     }
   }
 
+  async loadEditDataModal(id: any) {
+    try {
+      /*
+      const workScheduleAPI = new WorkScheduleAPI();
+      const { data } = await workScheduleAPI.GetEmployeeWorkSchedule(id);
+      this.inputFormElement.form = this.populateForm(data);
+      */
+
+      const schedule = this.rowData.find((item: any) => item.id === id);
+
+      if (schedule) {
+        this.$nextTick(() => {
+          this.modalForm = this.populateFormModal(schedule);
+        });
+      } else {
+        getToastError(this.$t("messages.attendance.error.notFoundSchedule"));
+      }
+    } catch (error) {
+      getError(error);
+    }
+  }
   loadMockData() {
     this.rowData = [
       {
@@ -874,6 +869,24 @@ export default class WorkSchedule extends Vue {
     }
   }
 
+  async switchSchedule(formData: any) {
+    try {
+      const employeeIndex = this.currentWeekData.findIndex(
+        (emp: any) => emp.employee_id === formData.employee_id
+      );
+
+      if (employeeIndex === -1) return;
+
+      const scheduleIndex = this.currentWeekData[
+        employeeIndex
+      ].daily_schedules.findIndex(
+        (schedule: any) => schedule.day_index === formData!.dayIndex
+      );
+    } catch (error) {
+      getError(error);
+    }
+  }
+
   // HELPER =======================================================
   formatData(params: any) {
     return {
@@ -903,6 +916,35 @@ export default class WorkSchedule extends Vue {
   }
 
   populateForm(params: any) {
+    return {
+      id: params.id,
+      employee_id: params.employee_id,
+      employee_name: params.employee_name,
+      department_code: params.department_code,
+      department_name: params.department_name,
+      position_code: params.position_code,
+      position_name: params.position_name,
+      placement_code: params.placement_code,
+      placement_name: params.placement_name,
+      work_schedule_code: params.work_schedule_code,
+      work_schedule_name: params.work_schedule_name,
+      work_schedule_type_code: params.work_schedule_type_code,
+      work_schedule_type_name: params.work_schedule_type_name,
+      working_days: params.working_days || [],
+      start_time: params.start_time,
+      end_time: params.end_time,
+      break_duration: params.break_duration,
+      working_hours: params.working_hours,
+      effective_start_date: params.effective_start_date,
+      effective_end_date: params.effective_end_date,
+      is_current: params.is_current,
+      remark: params.remark,
+      dayIndex: params.day_index,
+      dayName: params.day_name,
+    };
+  }
+
+  populateFormModal(params: any) {
     return {
       id: params.id,
       employee_id: params.employee_id,
@@ -983,21 +1025,56 @@ export default class WorkSchedule extends Vue {
     return workingDays.map((day) => dayNames[day]).join(", ");
   }
 
-  getSchedule(employeeId: number | string, dayIndex: number) {
-    return this.workScheduleOptions.find(
-      (schedule: any) =>
-        schedule.employee_id == employeeId && schedule.day_index == dayIndex
+  getSchedule(employeeId: string, dayIndex: number) {
+    const employee = this.currentWeekData.find(
+      (emp: any) => emp.employee_id === employeeId
+    );
+
+    if (!employee) return undefined;
+    return employee.daily_schedules.find(
+      (schedule: any) => schedule.day_index === dayIndex
     );
   }
 
-  getScheduleCode(employeeId: number | string, dayIndex: number): string {
+  getScheduleCode(employeeId: string, dayIndex: number): string {
     const schedule = this.getSchedule(employeeId, dayIndex);
-    return schedule ? schedule.code : "OFF";
+    return schedule?.schedule.code || "OFF";
   }
 
-  getScheduleName(employeeId: number | string, dayIndex: number): string {
+  getScheduleName(employeeId: string, dayIndex: number): string {
     const schedule = this.getSchedule(employeeId, dayIndex);
-    return schedule ? schedule.name : "Day Off";
+    return schedule?.schedule.name || "Day Off";
+  }
+
+  selectedSchedule(employee: any, dayIndex: number) {
+    const dayNames = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+
+    this.modalForm = {
+      employee_id: employee.employee_id,
+      employee_name: employee.employee_name,
+      day_index: dayIndex,
+      day_name: dayNames[dayIndex],
+      current_schedule: this.getScheduleCode(employee.employee_id, dayIndex),
+    };
+
+    // const currentSchedule = this.getSchedule(employee.employee_id, dayIndex);
+    // if (currentSchedule) {
+    //   this.newScheduleStartTime = currentSchedule.start_time;
+    //   this.newScheduleEndTime = currentSchedule.end_time;
+    // } else {
+    //   this.newScheduleStartTime = "08:00";
+    //   this.newScheduleEndTime = "17:00";
+    // }
+
+    this.showModal = false;
   }
 
   // GETTER AND SETTER =======================================================
