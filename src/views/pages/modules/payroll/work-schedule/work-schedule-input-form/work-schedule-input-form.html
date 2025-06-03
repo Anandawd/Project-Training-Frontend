@@ -133,7 +133,7 @@
                     id="ScheduleType"
                     class="row mb-1"
                     type="text"
-                    v-model="form.work_schedule_type_code"
+                    v-model="form.work_schedule_type_name"
                     :label="$t('labels.payroll.attendance.scheduleType')"
                   />
                 </div>
@@ -213,6 +213,7 @@
                 </div>
                 <div class="col-md-6">
                   <c-input
+                    required
                     name="break_duration"
                     id="break_duration"
                     class="row mb-1"
@@ -246,6 +247,7 @@
                 </div>
                 <div class="col-md-6">
                   <c-checkbox
+                    required
                     class="mb-1 align-items-center"
                     name="IsCurrent"
                     id="IsCurrent"

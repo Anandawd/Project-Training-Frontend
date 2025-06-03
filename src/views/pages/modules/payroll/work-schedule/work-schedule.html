@@ -13,13 +13,13 @@
         $t('buttons.export')}}
       </button>
       <button
-        title="Switch Shift"
+        title="Switch Schedule"
         type="button"
         class="btn btn-primary mr-1"
         @click="handleShowModal('', $global.modePayroll.switchSchedule)"
       >
-        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
-        $t('buttons.switchShift') }}
+        <i class="fa fa-exchange-alt mr-1" aria-hidden="true"></i>{{
+        $t('buttons.switchSchedule') }}
       </button>
       <button
         title="Insert Schedule"
@@ -129,7 +129,7 @@
                 :key="empIndex"
                 class="employee-row"
               >
-                <td class="text-center align-middle">
+                <td class="align-middle">
                   <strong>{{employee.employee_id}}</strong>
                 </td>
                 <td class="align-middle">
@@ -141,30 +141,31 @@
                     >
                   </div>
                 </td>
-                <td class="text-center align-middle">
+                <td class="align-middle">
                   <small>{{employee.department_name}}</small>
                 </td>
                 <td
-                  v-for="(day, dayIndex) in currentWeekData"
+                  v-for="(day, dayIndex) in weekDays"
                   :key="dayIndex"
-                  @click="selectedShift(employee, dayIndex)"
+                  @click="selectedSchedule(employee, dayIndex)"
                   class="shift-cell text-center align-middle"
                 >
                   <span
                     :class="{
                       'shift-badge': true,
-                      'morning': getScheduleCode(employee.id, dayIndex) === 'M',
-                      'evening': getScheduleCode(employee.id, dayIndex) === 'E',
-                      'night': getScheduleCode(employee.id, dayIndex) === 'N',
-                      'off': getScheduleCode(employee.id, dayIndex) === 'OFF',
-                      'split': getScheduleCode(employee.id, dayIndex) === 'SP'
-                    }"
-                    >{{getScheduleCode(employee.id, dayIndex)}}</span
-                  >
+                      'morning': getScheduleCode(employee.employee_id, dayIndex) === 'M',
+                      'evening': getScheduleCode(employee.employee_id, dayIndex) === 'E',
+                      'night': getScheduleCode(employee.employee_id, dayIndex) === 'N',
+                      'regular': getScheduleCode(employee.employee_id, dayIndex) === 'R',
+                      'flexible': getScheduleCode(employee.employee_id, dayIndex) === 'F',
+                      'off': getScheduleCode(employee.employee_id, dayIndex) === 'OFF',
+                      'split': getScheduleCode(employee.employee_id, dayIndex) === 'SP'
+                      }"
+                    >{{getScheduleCode(employee.employee_id, dayIndex)}}
+                  </span>
                   <div class="shift-time">
                     <small>
-                      {{getSchedule(employee.id, dayIndex)?.start_time}} -
-                      {{getSchedule(employee.id, dayIndex)?.end_time}}
+                      {{getScheduleTime(employee.employee_id, dayIndex)}}
                     </small>
                   </div>
                 </td>
@@ -184,13 +185,19 @@
           <div class="card-body">
             <div class="d-flex flex-wrap">
               <div class="me-4 mb-2">
-                <span class="badge bg-success">M</span> - Morning
+                <span class="badge bg-primary">R</span> - Regular (08:00-17:00)
               </div>
               <div class="me-4 mb-2">
-                <span class="badge bg-warning">E</span> - Evening
+                <span class="badge bg-info">F</span> - Flexible (09:00-18:00)
               </div>
               <div class="me-4 mb-2">
-                <span class="badge bg-dark">N</span> - Night
+                <span class="badge bg-success">M</span> - Morning (06:00-15:00)
+              </div>
+              <div class="me-4 mb-2">
+                <span class="badge bg-warning">E</span> - Evening (14:00-23:00)
+              </div>
+              <div class="me-4 mb-2">
+                <span class="badge bg-dark">N</span> - Night (23:00-07:00)
               </div>
               <div class="me-4 mb-2">
                 <span class="badge bg-secondary">OFF</span> - Day Off
@@ -233,11 +240,10 @@
     <!-- Switch Schedule -->
     <c-modal
       v-show="showModal"
-      :title="$t('title.switchShift')"
+      :title="$t('title.switchSchedule')"
       size="lg"
-      @close="closeModal"
+      @close="showModal = false"
       @save="handleSaveModal"
-      :isSaving="isSaving"
     >
       <div @click.stop>
         <!-- document modal -->
@@ -247,169 +253,163 @@
           @submit="handleSaveModal"
           class="row"
         >
+          <!-- select employee -->
           <div class="row mb-3">
-            <div class="col-md-12">
-              <div class="alert alert-info">
-                <h6 class="mb-2">
-                  <i class="fa fa-user mr-2"></i>
-                  {{$t('labels.payroll.attendance.selectedEmployee')}}
-                </h6>
-                <div class="row">
-                  <div class="col-md-6">
-                    <strong
-                      >{{$t('labels.payroll.employee.employeeName')}}:</strong
-                    >
-                    {{selectedShiftData.employee_name}}
-                  </div>
-                  <div class="col-md-6">
-                    <strong
-                      >{{$t('labels.payroll.attendance.selectedDay')}}:</strong
-                    >
-                    {{selectedShiftData.dayName}}
-                    ({{currentWeekData[selectedShiftData.dayIndex]?.date}})
-                  </div>
-                </div>
-              </div>
+            <div class="col-md-6">
+              <c-select
+                required
+                offset="right"
+                class="row mb-1"
+                selectType="column"
+                name="SelectEmployee"
+                labelName="name"
+                keyName="employee_id"
+                v-model="modalForm.employee_id"
+                :label="$t('labels.payroll.attendance.selectEmployee')"
+                :columnOptions="columnEmployeeOptions"
+                :options="employeeOptions"
+                @change="onEmployeeChange"
+                :disabled="modeData === $global.modeData.edit"
+                validate
+              >
+              </c-select>
+            </div>
+            <div class="col-md-6">
+              <c-input
+                disabled
+                type="text"
+                name="Department"
+                id="Department"
+                class="row mb-1"
+                :label="$t('labels.payroll.employee.department')"
+                v-model="modalForm.department_name"
+              />
+            </div>
+            <div class="col-md-6">
+              <c-input
+                disabled
+                name="Position"
+                id="Position"
+                class="row mb-1"
+                type="text"
+                v-model="modalForm.position_name"
+                :label="$t('labels.payroll.employee.position')"
+              />
+            </div>
+            <div class="col-md-6">
+              <c-input
+                disabled
+                name="Placement"
+                id="Placement"
+                class="row mb-1"
+                type="text"
+                v-model="modalForm.placement_name"
+                :label="$t('labels.payroll.employee.placement')"
+              />
+            </div>
+            <div class="col-md-6">
+              <c-select
+                offset="right"
+                class="row mb-1"
+                name="CurrentSchedule"
+                labelName="name"
+                keyName="employee_id"
+                v-model="modalForm.work_schedule_name"
+                :label="$t('labels.payroll.attendance.currentSchedule')"
+                @change="onEmployeeChange"
+                validate
+              >
+              </c-select>
+            </div>
+            <div class="col-md-6">
+              <c-select
+                required
+                offset="right"
+                class="row mb-1"
+                selectType="column"
+                name="SelectEmployee"
+                labelName="name"
+                keyName="employee_id"
+                v-model="modalForm.new_schedule_code"
+                :label="$t('labels.payroll.attendance.newSchedule')"
+                :columnOptions="columnOptions"
+                :options="workScheduleOptions"
+                validate
+              >
+              </c-select>
+            </div>
+            <div class="col-md-6">
+              <c-input
+                type="textarea"
+                name="Reason"
+                id="Reason"
+                class="row mb-1"
+                :label="$t('labels.payroll.attendance.switchReason')"
+                v-model="modalForm.reason"
+              />
             </div>
           </div>
 
-          <div class="row mb-3">
+          <!-- <div class="row mb-3">
             <div class="col-md-6">
               <label class="form-label"
-                >{{$t('labels.payroll.attendance.currentShift')}}</label
+                >{{$t('labels.payroll.attendance.currentSchedule')}}</label
               >
               <div class="current-shift-display">
                 <span
                   :class="{
-              'badge rounded-pill px-3 py-2': true,
-              'bg-success': selectedShiftData.currentShift === 'M',
-              'bg-warning': selectedShiftData.currentShift === 'E',
-              'bg-dark': selectedShiftData.currentShift === 'N',
-              'bg-secondary': selectedShiftData.currentShift === 'OFF',
-              'bg-info': selectedShiftData.currentShift === 'SP'
-            }"
+            'badge rounded-pill px-3 py-2': true,
+            'bg-primary': modalForm.current_schedule === 'R',
+            'bg-info': modalForm.current_schedule === 'F',
+            'bg-success': modalForm.current_schedule === 'M',
+            'bg-warning': modalForm.current_schedule === 'E',
+            'bg-dark': modalForm.current_schedule === 'N',
+            'bg-secondary': modalForm.current_schedule === 'OFF'
+          }"
                 >
-                  {{getShiftName(selectedShiftData.employee_id,
-                  selectedShiftData.dayIndex)}}
+                  {{getScheduleName(modalForm.employee_id,
+                  modalForm.day_index)}}
                 </span>
               </div>
             </div>
             <div class="col-md-6">
               <label class="form-label"
-                >{{$t('labels.payroll.workSchedule.newShift')}}</label
+                >{{$t('labels.payroll.attendance.newSchedule')}}</label
               >
-              <select class="form-control" v-model="newShiftType">
-                <option value="">{{$t('labels.select')}}</option>
+              <select class="form-control" v-model="newScheduleCode">
                 <option
-                  v-for="shift in shiftOptions"
-                  :key="shift.code"
-                  :value="shift.code"
+                  v-for="schedule in workScheduleOptions"
+                  :key="schedule.code"
+                  :value="schedule.code"
                 >
-                  {{shift.name}}
+                  {{schedule.name}}
                 </option>
               </select>
             </div>
-          </div>
-
-          <div class="row mb-3" v-if="newShiftType && newShiftType !== 'OFF'">
-            <div class="col-md-6">
-              <label class="form-label"
-                >{{$t('labels.payroll.workSchedule.startTime')}}</label
-              >
-              <input
-                type="time"
-                class="form-control"
-                v-model="newShiftStartTime"
-              />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label"
-                >{{$t('labels.payroll.workSchedule.endTime')}}</label
-              >
-              <input
-                type="time"
-                class="form-control"
-                v-model="newShiftEndTime"
-              />
-            </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-md-12">
-              <label class="form-label"
-                >{{$t('labels.payroll.workSchedule.switchReason')}}</label
-              >
-              <textarea
-                class="form-control"
-                rows="3"
-                v-model="shiftSwitchReason"
-                :placeholder="$t('labels.payroll.workSchedule.switchReasonPlaceholder')"
-              ></textarea>
-            </div>
-          </div>
-
-          <!-- Shift Preview -->
-          <div class="row" v-if="newShiftType">
-            <div class="col-md-12">
-              <div class="card border-success">
-                <div class="card-header bg-light">
-                  <h6 class="mb-0">
-                    <i class="fa fa-eye mr-2"></i>
-                    {{$t('labels.payroll.workSchedule.shiftPreview')}}
-                  </h6>
-                </div>
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-4">
-                      <strong
-                        >{{$t('labels.payroll.workSchedule.newShiftType')}}:</strong
-                      >
-                      <span class="badge bg-primary ms-2"
-                        >{{getSelectedShiftName()}}</span
-                      >
-                    </div>
-                    <div class="col-md-4" v-if="newShiftType !== 'OFF'">
-                      <strong
-                        >{{$t('labels.payroll.workSchedule.workingTime')}}:</strong
-                      >
-                      <span class="badge bg-info ms-2"
-                        >{{newShiftStartTime}} - {{newShiftEndTime}}</span
-                      >
-                    </div>
-                    <div class="col-md-4" v-if="newShiftType !== 'OFF'">
-                      <strong
-                        >{{$t('labels.payroll.workSchedule.workingHours')}}:</strong
-                      >
-                      <span class="badge bg-success ms-2"
-                        >{{calculateShiftHours()}}h</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <template #footer>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @click="showModal = false"
-            >
-              <i class="fa fa-times mr-1"></i>
-              {{$t('buttons.cancel')}}
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="handleShiftSwitch"
-              :disabled="!newShiftType"
-            >
-              <i class="fa fa-exchange-alt mr-1"></i>
-              {{$t('buttons.switchShift')}}
-            </button>
-          </template>
+          </div> -->
         </c-form>
+
+        <!-- button -->
+        <div class="d-flex justify-content-end mt-2">
+          <button
+            type="button"
+            n
+            class="btn btn-danger mr-1 px-3"
+            @click="showModal = false"
+          >
+            <i class="fa fa-times" aria-hidden="true"></i>
+            {{$t('buttons.cancel')}}
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary px-3"
+            @click="handleSaveModal"
+            :disabled="!newScheduleCode"
+          >
+            <i class="fa fa-save mr-1"></i>
+            {{$t('buttons.save')}}
+          </button>
+        </div>
       </div>
     </c-modal>
 

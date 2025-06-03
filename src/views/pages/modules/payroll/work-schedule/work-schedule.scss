@@ -1,4 +1,3 @@
-// Work Schedule Styling
 .work-schedule {
   .schedule-table {
     .employee-row {
@@ -10,23 +9,36 @@
     .shift-cell {
       cursor: pointer;
       transition: all 0.3s ease;
-      min-height: 40px;
+      min-height: 60px;
       vertical-align: middle;
+      padding: 8px 4px;
 
       &:hover {
         background-color: #e3f2fd;
-        transform: scale(1.05);
+        transform: scale(1.02);
       }
 
       .shift-badge {
         font-size: 12px;
         font-weight: bold;
-        padding: 8px 16px;
+        padding: 8px 12px;
         border-radius: 20px;
-        min-width: 60px;
+        min-width: 40px;
         display: inline-block;
         text-align: center;
         transition: all 0.3s ease;
+        margin-bottom: 4px;
+
+        // Perbaikan: Tambahkan styling untuk semua shift types
+        &.regular {
+          background-color: #0d6efd;
+          color: white;
+        }
+
+        &.flexible {
+          background-color: #20c997;
+          color: white;
+        }
 
         &.morning {
           background-color: #28a745;
@@ -57,6 +69,32 @@
           transform: scale(1.1);
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
+      }
+
+      .shift-time {
+        font-size: 10px;
+        color: #6c757d;
+        margin-top: 2px;
+
+        small {
+          font-size: 9px;
+          font-weight: 500;
+        }
+      }
+    }
+
+    // Styling untuk day headers
+    .day-header {
+      text-align: center;
+
+      strong {
+        font-size: 13px;
+        color: #495057;
+      }
+
+      small {
+        font-size: 10px;
+        color: #6c757d;
       }
     }
   }
@@ -144,23 +182,20 @@
       }
     }
   }
-
-  .time-input {
-    &:focus {
-      border-color: #0d6efd;
-      box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-    }
-  }
 }
 
 // Shift Modal Styling
 .shift-modal {
   .current-shift-display {
-    padding: 10px;
+    padding: 15px;
     background-color: #f8f9fa;
     border-radius: 8px;
     border: 1px solid #dee2e6;
     text-align: center;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .shift-preview {
@@ -191,17 +226,72 @@
   }
 }
 
+// Badge variations untuk different schedule types
+.badge {
+  &.bg-primary {
+    // Regular
+    background-color: #0d6efd !important;
+  }
+
+  &.bg-info {
+    // Flexible
+    background-color: #20c997 !important;
+  }
+
+  &.bg-success {
+    // Morning
+    background-color: #28a745 !important;
+  }
+
+  &.bg-warning {
+    // Evening
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+  }
+
+  &.bg-dark {
+    // Night
+    background-color: #343a40 !important;
+  }
+
+  &.bg-secondary {
+    // Off
+    background-color: #6c757d !important;
+  }
+}
+
 // Responsive adjustments
 @media (max-width: 768px) {
   .work-schedule {
     .schedule-table {
-      font-size: 12px;
+      font-size: 11px;
 
       .shift-cell {
+        min-height: 50px;
+        padding: 4px 2px;
+
         .shift-badge {
           font-size: 10px;
           padding: 4px 8px;
-          min-width: 40px;
+          min-width: 30px;
+        }
+
+        .shift-time {
+          font-size: 8px;
+
+          small {
+            font-size: 8px;
+          }
+        }
+      }
+
+      .day-header {
+        strong {
+          font-size: 11px;
+        }
+
+        small {
+          font-size: 9px;
         }
       }
     }
@@ -218,6 +308,27 @@
     .working-days-selection {
       .form-check {
         margin-bottom: 12px;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .work-schedule {
+    .schedule-table {
+      .shift-cell {
+        min-height: 45px;
+        padding: 2px 1px;
+
+        .shift-badge {
+          font-size: 9px;
+          padding: 3px 6px;
+          min-width: 25px;
+        }
+
+        .shift-time {
+          display: none; // Hide time on very small screens
+        }
       }
     }
   }
@@ -272,24 +383,23 @@
   background-color: #d4edda;
 }
 
-// Drag and drop styling (for future implementation)
-.shift-draggable {
-  cursor: grab;
-
-  &:active {
-    cursor: grabbing;
+// Hover effects untuk table
+.schedule-table {
+  tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
   }
-}
 
-.shift-drop-zone {
-  border: 2px dashed #0d6efd;
-  background-color: rgba(13, 110, 253, 0.1);
-  border-radius: 8px;
-  padding: 10px;
-  transition: all 0.3s ease;
+  th {
+    background-color: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
-  &.drag-over {
-    background-color: rgba(13, 110, 253, 0.2);
-    border-color: #0b5ed7;
+  td {
+    border-color: #dee2e6 !important;
+    vertical-align: middle;
   }
 }

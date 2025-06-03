@@ -1,7 +1,9 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
+import CInput from "@/components/input/input.vue";
 import CModal from "@/components/modal/modal.vue";
+import CSelect from "@/components/select/select.vue";
 import { formatDate, formatDateTimeUTC } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
@@ -30,6 +32,8 @@ interface Day {
     CModal,
     CDialog,
     CInputForm,
+    CSelect,
+    CInput,
   },
 })
 export default class WorkSchedule extends Vue {
@@ -55,6 +59,8 @@ export default class WorkSchedule extends Vue {
   public modalForm: any = {};
   public modalParam: any;
   public showModal: boolean = false;
+  newScheduleCode: string = "";
+  scheduleReason: string = "";
 
   // dialog
   public showDialog: boolean = false;
@@ -68,6 +74,38 @@ export default class WorkSchedule extends Vue {
     text: "",
     filter: [0],
   };
+
+  columnEmployeeOptions = [
+    {
+      label: "name",
+      field: "name",
+      align: "left",
+      width: "200",
+      filter: true,
+    },
+    {
+      field: "employee_id",
+      label: "code",
+      align: "right",
+      width: "100",
+    },
+  ];
+
+  columnOptions = [
+    {
+      label: "name",
+      field: "name",
+      align: "left",
+      width: "150",
+      filter: true,
+    },
+    {
+      field: "code",
+      label: "code",
+      align: "right",
+      width: "100",
+    },
+  ];
 
   // AG GRID VARIABLE
   gridOptions: any = {};
@@ -341,7 +379,7 @@ export default class WorkSchedule extends Vue {
 
     this.modeData = mode;
     this.$nextTick(() => {
-      if (mode === $global.modeData.insert) {
+      if (mode === $global.modePayroll.switchSchedule) {
         this.modalForm = {};
       } else {
         this.loadEditDataModal(params.id);
@@ -366,6 +404,18 @@ export default class WorkSchedule extends Vue {
     } else if (this.modeData === $global.modePayroll.switchSchedule) {
       this.switchSchedule(this.modalForm);
     }
+  }
+
+  handleSaveModal() {
+    const formData = {
+      ...this.modalForm,
+      new_schedule: this.newScheduleCode,
+      start_time: this.getScheduleStartTime(),
+      end_time: this.getScheduleEndTime(),
+      reason: this.scheduleReason,
+    };
+
+    this.switchSchedule(formData);
   }
 
   handleEdit(formData: any) {
@@ -403,6 +453,32 @@ export default class WorkSchedule extends Vue {
 
   onRefresh() {
     this.loadDataGrid(this.searchDefault);
+  }
+
+  onEmployeeChange() {
+    if (this.modalForm.employee_id) {
+      const selectedEmployee = this.employeeOptions.find(
+        (emp: any) => emp.employee_id === this.modalForm.employee_id
+      );
+
+      if (selectedEmployee) {
+        this.modalForm.employee_name = selectedEmployee.name;
+        this.modalForm.department_code = selectedEmployee.department_code;
+        this.modalForm.department_name = selectedEmployee.department_name;
+        this.modalForm.position_code = selectedEmployee.position_code;
+        this.modalForm.position_name = selectedEmployee.position_name;
+        this.modalForm.placement_code = selectedEmployee.placement_code;
+        this.modalForm.placement_name = selectedEmployee.placement_name;
+      }
+    } else {
+      this.modalForm.employee_name = "";
+      this.modalForm.department_code = "";
+      this.modalForm.department_name = "";
+      this.modalForm.position_code = "";
+      this.modalForm.position_name = "";
+      this.modalForm.placement_code = "";
+      this.modalForm.placement_name = "";
+    }
   }
 
   // API REQUEST =======================================================
@@ -503,6 +579,7 @@ export default class WorkSchedule extends Vue {
       getError(error);
     }
   }
+
   loadMockData() {
     this.rowData = [
       {
@@ -593,6 +670,50 @@ export default class WorkSchedule extends Vue {
         effective_end_date: "",
         is_current: true,
         remark: "Standard working hours",
+        daily_schedules: [
+          {
+            day_index: 0,
+            schedule: { code: "OFF", name: "Day Off" },
+            start_time: "",
+            end_time: "",
+          }, // Sunday
+          {
+            day_index: 1,
+            schedule: { code: "R", name: "Regular" },
+            start_time: "08:00",
+            end_time: "17:00",
+          }, // Monday
+          {
+            day_index: 2,
+            schedule: { code: "R", name: "Regular" },
+            start_time: "08:00",
+            end_time: "17:00",
+          }, // Tuesday
+          {
+            day_index: 3,
+            schedule: { code: "R", name: "Regular" },
+            start_time: "08:00",
+            end_time: "17:00",
+          }, // Wednesday
+          {
+            day_index: 4,
+            schedule: { code: "R", name: "Regular" },
+            start_time: "08:00",
+            end_time: "17:00",
+          }, // Thursday
+          {
+            day_index: 5,
+            schedule: { code: "R", name: "Regular" },
+            start_time: "08:00",
+            end_time: "17:00",
+          }, // Friday
+          {
+            day_index: 6,
+            schedule: { code: "OFF", name: "Day Off" },
+            start_time: "",
+            end_time: "",
+          }, // Saturday
+        ],
         created_at: "2025-01-01",
         created_by: "Admin",
         updated_at: "2025-01-01",
@@ -623,6 +744,125 @@ export default class WorkSchedule extends Vue {
         effective_end_date: "",
         is_current: true,
         remark: "Flexible working hours",
+        daily_schedules: [
+          {
+            day_index: 0,
+            schedule: { code: "OFF", name: "Day Off" },
+            start_time: "",
+            end_time: "",
+          }, // Sunday
+          {
+            day_index: 1,
+            schedule: { code: "F", name: "Flexible" },
+            start_time: "09:00",
+            end_time: "18:00",
+          }, // Monday
+          {
+            day_index: 2,
+            schedule: { code: "F", name: "Flexible" },
+            start_time: "09:00",
+            end_time: "18:00",
+          }, // Tuesday
+          {
+            day_index: 3,
+            schedule: { code: "F", name: "Flexible" },
+            start_time: "09:00",
+            end_time: "18:00",
+          }, // Wednesday
+          {
+            day_index: 4,
+            schedule: { code: "F", name: "Flexible" },
+            start_time: "09:00",
+            end_time: "18:00",
+          }, // Thursday
+          {
+            day_index: 5,
+            schedule: { code: "F", name: "Flexible" },
+            start_time: "09:00",
+            end_time: "18:00",
+          }, // Friday
+          {
+            day_index: 6,
+            schedule: { code: "OFF", name: "Day Off" },
+            start_time: "",
+            end_time: "",
+          }, // Saturday
+        ],
+        created_at: "2025-01-01",
+        created_by: "Admin",
+        updated_at: "2025-01-01",
+        updated_by: "Admin",
+      },
+      {
+        id: 3,
+        employee_id: "EMP003",
+        employee_name: "Robert Johnson",
+        department_code: "FINANCE",
+        department_name: "Finance",
+        position_code: "STAFF",
+        position_name: "Staff",
+        placement_code: "AMORA_UBUD",
+        placement_name: "Amora Ubud",
+        work_schedule_code: "NIGHT001",
+        work_schedule_name: "Night Shift",
+        work_schedule_type_code: "FIXED",
+        work_schedule_type_name: "Fixed",
+        working_days: [1, 2, 3, 4, 5],
+        working_days_text: "Mon-Fri",
+        start_time: "23:00",
+        end_time: "07:00",
+        working_time_text: "23:00-07:00",
+        break_duration: 30,
+        working_hours: 8,
+        effective_start_date: "2025-01-01",
+        effective_end_date: "",
+        is_current: true,
+        remark: "Night shift hours",
+        // Tambahkan daily_schedules untuk 7 hari
+        daily_schedules: [
+          {
+            day_index: 0,
+            schedule: { code: "OFF", name: "Day Off" },
+            start_time: "",
+            end_time: "",
+          }, // Sunday
+          {
+            day_index: 1,
+            schedule: { code: "N", name: "Night" },
+            start_time: "23:00",
+            end_time: "07:00",
+          }, // Monday
+          {
+            day_index: 2,
+            schedule: { code: "N", name: "Night" },
+            start_time: "23:00",
+            end_time: "07:00",
+          }, // Tuesday
+          {
+            day_index: 3,
+            schedule: { code: "N", name: "Night" },
+            start_time: "23:00",
+            end_time: "07:00",
+          }, // Wednesday
+          {
+            day_index: 4,
+            schedule: { code: "N", name: "Night" },
+            start_time: "23:00",
+            end_time: "07:00",
+          }, // Thursday
+          {
+            day_index: 5,
+            schedule: { code: "N", name: "Night" },
+            start_time: "23:00",
+            end_time: "07:00",
+          }, // Friday
+          {
+            day_index: 6,
+            schedule: { code: "OFF", name: "Day Off" },
+            start_time: "",
+            end_time: "",
+          }, // Saturday
+        ],
         created_at: "2025-01-01",
         created_by: "Admin",
         updated_at: "2025-01-01",
@@ -880,8 +1120,31 @@ export default class WorkSchedule extends Vue {
       const scheduleIndex = this.currentWeekData[
         employeeIndex
       ].daily_schedules.findIndex(
-        (schedule: any) => schedule.day_index === formData!.dayIndex
+        (schedule: any) => schedule.day_index === formData!.day_index
       );
+
+      if (scheduleIndex !== -1) {
+        const newSchedule = this.workScheduleOptions.find(
+          (item: any) => item.code === formData.newSchedule
+        );
+
+        this.currentWeekData[employeeIndex].daily_schedules[scheduleIndex] = {
+          day_index: formData.day_index,
+          schedule: {
+            code: formData.new_schedule,
+            name: newSchedule?.name || "Day Off",
+          },
+          start_time: formData.start_time || "",
+          end_time: formData.end_time || "",
+          reason: formData.reason || "",
+          updated_at: formatDateTimeUTC(new Date()),
+          updated_by: "Current User",
+        };
+
+        getToastSuccess(this.$t("messages.attendance.success.switchSchedule"));
+      }
+
+      this.showModal = false;
     } catch (error) {
       getError(error);
     }
@@ -1030,7 +1293,8 @@ export default class WorkSchedule extends Vue {
       (emp: any) => emp.employee_id === employeeId
     );
 
-    if (!employee) return undefined;
+    if (!employee || !employee.daily_schedules) return undefined;
+
     return employee.daily_schedules.find(
       (schedule: any) => schedule.day_index === dayIndex
     );
@@ -1038,12 +1302,49 @@ export default class WorkSchedule extends Vue {
 
   getScheduleCode(employeeId: string, dayIndex: number): string {
     const schedule = this.getSchedule(employeeId, dayIndex);
-    return schedule?.schedule.code || "OFF";
+    return schedule?.schedule?.code || "OFF";
   }
 
   getScheduleName(employeeId: string, dayIndex: number): string {
     const schedule = this.getSchedule(employeeId, dayIndex);
-    return schedule?.schedule.name || "Day Off";
+    return schedule?.schedule?.name || "Day Off";
+  }
+
+  getScheduleTime(employeeId: string, dayIndex: number): string {
+    const schedule = this.getSchedule(employeeId, dayIndex);
+    if (!schedule || !schedule.start_time || !schedule.end_time) return "";
+    return `${schedule.start_time} - ${schedule.end_time}`;
+  }
+
+  getSelectedScheduleName(): string {
+    const shift = this.workScheduleOptions.find(
+      (item: any) => item.code === this.newScheduleCode
+    );
+    return shift?.name || "";
+  }
+
+  getScheduleStartTime(): string {
+    const scheduleMap: { [key: string]: string } = {
+      R: "08:00",
+      F: "09:00",
+      N: "23:00",
+      M: "06:00",
+      E: "14:00",
+      OFF: "",
+    };
+    return scheduleMap[this.newScheduleCode] || "";
+  }
+
+  getScheduleEndTime(): string {
+    const scheduleMap: { [key: string]: string } = {
+      R: "17:00",
+      F: "18:00",
+      N: "07:00",
+      M: "15:00",
+      E: "23:00",
+      OFF: "",
+    };
+    return scheduleMap[this.newScheduleCode] || "";
   }
 
   selectedSchedule(employee: any, dayIndex: number) {
@@ -1064,16 +1365,6 @@ export default class WorkSchedule extends Vue {
       day_name: dayNames[dayIndex],
       current_schedule: this.getScheduleCode(employee.employee_id, dayIndex),
     };
-
-    // const currentSchedule = this.getSchedule(employee.employee_id, dayIndex);
-    // if (currentSchedule) {
-    //   this.newScheduleStartTime = currentSchedule.start_time;
-    //   this.newScheduleEndTime = currentSchedule.end_time;
-    // } else {
-    //   this.newScheduleStartTime = "08:00";
-    //   this.newScheduleEndTime = "17:00";
-    // }
-
     this.showModal = false;
   }
 

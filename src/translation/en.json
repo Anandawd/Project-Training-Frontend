@@ -226,7 +226,11 @@
         "schedule": "Schedule",
         "totalHours": "Total Hours",
         "workingDaysCount": "Working Days Count",
-        "daysPerWeek": "Days Per Week"
+        "daysPerWeek": "Days Per Week",
+        "selectedDay": "Selected Day",
+        "currentSchedule": "Current Schedule",
+        "newSchedule": "New Schedule",
+        "switchReason": "Switch Reason"
       },
       "payroll": {
         "payroll": "Payroll",
@@ -1768,6 +1772,7 @@
   },
   "title": {
     "t11": "t11",
+    "switchSchedule": "Switch Schedule",
     "employeeSchedule": "Employee Schedule",
     "weeklySchedule": "Weekly Schedule",
     "leave": "Leave",
@@ -2684,6 +2689,7 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "switchSchedule": "Switch Schedule",
     "thisWeek": "This Week",
     "switchShift": "Switch Shift",
     "requestLeave": "Request Leave",
