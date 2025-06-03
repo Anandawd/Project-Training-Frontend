@@ -32,64 +32,55 @@
           >
             <div class="accordion-body">
               <div class="row mb-3">
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <c-select
                     required
                     offset="right"
                     class="row mb-1"
                     selectType="column"
-                    name="selectEmployee"
+                    name="SelectEmployee"
                     labelName="name"
-                    keyName="code"
-                    v-model="form.selectEmployee"
+                    keyName="employee_id"
+                    v-model="form.employee_id"
                     :label="$t('labels.payroll.attendance.selectEmployee')"
-                    :columnOptions="columnOptions"
-                    :options="selectEmployeeOptions"
+                    :columnOptions="columnEmployeeOptions"
+                    :options="employeeOptions"
+                    @change="onEmployeeChange"
+                    :disabled="modeData === $global.modeData.edit"
                   >
                   </c-select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <c-input
                     disabled
                     type="text"
-                    name="department"
-                    id="department"
+                    name="Department"
+                    id="Department"
                     class="row mb-1"
                     :label="$t('labels.payroll.employee.department')"
-                    v-model="form.employee_department"
+                    v-model="form.department_name"
                   />
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <c-input
                     disabled
-                    id="position"
+                    name="Position"
+                    id="Position"
                     class="row mb-1"
                     type="text"
-                    name="position"
-                    v-model="form.employee_position"
+                    v-model="form.position_name"
                     :label="$t('labels.payroll.employee.position')"
                   />
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <c-input
                     disabled
-                    id="quotaLeave"
+                    name="Placement"
+                    id="Placement"
                     class="row mb-1"
                     type="text"
-                    name="quotaLeave"
-                    v-model="form.total_quota_leave"
-                    :label="$t('labels.payroll.attendance.quotaLeave')"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    disabled
-                    id="remainingLeave"
-                    class="row mb-1"
-                    type="text"
-                    name="remainingLeave"
-                    v-model="form.total_remaining_leave"
-                    :label="$t('labels.payroll.attendance.remainingLeave')"
+                    v-model="form.placement_name"
+                    :label="$t('labels.payroll.employee.placement')"
                   />
                 </div>
               </div>
@@ -97,87 +88,257 @@
           </div>
         </div>
 
-        <!-- leave information -->
+        <!-- work schedule information -->
         <div class="accordion-item">
-          <h6 class="accordion-header" id="itemLeaveInformationHeader">
+          <h6 class="accordion-header" id="itemWorkSchedulenformationHeader">
             <button
               type="button"
               class="accordion-button"
               data-bs-toggle="collapse"
-              data-bs-target="#leaveInformation"
-              aria-controls="leaveInformation"
+              data-bs-target="#workScheduleInformation"
+              aria-controls="workScheduleInformation"
               aria-expanded="false"
             >
-              {{$t('labels.payroll.employee.leaveInformation')}}
+              {{$t('labels.payroll.attendance.workScheduleInformation')}}
             </button>
           </h6>
           <div
-            id="leaveInformation"
+            id="workScheduleInformation"
             class="accordion-collapse collapse show p-3"
-            aria-labelledby="leaveInformationHeader"
+            aria-labelledby="workScheduleInformationHeader"
           >
             <div class="accordion-body">
               <div class="row mb-3">
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <c-select
                     required
                     offset="right"
                     class="row mb-1"
-                    name="leaveType"
+                    name="Schedule"
+                    selectType="column"
                     labelName="name"
                     keyName="code"
-                    v-model="form.leave_type"
-                    :label="$t('labels.payroll.attendance.leaveType')"
-                    :options="leaveTypeOptions"
+                    v-model="form.work_schedule_code"
+                    @change="onWorkScheduleChange"
+                    :label="$t('labels.payroll.attendance.selectSchedule')"
+                    :options="workScheduleOptions"
+                    :columnOptions="columnOptions"
                   >
                   </c-select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <c-input
-                    required
-                    id="reason"
+                    disabled
+                    name="ScheduleType"
+                    id="ScheduleType"
                     class="row mb-1"
                     type="text"
-                    name="reason"
-                    v-model="form.reason"
-                    :label="$t('labels.payroll.attendance.reason')"
+                    v-model="form.work_schedule_type_code"
+                    :label="$t('labels.payroll.attendance.scheduleType')"
                   />
                 </div>
-                <div class="col-md-4">
-                  <c-input
-                    id="remark"
-                    class="row mb-1"
-                    type="text"
-                    name="remark"
-                    v-model="form.remark"
-                    :label="$t('labels.remark')"
-                  />
-                </div>
-                <div class="col-md-4 mb-1">
+                <div class="col-md-6 mb-1">
                   <c-datepicker
                     required
-                    id="startDate"
+                    name="EffectiveDate"
+                    id="EffectiveDate"
                     customLabelClass="col-3"
-                    :label="$t('labels.payroll.attendance.startDate')"
+                    :label="$t('labels.payroll.attendance.effectiveDate')"
                     type="date"
                     valueType="YYYY-MM-DD"
                     format="DD/MM/YYYY"
-                    name="startDate"
-                    v-model="form.start_date"
+                    v-model="form.effective_start_date"
                   />
                 </div>
-                <div class="col-md-4 mb-1">
+                <div class="col-md-6 mb-1">
                   <c-datepicker
                     required
-                    id="endDate"
+                    name="EndDate"
+                    id="EndDate"
                     customLabelClass="col-3"
                     :label="$t('labels.payroll.attendance.endDate')"
                     type="date"
                     valueType="YYYY-MM-DD"
                     format="DD/MM/YYYY"
-                    name="endDate"
-                    v-model="form.end_date"
+                    v-model="form.effective_end_date"
                   />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- working time configuration -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemWorkingTimeHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#workingTimeConfiguration"
+              aria-controls="workingTimeConfiguration"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.attendance.workingTimeInformation')}}
+            </button>
+          </h6>
+          <div
+            id="workingTimeConfiguration"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="workingTimeHeader"
+          >
+            <div class="accordian-body">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <c-input
+                    required
+                    name="StartTime"
+                    id="StartTime"
+                    class="row mb-1"
+                    type="time"
+                    v-model="form.start_time"
+                    :label="$t('labels.payroll.attendance.startTime')"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <c-input
+                    required
+                    name="EndTime"
+                    id="EndTime"
+                    class="row mb-1"
+                    type="time"
+                    v-model="form.end_time"
+                    :label="$t('labels.payroll.attendance.endTime')"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <c-input
+                    name="break_duration"
+                    id="break_duration"
+                    class="row mb-1"
+                    type="number"
+                    min="0"
+                    max="480"
+                    v-model="form.break_duration"
+                    :label="$t('labels.payroll.attendance.breakDuration')"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <c-input
+                    disabled
+                    name="calculated_working_hours"
+                    id="calculated_working_hours"
+                    class="row mb-1"
+                    type="text"
+                    v-model="calculatedWorkingHours"
+                    :label="$t('labels.payroll.attendance.workingHours')"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <c-input
+                    name="remark"
+                    id="remark"
+                    class="row mb-1"
+                    type="text"
+                    v-model="form.remark"
+                    :label="$t('labels.remark')"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <c-checkbox
+                    class="mb-1 align-items-center"
+                    name="IsCurrent"
+                    id="IsCurrent"
+                    :label="$t('labels.payroll.attendance.setAsCurrent')"
+                    v-model="form.is_current"
+                  />
+                </div>
+              </div>
+
+              <!-- Working Days Selection -->
+              <!-- <div class="row mb-3">
+                <div class="col-md-12">
+                  <label class="form-label"
+                    >{{$t('labels.payroll.workSchedule.workingDays')}}</label
+                  >
+                  <div class="working-days-selection">
+                    <div class="row">
+                      <div
+                        class="col-md-3 mb-2"
+                        v-for="dayOption in workingDaysOptions"
+                        :key="dayOption.value"
+                      >
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            :id="`working_day_${dayOption.value}`"
+                            :checked="form.working_days.includes(dayOption.value)"
+                            @change="onWorkingDayToggle(dayOption.value)"
+                          />
+                          <label
+                            class="form-check-label"
+                            :for="`working_day_${dayOption.value}`"
+                          >
+                            {{dayOption.label}}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <small class="text-muted">
+                    {{$t('labels.payroll.workSchedule.selectedDays')}}:
+                    {{workingDaysText}}
+                  </small>
+                </div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schedule Summary -->
+      <div class="row mt-3" v-if="form.work_schedule_code">
+        <div class="col-md-12">
+          <div class="card border-info">
+            <div class="card-header bg-light">
+              <h6 class="mb-0">
+                <i class="fa fa-info-circle mr-2"></i>
+                {{$t('labels.payroll.attendance.scheduleSummary')}}
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-3">
+                  <strong>{{$t('labels.payroll.attendance.schedule')}}:</strong>
+                  <span class="badge bg-primary ms-2"
+                    >{{form.work_schedule_name}}</span
+                  >
+                </div>
+                <div class="col-md-3">
+                  <strong
+                    >{{$t('labels.payroll.attendance.workingTime')}}:</strong
+                  >
+                  <span class="badge bg-info ms-2"
+                    >{{form.start_time}} - {{form.end_time}}</span
+                  >
+                </div>
+                <div class="col-md-3">
+                  <strong
+                    >{{$t('labels.payroll.attendance.totalHours')}}:</strong
+                  >
+                  <span class="badge bg-success ms-2"
+                    >{{calculatedWorkingHours}}h</span
+                  >
+                </div>
+                <div class="col-md-3">
+                  <strong
+                    >{{$t('labels.payroll.attendance.workingDaysCount')}}:</strong
+                  >
+                  <span class="badge bg-secondary ms-2"
+                    >{{form.working_days.length}}
+                    {{$t('labels.payroll.attendance.daysPerWeek')}}</span
+                  >
                 </div>
               </div>
             </div>

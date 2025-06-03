@@ -23,41 +23,41 @@ interface Day {
   full_date: Date;
 }
 
-// interface Employee {
-//   id: number | string;
-//   employee_id: string;
-//   employee_name: string;
-//   department: string;
-//   position: string;
-// }
-
-// interface Shift {
-//   employee_id: number | string;
-//   day_index: number;
-//   shift_type: string;
-//   start_time: string;
-//   end_time: string;
-//   break_duration: number;
-//   location: string;
-//   notes: string;
-// }
-
-// interface SelectedShift {
-//   employee_id: number | string;
-//   employee_name: string;
-//   dayIndex: number;
-// }
+interface Shift {
+  id: number;
+  code: string;
+  name: string;
+  description: string;
+  color: number;
+  type_code: string;
+  type_name: string;
+  working_days: Array<number>;
+  default_start_time: string;
+  default_end_time: string;
+  default_break_duration: number;
+  is_24_hour: boolean;
+  is_crosses_midnight: boolean;
+  is_active: boolean;
+}
 
 interface EmployeeWorkSchedule {
   id: number;
   employee_id: string;
-  shift_id: string;
+  employee_name: string;
+  department_code: string;
+  department_name: string;
+  position_code: string;
+  position_name: string;
+  placement_code: string;
+  placement_name: string;
+  work_schedule_code: string;
+  work_schedule_name: string;
   effective_date: Date;
   end_date: Date;
-  working_days: string;
+  working_days: Array<number>;
   start_time: string;
   end_time: string;
-  break_duration: string;
+  break_duration: number;
   is_current: boolean;
   remark: string;
   updated_at: string;
@@ -78,12 +78,15 @@ interface EmployeeWorkSchedule {
 export default class WorkSchedule extends Vue {
   // data
   public rowData: any = [];
+  public currentWeekData: any = [];
   public deleteParam: any;
   public currentWeekStart: Date = new Date();
   public weekDays: Day[] = [];
 
   // options data
   public employeeOptions: any = [];
+  public workScheduleOptions: any = [];
+  public workScheduleTypeOptions: any = [];
   public shiftOptions: any = [];
 
   // form
@@ -91,6 +94,9 @@ export default class WorkSchedule extends Vue {
   public modeData: any;
   public showForm: boolean = false;
   public inputFormElement: any = ref();
+
+  // modal
+  public showShiftModal: boolean = false;
 
   // dialog
   public showDialog: boolean = false;
@@ -123,23 +129,24 @@ export default class WorkSchedule extends Vue {
 
   // RECYCLE LIFE FUNCTION =======================================================
   created(): void {
+    this.initializeWeek();
     this.loadData();
-  }
-  mounted(): void {
-    console.log("weekDays", this.weekDays);
   }
 
   beforeMount(): void {
     this.searchOptions = [
-      { text: this.$t("commons.filter.payroll.payroll.periodName"), value: 0 },
-      { text: this.$t("commons.filter.payroll.payroll.status"), value: 1 },
-      { text: this.$t("commons.filter.payroll.employee.placement"), value: 2 },
+      { text: this.$t("commons.filter.payroll.employee.employeeId"), value: 0 },
+      { text: this.$t("commons.filter.payroll.employee.name"), value: 1 },
+      { text: this.$t("commons.filter.payroll.employee.department"), value: 2 },
+      { text: this.$t("commons.filter.payroll.employee.position"), value: 3 },
+      { text: this.$t("commons.filter.payroll.employee.placement"), value: 4 },
     ];
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
       actionGrid: {
-        edit: true,
         menu: true,
+        edit: true,
+        delete: true,
       },
       rowHeight: $global.agGrid.rowHeightDefault,
       headerHeight: $global.agGrid.headerHeight,
@@ -158,40 +165,116 @@ export default class WorkSchedule extends Vue {
         sortable: false,
         cellRenderer: "actionGrid",
         colId: "params",
-        width: 80,
+        width: 120,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.periodName"),
-        headerClass: "align-header-center",
-        field: "period_name",
+        headerName: this.$t("commons.table.payroll.employee.id"),
+        field: "employee_id",
         width: 120,
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.periodDate"),
-        headerClass: "align-header-center",
-        field: "period_date",
-        width: 100,
+        headerName: this.$t("commons.table.payroll.employee.employeeName"),
+        field: "employee_name",
+        width: 150,
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.paymentDate"),
+        headerName: this.$t("commons.table.payroll.employee.department"),
+        field: "department_name",
+        width: 150,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.position"),
+        field: "position_name",
+        width: 150,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.placement"),
+        field: "placement_name",
+        width: 150,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.attendance.currentSchedule"),
+        field: "work_schedule_name",
+        width: 150,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.attendance.workingDays"),
+        field: "working_days_text",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.attendance.workingTime"),
+        field: "working_time_text",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.attendance.effectiveDate"),
         headerClass: "align-header-center",
-        field: "payment_date",
+        cellClass: "text-center",
+        field: "effective_start_date",
+        width: 120,
+        enableRowGroup: true,
+        valueFormatter: formatDate,
+      },
+      {
+        headerName: this.$t("commons.table.status"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "is_current",
         width: 100,
         enableRowGroup: true,
+        cellRenderer: (params: any) => {
+          const isCurrent = params.value;
+          return isCurrent
+            ? `<span class="badge bg-success">Current</span>`
+            : `<span class="badge bg-secondary">Inactive</span>`;
+        },
       },
       {
         headerName: this.$t("commons.table.remark"),
-        headerClass: "align-header-center",
         field: "remark",
+        width: 200,
+        enableRowGroup: false,
+      },
+      {
+        headerName: this.$t("commons.table.updatedAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "updated_at",
+        width: 100,
+        enableRowGroup: true,
+        valueFormatter: formatDate,
+      },
+      {
+        headerName: this.$t("commons.table.updatedBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "updated_by",
         width: 100,
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.status"),
+        headerName: this.$t("commons.table.createdAt"),
         headerClass: "align-header-center",
-        field: "status",
+        cellClass: "text-center",
+        field: "created_at",
+        width: 100,
+        enableRowGroup: true,
+        valueFormatter: formatDate,
+      },
+      {
+        headerName: this.$t("commons.table.createdBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "created_by",
         width: 100,
         enableRowGroup: true,
       },
@@ -239,9 +322,15 @@ export default class WorkSchedule extends Vue {
         action: () =>
           this.handleShowForm(this.paramsData, $global.modeData.edit),
       },
+      {
+        name: this.$t("commons.contextMenu.delete"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("delete_icon24"),
+        action: () => this.handleDelete(this.paramsData),
+      },
       "separator",
       {
-        name: this.$t("commons.contextMenu.switchShift"),
+        name: this.$t("commons.contextMenu.switchSchedule"),
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () => this.handleShowModal(this.paramsData),
@@ -276,6 +365,7 @@ export default class WorkSchedule extends Vue {
     this.modeData = mode;
     this.$nextTick(() => {
       if (mode === $global.modeData.insert) {
+        console.log("masuk insert");
         this.inputFormElement.initialize();
       } else {
         this.loadEditData(params.id);
@@ -284,7 +374,9 @@ export default class WorkSchedule extends Vue {
     this.showForm = true;
   }
 
-  handleShowModal(params: any) {}
+  handleShowModal(params: any) {
+    this.showShiftModal = true;
+  }
 
   handleShowDetail() {}
 
@@ -312,8 +404,7 @@ export default class WorkSchedule extends Vue {
       "messages.attendance.confirm.deleteWorkSchedule",
       {
         employeeName: params.employee_name,
-        leaveType: params.leave_type_name,
-        dates: `${params.start_date} - ${params.end_date}`,
+        scheduleName: params.work_schedule_name,
       }
     );
     this.dialogAction = "delete";
@@ -353,13 +444,13 @@ export default class WorkSchedule extends Vue {
   async loadDataGrid(search: any = this.searchDefault) {
     try {
       /*
-      const leaveAPI = new LeaveAPI();
+      const workScheduleAPI = new WorkScheduleAPI();
       let params = {
         Index: search.index,
         Text: search.text,
         IndexCheckBox: search.filter[0],
       };
-      const { data } = await leaveAPI.GetLeaveRequestList(params);
+      const { data } = await workScheduleAPI.GetEmployeeWorkScheduleList(params);
       this.rowData = data;
       */
 
@@ -387,24 +478,6 @@ export default class WorkSchedule extends Vue {
         });
       }
 
-      if (search.filter && search.filter.length > 0) {
-        const statusFilter = parseInt(search.filter[0]);
-        if (statusFilter !== 0) {
-          filteredData = filteredData.filter((item: any) => {
-            switch (statusFilter) {
-              case 1:
-                return item.status === "PENDING";
-              case 2:
-                return item.status === "APPROVED";
-              case 3:
-                return item.status === "REJECTED";
-              default:
-                return true;
-            }
-          });
-        }
-      }
-
       if (this.gridApi) {
         this.gridApi.setRowData(filteredData);
       }
@@ -416,19 +489,19 @@ export default class WorkSchedule extends Vue {
   async loadEditData(id: any) {
     try {
       /*
-      const leaveAPI = new LeaveAPI();
-      const { data } = await leaveAPI.GetLeaveRequest(id);
+      const workScheduleAPI = new WorkScheduleAPI();
+      const { data } = await workScheduleAPI.GetEmployeeWorkSchedule(id);
       this.inputFormElement.form = this.populateForm(data);
       */
 
-      const leave = this.rowData.find((item: any) => item.id === id);
+      const schedule = this.rowData.find((item: any) => item.id === id);
 
-      if (leave) {
+      if (schedule) {
         this.$nextTick(() => {
-          this.inputFormElement.form = this.populateForm(leave);
+          this.inputFormElement.form = this.populateForm(schedule);
         });
       } else {
-        getToastError(this.$t("messages.attendance.error.notFoundLeave"));
+        getToastError(this.$t("messages.attendance.error.notFoundSchedule"));
       }
     } catch (error) {
       getError(error);
@@ -447,20 +520,25 @@ export default class WorkSchedule extends Vue {
         position_name: "Staff",
         placement_code: "AMORA_UBUD",
         placement_name: "Amora Ubud",
-        status: "PENDING",
-        total_quota_leave: 12,
-        total_remaining_leave: 10,
-        leave_type_code: "T01",
-        leave_type_name: "Annual Leave",
-        reason: "Family vacation",
-        start_date: "2025-02-15",
-        end_date: "2025-02-17",
-        total_days: 3,
-        remark: "Already booked flights",
-        created_at: "2025-01-15",
-        created_by: "John Doe",
-        updated_at: "2025-01-15",
-        updated_by: "John Doe",
+        work_schedule_code: "REG001",
+        work_schedule_name: "Regular Shift",
+        work_schedule_type_code: "FIXED",
+        work_schedule_type_name: "Fixed",
+        working_days: [1, 2, 3, 4, 5],
+        working_days_text: "Mon-Fri",
+        start_time: "08:00",
+        end_time: "17:00",
+        working_time_text: "08:00-17:00",
+        break_duration: 60,
+        working_hours: 8,
+        effective_start_date: "2025-01-01",
+        effective_end_date: "",
+        is_current: true,
+        remark: "Standard working hours",
+        created_at: "2025-01-01",
+        created_by: "Admin",
+        updated_at: "2025-01-01",
+        updated_by: "Admin",
       },
       {
         id: 2,
@@ -472,165 +550,88 @@ export default class WorkSchedule extends Vue {
         position_name: "Manager",
         placement_code: "AMORA_UBUD",
         placement_name: "Amora Ubud",
-        status: "APPROVED",
-        total_quota_leave: 12,
-        total_remaining_leave: 8,
-        leave_type_code: "T02",
-        leave_type_name: "Sick Leave",
-        reason: "Medical checkup",
-        start_date: "2025-01-20",
-        end_date: "2025-01-20",
-        total_days: 1,
-        remark: "Doctor appointment",
-        created_at: "2025-01-18",
-        created_by: "Jane Smith",
-        updated_at: "2025-01-19",
-        updated_by: "HR Manager",
+        work_schedule_code: "FLEX001",
+        work_schedule_name: "Flexible Hours",
+        work_schedule_type_code: "FLEXIBLE",
+        work_schedule_type_name: "Flexible",
+        working_days: [1, 2, 3, 4, 5],
+        working_days_text: "Mon-Fri",
+        start_time: "09:00",
+        end_time: "18:00",
+        working_time_text: "09:00-18:00",
+        break_duration: 60,
+        working_hours: 8,
+        effective_start_date: "2025-01-01",
+        effective_end_date: "",
+        is_current: true,
+        remark: "Flexible working hours",
+        created_at: "2025-01-01",
+        created_by: "Admin",
+        updated_at: "2025-01-01",
+        updated_by: "Admin",
       },
+    ];
+
+    this.currentWeekData = [
       {
-        id: 3,
-        employee_id: "EMP003",
-        employee_name: "Mike Johnson",
-        department_code: "FINANCE",
-        department_name: "Finance",
-        position_code: "STAFF",
-        position_name: "Staff",
-        placement_code: "AMORA_UBUD",
-        placement_name: "Amora Ubud",
-        status: "REJECTED",
-        total_quota_leave: 12,
-        total_remaining_leave: 12,
-        leave_type_code: "T01",
-        leave_type_name: "Annual Leave",
-        reason: "Personal matters",
-        start_date: "2025-02-01",
-        end_date: "2025-02-05",
-        total_days: 5,
-        remark: "Insufficient notice period",
-        created_at: "2025-01-30",
-        created_by: "Mike Johnson",
-        updated_at: "2025-01-31",
-        updated_by: "HR Manager",
-      },
-      {
-        id: 4,
-        employee_id: "EMP003",
-        employee_name: "Mike Johnson",
-        department_code: "FINANCE",
-        department_name: "Finance",
-        position_code: "STAFF",
-        position_name: "Staff",
-        placement_code: "AMORA_UBUD",
-        placement_name: "Amora Ubud",
-        status: "APPROVED",
-        total_quota_leave: 12,
-        total_remaining_leave: 10,
-        leave_type_code: "T01",
-        leave_type_name: "Annual Leave",
-        start_date: "2025-01-15",
-        end_date: "2025-01-15",
-        total_days: 1,
-        remark: "",
-        created_at: "2025-01-15",
-        created_by: "HR Manager",
-        updated_at: "2025-01-15",
-        updated_by: "HR Manager",
-      },
-      {
-        id: 5,
-        employee_id: "EMP005",
-        employee_name: "Alex Brown",
-        department_code: "MARKETING",
-        department_name: "Marketing",
-        position_code: "STAFF",
-        position_name: "Staff",
-        placement_code: "AMORA_UBUD",
-        placement_name: "Amora Ubud",
-        status: "PENDING",
-        total_quota_leave: 12,
-        total_remaining_leave: 10,
-        leave_type_code: "T01",
-        leave_type_name: "Annual Leave",
-        start_date: "2025-01-15",
-        end_date: "2025-01-15",
-        total_days: 1,
-        remark: "",
-        created_at: "2025-01-15",
-        created_by: "HR Manager",
-        updated_at: "2025-01-15",
-        updated_by: "HR Manager",
-      },
-      {
-        id: 6,
-        employee_id: "EMP006",
-        employee_name: "Lisa Anderson",
-        department_code: "HR",
-        department_name: "Human Resources",
-        position_code: "STAFF",
-        position_name: "Staff",
-        placement_code: "AMORA_UBUD",
-        placement_name: "Amora Ubud",
-        status: "PENDING",
-        total_quota_leave: 12,
-        total_remaining_leave: 10,
-        leave_type_code: "T01",
-        leave_type_name: "Annual Leave",
-        start_date: "2025-01-15",
-        end_date: "2025-01-15",
-        total_days: 1,
-        remark: "",
-        created_at: "2025-01-15",
-        created_by: "HR Manager",
-        updated_at: "2025-01-15",
-        updated_by: "HR Manager",
-      },
-      {
-        id: 7,
-        employee_id: "EMP007",
-        employee_name: "David Chen",
+        id: 1,
+        employee_id: "EMP001",
+        employee_name: "John Doe",
         department_code: "IT",
         department_name: "Information Technology",
         position_code: "STAFF",
         position_name: "Staff",
         placement_code: "AMORA_UBUD",
         placement_name: "Amora Ubud",
-        status: "PENDING",
-        total_quota_leave: 12,
-        total_remaining_leave: 10,
-        leave_type_code: "T01",
-        leave_type_name: "Annual Leave",
-        start_date: "2025-01-15",
-        end_date: "2025-01-15",
-        total_days: 1,
-        remark: "",
-        created_at: "2025-01-15",
-        created_by: "HR Manager",
-        updated_at: "2025-01-15",
-        updated_by: "HR Manager",
+        work_schedule_code: "REG001",
+        work_schedule_name: "Regular Shift",
+        work_schedule_type_code: "FIXED",
+        work_schedule_type_name: "Fixed",
+        working_days: [1, 2, 3, 4, 5],
+        working_days_text: "Mon-Fri",
+        start_time: "08:00",
+        end_time: "17:00",
+        working_time_text: "08:00-17:00",
+        break_duration: 60,
+        working_hours: 8,
+        effective_start_date: "2025-01-01",
+        effective_end_date: "",
+        is_current: true,
+        remark: "Standard working hours",
+        created_at: "2025-01-01",
+        created_by: "Admin",
+        updated_at: "2025-01-01",
+        updated_by: "Admin",
       },
       {
-        id: 8,
-        employee_id: "EMP008",
-        employee_name: "Emily Davis",
-        department_code: "FINANCE",
-        department_name: "Finance",
-        position_code: "STAFF",
-        position_name: "Staff",
+        id: 2,
+        employee_id: "EMP002",
+        employee_name: "Jane Smith",
+        department_code: "HR",
+        department_name: "Human Resources",
+        position_code: "MANAGER",
+        position_name: "Manager",
         placement_code: "AMORA_UBUD",
         placement_name: "Amora Ubud",
-        status: "REJECTED",
-        total_quota_leave: 12,
-        total_remaining_leave: 10,
-        leave_type_code: "T01",
-        leave_type_name: "Annual Leave",
-        start_date: "2025-01-15",
-        end_date: "2025-01-15",
-        total_days: 1,
-        remark: "",
-        created_at: "2025-01-15",
-        created_by: "HR Manager",
-        updated_at: "2025-01-15",
-        updated_by: "HR Manager",
+        work_schedule_code: "FLEX001",
+        work_schedule_name: "Flexible Hours",
+        work_schedule_type_code: "FLEXIBLE",
+        work_schedule_type_name: "Flexible",
+        working_days: [1, 2, 3, 4, 5],
+        working_days_text: "Mon-Fri",
+        start_time: "09:00",
+        end_time: "18:00",
+        working_time_text: "09:00-18:00",
+        break_duration: 60,
+        working_hours: 8,
+        effective_start_date: "2025-01-01",
+        effective_end_date: "",
+        is_current: true,
+        remark: "Flexible working hours",
+        created_at: "2025-01-01",
+        created_by: "Admin",
+        updated_at: "2025-01-01",
+        updated_by: "Admin",
       },
     ];
   }
@@ -638,162 +639,24 @@ export default class WorkSchedule extends Vue {
   async loadDropdown() {
     try {
       /*
-      const leaveAPI = new LeaveAPI();
+      const workScheduleAPI = new WorkScheduleAPI();
       const promises = [
-        leaveAPI.GetEmployeeOptionsForLeave().then(response => {
+        workScheduleAPI.GetEmployeeOptionsForSchedule().then(response => {
           this.employeeOptions = response.data;
         }),
-        leaveAPI.GetLeaveTypeOptions().then(response => {
-          this.leaveTypeOptions = response.data;
+        workScheduleAPI.GetSchedulePatternOptions().then(response => {
+          this.workScheduleOptions = response.data;
+        }),
+        workScheduleAPI.GetWorkScheduleTypeOptions().then(response => {
+          this.workScheduleTypeOptions = response.data;
+        }),
+        workScheduleAPI.GetShiftOptions().then(response => {
+          this.shiftOptions = response.data;
         }),
       ];
 
       await Promise.all(promises);
       */
-
-      //    this.shifts = [
-      //   {
-      //     employee_id: 1,
-      //     day_index: 0,
-      //     shift_type: "M",
-      //     start_time: "07:00",
-      //     end_time: "15:00",
-      //     break_duration: 30,
-      //     location: "FD",
-      //     notes: "Cover for Sarah",
-      //   },
-      //   {
-      //     employee_id: 1,
-      //     day_index: 1,
-      //     shift_type: "M",
-      //     start_time: "07:00",
-      //     end_time: "15:00",
-      //     break_duration: 30,
-      //     location: "FD",
-      //     notes: "",
-      //   },
-      //   {
-      //     employee_id: 1,
-      //     day_index: 2,
-      //     shift_type: "OFF",
-      //     start_time: "",
-      //     end_time: "",
-      //     break_duration: 0,
-      //     location: "",
-      //     notes: "Requested day off",
-      //   },
-      //   {
-      //     employee_id: 1,
-      //     day_index: 3,
-      //     shift_type: "M",
-      //     start_time: "07:00",
-      //     end_time: "15:00",
-      //     break_duration: 30,
-      //     location: "FD",
-      //     notes: "",
-      //   },
-      //   {
-      //     employee_id: 1,
-      //     day_index: 4,
-      //     shift_type: "M",
-      //     start_time: "07:00",
-      //     end_time: "15:00",
-      //     break_duration: 30,
-      //     location: "FD",
-      //     notes: "",
-      //   },
-      //   {
-      //     employee_id: 1,
-      //     day_index: 5,
-      //     shift_type: "E",
-      //     start_time: "15:00",
-      //     end_time: "23:00",
-      //     break_duration: 30,
-      //     location: "FD",
-      //     notes: "",
-      //   },
-      //   {
-      //     employee_id: 1,
-      //     day_index: 6,
-      //     shift_type: "E",
-      //     start_time: "15:00",
-      //     end_time: "23:00",
-      //     break_duration: 30,
-      //     location: "FD",
-      //     notes: "",
-      //   },
-
-      //   {
-      //     employee_id: 2,
-      //     day_index: 0,
-      //     shift_type: "E",
-      //     start_time: "15:00",
-      //     end_time: "23:00",
-      //     break_duration: 30,
-      //     location: "BO",
-      //     notes: "",
-      //   },
-      //   {
-      //     employee_id: 2,
-      //     day_index: 1,
-      //     shift_type: "E",
-      //     start_time: "15:00",
-      //     end_time: "23:00",
-      //     break_duration: 30,
-      //     location: "BO",
-      //     notes: "",
-      //   },
-      //   {
-      //     employee_id: 2,
-      //     day_index: 2,
-      //     shift_type: "E",
-      //     start_time: "15:00",
-      //     end_time: "23:00",
-      //     break_duration: 30,
-      //     location: "BO",
-      //     notes: "",
-      //   },
-      //   {
-      //     employee_id: 2,
-      //     day_index: 3,
-      //     shift_type: "OFF",
-      //     start_time: "",
-      //     end_time: "",
-      //     break_duration: 0,
-      //     location: "",
-      //     notes: "Personal time",
-      //   },
-      //   {
-      //     employee_id: 2,
-      //     day_index: 4,
-      //     shift_type: "OFF",
-      //     start_time: "",
-      //     end_time: "",
-      //     break_duration: 0,
-      //     location: "",
-      //     notes: "Personal time",
-      //   },
-      //   {
-      //     employee_id: 2,
-      //     day_index: 5,
-      //     shift_type: "M",
-      //     start_time: "07:00",
-      //     end_time: "15:00",
-      //     break_duration: 30,
-      //     location: "BO",
-      //     notes: "",
-      //   },
-      //   {
-      //     employee_id: 2,
-      //     day_index: 6,
-      //     shift_type: "M",
-      //     start_time: "07:00",
-      //     end_time: "15:00",
-      //     break_duration: 30,
-      //     location: "BO",
-      //     notes: "",
-      //   },
-      // ];
 
       this.employeeOptions = [
         {
@@ -805,9 +668,6 @@ export default class WorkSchedule extends Vue {
           position_name: "Manager",
           placement_code: "AMORA_UBUD",
           placement_name: "Amora Ubud",
-          total_quota_leave: 12,
-          total_remaining_leave: 0,
-          SubGroupName: "Employee",
         },
         {
           employee_id: "EMP002",
@@ -818,9 +678,6 @@ export default class WorkSchedule extends Vue {
           position_name: "Staff",
           placement_code: "AMORA_UBUD",
           placement_name: "Amora Ubud",
-          total_quota_leave: 12,
-          total_remaining_leave: 10,
-          SubGroupName: "Employee",
         },
         {
           employee_id: "EMP003",
@@ -831,9 +688,6 @@ export default class WorkSchedule extends Vue {
           position_name: "Staff",
           placement_code: "AMORA_UBUD",
           placement_name: "Amora Ubud",
-          total_quota_leave: 12,
-          total_remaining_leave: 10,
-          SubGroupName: "Employee",
         },
         {
           employee_id: "EMP004",
@@ -844,9 +698,6 @@ export default class WorkSchedule extends Vue {
           position_name: "Staff",
           placement_code: "AMORA_UBUD",
           placement_name: "Amora Ubud",
-          total_quota_leave: 12,
-          total_remaining_leave: 10,
-          SubGroupName: "Employee",
         },
         {
           employee_id: "EMP005",
@@ -857,18 +708,40 @@ export default class WorkSchedule extends Vue {
           position_name: "Staff",
           placement_code: "AMORA_UBUD",
           placement_name: "Amora Ubud",
-          total_quota_leave: 12,
-          total_remaining_leave: 10,
-          SubGroupName: "Employee",
         },
       ];
 
-      this.shiftOptions = [
-        { code: "M", name: "Morning (07:00-15:00)" },
-        { code: "E", name: "Evening (15:00-23:00)" },
-        { code: "N", name: "Night (23:00-07:00)" },
-        { code: "OFF", name: "Day Off" },
-        { code: "SP", name: "Split Shift" },
+      this.workScheduleOptions = [
+        {
+          code: "R",
+          name: "Regular Shift (8:00-17:00)",
+          work_schedule_type_code: "FIXED",
+          work_schedule_type_name: "Fixed",
+          working_days: [1, 2, 3, 4, 5],
+          default_start_time: "08:00",
+          default_end_time: "17:00",
+          default_break_duration: 60,
+        },
+        {
+          code: "F",
+          name: "Flexible Hours (9:00-18:00)",
+          work_schedule_type_code: "FLEXIBLE",
+          work_schedule_type_name: "Flexible",
+          working_days: [1, 2, 3, 4, 5],
+          default_start_time: "09:00",
+          default_end_time: "18:00",
+          default_break_duration: 60,
+        },
+        {
+          code: "N",
+          name: "Night Shift (23:00-07:00)",
+          work_schedule_type_code: "FIXED",
+          work_schedule_type_name: "Fixed",
+          working_days: [1, 2, 3, 4, 5],
+          default_start_time: "23:00",
+          default_end_time: "07:00",
+          default_break_duration: 30,
+        },
       ];
     } catch (error) {
       getError(error);
@@ -878,10 +751,10 @@ export default class WorkSchedule extends Vue {
   async insertData(formData: any) {
     try {
       /*
-      const leaveAPI = new LeaveAPI();
-      const { status2 } = await leaveAPI.InsertLeaveRequest(formData);
+      const workScheduleAPI = new WorkScheduleAPI();
+      const { status2 } = await workScheduleAPI.InsertEmployeeWorkSchedule(formData);
       if (status2.status == 0) {
-        getToastSuccess(this.$t("messages.attendance.success.saveLeave"));
+        getToastSuccess(this.$t("messages.workSchedule.success.saveSchedule"));
         this.showForm = false;
         this.loadDataGrid(this.searchDefault);
       }
@@ -889,7 +762,7 @@ export default class WorkSchedule extends Vue {
 
       const newId = Math.max(...this.rowData.map((item: any) => item.id)) + 1;
 
-      const newLeave = {
+      const newSchedule = {
         id: newId,
         employee_id: formData.employee_id,
         employee_name: formData.employee_name,
@@ -899,15 +772,20 @@ export default class WorkSchedule extends Vue {
         position_name: formData.position_name,
         placement_code: formData.placement_code,
         placement_name: formData.placement_name,
-        status: "PENDING",
-        total_quota_leave: formData.total_quota_leave,
-        total_remaining_leave: formData.total_remaining_leave,
-        leave_type_code: formData.leave_type_code,
-        leave_type_name: formData.leave_type_name,
-        reason: formData.reason,
-        start_date: formData.start_date,
-        end_date: formData.end_date,
-        total_days: formData.total_days,
+        work_schedule_code: formData.work_schedule_code,
+        work_schedule_name: formData.work_schedule_name,
+        work_schedule_type_code: formData.work_schedule_type_code,
+        work_schedule_type_name: formData.work_schedule_type_name,
+        working_days: formData.working_days,
+        working_days_text: this.formatWorkingDaysText(formData.working_days),
+        start_time: formData.start_time,
+        end_time: formData.end_time,
+        working_time_text: `${formData.start_time}-${formData.end_time}`,
+        break_duration: formData.break_duration,
+        working_hours: formData.working_hours,
+        effective_start_date: formData.effective_start_date,
+        effective_end_date: formData.effective_end_date,
+        is_current: formData.is_current,
         remark: formData.remark,
         created_at: formatDateTimeUTC(new Date()),
         created_by: "Current User",
@@ -915,12 +793,12 @@ export default class WorkSchedule extends Vue {
         updated_by: "Current User",
       };
 
-      this.rowData.push(newLeave);
+      this.rowData.push(newSchedule);
 
       await this.$nextTick();
       await this.loadDataGrid(this.searchDefault);
 
-      getToastSuccess(this.$t("messages.attendance.success.saveLeave"));
+      getToastSuccess(this.$t("messages.attendance.success.saveSchedule"));
     } catch (error) {
       getError(error);
     }
@@ -929,12 +807,12 @@ export default class WorkSchedule extends Vue {
   async updateData(formData: any) {
     try {
       /*
-      const leaveAPI = new LeaveAPI();
-      const { status2 } = await leaveAPI.UpdateLeaveRequest(formData);
+      const workScheduleAPI = new WorkScheduleAPI();
+      const { status2 } = await workScheduleAPI.UpdateEmployeeWorkSchedule(formData);
       if (status2.status == 0) {
         this.loadDataGrid(this.searchDefault);
         this.showForm = false;
-        getToastSuccess(this.$t("messages.attendance.success.updateLeave"));
+        getToastSuccess(this.$t("messages.workSchedule.success.updateSchedule"));
       }
       */
 
@@ -944,12 +822,20 @@ export default class WorkSchedule extends Vue {
       if (index !== -1) {
         this.rowData[index] = {
           ...this.rowData[index],
-          leave_type_code: formData.leave_type_code,
-          leave_type_name: formData.leave_type_name,
-          reason: formData.reason,
-          start_date: formData.start_date,
-          end_date: formData.end_date,
-          total_days: formData.total_days,
+          work_schedule_code: formData.work_schedule_code,
+          work_schedule_name: formData.work_schedule_name,
+          work_schedule_type_code: formData.work_schedule_type_code,
+          work_schedule_type_name: formData.work_schedule_type_name,
+          working_days: formData.working_days,
+          working_days_text: this.formatWorkingDaysText(formData.working_days),
+          start_time: formData.start_time,
+          end_time: formData.end_time,
+          working_time_text: `${formData.start_time}-${formData.end_time}`,
+          break_duration: formData.break_duration,
+          working_hours: formData.working_hours,
+          effective_start_date: formData.effective_start_date,
+          effective_end_date: formData.effective_end_date,
+          is_current: formData.is_current,
           remark: formData.remark,
           updated_at: formatDateTimeUTC(new Date()),
           updated_by: "Current User",
@@ -959,7 +845,7 @@ export default class WorkSchedule extends Vue {
       await this.$nextTick();
       await this.loadDataGrid(this.searchDefault);
 
-      getToastSuccess(this.$t("messages.attendance.success.updateLeave"));
+      getToastSuccess(this.$t("messages.attendance.success.updateSchedule"));
     } catch (error) {
       getError(error);
     }
@@ -968,11 +854,11 @@ export default class WorkSchedule extends Vue {
   async deleteData() {
     try {
       /*
-      const leaveAPI = new LeaveAPI();
-      const { status2 } = await leaveAPI.DeleteLeaveRequest(this.deleteParam);
+      const workScheduleAPI = new WorkScheduleAPI();
+      const { status2 } = await workScheduleAPI.DeleteEmployeeWorkSchedule(this.deleteParam);
       if (status2.status == 0) {
         this.loadDataGrid(this.searchDefault);
-        getToastSuccess(this.$t("messages.attendance.success.deleteLeave"));
+        getToastSuccess(this.$t("messages.workSchedule.success.deleteSchedule"));
       }
       */
 
@@ -982,7 +868,7 @@ export default class WorkSchedule extends Vue {
 
       await this.$nextTick();
       await this.loadDataGrid(this.searchDefault);
-      getToastSuccess(this.$t("messages.attendance.success.deleteLeave"));
+      getToastSuccess(this.$t("messages.attendance.success.deleteSchedule"));
     } catch (error) {
       getError(error);
     }
@@ -991,7 +877,7 @@ export default class WorkSchedule extends Vue {
   // HELPER =======================================================
   formatData(params: any) {
     return {
-      id: params,
+      id: params.id,
       employee_id: params.employee_id,
       employee_name: params.employee_name,
       department_code: params.department_code,
@@ -1000,22 +886,25 @@ export default class WorkSchedule extends Vue {
       position_name: params.position_name,
       placement_code: params.placement_code,
       placement_name: params.placement_name,
-      status: params.status,
-      total_quota_leave: params.total_quota_leave,
-      total_remaining_leave: params.total_remaining_leave,
-      leave_type_code: params.leave_type_code,
-      leave_type_name: params.leave_type_name,
-      reason: params.reason,
-      start_date: params.start_date,
-      end_date: params.end_date,
-      total_days: params.total_days,
+      work_schedule_code: params.work_schedule_code,
+      work_schedule_name: params.work_schedule_name,
+      work_schedule_type_code: params.work_schedule_type_code,
+      work_schedule_type_name: params.work_schedule_type_name,
+      working_days: params.working_days,
+      start_time: params.start_time,
+      end_time: params.end_time,
+      break_duration: params.break_duration,
+      working_hours: params.working_hours,
+      effective_start_date: params.effective_start_date,
+      effective_end_date: params.effective_end_date,
+      is_current: params.is_current,
       remark: params.remark,
     };
   }
 
   populateForm(params: any) {
     return {
-      id: params,
+      id: params.id,
       employee_id: params.employee_id,
       employee_name: params.employee_name,
       department_code: params.department_code,
@@ -1024,15 +913,18 @@ export default class WorkSchedule extends Vue {
       position_name: params.position_name,
       placement_code: params.placement_code,
       placement_name: params.placement_name,
-      status: params.status,
-      total_quota_leave: params.total_quota_leave,
-      total_remaining_leave: params.total_remaining_leave,
-      leave_type_code: params.leave_type_code,
-      leave_type_name: params.leave_type_name,
-      reason: params.reason,
-      start_date: params.start_date,
-      end_date: params.end_date,
-      total_days: params.total_days,
+      work_schedule_code: params.work_schedule_code,
+      work_schedule_name: params.work_schedule_name,
+      work_schedule_type_code: params.work_schedule_type_code,
+      work_schedule_type_name: params.work_schedule_type_name,
+      working_days: params.working_days || [],
+      start_time: params.start_time,
+      end_time: params.end_time,
+      break_duration: params.break_duration,
+      working_hours: params.working_hours,
+      effective_start_date: params.effective_start_date,
+      effective_end_date: params.effective_end_date,
+      is_current: params.is_current,
       remark: params.remark,
     };
   }
@@ -1068,6 +960,44 @@ export default class WorkSchedule extends Vue {
         full_date: date,
       });
     }
+  }
+
+  navigateWeek(direction: number) {
+    const newDate = new Date(this.currentWeekStart);
+    newDate.setDate(newDate.getDate() + direction * 7);
+    this.currentWeekStart = newDate;
+    this.generateWeekDays();
+  }
+
+  goToCurrentWeek() {
+    this.initializeWeek();
+  }
+
+  timeStringToMinutes(timeString: string): number {
+    const [hours, minutes] = timeString.split(":").map(Number);
+    return hours * 60 + minutes;
+  }
+
+  formatWorkingDaysText(workingDays: number[]): string {
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    return workingDays.map((day) => dayNames[day]).join(", ");
+  }
+
+  getSchedule(employeeId: number | string, dayIndex: number) {
+    return this.workScheduleOptions.find(
+      (schedule: any) =>
+        schedule.employee_id == employeeId && schedule.day_index == dayIndex
+    );
+  }
+
+  getScheduleCode(employeeId: number | string, dayIndex: number): string {
+    const schedule = this.getSchedule(employeeId, dayIndex);
+    return schedule ? schedule.code : "OFF";
+  }
+
+  getScheduleName(employeeId: number | string, dayIndex: number): string {
+    const schedule = this.getSchedule(employeeId, dayIndex);
+    return schedule ? schedule.name : "Day Off";
   }
 
   // GETTER AND SETTER =======================================================

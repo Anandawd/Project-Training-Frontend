@@ -2,6 +2,7 @@
   "labels": {
     "payroll": {
       "employee": {
+        "id": "ID",
         "employee": "Employee",
         "management": "Management",
         "employeeManagement": "Employee Management",
@@ -202,7 +203,30 @@
         "currentBalance": "Current Balance",
         "balanceAfter": "Balance After",
         "totalLeaveQuota": "Total Leave Quota",
-        "remainingLeaveQuota": "Remaining Leave Quota"
+        "remainingLeaveQuota": "Remaining Leave Quota",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday",
+        "workScheduleInformation": "Work Schedule Information",
+        "workingTime": "Working Time",
+        "selectSchedule": "Select Schedule",
+        "scheduleType": "Schedule Type",
+        "effectiveDate": "Effective Date",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "breakDuration": "Break Duration (in Minutes)",
+        "workingHours": "Working Hours",
+        "setAsCurrent": "Set as Current",
+        "workingTimeInformation": "Working Time Information",
+        "scheduleSummary": "Schedule Summary",
+        "schedule": "Schedule",
+        "totalHours": "Total Hours",
+        "workingDaysCount": "Working Days Count",
+        "daysPerWeek": "Days Per Week"
       },
       "payroll": {
         "payroll": "Payroll",
@@ -1744,6 +1768,8 @@
   },
   "title": {
     "t11": "t11",
+    "employeeSchedule": "Employee Schedule",
+    "weeklySchedule": "Weekly Schedule",
     "leave": "Leave",
     "enrollmentProgress": "Enrollment Progress",
     "date": "Date",
@@ -2658,6 +2684,7 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "thisWeek": "This Week",
     "switchShift": "Switch Shift",
     "requestLeave": "Request Leave",
     "testFingerprint": "Test Fingerprint",
@@ -3389,7 +3416,10 @@
           "enrollmentDate": "Enrollment Date",
           "device": "Device",
           "templateCount": "Template Count",
-          "lastVerified": "Last Verified"
+          "lastVerified": "Last Verified",
+          "workingDays": "Working Days",
+          "workingTime": "Working Time",
+          "effectiveDate": "Effective Date"
         }
       },
       "reminderDate": "Reminder Date",
@@ -4069,6 +4099,7 @@
       "outstandingReal": "Outstanding Real"
     },
     "contextMenu": {
+      "switchSchedule": "Switch Schedule",
       "enroll": "Enroll",
       "reEnroll": "Re-enroll",
       "quickVerify": "Quick Verify",
