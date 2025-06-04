@@ -91,7 +91,7 @@ export default class WorkSchedule extends Vue {
   public selectedDay: Day | null = null;
   public selectedDayIndex: number = -1;
 
-  public showScheduleSwitchModal: boolean = true;
+  public showScheduleSwitchModal: boolean = false;
   public selectedEmployeeForSwitch: any = null;
   public selectedDateForSwitch: string = "";
   public selectedDayIndexForSwitch: number = -1;
@@ -367,14 +367,16 @@ export default class WorkSchedule extends Vue {
       },
       "separator",
       {
-        name: this.$t("commons.contextMenu.switchSchedule"),
+        name: "Quick Switch Today",
         disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
-        action: () =>
-          this.handleShowModal(
-            this.paramsData,
-            $global.modePayroll.switchSchedule
-          ),
+        action: () => this.quickSwitchToday(this.paramsData),
+      },
+      {
+        name: "Manage Switch Requests",
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("detail_icon24"),
+        action: () => this.showSwitchRequestsModal(this.paramsData),
       },
       {
         name: this.$t("commons.contextMenu.detail"),
@@ -521,6 +523,23 @@ export default class WorkSchedule extends Vue {
     );
 
     this.showScheduleSwitchModal = true;
+  }
+
+  quickSwitchToday(employee: any) {
+    const today = new Date().toISOString().split("T")[0];
+    const todayDay = this.weekDays.find((day) => day.date === today);
+
+    if (todayDay) {
+      this.openScheduleModal(employee, todayDay, todayDay.day_index);
+    } else {
+      getToastInfo("Today's schedule is not in the current week view");
+    }
+  }
+
+  showSwitchRequestsModal(employee: any) {
+    // Implementation for showing employee's switch requests
+    console.log("Show switch requests for:", employee.employee_name);
+    // This could open another modal showing all pending/approved/rejected requests
   }
 
   async handleSwitchConfirmed(switchData: any) {
@@ -1918,6 +1937,7 @@ export default class WorkSchedule extends Vue {
 
     return `${shift.start_time} - ${shift.end_time}`;
   }
+
   // GETTER AND SETTER =======================================================
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
@@ -1955,5 +1975,14 @@ export default class WorkSchedule extends Vue {
 
   get warningConflicts(): ScheduleConflict[] {
     return this.scheduleConflicts.filter((c) => c.severity === "warning");
+  }
+
+  get pendingSwitchCount(): number {
+    return this.switchRequests.filter((req) => req.status === "PENDING").length;
+  }
+
+  get todaysSwitchRequests(): any[] {
+    const today = new Date().toISOString().split("T")[0];
+    return this.switchRequests.filter((req) => req.schedule_date === today);
   }
 }

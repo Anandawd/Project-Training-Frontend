@@ -77,7 +77,6 @@ export default class InputForm extends Vue {
   }
 
   onSave() {
-    console.log("form save", this.form);
     this.$emit("save", this.form);
   }
 
@@ -95,12 +94,9 @@ export default class InputForm extends Vue {
 
   onHolidayTypeChange() {
     if (this.form.type_code) {
-      console.log(this.form.type_code);
       const selectedOption = this.holidayTypeOptions.find(
         (d: any) => d.code === this.form.type_code
       );
-
-      console.log("selected", selectedOption);
 
       if (selectedOption) {
         this.form.type_code = selectedOption.code;

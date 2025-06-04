@@ -1,4 +1,5 @@
 <c-modal
+  v-show="visible"
   :title="$t('title.switchSchedule')"
   size="xl"
   @close="closeModal"
@@ -8,7 +9,477 @@
 >
   <div @click.stop>
     <div class="schedule-switch-modal">
-      <h1>Form</h1>
+      <!-- Employee & Date Info Header -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card p-3 border-primary">
+            <div class="row align-items center">
+              <div class="col-md-3">
+                <h6 class="mb-0">
+                  <i class="fa fa-user mr-2"></i
+                  >{{selectedEmployee?.employee_name}}
+                </h6>
+                <small
+                  >{{selectedEmployee?.employee_id}} |
+                  {{selectedEmployee?.position_name}}</small
+                >
+              </div>
+              <div class="col-md-3">
+                <h6 class="mb-0">
+                  <i class="fa fa-calendar mr-2"></i>Selected Date
+                </h6>
+                <small>{{selectedDate}}</small>
+              </div>
+              <div class="col-md-3">
+                <h6 class="mb-0">Current Schedule</h6>
+                <span
+                  class="badge badge-lg"
+                  :style="{ backgroundColor: getShiftDisplayInfo(currentSchedule?.shift_code).color }"
+                >
+                  {{currentSchedule?.shift_code || 'OFF'}}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8">
+          <!-- Schedule Comparison -->
+          <div class="row mb-4">
+            <div class="col-md-6 mb-4 mb-md-0">
+              <div class="card border-info h-100">
+                <div class="card-header bg-info text-white">
+                  <h6 class="mb-0">
+                    <i class="fa fa-clock mr-2"></i>Current Schedule
+                  </h6>
+                </div>
+                <div class="card-body text-center">
+                  <div class="current-schedule-display p-3">
+                    <span
+                      class="badge badge-xl mb-3"
+                      :style="{ 
+                      backgroundColor: getShiftDisplayInfo(currentSchedule?.shift_code).color,
+                      fontSize: '18px',
+                      padding: '15px 25px'
+                    }"
+                    >
+                      {{currentSchedule?.shift_code || 'OFF'}}
+                    </span>
+                    <h5 class="mb-2">
+                      {{getShiftDisplayInfo(currentSchedule?.shift_code).name}}
+                    </h5>
+                    <p class="text-muted mb-1">
+                      {{getShiftDisplayInfo(currentSchedule?.shift_code).time}}
+                    </p>
+                    <small class="text-muted">
+                      Working Hours:
+                      {{getShiftDisplayInfo(currentSchedule?.shift_code).working_hours}}h
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- New Schedule -->
+            <div class="col-md-6">
+              <div class="card border-success h-100">
+                <div class="card-header bg-success text-white">
+                  <h6 class="mb-0">
+                    <i class="fa fa-exchange-alt mr-2"></i>New Schedule
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <c-select
+                    required
+                    class="mb-3"
+                    name="RequestedShift"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.requested_shift_code"
+                    :label="$t('labels.payroll.attendance.selectNewShift')"
+                    :options="availableShifts"
+                    @change="onShiftChange"
+                  />
+
+                  <div v-if="form.requested_shift_code" class="text-center">
+                    <span
+                      class="badge badge-xl mb-3"
+                      :style="{ 
+                      backgroundColor: getShiftDisplayInfo(form.requested_shift_code).color,
+                      fontSize: '18px',
+                      padding: '15px 25px'
+                    }"
+                    >
+                      {{form.requested_shift_code}}
+                    </span>
+                    <h5 class="mb-2">
+                      {{getShiftDisplayInfo(form.requested_shift_code).name}}
+                    </h5>
+                    <p class="text-muted mb-1">
+                      {{getShiftDisplayInfo(form.requested_shift_code).time}}
+                    </p>
+                    <small class="text-muted">
+                      Working Hours:
+                      {{getShiftDisplayInfo(form.requested_shift_code).working_hours}}h
+                    </small>
+
+                    <!-- Hours Difference Indicator -->
+                    <div class="mt-2">
+                      <span
+                        :class="{
+                        'badge': true,
+                        'bg-success': getShiftDisplayInfo(form.requested_shift_code).working_hours <= getShiftDisplayInfo(currentSchedule?.shift_code).working_hours,
+                        'bg-warning': getShiftDisplayInfo(form.requested_shift_code).working_hours > getShiftDisplayInfo(currentSchedule?.shift_code).working_hours
+                      }"
+                      >
+                        {{getShiftDisplayInfo(form.requested_shift_code).working_hours
+                        >
+                        getShiftDisplayInfo(currentSchedule?.shift_code).working_hours
+                        ? '+' : ''}}
+                        {{getShiftDisplayInfo(form.requested_shift_code).working_hours
+                        -
+                        getShiftDisplayInfo(currentSchedule?.shift_code).working_hours}}h
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Switch Type & Options -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h6><i class="fa fa-cogs mr-2"></i>Switch Details</h6>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <c-select
+                    required
+                    class="mb-3"
+                    name="SwitchType"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.switch_type"
+                    :label="$t('labels.payroll.attendance.switchType')"
+                    :options="switchTypeOptions"
+                    @change="onSwitchTypeChange"
+                  />
+                </div>
+                <!-- Mutual Swap Target -->
+                <div class="col-md-6" v-if="form.switch_type === 'MUTUAL_SWAP'">
+                  <c-select
+                    required
+                    class="mb-3"
+                    name="TargetEmployee"
+                    labelName="employee_name"
+                    keyName="employee_id"
+                    v-model="form.target_employee_id"
+                    :label="$t('labels.payroll.attendance.swapWith')"
+                    :options="mutualSwapOptions"
+                    :loading="loading"
+                  />
+                </div>
+
+                <!-- Emergency Override -->
+                <div class="col-md-6" v-if="criticalConflicts.length > 0">
+                  <div class="form-check mt-4">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      v-model="form.emergency_override"
+                      id="emergencyOverride"
+                    />
+                    <label
+                      class="form-check-label text-danger"
+                      for="emergencyOverride"
+                    >
+                      <i class="fa fa-exclamation-triangle mr-1"></i>
+                      Emergency Override (Critical Conflicts)
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Reason -->
+              <div class="row">
+                <div class="col-12">
+                  <label class="form-label">
+                    {{$t('labels.payroll.attendance.switchReason')}}
+                    <span class="text-danger">*</span>
+                  </label>
+                  <textarea
+                    class="form-control"
+                    rows="3"
+                    v-model="form.reason"
+                    maxlength="500"
+                  ></textarea>
+                  <small class="text-muted"
+                    >{{form.reason.length}}/500 characters</small
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conflicts & Validation Results -->
+          <div v-if="conflicts.length > 0" class="card mb-4">
+            <div
+              class="card-header"
+              :class="{
+            'bg-danger text-white': criticalConflicts.length > 0,
+            'bg-warning': criticalConflicts.length === 0 && warningConflicts.length > 0,
+            'bg-info text-white': criticalConflicts.length === 0 && warningConflicts.length === 0
+          }"
+            >
+              <h6 class="mb-0">
+                <i :class="getConflictIcon('validation')" class="mr-2"></i>
+                Validation Results
+                <span class="badge badge-light ml-2"
+                  >{{conflicts.length}} issues</span
+                >
+              </h6>
+            </div>
+            <div class="card-body">
+              <!-- Critical Conflicts -->
+              <div v-if="criticalConflicts.length > 0" class="mb-3">
+                <h6 class="text-danger">
+                  <i class="fa fa-times-circle mr-1"></i>Critical Issues (Must
+                  be resolved)
+                </h6>
+                <div
+                  v-for="conflict in criticalConflicts"
+                  :key="conflict.type"
+                  class="alert alert-danger d-flex align-items-center"
+                >
+                  <i :class="getConflictIcon(conflict.type)" class="mr-2"></i>
+                  <div class="flex-grow-1">
+                    <strong>{{conflict.type.replace('_', ' ')}}:</strong>
+                    {{conflict.message}}
+                    <div v-if="conflict.details" class="small mt-1 text-muted">
+                      {{conflict.details}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Warning Conflicts -->
+              <div v-if="warningConflicts.length > 0" class="mb-3">
+                <h6 class="text-warning">
+                  <i class="fa fa-exclamation-triangle mr-1"></i>Warnings
+                  (Review recommended)
+                </h6>
+                <div
+                  v-for="conflict in warningConflicts"
+                  :key="conflict.type"
+                  class="alert alert-warning d-flex align-items-center"
+                >
+                  <i :class="getConflictIcon(conflict.type)" class="mr-2"></i>
+                  <div class="flex-grow-1">
+                    <strong>{{conflict.type.replace('_', ' ')}}:</strong>
+                    {{conflict.message}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Impact Analysis & Department Staffing -->
+        <div class="col-md-4">
+          <!-- Department Staffing Impact -->
+          <div
+            v-if="departmentStaffing.current_shift_staffing"
+            class="card mb-4"
+          >
+            <div class="card-header bg-secondary text-white">
+              <h6 class="mb-0">
+                <i class="fa fa-users mr-2"></i>Staffing Impact
+              </h6>
+            </div>
+
+            <div class="card-body">
+              <div class="staffing-analysis">
+                <!-- Current Shift Impact -->
+                <div class="mb-3 p-2 border rounded">
+                  <h6 class="text-muted mb-1">
+                    {{currentSchedule?.shift_code}} Shift
+                  </h6>
+                  <div class="d-flex justify-content-between">
+                    <span>Current Staff:</span>
+                    <span
+                      >{{departmentStaffing.current_shift_staffing[currentSchedule?.shift_code]
+                      || 0}}</span
+                    >
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <span>After Change:</span>
+                    <span
+                      :class="{
+                    'text-danger': staffingImpact?.current_shift_impact < staffingImpact?.current_shift_minimum,
+                    'text-success': staffingImpact?.current_shift_impact >= staffingImpact?.current_shift_minimum
+                  }"
+                    >
+                      {{staffingImpact?.current_shift_impact}}
+                    </span>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <span>Minimum Required:</span>
+                    <span>{{staffingImpact?.current_shift_minimum}}</span>
+                  </div>
+                </div>
+
+                <!-- New Shift Impact -->
+                <div class="p-2 border rounded">
+                  <h6 class="text-muted mb-1">
+                    {{form.requested_shift_code}} Shift
+                  </h6>
+                  <div class="d-flex justify-content-between">
+                    <span>Current Staff:</span>
+                    <span
+                      >{{departmentStaffing.current_shift_staffing[form.requested_shift_code]
+                      || 0}}</span
+                    >
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <span>After Change:</span>
+                    <span
+                      :class="{
+                    'text-danger': staffingImpact?.new_shift_impact > staffingImpact?.new_shift_maximum,
+                    'text-success': staffingImpact?.new_shift_impact <= staffingImpact?.new_shift_maximum
+                  }"
+                    >
+                      {{staffingImpact?.new_shift_impact}}
+                    </span>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <span>Maximum Allowed:</span>
+                    <span>{{staffingImpact?.new_shift_maximum}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mutual Swap Options -->
+          <div
+            v-if="form.switch_type === 'MUTUAL_SWAP' && mutualSwapOptions.length > 0"
+            class="card mb-4"
+          >
+            <div class="card-header bg-info text-white">
+              <h6 class="mb-0">
+                <i class="fa fa-exchange-alt mr-2"></i>Available Swap Partners
+              </h6>
+            </div>
+            <div class="card-body">
+              <div
+                v-for="option in mutualSwapOptions.slice(0, 3)"
+                :key="option.employee_id"
+                class="swap-option p-2 border rounded mb-2"
+                :class="{ 'border-primary bg-light': form.target_employee_id === option.employee_id }"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>{{option.employee_name}}</strong>
+                    <br />
+                    <small class="text-muted">{{option.department_name}}</small>
+                  </div>
+                  <div class="text-right">
+                    <span
+                      class="badge"
+                      :style="{ backgroundColor: getShiftDisplayInfo(option.current_shift).color }"
+                    >
+                      {{option.current_shift}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="mutualSwapOptions.length > 3" class="text-center">
+                <small class="text-muted"
+                  >+{{mutualSwapOptions.length - 3}} more options
+                  available</small
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card">
+            <div class="card-header">
+              <h6 class="mb-0"><i class="fa fa-bolt mr-2"></i>Quick Actions</h6>
+            </div>
+            <div class="card-body">
+              <button
+                type="button"
+                class="btn btn-outline-primary btn-sm btn-block mb-2"
+                @click="form.requested_shift_code = 'OFF'; form.reason = 'Request day off'"
+              >
+                <i class="fa fa-calendar-times mr-1"></i>
+                Request Day Off
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-warning btn-sm btn-block mb-2"
+                @click="form.switch_type = 'EMERGENCY'; form.reason = 'Emergency situation'"
+              >
+                <i class="fa fa-exclamation-triangle mr-1"></i>
+                Emergency Change
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-info btn-sm btn-block"
+                @click="form.switch_type = 'MUTUAL_SWAP'"
+              >
+                <i class="fa fa-exchange-alt mr-1"></i>
+                Find Swap Partner
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <small class="text-muted">
+                <i class="fa fa-info-circle mr-1"></i>
+                Changes may require approval based on your organization's policy
+              </small>
+            </div>
+
+            <div>
+              <button
+                type="button"
+                class="btn btn-secondary mr-2"
+                @click="closeModal"
+                :disabled="loading"
+              >
+                <i class="fa fa-times mr-1"></i>{{$t('buttons.cancel')}}
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="submitSwitch"
+                :disabled="!canProceed || loading"
+              >
+                <i v-if="loading" class="fa fa-spinner fa-spin mr-1"></i>
+                <i v-else class="fa fa-save mr-1"></i>
+                {{loading ? 'Processing...' : (criticalConflicts.length > 0 ?
+                'Override & Submit' : 'Submit Request')}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </c-modal>

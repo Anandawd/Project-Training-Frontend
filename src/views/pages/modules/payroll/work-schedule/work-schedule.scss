@@ -107,6 +107,10 @@
   font-size: 12px;
 }
 
+.dropdown-menu .dropdown-item {
+  z-index: 99;
+}
+
 @media (max-width: 768px) {
   .shift-badge {
     font-size: 10px;

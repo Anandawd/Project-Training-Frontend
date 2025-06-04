@@ -231,7 +231,9 @@
         "currentSchedule": "Current Schedule",
         "newSchedule": "New Schedule",
         "switchReason": "Switch Reason",
-        "selectNewShift": "Select New Shift"
+        "selectNewShift": "Select New Shift",
+        "switchType": "Switch Type",
+        "swapWith": "Swap With"
       },
       "payroll": {
         "payroll": "Payroll",

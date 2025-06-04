@@ -267,19 +267,18 @@ export default class ScheduleSwitchModal extends Vue {
     if (!this.selectedEmployee || !this.selectedDate) return;
 
     try {
-      const { data } = await this.workScheduleAPI.ValidateStaffCoverage({
-        department_code: this.selectedEmployee.department_code,
-        schedule_date: this.selectedDate,
-        simulation_changes: [
-          {
-            employee_id: this.selectedEmployee.employee_id,
-            from_shift: this.currentSchedule?.shift_code,
-            to_shift: this.form.requested_shift_code,
-          },
-        ],
-      });
-
-      this.departmentStaffing = data;
+      // const { data } = await this.workScheduleAPI.ValidateStaffCoverage({
+      //   department_code: this.selectedEmployee.department_code,
+      //   schedule_date: this.selectedDate,
+      //   simulation_changes: [
+      //     {
+      //       employee_id: this.selectedEmployee.employee_id,
+      //       from_shift: this.currentSchedule?.shift_code,
+      //       to_shift: this.form.requested_shift_code,
+      //     },
+      //   ],
+      // });
+      // this.departmentStaffing = data;
     } catch (error) {
       console.error("Gagal check department staffing:", error);
     }
