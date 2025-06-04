@@ -230,7 +230,8 @@
         "selectedDay": "Selected Day",
         "currentSchedule": "Current Schedule",
         "newSchedule": "New Schedule",
-        "switchReason": "Switch Reason"
+        "switchReason": "Switch Reason",
+        "selectNewShift": "Select New Shift"
       },
       "payroll": {
         "payroll": "Payroll",
