@@ -2380,12 +2380,15 @@
       "success": {
         "saveAttendance": "Attendance record has been successfully saved",
         "saveLeave": "Leave request has been successfully saved",
+        "saveHoliday": "Holiday has been successfully saved",
         "deleteFingerprint": "Enrollment deleted successfully",
         "deleteAttendance": "Attendace record has been successfully removed",
         "deleteLeave": "Leave request has been successfully removed",
+        "deleteHoliday": "Holiday has been successfully removed",
         "updateFingerprint": "Enrollment updated successfully",
         "updateAttendance": "Attendance record has been successfully updated",
         "updateLeave": "Leave request has been successfully updated",
+        "updateHoliday": "Holiday has been successfully updated",
         "enrolled": "Fingerprint enrolled successfully",
         "reEnrolled": "Fingerprint re-enrolled successfully",
         "verified": "Fingerprint verified successfully",
@@ -2407,6 +2410,7 @@
       "error": {
         "deleteAttendance": "Failed to delete attendance record",
         "attendanceNotFound": "Attendance record not found in the system",
+        "holidayNotFound": "Holiday data not found in the system",
         "noDeviceConnected": "No device connected",
         "enrollmentNotCompleted": "Enrollment not completed yet",
         "cannotStartEnrollment": "Cannot start enrollment. Please check requirements",
@@ -2426,6 +2430,7 @@
       "confirm": {
         "deleteAttendance": "Are you sure you want to delete this attendance record?",
         "deleteLeave": "Are you sure you want to delete this leave request for {employeeName}?",
+        "deleteHoliday": "Are you sure you want to delete this holiday?",
         "reEnrollTitle": "Re-Enroll Fingerprint",
         "reEnrollMessage": "Are you sure you want to re-enroll fingerprint for {employeeName}? This will overwrite the existing template.",
         "deleteTitleFingerprint": "Delete Enrollment",

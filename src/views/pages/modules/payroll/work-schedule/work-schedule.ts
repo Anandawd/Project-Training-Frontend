@@ -4,6 +4,7 @@ import CDialog from "@/components/dialog/dialog.vue";
 import CInput from "@/components/input/input.vue";
 import CModal from "@/components/modal/modal.vue";
 import CSelect from "@/components/select/select.vue";
+import WorkScheduleAPI from "@/services/api/payroll/work-schedule/work-schedule";
 import { formatDate, formatDateTimeUTC } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
@@ -17,6 +18,7 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
+import ScheduleSwitchModal from "./schedule-switch-modal/schedule-switch-modal.vue";
 import CInputForm from "./work-schedule-input-form/work-schedule-input-form.vue";
 
 interface Day {
@@ -46,6 +48,8 @@ interface ScheduleConflict {
   severity: "warning" | "error";
 }
 
+const workScheduleAPI = new WorkScheduleAPI();
+
 @Options({
   components: {
     AgGridVue,
@@ -55,6 +59,7 @@ interface ScheduleConflict {
     CInputForm,
     CSelect,
     CInput,
+    ScheduleSwitchModal,
   },
 })
 export default class WorkSchedule extends Vue {
@@ -85,6 +90,13 @@ export default class WorkSchedule extends Vue {
   public selectedEmployee: any = null;
   public selectedDay: Day | null = null;
   public selectedDayIndex: number = -1;
+
+  public showScheduleSwitchModal: boolean = true;
+  public selectedEmployeeForSwitch: any = null;
+  public selectedDateForSwitch: string = "";
+  public selectedDayIndexForSwitch: number = -1;
+  public currentScheduleForSwitch: any = null;
+  public switchRequests: any[] = [];
 
   // Schedule management
   public scheduleConflicts: ScheduleConflict[] = [];
@@ -498,31 +510,50 @@ export default class WorkSchedule extends Vue {
   }
 
   openScheduleModal(employee: any, day: Day, dayIndex: number) {
-    this.selectedEmployee = employee;
-    this.selectedDay = day;
-    this.selectedDayIndex = dayIndex;
+    this.selectedEmployeeForSwitch = employee;
+    this.selectedDateForSwitch = day.date;
+    this.selectedDayIndexForSwitch = day.day_index;
 
-    const currentSchedule = this.getSchedule(employee.employee_id, dayIndex);
+    // Get current schedule for this employee and day
+    this.currentScheduleForSwitch = this.getSchedule(
+      employee.employee_id,
+      day.day_index
+    );
 
-    this.modalForm = {
-      employee_id: employee.employee_id,
-      employee_name: employee.employee_name,
-      department_name: employee.department_name,
-      position_name: employee.position_name,
-      placement_name: employee.placement_name,
-      day_index: dayIndex,
-      day_name: day.name,
-      date: day.date,
-      current_shift_code: currentSchedule?.shift_code || "OFF",
-      current_shift_name: currentSchedule?.shift_name || "Day Off",
-      current_start_time: currentSchedule?.start_time || "",
-      current_end_time: currentSchedule?.end_time || "",
-      new_shift_code: "",
-      reason: "",
-    };
+    this.showScheduleSwitchModal = true;
+  }
 
-    this.validateScheduleConflicts();
-    this.showModal = true;
+  async handleSwitchConfirmed(switchData: any) {
+    try {
+      console.log("Switch confirmed:", switchData);
+
+      // Update local schedule data immediately if auto-approved
+      if (switchData.auto_approved) {
+        this.updateLocalScheduleData(switchData);
+      }
+
+      // Reload switch requests to show pending items
+      await this.loadPendingSwitchRequests();
+
+      // Refresh current week data
+      // await this.loadCurrentWeekData();
+
+      // Close modal
+      this.showScheduleSwitchModal = false;
+
+      getToastSuccess("Schedule switch processed successfully");
+    } catch (error) {
+      console.error("Error handling switch confirmation:", error);
+      getToastError("Failed to process schedule switch");
+    }
+  }
+
+  handleSwitchModalClose() {
+    this.showScheduleSwitchModal = false;
+    this.selectedEmployeeForSwitch = null;
+    this.selectedDateForSwitch = "";
+    this.selectedDayIndexForSwitch = -1;
+    this.currentScheduleForSwitch = null;
   }
 
   // API REQUEST =======================================================
@@ -1362,6 +1393,88 @@ export default class WorkSchedule extends Vue {
     }
   }
 
+  updateLocalScheduleData(switchData: any) {
+    const employeeIndex = this.currentWeekData.findIndex(
+      (emp: any) => emp.employee_id === switchData.employee_id
+    );
+
+    if (employeeIndex !== -1) {
+      const scheduleIndex = this.currentWeekData[
+        employeeIndex
+      ].daily_schedules.findIndex(
+        (schedule: any) => schedule.day_index === this.selectedDayIndexForSwitch
+      );
+
+      if (scheduleIndex !== -1) {
+        // Find shift details
+        const newShift = this.shiftOptions.find(
+          (shift: any) => shift.code === switchData.new_shift_code
+        );
+
+        if (newShift) {
+          this.currentWeekData[employeeIndex].daily_schedules[scheduleIndex] = {
+            ...this.currentWeekData[employeeIndex].daily_schedules[
+              scheduleIndex
+            ],
+            shift_code: switchData.new_shift_code,
+            shift_name: newShift.shift_name,
+            start_time: newShift.start_time,
+            end_time: newShift.end_time,
+            working_hours: newShift.working_hours,
+            is_overtime: newShift.is_overtime || false,
+            switch_reason: switchData.reason,
+            updated_at: new Date().toISOString(),
+            updated_by: "Current User",
+          };
+        }
+      }
+    }
+  }
+
+  async loadPendingSwitchRequests() {
+    try {
+      const { data } = await workScheduleAPI.GetPendingSwitchRequests();
+      this.switchRequests = data || [];
+    } catch (error) {
+      console.error("Failed to load pending switch requests:", error);
+    }
+  }
+
+  async approveSwitchRequest(switchId: number, approverNotes?: string) {
+    try {
+      const { data } = await workScheduleAPI.ApproveScheduleSwitch(
+        switchId,
+        approverNotes
+      );
+
+      // Update local data
+      this.updateLocalScheduleData(data);
+
+      // Reload requests
+      await this.loadPendingSwitchRequests();
+      // await this.loadCurrentWeekData();
+
+      getToastSuccess("Switch request approved successfully");
+    } catch (error) {
+      console.error("Failed to approve switch request:", error);
+      getToastError("Failed to approve switch request");
+    }
+  }
+
+  async rejectSwitchRequest(switchId: number, rejectionReason: string) {
+    try {
+      await workScheduleAPI.RejectScheduleSwitch(switchId, rejectionReason);
+
+      // Reload requests
+      await this.loadPendingSwitchRequests();
+
+      getToastSuccess("Switch request rejected");
+    } catch (error) {
+      console.error("Failed to reject switch request:", error);
+      getToastError("Failed to reject switch request");
+    }
+  }
+
   // HELPER =======================================================
   formatData(params: any) {
     return {
@@ -1483,12 +1596,10 @@ export default class WorkSchedule extends Vue {
     newDate.setDate(newDate.getDate() + direction * 7);
     this.currentWeekStart = newDate;
     this.generateWeekDays();
-    //  this.validateScheduleConflicts();
   }
 
   goToCurrentWeek() {
     this.initializeWeek();
-    //  this.validateScheduleConflicts();
   }
 
   timeStringToMinutes(timeString: string): number {

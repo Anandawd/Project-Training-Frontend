@@ -343,7 +343,6 @@ export default class SalaryAdjustment extends Vue {
     this.modeData = mode;
     this.$nextTick(() => {
       if (mode === $global.modeData.insert) {
-        console.log("inputFormElement", this.inputFormElement);
         this.inputFormElement.initialize();
       } else {
         this.loadEditData(params.id);

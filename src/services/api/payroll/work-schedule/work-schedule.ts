@@ -86,47 +86,88 @@ class WorkScheduleAPI extends ConfigurationResource {
     });
   }
 
-  // Schedule Pattern Operations
-  GetSchedulePatternList(params: any) {
+  // ============ SCHEDULE TEMPLATE MANAGEMENT ============
+
+  GetScheduleTemplates(params: any) {
     return request({
-      url: "GetSchedulePatternList",
+      url: "GetScheduleTemplates",
       method: "get",
       params: params,
     });
   }
 
-  GetSchedulePatternOptions() {
+  CreateScheduleTemplate(params: any) {
     return request({
-      url: "GetSchedulePatternOptions",
+      url: "CreateScheduleTemplate",
+      method: "post",
+      data: params,
+    });
+  }
+
+  UpdateScheduleTemplate(params: any) {
+    return request({
+      url: "UpdateScheduleTemplate",
+      method: "put",
+      data: params,
+    });
+  }
+
+  DeleteScheduleTemplate(templateId: number) {
+    return request({
+      url: `DeleteScheduleTemplate/${templateId}`,
+      method: "delete",
+    });
+  }
+
+  GetTemplateDetails(templateId: number) {
+    return request({
+      url: `GetTemplateDetails/${templateId}`,
       method: "get",
     });
   }
 
-  // Work Schedule Type Operations
-  GetWorkScheduleTypeList(params: any) {
+  // ============ EMPLOYEE SCHEDULE ASSIGNMENT ============
+
+  AssignScheduleToEmployee(params: any) {
     return request({
-      url: "GetWorkScheduleTypeList",
+      url: "AssignScheduleToEmployee",
+      method: "post",
+      data: params,
+    });
+  }
+
+  UpdateEmployeeScheduleAssignment(params: any) {
+    return request({
+      url: "UpdateEmployeeScheduleAssignment",
+      method: "put",
+      data: params,
+    });
+  }
+
+  GetEmployeeCurrentSchedule(employeeId: string) {
+    return request({
+      url: `GetEmployeeCurrentSchedule/${employeeId}`,
+      method: "get",
+    });
+  }
+
+  GetEmployeeScheduleHistory(employeeId: string, params?: any) {
+    return request({
+      url: `GetEmployeeScheduleHistory/${employeeId}`,
+      method: "get",
+      params: params,
+    });
+  }
+  // ============ DAILY SCHEDULE MANAGEMENT ============
+
+  GetDailySchedules(params: any) {
+    return request({
+      url: "GetDailySchedules",
       method: "get",
       params: params,
     });
   }
 
-  GetWorkScheduleTypeOptions() {
-    return request({
-      url: "GetWorkScheduleTypeOptions",
-      method: "get",
-    });
-  }
-
-  // Employee Options
-  GetEmployeeOptionsForSchedule() {
-    return request({
-      url: "GetEmployeeOptionsForSchedule",
-      method: "get",
-    });
-  }
-
-  // Weekly Schedule Operations
   GetWeeklySchedule(params: any) {
     return request({
       url: "GetWeeklySchedule",
@@ -135,226 +176,233 @@ class WorkScheduleAPI extends ConfigurationResource {
     });
   }
 
-  UpdateWeeklySchedule(params: any) {
+  GenerateScheduleFromTemplate(params: any) {
     return request({
-      url: "UpdateWeeklySchedule",
-      method: "put",
-      data: params,
-    });
-  }
-
-  // Shift Operations
-  GetShiftOptions() {
-    return request({
-      url: "GetShiftOptions",
-      method: "get",
-    });
-  }
-
-  SwitchEmployeeShift(params: any) {
-    return request({
-      url: "SwitchEmployeeShift",
+      url: "GenerateScheduleFromTemplate",
       method: "post",
       data: params,
     });
   }
 
-  BulkUpdateShifts(params: any) {
+  // ============ SCHEDULE SWITCH MANAGEMENT ============
+  RequestScheduleSwitch(params: any) {
     return request({
-      url: "BulkUpdateShifts",
-      method: "put",
-      data: params,
-    });
-  }
-
-  // Schedule Validation
-  ValidateScheduleConflict(params: any) {
-    return request({
-      url: "ValidateScheduleConflict",
+      url: "RequestScheduleSwitch",
       method: "post",
       data: params,
     });
   }
 
-  CheckScheduleOverlap(params: any) {
+  ApproveScheduleSwitch(switchId: number, approverNotes?: string) {
     return request({
-      url: "CheckScheduleOverlap",
+      url: `ApproveScheduleSwitch/${switchId}`,
       method: "post",
-      data: params,
+      data: { approver_notes: approverNotes },
     });
   }
 
-  // Schedule Reports
-  GetScheduleReport(params: any) {
+  RejectScheduleSwitch(switchId: number, rejectionReason: string) {
     return request({
-      url: "GetScheduleReport",
+      url: `RejectScheduleSwitch/${switchId}`,
+      method: "post",
+      data: { rejection_reason: rejectionReason },
+    });
+  }
+
+  GetScheduleSwitchRequests(params: any) {
+    return request({
+      url: "GetScheduleSwitchRequests",
       method: "get",
       params: params,
     });
   }
 
-  GetScheduleStatistics(params: any) {
+  GetPendingSwitchRequests(employeeId?: string) {
     return request({
-      url: "GetScheduleStatistics",
+      url: "GetPendingSwitchRequests",
+      method: "get",
+      params: { employee_id: employeeId },
+    });
+  }
+
+  // ============ SHIFT TYPE MANAGEMENT ============
+
+  GetShiftTypes(params: any) {
+    return request({
+      url: "GetShiftTypes",
       method: "get",
       params: params,
     });
   }
 
-  // Department Schedule Operations
-  GetDepartmentSchedule(departmentCode: string, params: any) {
+  CreateShiftType(params: any) {
     return request({
-      url: `GetDepartmentSchedule/${departmentCode}`,
-      method: "get",
-      params: params,
+      url: "CreateShiftType",
+      method: "post",
+      data: params,
     });
   }
 
-  UpdateDepartmentSchedule(params: any) {
+  UpdateShiftType(params: any) {
     return request({
-      url: "UpdateDepartmentSchedule",
+      url: "UpdateShiftType",
       method: "put",
       data: params,
     });
   }
 
-  // Schedule Template Operations
-  GetScheduleTemplates() {
+  GetShiftTypesForDepartment(departmentCode: string) {
     return request({
-      url: "GetScheduleTemplates",
+      url: `GetShiftTypesForDepartment/${departmentCode}`,
       method: "get",
     });
   }
 
-  ApplyScheduleTemplate(params: any) {
+  // ============ DEPARTMENT SCHEDULE RULES ============
+
+  GetDepartmentScheduleRules(departmentCode: string) {
     return request({
-      url: "ApplyScheduleTemplate",
+      url: `GetDepartmentScheduleRules/${departmentCode}`,
+      method: "get",
+    });
+  }
+
+  UpdateDepartmentScheduleRules(params: any) {
+    return request({
+      url: "UpdateDepartmentScheduleRules",
+      method: "put",
+      data: params,
+    });
+  }
+
+  ValidateScheduleAgainstRules(params: any) {
+    return request({
+      url: "ValidateScheduleAgainstRules",
       method: "post",
       data: params,
     });
   }
 
-  SaveAsTemplate(params: any) {
+  // ============ SEASONAL ADJUSTMENTS ============
+
+  GetSeasonalAdjustments(placementCode: string) {
     return request({
-      url: "SaveScheduleAsTemplate",
+      url: `GetSeasonalAdjustments/${placementCode}`,
+      method: "get",
+    });
+  }
+
+  CreateSeasonalAdjustment(params: any) {
+    return request({
+      url: "CreateSeasonalAdjustment",
       method: "post",
       data: params,
     });
   }
 
-  // Import/Export Operations
-  ExportScheduleData(params: any) {
+  ApplySeasonalAdjustment(adjustmentId: number, targetDate: string) {
     return request({
-      url: "ExportScheduleData",
+      url: `ApplySeasonalAdjustment/${adjustmentId}`,
+      method: "post",
+      data: { target_date: targetDate },
+    });
+  }
+
+  // ============ CONFLICT DETECTION ============
+
+  CheckScheduleConflicts(params: any) {
+    return request({
+      url: "CheckScheduleConflicts",
+      method: "post",
+      data: params,
+    });
+  }
+
+  GetScheduleAnalytics(params: any) {
+    return request({
+      url: "GetScheduleAnalytics",
+      method: "get",
+      params: params,
+    });
+  }
+
+  ValidateStaffCoverage(params: any) {
+    return request({
+      url: "ValidateStaffCoverage",
+      method: "post",
+      data: params,
+    });
+  }
+
+  // ============ EMERGENCY SCHEDULE OVERRIDE ============
+
+  CreateEmergencyOverride(params: any) {
+    return request({
+      url: "CreateEmergencyOverride",
+      method: "post",
+      data: params,
+    });
+  }
+
+  GetEmergencyOverrides(params: any) {
+    return request({
+      url: "GetEmergencyOverrides",
+      method: "get",
+      params: params,
+    });
+  }
+
+  // ============ REPORTING ============
+
+  GetScheduleUtilizationReport(params: any) {
+    return request({
+      url: "GetScheduleUtilizationReport",
+      method: "get",
+      params: params,
+    });
+  }
+
+  GetOvertimeProjection(params: any) {
+    return request({
+      url: "GetOvertimeProjection",
+      method: "get",
+      params: params,
+    });
+  }
+
+  GetStaffCoverageReport(params: any) {
+    return request({
+      url: "GetStaffCoverageReport",
+      method: "get",
+      params: params,
+    });
+  }
+
+  ExportSchedule(params: any) {
+    return request({
+      url: "ExportSchedule",
       method: "get",
       params: params,
       responseType: "blob",
     });
   }
 
-  ImportScheduleData(formData: FormData) {
-    return request({
-      url: "ImportScheduleData",
-      method: "post",
-      data: formData,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-  }
+  // ============ TEMPLATE PRESETS ============
 
-  GetScheduleImportTemplate() {
-    return request({
-      url: "GetScheduleImportTemplate",
-      method: "get",
-      responseType: "blob",
-    });
-  }
+  // GetHospitalityTemplatePresets() {
+  //   return request({
+  //     url: "GetHospitalityTemplatePresets",
+  //     method: "get",
+  //   });
+  // }
 
-  // Calendar Integration
-  GetScheduleCalendar(params: any) {
-    return request({
-      url: "GetScheduleCalendar",
-      method: "get",
-      params: params,
-    });
-  }
-
-  // Rotation Schedule Operations
-  GetRotationSchedule(params: any) {
-    return request({
-      url: "GetRotationSchedule",
-      method: "get",
-      params: params,
-    });
-  }
-
-  CreateRotationSchedule(params: any) {
-    return request({
-      url: "CreateRotationSchedule",
-      method: "post",
-      data: params,
-    });
-  }
-
-  // Schedule Approval Operations
-  SubmitScheduleForApproval(params: any) {
-    return request({
-      url: "SubmitScheduleForApproval",
-      method: "post",
-      data: params,
-    });
-  }
-
-  ApproveSchedule(params: any) {
-    return request({
-      url: "ApproveSchedule",
-      method: "post",
-      data: params,
-    });
-  }
-
-  RejectSchedule(params: any) {
-    return request({
-      url: "RejectSchedule",
-      method: "post",
-      data: params,
-    });
-  }
-
-  // Overtime Schedule Operations
-  GetOvertimeSchedule(params: any) {
-    return request({
-      url: "GetOvertimeSchedule",
-      method: "get",
-      params: params,
-    });
-  }
-
-  ScheduleOvertime(params: any) {
-    return request({
-      url: "ScheduleOvertime",
-      method: "post",
-      data: params,
-    });
-  }
-
-  // Holiday Integration
-  GetHolidayAdjustedSchedule(params: any) {
-    return request({
-      url: "GetHolidayAdjustedSchedule",
-      method: "get",
-      params: params,
-    });
-  }
-
-  ApplyHolidayAdjustments(params: any) {
-    return request({
-      url: "ApplyHolidayAdjustments",
-      method: "post",
-      data: params,
-    });
-  }
+  // ApplyTemplatePreset(presetId: string, params: any) {
+  //   return request({
+  //     url: `ApplyTemplatePreset/${presetId}`,
+  //     method: "post",
+  //     data: params,
+  //   });
+  // }
 }
 
 export { WorkScheduleAPI as default };

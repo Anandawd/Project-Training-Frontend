@@ -3,13 +3,13 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
-        title="Switch Schedule"
+        title="Switch Shift"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowModal('', $global.modePayroll.switchSchedule)"
+        @click="handleShowModal('', $global.modePayroll.switchShift)"
       >
         <i class="fa fa-exchange-alt mr-1" aria-hidden="true"></i>{{
-        $t('buttons.switchSchedule') }}
+        $t('buttons.switchShift') }}
       </button>
       <button
         title="Insert Schedule"
@@ -309,7 +309,19 @@
     </div>
 
     <!-- Switch Schedule -->
-    <c-modal
+    <!-- <schedule-switch-modal
+      :visible="false"
+      :selectedEmployee="selectedEmployeeForSwitch"
+      :selectedDate="selectedDateForSwitch"
+      :selectedDayIndex="selectedDayIndexForSwitch"
+      :shiftOptions="shiftOptions"
+      :currentSchedule="currentScheduleForSwitch"
+      @close="handleSwitchModalClose"
+      @switch-confirmed="handleSwitchConfirmed"
+      @swap-confirmed="handleSwitchConfirmed"
+    ></schedule-switch-modal> -->
+
+    <!-- <c-modal
       v-show="showModal"
       :title="$t('title.switchSchedule')"
       size="lg"
@@ -318,7 +330,6 @@
     >
       <div @click.stop>
         <div class="switch-schedule-modal">
-          <!-- Employee Info -->
           <div class="row mb-3">
             <div class="col-md-12">
               <div class="card border-primary">
@@ -364,7 +375,6 @@
             </div>
           </div>
 
-          <!-- Current vs New Schedule Comparison -->
           <div class="row mb-3">
             <div class="col-md-6 mb-sm-3 mb-md-0">
               <div class="card border-info">
@@ -429,7 +439,6 @@
             </div>
           </div>
 
-          <!-- Conflicts Display -->
           <div v-if="modalForm.new_shift_code" class="row mb-3">
             <div class="col-md-12">
               <div class="card border-warning">
@@ -468,7 +477,6 @@
             </div>
           </div>
 
-          <!-- Reason -->
           <div class="row mb-3">
             <div class="col-md-12">
               <label class="form-label"
@@ -483,7 +491,6 @@
             </div>
           </div>
 
-          <!-- Action Buttons -->
           <div class="d-flex justify-content-end">
             <button
               type="button"
@@ -503,7 +510,7 @@
           </div>
         </div>
       </div>
-    </c-modal>
+    </c-modal> -->
 
     <!-- dialog -->
     <c-dialog

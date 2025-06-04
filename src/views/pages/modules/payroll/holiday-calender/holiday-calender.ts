@@ -1,13 +1,15 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
-import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
+import Checklist from "@/components/ag_grid-framework/checklist.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
+import { formatDateTimeUTC } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
   getError,
 } from "@/utils/general";
 import $global from "@/utils/global";
+import { getToastError, getToastSuccess } from "@/utils/toast";
 import CSearchFilter from "@/views/pages/components/filter/filter.vue";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
@@ -36,8 +38,23 @@ interface Holiday {
   },
 })
 export default class HolidayCalender extends Vue {
-  //table
-  public rowData: Holiday[] = [];
+  // data
+  public rowData: any = [];
+  public deleteParam: any;
+
+  // options data
+  public holidayTypeOptions: any = [];
+
+  // form
+  public form: any = {};
+  public modeData: any;
+  public showForm: boolean = false;
+  public inputFormElement: any = ref();
+
+  // dialog
+  public showDialog: boolean = false;
+  public dialogMessage: string = "";
+  public dialogAction: string = "";
 
   // filter
   public searchOptions: any;
@@ -46,20 +63,6 @@ export default class HolidayCalender extends Vue {
     text: "",
     filter: [0],
   };
-
-  // form
-  public showForm: boolean = false;
-  public showDetail: boolean = false;
-  public modeData: any;
-  public modePayroll: any;
-  public form: any = {};
-  public inputFormElement: any = ref();
-  public formType: any;
-
-  // dialog
-  public showDialog: boolean = false;
-  public dialogMessage: string;
-  public deleteParam: any;
 
   // AG GRID VARIABLE
   gridOptions: any = {};
@@ -77,87 +80,102 @@ export default class HolidayCalender extends Vue {
   ColumnApi: any;
   agGridSetting: any;
 
-  // GENERAL FUNCTION
-  handleSave(formData: any) {
-    formData.periodName = parseInt(formData.periodName);
-    formData.startDate = parseInt(formData.startDate);
-    formData.endDate = parseInt(formData.endDate);
-    formData.paymentDate = parseInt(formData.paymentDate);
-    formData.remark = parseInt(formData.remark);
-
-    if (this.modeData == $global.modeData.insert) {
-      this.insertData(formData);
-    } else {
-      this.updateData(formData);
-    }
+  // RECYCLE LIFE FUNCTION =======================================================
+  created(): void {
+    this.loadData();
   }
 
-  async handleEdit(params: any) {
-    this.showForm = true;
-    this.modeData = $global.modeData.edit;
-    await this.loadEditData(params.id);
-  }
-
-  refreshData(search: any) {
-    this.loadDataGrid(search);
-  }
-
-  async loadMockData() {
-    this.rowData = [
+  beforeMount(): void {
+    this.searchOptions = [
+      { text: this.$t("commons.filter.name"), value: 0 },
+      { text: this.$t("commons.filter.payroll.attendace.type"), value: 1 },
+    ];
+    this.agGridSetting = $global.agGrid;
+    this.gridOptions = {
+      actionGrid: {
+        edit: true,
+        delete: true,
+      },
+      rowHeight: $global.agGrid.rowHeightDefault,
+      headerHeight: $global.agGrid.headerHeight,
+    };
+    this.columnDefs = [
       {
-        id: 1,
-        code: "HOLIDAY1",
-        name: "New Year's Day",
-        type: "National",
-        date: "01/01/2025",
-        remark: "",
-        is_recuring: true,
-        status: "Active",
+        headerName: this.$t("commons.table.action"),
+        headerClass: "align-header-center",
+        field: "id",
+        enableRowGroup: false,
+        resizable: false,
+        filter: false,
+        suppressMenu: true,
+        suppressMoveable: true,
+        lockPosition: "left",
+        sortable: false,
+        cellRenderer: "actionGrid",
+        colId: "params",
+        width: 80,
       },
       {
-        id: 2,
-        code: "HOLIDAY2",
-        name: "Chinese New Year",
-        type: "National",
-        date: "21/01/2025",
-        remark: "",
-        is_recuring: true,
-        status: "Active",
+        headerName: this.$t("commons.table.payroll.attendance.date"),
+        field: "date",
+        width: 100,
+        enableRowGroup: true,
       },
       {
-        id: 3,
-        code: "HOLIDAY3",
-        name: "Nyepi",
-        type: "National",
-        date: "19/02/2025",
-        remark: "",
-        is_recuring: true,
-        status: "Active",
+        headerName: this.$t("commons.table.payroll.attendance.name"),
+        field: "name",
+        width: 150,
+        enableRowGroup: true,
       },
       {
-        id: 4,
-        code: "HOLIDAY4",
-        name: "Good Friday",
-        type: "National",
-        date: "29/03/2025",
-        remark: "",
-        is_recuring: true,
-        status: "Active",
+        headerName: this.$t("commons.table.payroll.attendance.type"),
+        field: "type_name",
+        width: 120,
+        enableRowGroup: true,
       },
       {
-        id: 5,
-        code: "HOLIDAY5",
-        name: "Easter",
-        type: "Company",
-        date: "30/03/2025",
-        remark: "",
-        is_recuring: true,
-        status: "Active",
+        headerName: this.$t("commons.table.remark"),
+        field: "remark",
+        width: 200,
+        enableRowGroup: false,
+      },
+      {
+        headerName: this.$t("commons.table.status"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "status",
+        width: 100,
+        enableRowGroup: true,
+        cellRenderer: "checklistRenderer",
       },
     ];
+    this.context = { componentParent: this };
+    this.frameworkComponents = {
+      actionGrid: ActionGrid,
+      checklistRenderer: Checklist,
+    };
+    this.rowGroupPanelShow = "always";
+    this.statusBar = {
+      statusPanels: [
+        { statusPanel: "agTotalAndFilteredRowCountComponent", align: "left" },
+        { statusPanel: "agTotalRowCountComponent", align: "center" },
+        { statusPanel: "agFilteredRowCountComponent" },
+        { statusPanel: "agSelectedRowCountComponent" },
+        { statusPanel: "agAggregationComponent" },
+      ],
+    };
+    this.paginationPageSize = this.agGridSetting.limitDefaultPageSize;
+    this.rowSelection = "single";
+    this.rowModelType = "serverSide";
+    this.limitPageSize = this.agGridSetting.limitDefaultPageSize;
   }
 
-  // UI FUNCTION
+  onGridReady(params: any) {
+    this.gridApi = params.api;
+    this.ColumnApi = params.columnApi;
+  }
+
+  // GENERAL FUNCTION =======================================================
   getContextMenu(params: any) {
     const { node } = params;
     if (node) {
@@ -189,7 +207,7 @@ export default class HolidayCalender extends Vue {
       const vm = this;
       vm.gridApi.forEachNode((node: any) => {
         if (node.data) {
-          if (node.data.id_log == vm.paramsData.id_log) {
+          if (node.data.id == vm.paramsData.id) {
             node.setSelected(true, true);
           }
         }
@@ -197,47 +215,263 @@ export default class HolidayCalender extends Vue {
     }
   }
 
-  // handleShowForm(params: any, mode: any) {
-  //   this.inputFormElement.initialize();
-  //   this.modeData = mode;
-  //   this.showForm = true;
-  // }
+  async handleShowForm(params: any, mode: any) {
+    this.showForm = false;
+    await this.$nextTick();
 
-  handleShowForm(params: any, mode: any) {
-    if (mode === $global.modePayroll.detail) {
-      this.$router.push({
-        name: "PeriodDetail",
-        params: { id: params.id || "new" },
+    this.modeData = mode;
+    this.$nextTick(() => {
+      if (mode === $global.modeData.insert) {
+        this.inputFormElement.initialize();
+      } else {
+        this.loadEditData(params.id);
+      }
+    });
+    this.showForm = true;
+  }
+
+  handleSave(formData: any) {
+    const formattedData = this.formatData(formData);
+
+    if (this.modeData === $global.modeData.insert) {
+      this.insertData(formattedData).then(() => {
+        this.showForm = false;
       });
     } else {
-      this.inputFormElement.initialize();
-      this.modeData = mode;
-      this.showForm = true;
+      this.updateData(formattedData).then(() => {
+        this.showForm = false;
+      });
     }
   }
 
-  handleShowDetail(params: any, mode: any) {
-    this.$router.push({
-      name: "PeriodDetail",
-      params: { id: params.id },
-    });
+  handleEdit(formData: any) {
+    this.handleShowForm(formData, $global.modeData.edit);
   }
 
   handleDelete(params: any) {
-    this.showDialog = true;
     this.deleteParam = params.id;
+    this.dialogMessage = this.$t("messages.attendance.confirm.deleteHoliday");
+    this.dialogAction = "delete";
+    this.showDialog = true;
   }
 
-  // API FUNCTION
+  confirmAction() {
+    if (this.dialogAction === "delete") {
+      this.deleteData();
+    }
+    this.showDialog = false;
+  }
+
+  refreshData(search: any) {
+    this.searchOptions = { ...search };
+    this.loadDataGrid(search);
+  }
+
+  onRefresh() {
+    this.loadDataGrid(this.searchDefault);
+  }
+  // API REQUEST =======================================================
+  async loadData() {
+    try {
+      this.loadMockData();
+      this.loadDropdown();
+    } catch (error) {
+      getError(error);
+    }
+  }
+
   async loadDataGrid(search: any = this.searchDefault) {
     try {
-      let params = {
-        Index: search.index,
-        Text: search.text,
-        IndexCheckBox: search.filter[0],
-      };
-      // const {data} = await payrollAPI.getPayrollPeriod(params)
-      // this.rowData = data
+      /*
+        let params = {
+          Index: search.index,
+          Text: search.text,
+          IndexCheckBox: search.filter[0],
+        };
+        const { data } = await salaryAdjustmentAPI.GetSalaryAdjustmentList(params);
+        this.rowData = data;
+        */
+
+      let filteredData = [...this.rowData];
+
+      if (search.text && search.text.trim()) {
+        let searchText = search.text.toLowerCase().trim();
+        let searchIndex = search.index;
+
+        filteredData = filteredData.filter((item: any) => {
+          switch (searchIndex) {
+            case 0:
+              return item.name.toLowerCase().includes(searchText);
+            case 1:
+              return item.type.toLowerCase().includes(searchText);
+            default:
+              return true;
+          }
+        });
+      }
+
+      if (search.filter && search.filter.length > 0) {
+        const statusFilter = parseInt(search.filter[0]);
+        if (statusFilter !== 0) {
+          filteredData = filteredData.filter((item: any) => {
+            switch (statusFilter) {
+              case 1:
+                return item.status === true;
+              case 2:
+                return item.status === false;
+              default:
+                return true;
+            }
+          });
+        }
+      }
+
+      if (this.gridApi) {
+        this.gridApi.setRowData(filteredData);
+      }
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadEditData(id: any) {
+    try {
+      /*
+        const { data } = await salaryAdjustmentAPI.GetSalaryAdjustment(id);
+        this.populateForm(data);
+        */
+
+      const data = this.rowData.find((data: any) => data.id === id);
+
+      if (data) {
+        this.$nextTick(() => {
+          this.inputFormElement.form = this.populateForm(data);
+        });
+      } else {
+        getToastError(this.$t("messages.attendace.error.notHolidayFound"));
+      }
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  loadMockData() {
+    this.rowData = [
+      {
+        id: 1,
+        code: "HOLIDAY1",
+        name: "New Year's Day",
+        type_code: "National",
+        type_name: "National",
+        date: "01/01/2025",
+        remark: "",
+        is_recuring: true,
+        status: true,
+      },
+      {
+        id: 2,
+        code: "HOLIDAY2",
+        name: "Chinese New Year",
+        type_code: "National",
+        type_name: "National",
+        date: "21/01/2025",
+        remark: "",
+        is_recuring: true,
+        status: true,
+      },
+      {
+        id: 3,
+        code: "HOLIDAY3",
+        name: "Nyepi",
+        type_code: "National",
+        type_name: "National",
+        date: "19/02/2025",
+        remark: "",
+        is_recuring: true,
+        status: true,
+      },
+      {
+        id: 4,
+        code: "HOLIDAY4",
+        name: "Good Friday",
+        type_code: "National",
+        type_name: "National",
+        date: "29/03/2025",
+        remark: "",
+        is_recuring: true,
+        status: false,
+      },
+      {
+        id: 5,
+        code: "HOLIDAY5",
+        name: "Easter",
+        type_code: "Company",
+        type_name: "Company",
+        date: "30/03/2025",
+        remark: "",
+        is_recuring: true,
+        status: false,
+      },
+    ];
+  }
+
+  async loadDropdown() {
+    try {
+      /*
+        const promises = [
+          salaryAdjustmentAPI.GetEmployeeOptions().then(response => {
+            this.employeeOptions = response.data;
+          }),
+          salaryAdjustmentAPI.GetAdjustmentReasonOptions().then(response => {
+            this.adjustmentReasonOptions = response.data;
+          }),
+        ];
+  
+        await Promise.all(promises);
+        */
+
+      this.holidayTypeOptions = [
+        {
+          SubGroupName: "Type",
+          code: "HT01",
+          name: "National",
+        },
+        {
+          SubGroupName: "Type",
+          code: "HT02",
+          name: "Regional",
+        },
+        {
+          SubGroupName: "Type",
+          code: "HT03",
+          name: "Religious",
+        },
+        {
+          SubGroupName: "Type",
+          code: "HT04",
+          name: "Company",
+        },
+        {
+          SubGroupName: "Type",
+          code: "HT05",
+          name: "Collective Leave",
+        },
+        {
+          SubGroupName: "Type",
+          code: "HT06",
+          name: "Local",
+        },
+        {
+          SubGroupName: "Type",
+          code: "HT07",
+          name: "Observance",
+        },
+        {
+          SubGroupName: "Type",
+          code: "HT08",
+          name: "Optional",
+        },
+      ];
     } catch (error) {
       getError(error);
     }
@@ -245,22 +479,38 @@ export default class HolidayCalender extends Vue {
 
   async insertData(formData: any) {
     try {
-      // const {status2} = await payrollAPI.InsertPayrollPeriod(formData)
-      // if(status2.status ==0){
-      //   getToastSuccess(this.$t('messages.saveSuccess'))
-      //   this.showForm = false
-      //   this.loadDataGrid()
-      // }
-    } catch (error) {
-      getError(error);
-    }
-  }
+      /*
+        const { status2 } = await salaryAdjustmentAPI.InsertSalaryAdjustment(formData);
+        if (status2.status == 0) {
+          getToastSuccess(this.$t("messages.saveSuccess"));
+          this.showForm = false;
+          this.loadDataGrid(this.searchDefault);
+        }
+        */
 
-  async loadEditData(params: any) {
-    try {
-      // const {data} = await payrollAPI.GetPayrollPeriod(params)
-      // this.inputFormElement.form = data
-      // this.showForm = true
+      const newId = Math.max(...this.rowData.map((data: any) => data.id)) + 1;
+
+      const newHoliday = {
+        id: newId,
+        code: formData.code,
+        name: formData.name,
+        date: formData.date,
+        type_code: formData.type_code,
+        type_name: formData.type_name,
+        status: formData.status === "A",
+        remark: formData.remark,
+        created_at: formatDateTimeUTC(new Date()),
+        created_by: "Current User",
+        updated_at: formatDateTimeUTC(new Date()),
+        updated_by: "Current User",
+      };
+
+      this.rowData.push(newHoliday);
+
+      await this.$nextTick();
+      await this.loadDataGrid(this.searchDefault);
+
+      getToastSuccess(this.$t("messages.attendance.success.saveHoliday"));
     } catch (error) {
       getError(error);
     }
@@ -268,120 +518,93 @@ export default class HolidayCalender extends Vue {
 
   async updateData(formData: any) {
     try {
-      // const { status2 } = await trainingAPI.UpdateLostAndFound(formData);
-      // if (status2.status == 0) {
-      //   this.loadDataGrid("");
-      //   this.showForm = false;
-      //   getToastSuccess(this.$t("messages.saveSuccess"));
-      // }
+      /*
+        const { status2 } = await salaryAdjustmentAPI.UpdateSalaryAdjustment(formData);
+        if (status2.status == 0) {
+          this.loadDataGrid(this.searchDefault);
+          this.showForm = false;
+          getToastSuccess(this.$t("messages.saveSuccess"));
+        }
+        */
+
+      const index = this.rowData.findIndex(
+        (data: any) => data.id === formData.id
+      );
+
+      if (index !== -1) {
+        this.rowData[index] = {
+          ...this.rowData[index],
+          code: formData.code,
+          name: formData.name,
+          date: formData.date,
+          type_code: formData.type_code,
+          type_name: formData.type_name,
+          status: formData.status === "A",
+          remark: formData.remark,
+          updated_at: formatDateTimeUTC(new Date()),
+          updated_by: "Current User",
+        };
+      }
+
+      await this.$nextTick();
+      await this.loadDataGrid(this.searchDefault);
+
+      getToastSuccess(this.$t("messages.attendance.success.updateHoliday"));
     } catch (error) {
       getError(error);
     }
   }
 
-  created(): void {
-    this.loadMockData();
+  async deleteData() {
+    try {
+      /*
+        const { status2 } = await salaryAdjustmentAPI.DeleteSalaryAdjustment(this.deleteParam);
+        if (status2.status == 0) {
+          this.loadDataGrid(this.searchDefault);
+          getToastSuccess(this.$t("messages.deleteSuccess"));
+        }
+        */
+
+      this.rowData = this.rowData.filter(
+        (item: any) => item.id !== this.deleteParam
+      );
+
+      await this.$nextTick();
+      await this.loadDataGrid(this.searchDefault);
+      getToastSuccess(this.$t("messages.attendance.success.deleteHoliday"));
+    } catch (error) {
+      getError(error);
+    }
+  }
+  // HELPER =======================================================
+  formatData(params: any) {
+    return {
+      id: params.id,
+      code: params.code,
+      name: params.name,
+      date: params.date,
+      type_code: params.type_code,
+      type_name: params.type_name,
+      status: params.status,
+      remark: params.remark,
+    };
   }
 
-  beforeMount(): void {
-    this.searchOptions = [
-      { text: this.$t("commons.filter.all"), value: 0 },
-      { text: this.$t("commons.filter.payroll.attendace.type"), value: 0 },
-    ];
-    this.agGridSetting = $global.agGrid;
-    this.gridOptions = {
-      actionGrid: {
-        edit: true,
-        delete: true,
-      },
-      rowHeight: $global.agGrid.rowHeightDefault,
-      headerHeight: $global.agGrid.headerHeight,
+  populateForm(params: any) {
+    return {
+      id: params.id,
+      code: params.code,
+      name: params.name,
+      date: params.date,
+      type_code: params.type_code,
+      type_name: params.type_name,
+      status: params.status ? "A" : "I",
+      remark: params.remark,
     };
-    this.columnDefs = [
-      {
-        headerName: this.$t("commons.table.action"),
-        headerClass: "align-header-center",
-        field: "Code",
-        enableRowGroup: false,
-        resizable: false,
-        filter: false,
-        suppressMenu: true,
-        suppressMoveable: true,
-        lockPosition: "left",
-        sortable: false,
-        cellRenderer: "actionGrid",
-        colId: "params",
-        width: 80,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.attendance.date"),
-        headerClass: "align-header-center",
-        field: "date",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.attendance.name"),
-        headerClass: "align-header-center",
-        field: "name",
-        width: 120,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.attendance.type"),
-        headerClass: "align-header-center",
-        field: "type",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.remark"),
-        headerClass: "align-header-center",
-        field: "remark",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.status"),
-        headerClass: "align-header-center",
-        field: "status",
-        width: 100,
-        enableRowGroup: true,
-      },
-    ];
-    this.context = { componentParent: this };
-    this.frameworkComponents = {
-      actionGrid: ActionGrid,
-      iconLockRenderer: IconLockRenderer,
-    };
-    this.rowGroupPanelShow = "always";
-    this.statusBar = {
-      statusPanels: [
-        { statusPanel: "agTotalAndFilteredRowCountComponent", align: "left" },
-        { statusPanel: "agTotalRowCountComponent", align: "center" },
-        { statusPanel: "agFilteredRowCountComponent" },
-        { statusPanel: "agSelectedRowCountComponent" },
-        { statusPanel: "agAggregationComponent" },
-      ],
-    };
-    this.paginationPageSize = this.agGridSetting.limitDefaultPageSize;
-    this.rowSelection = "single";
-    this.rowModelType = "serverSide";
-    this.limitPageSize = this.agGridSetting.limitDefaultPageSize;
-  }
-  onGridReady(params: any) {
-    this.gridApi = params.api;
-    this.ColumnApi = params.columnApi;
-
-    params.api.sizeColumnsToFit();
   }
 
-  // GETTER AND SETTER
+  // GETTER AND SETTER =======================================================
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
-  }
-
-  get isRunPayrollDisabled(): boolean {
-    return !this.rowData.some((item: any) => item.status === "Draft");
   }
 }

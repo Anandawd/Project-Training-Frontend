@@ -14,10 +14,10 @@
         <div class="col-md-4">
           <c-input
             required
-            id="code"
+            id="Cod"
+            name="Code"
             class="row mb-1"
             type="text"
-            name="code"
             v-model="form.code"
             :label="$t('labels.payroll.attendance.code')"
           />
@@ -25,11 +25,11 @@
         <div class="col-md-4">
           <c-input
             required
-            id="name"
+            id="Name"
+            name="Name"
             class="row mb-1"
             type="text"
-            name="name"
-            v-model="form.code"
+            v-model="form.name"
             :label="$t('labels.payroll.attendance.name')"
           />
         </div>
@@ -38,33 +38,34 @@
             required
             offset="right"
             class="row mb-1"
-            name="type"
+            name="Type"
             labelName="name"
             keyName="code"
-            v-model="form.type"
+            v-model="form.type_code"
             :label="$t('labels.payroll.attendance.type')"
-            :options="typeOptions"
+            :options="holidayTypeOptions"
+            @change="onHolidayTypeChange"
           />
         </div>
         <div class="col-md-4 mb-1">
           <c-datepicker
             required
-            id="date"
+            id="Date"
+            name="Date"
             customLabelClass="col-3"
             :label="$t('labels.date')"
             type="date"
             valueType="YYYY-MM-DD"
             format="DD/MM/YYYY"
-            name="date"
             v-model="form.date"
           />
         </div>
         <div class="col-md-4">
           <c-input
-            id="remark"
+            id="Remark"
+            name="Remark"
             class="row mb-1"
             type="text"
-            name="remark"
             v-model="form.remark"
             :label="$t('labels.remark')"
           />
@@ -82,13 +83,13 @@
               <c-radio
                 class="me-3"
                 :label="$t('labels.active')"
-                v-model="form.departmentStatus"
-                :value="A"
+                v-model="form.status"
+                value="A"
               ></c-radio>
               <c-radio
                 class="me-3"
                 :label="$t('labels.inactive')"
-                v-model="form.departmentStatus"
+                v-model="form.status"
                 value="I"
               ></c-radio>
             </div>

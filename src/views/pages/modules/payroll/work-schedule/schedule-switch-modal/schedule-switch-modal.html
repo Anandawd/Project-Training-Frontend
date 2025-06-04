@@ -1,0 +1,14 @@
+<c-modal
+  :title="$t('title.switchSchedule')"
+  size="xl"
+  @close="closeModal"
+  @save="submitSwitch"
+  :save-disabled="!canProceed"
+  :loading="loading"
+>
+  <div @click.stop>
+    <div class="schedule-switch-modal">
+      <h1>Form</h1>
+    </div>
+  </div>
+</c-modal>

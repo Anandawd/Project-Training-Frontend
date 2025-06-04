@@ -23,61 +23,19 @@ import * as Yup from "yup";
       type: Number,
       require: true,
     },
+    holidayTypeOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
   },
   emits: ["save", "close"],
 })
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
-  public isSave: boolean = false;
+  holidayTypeOptions!: any[];
 
-  public defaultForm: any = {};
   public form: any = reactive({});
-  public formDetail: any = reactive({});
-
-  // options
-  typeOptions: any = [
-    {
-      SubGroupName: "Type",
-      code: "HT01",
-      name: "National",
-    },
-    {
-      SubGroupName: "Type",
-      code: "HT02",
-      name: "Regional",
-    },
-    {
-      SubGroupName: "Type",
-      code: "HT03",
-      name: "Religious",
-    },
-    {
-      SubGroupName: "Type",
-      code: "HT04",
-      name: "Company",
-    },
-    {
-      SubGroupName: "Type",
-      code: "HT05",
-      name: "Collective Leave",
-    },
-    {
-      SubGroupName: "Type",
-      code: "HT06",
-      name: "Local",
-    },
-    {
-      SubGroupName: "Type",
-      code: "HT07",
-      name: "Observance",
-    },
-    {
-      SubGroupName: "Type",
-      code: "HT08",
-      name: "Optional",
-    },
-  ];
 
   columnOptions = [
     {
@@ -99,12 +57,13 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      placement: "",
-      periodName: "",
-      periodType: "",
-      startDate: "",
-      endDate: "",
-      paymentDate: "",
+      id: null,
+      code: "",
+      name: "",
+      type_code: "",
+      type_name: "",
+      date: new Date().toISOString().split("T")[0],
+      status: "A",
       remark: "",
     };
   }
@@ -118,6 +77,7 @@ export default class InputForm extends Vue {
   }
 
   onSave() {
+    console.log("form save", this.form);
     this.$emit("save", this.form);
   }
 
@@ -133,15 +93,32 @@ export default class InputForm extends Vue {
     focusOnInvalid();
   }
 
+  onHolidayTypeChange() {
+    if (this.form.type_code) {
+      console.log(this.form.type_code);
+      const selectedOption = this.holidayTypeOptions.find(
+        (d: any) => d.code === this.form.type_code
+      );
+
+      console.log("selected", selectedOption);
+
+      if (selectedOption) {
+        this.form.type_code = selectedOption.code;
+        this.form.type_name = selectedOption.name;
+      } else {
+        this.form.type_code = "";
+        this.form.type_name = "";
+      }
+    }
+  }
+
   // validation
   get schema() {
     return Yup.object().shape({
-      placement: Yup.string().required("Placement is required"),
-      periodName: Yup.string().required("Period name is required"),
-      periodType: Yup.string().required("Period type is required"),
-      startDate: Yup.string().required("Start date is required"),
-      endDate: Yup.string().required("End date is required"),
-      paymentDate: Yup.string().required("Payment date is required"),
+      Code: Yup.string().required(),
+      Name: Yup.string().required(),
+      Type: Yup.string().required(),
+      Date: Yup.string().required(),
     });
   }
 
@@ -152,10 +129,6 @@ export default class InputForm extends Vue {
       )}`;
     } else if (this.modeData === $global.modeData.edit) {
       return `${this.$t("commons.update")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
-      )}`;
-    } else if (this.modeData === $global.modeData.duplicate) {
-      return `${this.$t("commons.duplicate")} ${this.$t(
         `${this.$route.meta.pageTitle}`
       )}`;
     }
