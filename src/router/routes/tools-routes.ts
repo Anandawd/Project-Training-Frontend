@@ -951,7 +951,6 @@ export default [
     },
   },
 
-
   {
     path: "configurations/card-bank",
     name: "Card Bank",
@@ -2219,7 +2218,6 @@ export default [
       ),
     },
   },
-
   {
     path: "configurations/fa-item-category",
     name: "FA Item Category",
@@ -2358,6 +2356,31 @@ export default [
         { title: "title.home", url: "/" },
         { title: "title.configurations", url: "/configurations" },
         { title: "title.seatingPlan", active: true },
+      ],
+      icon: getIconFromMenu(
+        menu,
+        $global.toolsAccessOrder.accessForm.configuration
+      ),
+      menu: getRouterMenu(
+        menu,
+        $global.toolsAccessOrder.accessForm.configuration
+      ),
+    },
+  },
+  // payroll
+  {
+    path: "configurations/schedule",
+    name: "Schedule",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/general/tools/configurations/payroll/schedule/schedule.vue"
+      ),
+    meta: {
+      pageTitle: "title.schedule",
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.configurations", url: "/configurations" },
+        { title: "title.schedule", active: true },
       ],
       icon: getIconFromMenu(
         menu,

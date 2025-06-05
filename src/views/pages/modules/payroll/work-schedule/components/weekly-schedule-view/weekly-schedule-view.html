@@ -1,0 +1,336 @@
+<section class="content">
+  <!-- Weekly Schedule View -->
+  <div class="card mb-3">
+    <div class="card-header">
+      <div
+        class="d-flex justify-content-between align-items-center flex-md-row flex-column gap-2 gap-md-0"
+      >
+        <div
+          class="d-flex align-items-center flex-column flex-md-row gap-2 gap-md-0"
+        >
+          <h3 class="card-title mb-0 mr-3">
+            {{$t('title.weeklySchedule')}} :
+            <span class="text-bold">{{currentWeekRange}}</span>
+          </h3>
+
+          <!-- Schedule Stats -->
+          <div class="schedule-stats d-flex">
+            <span class="badge badge-primary p-2 mr-2">
+              <i class="fa fa-users mr-1"></i>
+              {{currentWeekData.length}} employees
+            </span>
+
+            <span
+              v-if="hasScheduleChanges"
+              class="badge badge-warning p-2 mr-2"
+            >
+              <i class="fa fa-edit mr-1"></i>
+              {{scheduleChanges.length}} unsaved changes
+            </span>
+
+            <span
+              v-if="warningConflicts.length > 0"
+              class="badge badge-warning mr-2"
+            >
+              <i class="fa fa-exclamation-triangle p-2 mr-1"></i>
+              {{warningConflicts.length}} warnings
+            </span>
+          </div>
+        </div>
+
+        <div class="week-navigation">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary mx-1"
+            @click="navigateWeek(-1)"
+            :title="$t('buttons.previousWeek')"
+          >
+            <i class="fa fa-chevron-left mx-1" aria-hidden="true"></i>{{
+            $t('buttons.prevWeek')}}
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-primary week-nav-btn mx-1"
+            @click="goToCurrentWeek"
+            :title="$t('buttons.currentWeek')"
+          >
+            <i class="fa fa-calendar-day mr-1" aria-hidden="true"></i>
+            {{$t('buttons.thisWeek')}}
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary week-nav-btn mx-1"
+            @click="navigateWeek(1)"
+            :title="$t('buttons.nextWeek')"
+          >
+            {{ $t('buttons.nextWeek')}}
+            <i class="fa fa-chevron-right ml-1" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive card">
+        <table class="table table-bordered table-hover schedule-table">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 100px" class="sticky-col align-content-center">
+                {{$t('labels.payroll.employee.employee')}}
+              </th>
+              <th
+                v-for="(day, index) in weekDays"
+                :key="index"
+                class="text-center align-content-start"
+                style="width: 100px"
+              >
+                <div class="day-header">
+                  <strong>{{ day.name }}</strong>
+                  <br />
+                  <small class="text-muted">{{day.date}}</small>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(employee, empIndex) in currentWeekData"
+              :key="empIndex"
+              class="employee-row"
+            >
+              <td class="align-middle sticky-col bg-light">
+                <div class="employee-info">
+                  <div class="d-flex flex-column">
+                    <strong class="employee-id"
+                      >{{employee.employee_id}}</strong
+                    >
+                    <strong class="employee-name"
+                      >{{employee.employee_name}}</strong
+                    >
+                    <small class="department-name"
+                      >{{employee.department_name}}</small
+                    >
+                    <small class="text-muted position-name"
+                      >{{employee.position_name}}</small
+                    >
+                  </div>
+                  <!-- Employee Actions -->
+                  <div class="dropdown">
+                    <button
+                      class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                      type="button"
+                      :id="`empDropdown${empIndex}`"
+                      data-bs-toggle="dropdown"
+                    >
+                      <i class="fa fa-ellipsis-v"></i>
+                    </button>
+                    <ul
+                      class="dropdown-menu"
+                      :aria-labelledby="`empDropdown${empIndex}`"
+                    >
+                      <li>
+                        <a
+                          class="dropdown-item"
+                          href="#"
+                          @click="quickSwitchToday(employee)"
+                        >
+                          <i class="fa fa-exchange-alt mr-2"></i>Quick Switch
+                          Today
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          class="dropdown-item"
+                          href="#"
+                          @click="showSwitchRequestsModal(employee)"
+                        >
+                          <i class="fa fa-list mr-2"></i>View Switch Requests
+                        </a>
+                      </li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li>
+                        <a
+                          class="dropdown-item"
+                          href="#"
+                          @click="handleShowForm(employee, $global.modeData.edit)"
+                        >
+                          <i class="fa fa-edit mr-2"></i>Update Schedule
+                          Template
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Daily Schedule Cells -->
+              <td
+                v-for="(day, dayIndex) in weekDays"
+                :key="dayIndex"
+                @click="openScheduleModal(employee, day, day.day_index)"
+                class="shift-cell text-center align-middle"
+                :class="{
+                    'selected': bulkEditMode && selectedCells.includes(`${employee.employee_id}-${day.day_index}`),
+                    'has-conflict': checkCellConflict(employee.employee_id, day.day_index),
+                    'has-switch-request': todaysSwitchRequests.some(req => 
+                      req.employee_id === employee.employee_id && 
+                      req.schedule_date === day.date
+                    )
+                  }"
+                :title="`Click to switch schedule for ${employee.employee_name} on ${day.name}`"
+              >
+                <div class="shift-content">
+                  <span
+                    :class="{
+                        'shift-badge': true,
+                        [getShiftBadgeClass(getScheduleCode(employee.employee_id, day.day_index))]: true
+                      }"
+                    :style="{ backgroundColor: getShiftColor(getScheduleCode(employee.employee_id, day.day_index)) }"
+                  >
+                    {{getScheduleCode(employee.employee_id, day.day_index)}}
+                  </span>
+
+                  <!-- Shift Time -->
+                  <div class="shift-time">
+                    <small>
+                      {{getScheduleTime(employee.employee_id, day.day_index)}}
+                    </small>
+                  </div>
+
+                  <!-- Indicators -->
+                  <div class="shift-indicators">
+                    <!-- Overtime Indicator -->
+                    <div
+                      v-if="getSchedule(employee.employee_id, day.day_index)?.is_overtime"
+                      class="indicator overtime-indicator"
+                      title="Overtime shift"
+                    >
+                      <i class="fa fa-clock text-warning"></i>
+                    </div>
+
+                    <!-- Switch Request Indicator -->
+                    <div
+                      v-if="todaysSwitchRequests.some(req => 
+                          req.employee_id === employee.employee_id && 
+                          req.schedule_date === day.date
+                        )"
+                      class="indicator switch-indicator"
+                      title="Has pending switch request"
+                    >
+                      <i class="fa fa-exchange-alt text-info"></i>
+                    </div>
+
+                    <!-- Conflict Indicator -->
+                    <div
+                      v-if="checkCellConflict(employee.employee_id, day.day_index)"
+                      class="indicator conflict-indicator"
+                      title="Schedule conflict detected"
+                    >
+                      <i class="fa fa-exclamation-triangle text-danger"></i>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Legend -->
+      <div class="mt-4 card border-info">
+        <div class="card-header bg-light">
+          <h6 class="mb-0">
+            <i class="fa fa-info-circle mr-2"></i>
+            {{$t('labels.payroll.attendance.legend')}}
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <!-- Front Office Shifts -->
+            <div class="col-md-3 mb-2">
+              <h6 class="text-muted font-weight-bold">Front Office</h6>
+              <div class="legend-item">
+                <span class="badge" style="background-color: #28a745"
+                  >FO-M</span
+                >
+                - Morning (07:00-15:00)
+              </div>
+              <div class="legend-item">
+                <span
+                  class="badge"
+                  style="background-color: #ffc107; color: #212529"
+                  >FO-E</span
+                >
+                - Evening (15:00-23:00)
+              </div>
+              <div class="legend-item">
+                <span class="badge" style="background-color: #343a40"
+                  >FO-N</span
+                >
+                - Night (23:00-07:00)
+              </div>
+            </div>
+
+            <!-- Housekeeping Shifts -->
+            <div class="col-md-3 mb-2">
+              <h6 class="text-muted font-weight-bold">Housekeeping</h6>
+              <div class="legend-item">
+                <span class="badge" style="background-color: #17a2b8"
+                  >HK-M</span
+                >
+                - Morning (08:00-16:00)
+              </div>
+              <div class="legend-item">
+                <span class="badge" style="background-color: #fd7e14"
+                  >HK-E</span
+                >
+                - Evening (14:00-22:00)
+              </div>
+            </div>
+
+            <!-- F&B Shifts -->
+            <div class="col-md-3 mb-2">
+              <h6 class="text-muted font-weight-bold">F&B</h6>
+              <div class="legend-item">
+                <span class="badge" style="background-color: #e83e8c"
+                  >FB-B</span
+                >
+                - Breakfast (05:00-13:00)
+              </div>
+              <div class="legend-item">
+                <span class="badge" style="background-color: #6610f2"
+                  >FB-L</span
+                >
+                - Lunch (10:00-18:00)
+              </div>
+              <div class="legend-item">
+                <span class="badge" style="background-color: #6f42c1"
+                  >FB-D</span
+                >
+                - Dinner (16:00-00:00)
+              </div>
+            </div>
+
+            <!-- Indicators -->
+            <div class="col-md-3 mb-2">
+              <h6 class="text-muted font-weight-bold">Indicators</h6>
+              <div class="legend-item">
+                <i class="fa fa-clock text-warning mr-2"></i>- Overtime
+              </div>
+              <div class="legend-item">
+                <i class="fa fa-exchange-alt text-info mr-2"></i>- Switch
+                Request
+              </div>
+              <div class="legend-item">
+                <i class="fa fa-exclamation-triangle text-danger mr-2"></i>-
+                Conflict
+              </div>
+              <div class="legend-item">
+                <span class="badge bg-secondary">OFF</span> - Day Off
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

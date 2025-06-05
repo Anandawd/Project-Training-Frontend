@@ -18,8 +18,8 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import ScheduleSwitchModal from "./schedule-switch-modal/schedule-switch-modal.vue";
-import CInputForm from "./work-schedule-input-form/work-schedule-input-form.vue";
+import ScheduleSwitchModal from "./components/schedule-switch-modal/schedule-switch-modal.vue";
+import CInputForm from "./components/work-schedule-input-form/work-schedule-input-form.vue";
 
 interface Day {
   name: string;
@@ -483,6 +483,12 @@ export default class WorkSchedule extends Vue {
 
   onRefresh() {
     this.loadDataGrid(this.searchDefault);
+  }
+
+  handleToScheduleTemplate() {
+    this.$router.push({
+      name: "ScheduleTemplate",
+    });
   }
 
   onEmployeeChange() {

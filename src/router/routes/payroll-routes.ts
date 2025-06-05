@@ -201,6 +201,25 @@ export default [
       menu: getRouterMenu(menu, 1),
     },
   },
+  // configurations
+  {
+    path: "schedule",
+    name: "ScheduleTemplate",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/work-schedule/configurations/schedule/schedule.vue"
+      ),
+    meta: {
+      pageTitle: "title.schedule",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.attendance" },
+        { title: "title.schedule", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
   {
     path: "periods",
     name: "Periods",

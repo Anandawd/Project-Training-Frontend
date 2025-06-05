@@ -1,0 +1,311 @@
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">{{title}}</div>
+    <div class="card-body">
+      <!-- form accordian -->
+      <div id="parrentAccordion" class="accordion">
+        <!-- basic information -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemBasicInformationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#basicInformation"
+              aria-controls="basicInformation"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.attendance.basicInformation')}}
+            </button>
+          </h6>
+          <div
+            id="basicInformation"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="basicInformationHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="text"
+                    name="Code"
+                    id="Code"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.code')"
+                    v-model="form.code"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="text"
+                    name="Name"
+                    id="Name"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.name')"
+                    v-model="form.name"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    name="Description"
+                    id="Description"
+                    class="row mb-1"
+                    type="text"
+                    v-model="form.description"
+                    :label="$t('labels.payroll.employee.description')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    name="Type"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.type"
+                    @change="onTypeOptionsChange"
+                    :label="$t('labels.payroll.attendance.type')"
+                    :options="typeOptions"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="number"
+                    name="CycleDays"
+                    id="CycleDays"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.rotationCycleDays')"
+                    v-model="form.rotation_cycle_days"
+                    showZeroNumber
+                    :min="0"
+                    :max="7"
+                  />
+                </div>
+                <div class="col-md-4 mb-sm-1">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <label
+                        class="form-label"
+                        style="font-size: 12px; font-weight: 700; color: red"
+                        >{{$t('labels.default')}}</label
+                      >
+                    </div>
+                    <div class="col-sm-9 d-flex align-items-center p-0">
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.yes')"
+                        v-model="form.is_default"
+                        value="1"
+                      ></c-radio>
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.no')"
+                        v-model="form.status"
+                        value="0"
+                      ></c-radio>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-sm-1">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <label
+                        class="form-label"
+                        style="font-size: 12px; font-weight: 700; color: red"
+                        >{{$t('labels.status')}}</label
+                      >
+                    </div>
+                    <div class="col-sm-9 d-flex align-items-center p-0">
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.active')"
+                        v-model="form.is_active"
+                        value="1"
+                      ></c-radio>
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.inactive')"
+                        v-model="form.is_active"
+                        value="0"
+                      ></c-radio>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- schedule pattern information -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemSchedulePatternformationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#schedulePatternInformation"
+              aria-controls="schedulePatternInformation"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.attendance.schedulePatternInformation')}}
+            </button>
+          </h6>
+          <div
+            id="schedulePatternInformation"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="schedulePatternInformationHeader"
+          >
+            <div class="accordion-body">
+              <!-- Schedule Pattern -->
+              <div class="card mb-3">
+                <div class="card-header">
+                  <h6 class="mb-0">
+                    <i class="fa fa-calendar-alt mr-2"></i>
+                    {{$t('labels.payroll.attendance.schedulePattern')}}
+                    <span class="badge bg-info ml-2"
+                      >{{totalWorkingDays}}
+                      {{$t('labels.payroll.attendance.workingDays')}}</span
+                    >
+                    <span class="badge bg-success ml-2"
+                      >{{totalWorkingHours}}
+                      {{$t('labels.payroll.attendance.workingHours')}}</span
+                    >
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <div class="schedule-pattern">
+                    <div class="row schedule-headers">
+                      <div class="col-md-1"><strong>Day</strong></div>
+                      <div class="col-md-2"><strong>Day Name</strong></div>
+                      <div class="col-md-4"><strong>Shift</strong></div>
+                      <div class="col-md-2">
+                        <strong>Working Hours</strong>
+                      </div>
+                      <div class="col-md-3"><strong>Remark</strong></div>
+                    </div>
+
+                    <div
+                      v-for="(detail, index) in form.details"
+                      :key="index"
+                      class="row schedule-day mb-2 p-2 border rounded"
+                      :class="{ 'bg-light': !detail.is_working_day }"
+                    >
+                      <div class="col-md-1 d-flex align-items-center">
+                        <strong>{{detail.day_order}}</strong>
+                      </div>
+                      <div class="col-md-2 d-flex align-items-center">
+                        <span class="badge bg-secondary"
+                          >{{getDayName(detail.day_order)}}</span
+                        >
+                      </div>
+                      <div class="col-md-4">
+                        <c-select
+                          name="shift"
+                          labelName="name"
+                          keyName="code"
+                          v-model="detail.shift_code"
+                          :options="shiftOptions"
+                          @change="onShiftChange(detail)"
+                          :show-label="false"
+                        />
+                      </div>
+                      <div class="col-md-2 d-flex align-items-center">
+                        <span
+                          class="badge"
+                          :class="detail.is_working_day ? 'bg-success' : 'bg-secondary'"
+                        >
+                          {{detail.working_hours}}h
+                        </span>
+                      </div>
+                      <div class="col-md-3">
+                        <c-input
+                          name="remark"
+                          v-model="detail.remark"
+                          :show-label="false"
+                          placeholder="Optional remark"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Template Preview -->
+              <div class="card">
+                <div class="card-header">
+                  <h6 class="mb-0">
+                    <i class="fa fa-eye mr-2"></i>
+                    Template Preview
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <div class="template-preview">
+                    <div class="d-flex flex-wrap">
+                      <div
+                        v-for="(detail, index) in form.details"
+                        :key="index"
+                        class="preview-day m-1 p-2 border rounded text-center"
+                        :class="{
+                    'bg-success text-white': detail.is_working_day,
+                    'bg-light': !detail.is_working_day
+                  }"
+                        style="min-width: 100px"
+                      >
+                        <small class="d-block">Day {{detail.day_order}}</small>
+                        <strong class="d-block"
+                          >{{getDayName(detail.day_order)}}</strong
+                        >
+                        <span
+                          class="badge mt-1"
+                          :class="detail.is_working_day ? 'bg-warning' : 'bg-secondary'"
+                        >
+                          {{detail.shift_code}}
+                        </span>
+                        <small class="d-block mt-1"
+                          >{{detail.working_hours}}h</small
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Cycle Repeat Indicator -->
+                  <div class="mt-3 p-3 bg-light rounded">
+                    <small class="text-muted">
+                      <i class="fa fa-repeat mr-1"></i>
+                      This {{form.rotation_cycle_days}}-day pattern will repeat
+                      continuously. Weekly hours: {{(totalWorkingHours /
+                      form.rotation_cycle_days * 7).toFixed(1)}}h
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- buttons -->
+      <div class="d-flex justify-content-end mt-2">
+        <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.close')}}
+        </button>
+        <button type="button" class="btn btn-primary px-3" @click="onSubmit">
+          <i class="fa fa-save"></i>
+          {{$t('buttons.save')}}
+        </button>
+      </div>
+    </div>
+  </div>
+</c-form>

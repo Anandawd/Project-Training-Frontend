@@ -1,27 +1,5 @@
 <section class="content">
   <div class="container-fluid">
-    <!-- button insert -->
-    <!-- <div class="d-flex justify-content-end mb-2">
-      <button
-        title="Switch Shift"
-        type="button"
-        class="btn btn-primary mr-1"
-        @click="handleShowModal('', $global.modePayroll.switchShift)"
-      >
-        <i class="fa fa-exchange-alt mr-1" aria-hidden="true"></i>{{
-        $t('buttons.switchShift') }}
-      </button>
-      <button
-        title="Insert Schedule"
-        type="button"
-        class="btn btn-primary mr-1"
-        @click="handleShowForm('', $global.modeData.insert)"
-      >
-        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
-        $t('buttons.insert') }}
-      </button>
-    </div> -->
-
     <!-- Header Actions -->
     <div class="d-flex justify-content-between align-items-center mb-2">
       <!-- Left side - Switch Requests Summary -->
@@ -61,6 +39,15 @@
           <i class="fa fa-exchange-alt mr-1" aria-hidden="true"></i>{{
           $t('buttons.switchShift') }}
         </button> -->
+        <button
+          title="Schedule Template"
+          type="button"
+          class="btn btn-warning mr-1"
+          @click="handleToScheduleTemplate"
+        >
+          <i class="fa fa-cogs mr-1" aria-hidden="true"></i>{{
+          $t('buttons.scheduleTemplate') }}
+        </button>
         <button
           title="Insert Schedule"
           type="button"
@@ -498,197 +485,6 @@
       @switch-confirmed="handleSwitchConfirmed"
       @swap-confirmed="handleSwitchConfirmed"
     />
-
-    <!-- <c-modal
-      v-show="showModal"
-      :title="$t('title.switchSchedule')"
-      size="lg"
-      @close="showModal = false"
-      @save="handleSaveModal"
-    >
-      <div @click.stop>
-        <div class="switch-schedule-modal">
-          <div class="row mb-3">
-            <div class="col-md-12">
-              <div class="card border-primary">
-                <div class="card-header bg-primary text-white">
-                  <h6 class="mb-0">
-                    <i class="fa fa-user mr-2"></i>Employee Information
-                  </h6>
-                </div>
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-3">
-                      <strong>{{modalForm.employee_name}}</strong>
-                      <br /><small class="text-muted"
-                        >{{modalForm.employee_id}}</small
-                      >
-                    </div>
-                    <div class="col-md-3">
-                      <strong>{{modalForm.department_name}}</strong>
-                      <br /><small class="text-muted"
-                        >{{modalForm.position_name}}</small
-                      >
-                    </div>
-                    <div class="col-md-3">
-                      <strong>{{modalForm.day_name}}</strong>
-                      <br /><small class="text-muted">{{modalForm.date}}</small>
-                    </div>
-                    <div class="col-md-3">
-                      <strong>Current Schedule</strong>
-                      <br />
-                      <span
-                        class="badge"
-                        :style="{ backgroundColor: getShiftColor(modalForm.current_shift_code) }"
-                      >
-                        {{modalForm.current_shift_code}}
-                      </span>
-                      <small class="d-block text-muted"
-                        >{{modalForm.current_shift_name}}</small
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-md-6 mb-sm-3 mb-md-0">
-              <div class="card border-info">
-                <div class="card-header bg-info text-white">
-                  <h6 class="mb-0">Current Schedule</h6>
-                </div>
-                <div class="card-body text-center">
-                  <div class="current-schedule-display p-3">
-                    <span
-                      class="badge badge-lg"
-                      :style="{ backgroundColor: getShiftColor(modalForm.current_shift_code), fontSize: '16px', padding: '12px 20px' }"
-                    >
-                      {{modalForm.current_shift_code}}
-                    </span>
-                    <h5 class="mt-2 mb-1">{{modalForm.current_shift_name}}</h5>
-                    <p
-                      class="text-muted mb-0"
-                      v-if="modalForm.current_start_time"
-                    >
-                      {{modalForm.current_start_time}} -
-                      {{modalForm.current_end_time}}
-                    </p>
-                    <p class="text-muted mb-0" v-else>Day Off</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="card border-success">
-                <div class="card-header bg-success text-white">
-                  <h6 class="mb-0">New Schedule</h6>
-                </div>
-                <div class="card-body">
-                  <c-select
-                    required
-                    offset="right"
-                    class="mb-3"
-                    name="NewShift"
-                    labelName="name"
-                    keyName="code"
-                    v-model="modalForm.new_shift_code"
-                    :label="$t('labels.payroll.attendance.selectNewShift')"
-                    :options="availableShiftsForEmployee"
-                  />
-
-                  <div v-if="modalForm.new_shift_code" class="text-center">
-                    <span
-                      class="badge badge-lg"
-                      :style="{ backgroundColor: getShiftColor(modalForm.new_shift_code), fontSize: '16px', padding: '12px 20px' }"
-                    >
-                      {{modalForm.new_shift_code}}
-                    </span>
-                    <h5 class="mt-2 mb-1">
-                      {{getShiftName(modalForm.new_shift_code)}}
-                    </h5>
-                    <p class="text-muted mb-0">
-                      {{getShiftTime(modalForm.new_shift_code)}}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div v-if="modalForm.new_shift_code" class="row mb-3">
-            <div class="col-md-12">
-              <div class="card border-warning">
-                <div class="card-header bg-warning">
-                  <h6 class="mb-0">
-                    <i class="fa fa-exclamation-triangle mr-2"></i>Conflict
-                    Check
-                  </h6>
-                </div>
-                <div class="card-body">
-                  <div v-if="!getModalConflicts().length" class="text-success">
-                    <i class="fa fa-check-circle mr-2"></i>No conflicts detected
-                  </div>
-                  <div v-else>
-                    <div
-                      v-for="conflict in getModalConflicts()"
-                      :key="conflict.message"
-                      :class="{
-                      'alert alert-danger': conflict.severity === 'error',
-                      'alert alert-warning': conflict.severity === 'warning'
-                    }"
-                      class="mb-2"
-                    >
-                      <i
-                        :class="{
-                      'fa fa-times-circle': conflict.severity === 'error',
-                      'fa fa-exclamation-triangle': conflict.severity === 'warning'
-                    }"
-                        class="mr-2"
-                      ></i>
-                      {{conflict.message}}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-md-12">
-              <label class="form-label"
-                >{{$t('labels.payroll.attendance.switchReason')}}</label
-              >
-              <textarea
-                class="form-control"
-                rows="3"
-                v-model="modalForm.reason"
-                placeholder="Enter reason for schedule change..."
-              ></textarea>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-end">
-            <button
-              type="button"
-              class="btn btn-secondary mr-2"
-              @click="showModal = false"
-            >
-              <i class="fa fa-times mr-1"></i>{{$t('buttons.cancel')}}
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="handleSaveModal"
-              :disabled="!modalForm.new_shift_code || getModalConflicts().some(c => c.severity === 'error')"
-            >
-              <i class="fa fa-save mr-1"></i>{{$t('buttons.save')}}
-            </button>
-          </div>
-        </div>
-      </div>
-    </c-modal> -->
 
     <!-- dialog -->
     <c-dialog

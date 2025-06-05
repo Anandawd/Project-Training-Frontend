@@ -233,7 +233,13 @@
         "switchReason": "Switch Reason",
         "selectNewShift": "Select New Shift",
         "switchType": "Switch Type",
-        "swapWith": "Swap With"
+        "swapWith": "Swap With",
+        "basicInformation": "Basic Information",
+        "rotationCycleDays": "Rotation Cycle Days",
+        "setAsDefault": "Set as Default",
+        "active": "Active",
+        "schedulePatternInformation": "Schedule Pattern Information",
+        "schedulePattern": "Schedule Pattern"
       },
       "payroll": {
         "payroll": "Payroll",
@@ -1775,6 +1781,7 @@
   },
   "title": {
     "t11": "t11",
+    "schedule": "Schedule",
     "switchSchedule": "Switch Schedule",
     "employeeSchedule": "Employee Schedule",
     "weeklySchedule": "Weekly Schedule",
@@ -2697,6 +2704,7 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "scheduleTemplate": "Schedule Template",
     "switchSchedule": "Switch Schedule",
     "thisWeek": "This Week",
     "switchShift": "Switch Shift",
@@ -3410,6 +3418,8 @@
           "categoryComponent": "Category Component"
         },
         "attendance": {
+          "cycleDays": "Cycle Days",
+          "default": "Default",
           "date": "Date",
           "currentSchedule": "Current Schedule",
           "checkIn": "Check In",
