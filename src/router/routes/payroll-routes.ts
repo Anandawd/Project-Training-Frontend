@@ -221,6 +221,42 @@ export default [
     },
   },
   {
+    path: "shift",
+    name: "Shift",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/work-schedule/configurations/shift/shift.vue"
+      ),
+    meta: {
+      pageTitle: "title.shift",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.attendance" },
+        { title: "title.shift", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
+    path: "shift-category",
+    name: "ShiftCategory",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/work-schedule/configurations/shift-category/shift-category.vue"
+      ),
+    meta: {
+      pageTitle: "title.shiftCategory",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.attendance" },
+        { title: "title.shiftCategory", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
     path: "periods",
     name: "Periods",
     component: () =>

@@ -18,33 +18,7 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import CInputForm from "./schedule-input-form/schedule-input-form.vue";
-
-interface ScheduleDetail {
-  day_order: number;
-  shift_code: string;
-  shift_name: string;
-  is_working_day: boolean;
-  working_hours: number;
-  remark?: string;
-}
-
-interface Schedule {
-  id?: number;
-  code: string;
-  name: string;
-  description: string;
-  type: "ROTATION" | "FIXED" | "FLEXIBLE" | "SEASONAL";
-  rotation_pattern?: any;
-  rotation_cycle_days?: number;
-  is_default: boolean;
-  is_active: boolean;
-  details: ScheduleDetail[];
-  updated_at: string;
-  updated_by: string;
-  created_at: string;
-  created_by: string;
-}
+import CInputForm from "./shift-category-input-form/shift-category-input-form.vue";
 
 const workScheduleAPI = new WorkScheduleAPI();
 
@@ -59,15 +33,10 @@ const workScheduleAPI = new WorkScheduleAPI();
     CInputForm,
   },
 })
-export default class ScheduleConfiguration extends Vue {
+export default class ShiftConfigurations extends Vue {
   // Data
-  public rowData: Schedule[] = [];
+  public rowData: any[] = [];
   public deleteParam: any;
-
-  // Options
-  public shiftOptions: any[] = [];
-  public departmentOptions: any[] = [];
-  public typeOptions: any[] = [];
 
   // form
   public form: any = {};
@@ -163,43 +132,6 @@ export default class ScheduleConfiguration extends Vue {
         field: "description",
         width: 200,
         enableRowGroup: false,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.attendance.type"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "type",
-        width: 120,
-        enableRowGroup: true,
-        cellRenderer: (params: any) => {
-          const type = params.value;
-          const colorMap = {
-            ROTATION: "bg-primary",
-            FIXED: "bg-success",
-            FLEXIBLE: "bg-warning",
-            SEASONAL: "bg-info",
-          };
-          return `<span class="badge ${
-            colorMap[type as keyof typeof colorMap]
-          }">${type}</span>`;
-        },
-      },
-      {
-        headerName: this.$t("commons.table.payroll.attendance.cycleDays"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "rotation_cycle_days",
-        width: 100,
-        enableRowGroup: false,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.attendance.default"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "is_default",
-        width: 100,
-        enableRowGroup: true,
-        cellRenderer: "checklistRenderer",
       },
       {
         headerName: this.$t("commons.table.status"),
@@ -356,7 +288,9 @@ export default class ScheduleConfiguration extends Vue {
 
   handleDelete(params: any) {
     this.deleteParam = params.id;
-    this.dialogMessage = this.$t("messages.attendance.deleteSchedule");
+    this.dialogMessage = this.$t(
+      "messages.attendance.confirm.deleteShiftCategory"
+    );
     this.dialogAction = "delete";
     this.showDialog = true;
   }
@@ -443,7 +377,7 @@ export default class ScheduleConfiguration extends Vue {
           this.inputFormElement.form = this.populateForm(data);
         });
       } else {
-        getToastError(this.$t("messages.attendance.error.notFoundSchedule"));
+        getToastError(this.$t("messages.attendance.error.notFoundShift"));
       }
     } catch (error) {
       getError(error);
@@ -454,133 +388,79 @@ export default class ScheduleConfiguration extends Vue {
     this.rowData = [
       {
         id: 1,
-        code: "FO-ROT-7D",
-        name: "Front Office 7-Day Rotation",
-        description:
-          "7-day rotation for front office with morning, evening, night shifts",
-        type: "ROTATION",
-        rotation_cycle_days: 7,
-        is_default: true,
+        code: "MORNING",
+        name: "Morning",
+        description: "",
         is_active: true,
-        details: [
-          {
-            day_order: 1,
-            shift_code: "FO-M",
-            shift_name: "FO Morning",
-            is_working_day: true,
-            working_hours: 8,
-          },
-          {
-            day_order: 2,
-            shift_code: "FO-M",
-            shift_name: "FO Morning",
-            is_working_day: true,
-            working_hours: 8,
-          },
-          {
-            day_order: 3,
-            shift_code: "FO-E",
-            shift_name: "FO Evening",
-            is_working_day: true,
-            working_hours: 8,
-          },
-          {
-            day_order: 4,
-            shift_code: "FO-E",
-            shift_name: "FO Evening",
-            is_working_day: true,
-            working_hours: 8,
-          },
-          {
-            day_order: 5,
-            shift_code: "FO-N",
-            shift_name: "FO Night",
-            is_working_day: true,
-            working_hours: 8,
-          },
-          {
-            day_order: 6,
-            shift_code: "OFF",
-            shift_name: "Day Off",
-            is_working_day: false,
-            working_hours: 0,
-          },
-          {
-            day_order: 7,
-            shift_code: "OFF",
-            shift_name: "Day Off",
-            is_working_day: false,
-            working_hours: 0,
-          },
-        ],
-        created_at: "2025-01-01",
+        created_at: "2025-01-01T00:00:00Z",
         created_by: "Admin",
-        updated_at: "2025-01-01",
+        updated_at: "2025-01-01T00:00:00Z",
         updated_by: "Admin",
       },
       {
         id: 2,
-        code: "HK-FIX",
-        name: "Housekeeping Fixed",
-        description: "Fixed morning schedule for housekeeping",
-        type: "FIXED",
-        rotation_cycle_days: 7,
-        is_default: false,
+        code: "MIDDLE",
+        name: "Middle",
+        description: "",
         is_active: true,
-        details: [
-          {
-            day_order: 1,
-            shift_code: "HK-M",
-            shift_name: "HK Morning",
-            is_working_day: true,
-            working_hours: 8,
-          },
-          {
-            day_order: 2,
-            shift_code: "HK-M",
-            shift_name: "HK Morning",
-            is_working_day: true,
-            working_hours: 8,
-          },
-          {
-            day_order: 3,
-            shift_code: "HK-M",
-            shift_name: "HK Morning",
-            is_working_day: true,
-            working_hours: 8,
-          },
-          {
-            day_order: 4,
-            shift_code: "HK-M",
-            shift_name: "HK Morning",
-            is_working_day: true,
-            working_hours: 8,
-          },
-          {
-            day_order: 5,
-            shift_code: "HK-M",
-            shift_name: "HK Morning",
-            is_working_day: true,
-            working_hours: 8,
-          },
-          {
-            day_order: 6,
-            shift_code: "HK-M",
-            shift_name: "HK Morning",
-            is_working_day: true,
-            working_hours: 8,
-          },
-          {
-            day_order: 7,
-            shift_code: "OFF",
-            shift_name: "Day Off",
-            is_working_day: false,
-            working_hours: 0,
-          },
-        ],
-        created_at: "2025-01-01",
+        created_at: "2025-01-01T00:00:00Z",
         created_by: "Admin",
-        updated_at: "2025-01-01",
+        updated_at: "2025-01-01T00:00:00Z",
+        updated_by: "Admin",
+      },
+      {
+        id: 3,
+        code: "AFTERNOON",
+        name: "Afternoon",
+        description: "",
+        is_active: true,
+        created_at: "2025-01-01T00:00:00Z",
+        created_by: "Admin",
+        updated_at: "2025-01-01T00:00:00Z",
+        updated_by: "Admin",
+      },
+      {
+        id: 4,
+        code: "EVENING",
+        name: "Evening",
+        description: "",
+        is_active: true,
+        created_at: "2025-01-01T00:00:00Z",
+        created_by: "Admin",
+        updated_at: "2025-01-01T00:00:00Z",
+        updated_by: "Admin",
+      },
+      {
+        id: 5,
+        code: "NIGHT",
+        name: "Night",
+        description: "",
+        is_active: true,
+        created_at: "2025-01-01T00:00:00Z",
+        created_by: "Admin",
+        updated_at: "2025-01-01T00:00:00Z",
+        updated_by: "Admin",
+      },
+      {
+        id: 6,
+        code: "SPLIT",
+        name: "Split",
+        description: "",
+        is_active: true,
+        created_at: "2025-01-01T00:00:00Z",
+        created_by: "Admin",
+        updated_at: "2025-01-01T00:00:00Z",
+        updated_by: "Admin",
+      },
+      {
+        id: 7,
+        code: "OFF",
+        name: "Off",
+        description: "",
+        is_active: true,
+        created_at: "2025-01-01T00:00:00Z",
+        created_by: "Admin",
+        updated_at: "2025-01-01T00:00:00Z",
         updated_by: "Admin",
       },
     ];
@@ -600,74 +480,6 @@ export default class ScheduleConfiguration extends Vue {
 
       await Promise.all(promises);
       */
-      this.typeOptions = [
-        { code: "ROTATION", name: "Rotation Schedule" },
-        { code: "FIXED", name: "Fixed Schedule" },
-        { code: "FLEXIBLE", name: "Flexible Schedule" },
-        { code: "SEASONAL", name: "Seasonal Schedule" },
-      ];
-
-      this.shiftOptions = [
-        {
-          code: "FO-M",
-          name: "Front Office Morning (07:00-15:00)",
-          department: "FRONT_OFFICE",
-        },
-        {
-          code: "FO-E",
-          name: "Front Office Evening (15:00-23:00)",
-          department: "FRONT_OFFICE",
-        },
-        {
-          code: "FO-N",
-          name: "Front Office Night (23:00-07:00)",
-          department: "FRONT_OFFICE",
-        },
-        {
-          code: "HK-M",
-          name: "Housekeeping Morning (08:00-16:00)",
-          department: "HOUSEKEEPING",
-        },
-        {
-          code: "HK-E",
-          name: "Housekeeping Evening (14:00-22:00)",
-          department: "HOUSEKEEPING",
-        },
-        {
-          code: "FB-B",
-          name: "F&B Breakfast (05:00-13:00)",
-          department: "RESTAURANT",
-        },
-        {
-          code: "FB-L",
-          name: "F&B Lunch (10:00-18:00)",
-          department: "RESTAURANT",
-        },
-        {
-          code: "FB-D",
-          name: "F&B Dinner (16:00-00:00)",
-          department: "RESTAURANT",
-        },
-        {
-          code: "SEC-D",
-          name: "Security Day (06:00-18:00)",
-          department: "SECURITY",
-        },
-        {
-          code: "SEC-N",
-          name: "Security Night (18:00-06:00)",
-          department: "SECURITY",
-        },
-        { code: "OFF", name: "Day Off", department: "ALL" },
-      ];
-
-      this.departmentOptions = [
-        { code: "FRONT_OFFICE", name: "Front Office" },
-        { code: "HOUSEKEEPING", name: "Housekeeping" },
-        { code: "RESTAURANT", name: "Restaurant" },
-        { code: "SECURITY", name: "Security" },
-        { code: "ENGINEERING", name: "Engineering" },
-      ];
     } catch (error) {
       getError(error);
     }
@@ -691,12 +503,7 @@ export default class ScheduleConfiguration extends Vue {
         code: formData.code,
         name: formData.name,
         description: formData.description,
-        type: formData.type,
-        rotation_pattern: formData.rotation_pattern,
-        rotation_cycle_days: formData.rotation_cycle_days,
-        is_default: formData.is_default,
         is_active: formData.is_active,
-        details: formData.details,
         created_at: formatDateTimeUTC(new Date()),
         created_by: "Current User",
         updated_at: formatDateTimeUTC(new Date()),
@@ -708,7 +515,7 @@ export default class ScheduleConfiguration extends Vue {
       await this.$nextTick();
       await this.loadDataGrid(this.searchDefault);
 
-      getToastSuccess(this.$t("messages.attendance.success.saveSchedule"));
+      getToastSuccess(this.$t("messages.attendance.success.saveShiftCategory"));
     } catch (error) {
       getError(error);
     }
@@ -732,23 +539,18 @@ export default class ScheduleConfiguration extends Vue {
           code: formData.code,
           name: formData.name,
           description: formData.description,
-          type: formData.type,
-          rotation_pattern: formData.rotation_pattern,
-          rotation_cycle_days: formData.rotation_cycle_days,
-          is_default: formData.is_default,
           is_active: formData.is_active,
-          details: formData.details,
           updated_at: formatDateTimeUTC(new Date()),
           updated_by: "Current User",
         };
       }
 
-      this.searchDefault.filter = [1];
-
       await this.$nextTick();
       await this.loadDataGrid(this.searchDefault);
 
-      getToastSuccess(this.$t("messages.attendance.success.updateSchedule"));
+      getToastSuccess(
+        this.$t("messages.attendance.success.updateShiftCategory")
+      );
     } catch (error) {
       getError(error);
     }
@@ -768,11 +570,11 @@ export default class ScheduleConfiguration extends Vue {
         (item: any) => item.id !== this.deleteParam
       );
 
-      this.searchDefault.filter = [1];
-
       await this.$nextTick();
       await this.loadDataGrid(this.searchDefault);
-      getToastSuccess(this.$t("messages.attendance.success.deleteSchedule"));
+      getToastSuccess(
+        this.$t("messages.attendance.success.deleteShiftCategory")
+      );
     } catch (error) {
       getError(error);
     }
@@ -782,38 +584,20 @@ export default class ScheduleConfiguration extends Vue {
   formatData(params: any) {
     return {
       id: params.id,
-      employee_id: params.employee_id,
-      employee_name: params.employee_name,
-      department_code: params.department_code,
-      department_name: params.department_name,
-      position_code: params.position_code,
-      position_name: params.position_name,
-      adjustment_reason_code: params.adjustment_reason_code,
-      adjustment_reason_name: params.adjustment_reason_name,
-      effective_date: params.effective_date,
-      current_salary: parseFloat(params.current_salary),
-      new_salary: parseFloat(params.new_salary),
-      difference_amount: params.difference_amount,
-      percentage_change: params.percentage_change,
-      remark: params.remark,
+      code: params.code,
+      name: params.name,
+      description: params.description,
+      is_active: params.is_active === "1" ? true : false,
     };
   }
 
   populateForm(params: any) {
     return {
       id: params.id,
-      employee_id: params.employee_id,
-      employee_name: params.employee_name,
-      department_code: params.department_code,
-      department_name: params.department_name,
-      position_code: params.position_code,
-      position_name: params.position_name,
-      adjustment_reason_code: params.adjustment_reason_code,
-      adjustment_reason_name: params.adjustment_reason_name,
-      effective_date: params.effective_date,
-      current_salary: params.current_salary,
-      new_salary: params.new_salary,
-      remark: params.remark,
+      code: params.code,
+      name: params.name,
+      description: params.description,
+      is_active: params.is_active ? "1" : "0",
     };
   }
 

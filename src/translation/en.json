@@ -239,7 +239,16 @@
         "setAsDefault": "Set as Default",
         "active": "Active",
         "schedulePatternInformation": "Schedule Pattern Information",
-        "schedulePattern": "Schedule Pattern"
+        "schedulePattern": "Schedule Pattern",
+        "selectPlacement": "Select Placement",
+        "category": "Category",
+        "overtimeMultiplier": "Overtime Multiplier",
+        "splitTimes": "Split Times",
+        "departments": "Departments",
+        "positions": "Positions",
+        "nightShift": "Night Shift",
+        "color": "Color",
+        "splitShift": "Split Shift"
       },
       "payroll": {
         "payroll": "Payroll",
@@ -1781,6 +1790,8 @@
   },
   "title": {
     "t11": "t11",
+    "shiftCategory": "Shift Category",
+    "shift": "Shift",
     "schedule": "Schedule",
     "switchSchedule": "Switch Schedule",
     "employeeSchedule": "Employee Schedule",
@@ -2704,7 +2715,8 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
-    "scheduleTemplate": "Schedule Template",
+    "shiftCategory": "Shift Category",
+    "schedule": "Schedule",
     "switchSchedule": "Switch Schedule",
     "thisWeek": "This Week",
     "switchShift": "Switch Shift",
@@ -3443,7 +3455,18 @@
           "lastVerified": "Last Verified",
           "workingDays": "Working Days",
           "workingTime": "Working Time",
-          "effectiveDate": "Effective Date"
+          "effectiveDate": "Effective Date",
+          "category": "Category",
+          "startTime": "Start Time",
+          "endTime": "End Time",
+          "breakDuration": "Break Duration",
+          "splitTimes": "Split Times",
+          "departments": "Departments",
+          "positions": "Positions",
+          "overtimeMultiplier": "Overtime Multiplier",
+          "color": "Color",
+          "splitShift": "Split Shift",
+          "nightShift": "Night Shift"
         }
       },
       "reminderDate": "Reminder Date",

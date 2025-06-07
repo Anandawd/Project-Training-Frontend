@@ -1,0 +1,248 @@
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">{{title}}</div>
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            name="Placement"
+            labelName="name"
+            keyName="code"
+            selectType="column"
+            v-model="form.placement_code"
+            :label="$t('labels.payroll.attendance.selectPlacement')"
+            :options="placementOptions"
+            :columnOptions="columnOptions"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            type="text"
+            name="Code"
+            id="Code"
+            class="row mb-1"
+            :label="$t('labels.payroll.employee.code')"
+            v-model="form.code"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            type="text"
+            name="Name"
+            id="Name"
+            class="row mb-1"
+            :label="$t('labels.payroll.employee.name')"
+            v-model="form.name"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            name="Category"
+            labelName="name"
+            keyName="code"
+            selectType="column"
+            v-model="form.category"
+            :label="$t('labels.payroll.attendance.category')"
+            :options="categoryOptions"
+            :columnOptions="columnOptions"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            name="StartTime"
+            id="StartTime"
+            class="row mb-1"
+            type="time"
+            v-model="form.start_time"
+            :label="$t('labels.payroll.attendance.startTime')"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            name="EndTime"
+            id="EndTime"
+            class="row mb-1"
+            type="time"
+            v-model="form.end_time"
+            :label="$t('labels.payroll.attendance.endTime')"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            showZeroNumber
+            name="BreakDuration"
+            id="BreakDuration"
+            class="row mb-1"
+            type="number"
+            v-model="form.break_duration"
+            :label="$t('labels.payroll.attendance.breakDuration')"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            showZeroNumber
+            name="WorkingHours"
+            id="WorkingHours"
+            class="row mb-1"
+            type="number"
+            v-model="form.working_hours"
+            :label="$t('labels.payroll.attendance.workingHours')"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            showZeroNumber
+            name="OvertimeMultiplier"
+            id="OvertimeMultiplier"
+            class="row mb-1"
+            type="number"
+            v-model="form.overtime_multiplier"
+            :label="$t('labels.payroll.attendance.overtimeMultiplier')"
+          />
+        </div>
+        <div class="col-md-4">
+          <div class="row mb-1">
+            <c-input
+              name="SplitTimes"
+              id="SplitTimes"
+              type="number"
+              class="col-9"
+              customLabelClass="col-4 mr-1"
+              v-model="form.split_times"
+              :label="$t('labels.payroll.attendance.splitTimes')"
+              :disabled="!form.is_split_shift"
+            />
+            <c-checkbox
+              class="col-3 col-md-2 align-items-center"
+              name="SplitShift"
+              id="SplitShift"
+              :label="$t('labels.payroll.attendance.splitShift')"
+              v-model="form.is_split_shift"
+            />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <c-select
+            multiple
+            offset="right"
+            class="row mb-1"
+            name="Departments"
+            labelName="name"
+            keyName="code"
+            selectType="column"
+            v-model="form.departments"
+            :label="$t('labels.payroll.attendance.departments')"
+            :options="departmentOptions"
+            :columnOptions="columnOptions"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            multiple
+            offset="right"
+            class="row mb-1"
+            name="Positions"
+            labelName="name"
+            keyName="code"
+            selectType="column"
+            v-model="form.positions"
+            :label="$t('labels.payroll.attendance.positions')"
+            :options="positionOptions"
+            :columnOptions="columnOptions"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            type="text"
+            name="Color"
+            id="Color"
+            class="row mb-1"
+            :label="$t('labels.payroll.attendance.color')"
+            v-model="form.color"
+          />
+        </div>
+        <div class="col-md-4 mb-sm-1">
+          <div class="row">
+            <div class="col-sm-3">
+              <label
+                class="form-label"
+                style="font-size: 12px; font-weight: 700; color: red"
+                >{{$t('labels.payroll.attendance.nightShift')}}</label
+              >
+            </div>
+            <div class="col-sm-9 d-flex align-items-center p-0">
+              <c-radio
+                class="me-3"
+                :label="$t('labels.yes')"
+                v-model="form.is_night_shift"
+                value="1"
+              ></c-radio>
+              <c-radio
+                class="me-3"
+                :label="$t('labels.no')"
+                v-model="form.is_night_shift"
+                value="0"
+              ></c-radio>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-sm-1">
+          <div class="row">
+            <div class="col-sm-3">
+              <label
+                class="form-label"
+                style="font-size: 12px; font-weight: 700; color: red"
+                >{{$t('labels.status')}}</label
+              >
+            </div>
+            <div class="col-sm-9 d-flex align-items-center p-0">
+              <c-radio
+                class="me-3"
+                :label="$t('labels.active')"
+                v-model="form.is_active"
+                value="1"
+              ></c-radio>
+              <c-radio
+                class="me-3"
+                :label="$t('labels.inactive')"
+                v-model="form.is_active"
+                value="0"
+              ></c-radio>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- buttons -->
+      <div class="d-flex justify-content-end mt-2">
+        <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.close')}}
+        </button>
+        <button type="button" class="btn btn-primary px-3" @click="onSubmit">
+          <i class="fa fa-save"></i>
+          {{$t('buttons.save')}}
+        </button>
+      </div>
+    </div>
+  </div>
+</c-form>

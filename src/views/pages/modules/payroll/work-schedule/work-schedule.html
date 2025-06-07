@@ -40,13 +40,31 @@
           $t('buttons.switchShift') }}
         </button> -->
         <button
-          title="Schedule Template"
+          title="Shift Category"
           type="button"
           class="btn btn-warning mr-1"
-          @click="handleToScheduleTemplate"
+          @click="handleToShiftCategory"
         >
           <i class="fa fa-cogs mr-1" aria-hidden="true"></i>{{
-          $t('buttons.scheduleTemplate') }}
+          $t('buttons.shiftCategory') }}
+        </button>
+        <button
+          title="Shift"
+          type="button"
+          class="btn btn-warning mr-1"
+          @click="handleToShift"
+        >
+          <i class="fa fa-cogs mr-1" aria-hidden="true"></i>{{
+          $t('buttons.shift') }}
+        </button>
+        <button
+          title="Schedule"
+          type="button"
+          class="btn btn-warning mr-1"
+          @click="handleToSchedule"
+        >
+          <i class="fa fa-cogs mr-1" aria-hidden="true"></i>{{
+          $t('buttons.schedule') }}
         </button>
         <button
           title="Insert Schedule"

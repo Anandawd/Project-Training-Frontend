@@ -28,7 +28,7 @@ interface Day {
   day_index: number;
 }
 
-interface ShiftSchedule {
+interface DailySchedule {
   employee_id: string;
   day_index: number;
   shift_code: string;
@@ -69,7 +69,7 @@ export default class WorkSchedule extends Vue {
   public deleteParam: any;
   public currentWeekStart: Date = new Date();
   public weekDays: Day[] = [];
-  public scheduleChanges: ShiftSchedule[] = [];
+  public scheduleChanges: DailySchedule[] = [];
 
   // options data
   public employeeOptions: any = [];
@@ -485,9 +485,19 @@ export default class WorkSchedule extends Vue {
     this.loadDataGrid(this.searchDefault);
   }
 
-  handleToScheduleTemplate() {
+  handleToSchedule() {
     this.$router.push({
       name: "ScheduleTemplate",
+    });
+  }
+  handleToShift() {
+    this.$router.push({
+      name: "Shift",
+    });
+  }
+  handleToShiftCategory() {
+    this.$router.push({
+      name: "ShiftCategory",
     });
   }
 
