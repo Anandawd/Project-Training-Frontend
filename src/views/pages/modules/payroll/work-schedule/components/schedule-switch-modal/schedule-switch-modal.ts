@@ -4,31 +4,16 @@ import CModal from "@/components/modal/modal.vue";
 import CSelect from "@/components/select/select.vue";
 import WorkScheduleAPI from "@/services/api/payroll/work-schedule/work-schedule";
 import $global from "@/utils/global";
-import { getToastError, getToastSuccess } from "@/utils/toast";
+import { getToastError } from "@/utils/toast";
 import { focusOnInvalid } from "@/utils/validation";
 import { Form as CForm } from "vee-validate";
 import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import * as Yup from "yup";
 
-interface ScheduleConflict {
-  type:
-    | "REST_TIME"
-    | "CONSECUTIVE_DAYS"
-    | "STAFF_LIMIT"
-    | "SKILL_REQUIREMENT"
-    | "OVERTIME_LIMIT";
-  severity: "ERROR" | "WARNING" | "INFO";
+interface BasicValidation {
+  type: "WARNING" | "INFO";
   message: string;
-  details?: any;
-}
-
-interface MutualSwapOption {
-  employee_id: string;
-  employee_name: string;
-  department_name: string;
-  current_shift: string;
-  shift_date: string;
 }
 
 @Options({
@@ -70,7 +55,7 @@ interface MutualSwapOption {
       default: null,
     },
   },
-  emits: ["close", "switch-confirmed", "swap-confirmed"],
+  emits: ["close", "switch-confirmed"],
 })
 export default class ScheduleSwitchModal extends Vue {
   inputFormValidation: any = ref();
@@ -82,11 +67,8 @@ export default class ScheduleSwitchModal extends Vue {
   shiftOptions!: any[];
   currentSchedule!: any;
 
-  public loading = false;
-  public conflicts: ScheduleConflict[] = [];
-  public mutualSwapOptions: MutualSwapOption[] = [];
-  public departmentStaffing: any = {};
-  public validationResult: any = null;
+  public isLoading = false;
+  public validations: BasicValidation[] = [];
 
   private workScheduleAPI = new WorkScheduleAPI();
 
@@ -94,9 +76,6 @@ export default class ScheduleSwitchModal extends Vue {
     switch_type: "PERSONAL_REQUEST",
     requested_shift_code: "",
     reason: "",
-    target_employee_id: "",
-    is_mutual_swap: false,
-    emergency_override: false,
   });
 
   columnEmployeeOptions = [
@@ -131,19 +110,9 @@ export default class ScheduleSwitchModal extends Vue {
     },
   ];
 
-  workingDaysOptions = [
-    { value: 1, label: "Monday" },
-    { value: 2, label: "Tuesday" },
-    { value: 3, label: "Wednesday" },
-    { value: 4, label: "Thursday" },
-    { value: 5, label: "Friday" },
-    { value: 6, label: "Saturday" },
-    { value: 0, label: "Sunday" },
-  ];
-
   mounted(): void {
     if (this.visible && this.selectedEmployee) {
-      this.checkDepartmentStaffing();
+      this.initializeForm();
     }
   }
 
@@ -154,15 +123,9 @@ export default class ScheduleSwitchModal extends Vue {
       switch_type: "PERSONAL_REQUEST",
       requested_shift_code: "",
       reason: "",
-      target_employee_id: "",
-      is_mutual_swap: false,
-      emergency_override: false,
     });
 
-    this.conflicts = [];
-    this.mutualSwapOptions = [];
-    this.departmentStaffing = {};
-    this.validationResult = null;
+    this.validations = [];
   }
 
   closeModal() {
@@ -194,140 +157,100 @@ export default class ScheduleSwitchModal extends Vue {
     focusOnInvalid();
   }
 
-  // Watchers
-  // @watch("form.requested_shift_code")
+  initializeForm() {
+    this.resetForm();
+
+    // Set default values if needed
+    if (this.currentSchedule) {
+      this.form.current_shift = this.currentSchedule.shift_code;
+    }
+  }
+
   onShiftChange() {
     if (this.form.requested_shift_code) {
-      this.validateScheduleChange();
-      this.loadMutualSwapOptions();
-      this.checkDepartmentStaffing();
-    }
-  }
-
-  // @watch("form.switch_type")
-  onSwitchTypeChange() {
-    if (this.form.switch_type === "MUTUAL_SWAP") {
-      this.form.is_mutual_swap = true;
-      this.loadMutualSwapOptions();
+      this.validateBasicSwitch();
     } else {
-      this.form.is_mutual_swap = false;
-      this.form.target_employee_id = "";
+      this.validations = [];
     }
   }
 
-  // Methods
-  async validateScheduleChange() {
+  validateBasicSwitch() {
+    this.validations = [];
+
     if (!this.form.requested_shift_code || !this.selectedEmployee) return;
 
-    this.loading = true;
-    try {
-      const { data } = await this.workScheduleAPI.CheckScheduleConflicts({
-        employee_id: this.selectedEmployee.employee_id,
-        schedule_date: this.selectedDate,
-        current_shift_code: this.currentSchedule?.shift_code,
-        requested_shift_code: this.form.requested_shift_code,
-        check_type: "SWITCH_VALIDATION",
+    // Basic validations without complex rules
+    const currentShift = this.currentSchedule?.shift_code || "OFF";
+    const requestedShift = this.form.requested_shift_code;
+
+    // Same shift validation
+    if (currentShift === requestedShift) {
+      this.validations.push({
+        type: "WARNING",
+        message: "Shift yang dipilih sama dengan shift saat ini",
       });
+      return;
+    }
 
-      this.conflicts = data.conflicts || [];
-      this.validationResult = data;
+    // Off to work validation
+    if (currentShift === "OFF" && requestedShift !== "OFF") {
+      this.validations.push({
+        type: "INFO",
+        message: "Mengubah hari libur menjadi hari kerja",
+      });
+    }
 
-      // Auto-populate emergency override untuk critical conflicts
+    // Work to off validation
+    if (currentShift !== "OFF" && requestedShift === "OFF") {
+      this.validations.push({
+        type: "INFO",
+        message: "Mengubah hari kerja menjadi hari libur",
+      });
+    }
+
+    // Department compatibility (basic check)
+    const newShift = this.availableShifts.find(
+      (s) => s.code === requestedShift
+    );
+    if (newShift && newShift.departments && newShift.departments.length > 0) {
       if (
-        this.criticalConflicts.length > 0 &&
-        this.form.switch_type === "EMERGENCY"
+        !newShift.departments.includes(this.selectedEmployee.department_code)
       ) {
-        this.form.emergency_override = true;
+        this.validations.push({
+          type: "WARNING",
+          message: `Shift ${newShift.name} biasanya untuk departemen lain`,
+        });
       }
-    } catch (error) {
-      getToastError("Gagal validasi perubahan jadwal");
-      console.error(error);
-    } finally {
-      this.loading = false;
-    }
-  }
-
-  async loadMutualSwapOptions() {
-    if (!this.form.is_mutual_swap || !this.selectedEmployee) return;
-
-    try {
-      // const { data } = await this.workScheduleAPI.GetMutualSwapOptions({
-      //   employee_id: this.selectedEmployee.employee_id,
-      //   schedule_date: this.selectedDate,
-      //   requested_shift_code: this.form.requested_shift_code,
-      //   department_code: this.selectedEmployee.department_code,
-      // });
-      // this.mutualSwapOptions = data || [];
-    } catch (error) {
-      console.error("Gagal load mutual swap options:", error);
-    }
-  }
-
-  async checkDepartmentStaffing() {
-    if (!this.selectedEmployee || !this.selectedDate) return;
-
-    try {
-      // const { data } = await this.workScheduleAPI.ValidateStaffCoverage({
-      //   department_code: this.selectedEmployee.department_code,
-      //   schedule_date: this.selectedDate,
-      //   simulation_changes: [
-      //     {
-      //       employee_id: this.selectedEmployee.employee_id,
-      //       from_shift: this.currentSchedule?.shift_code,
-      //       to_shift: this.form.requested_shift_code,
-      //     },
-      //   ],
-      // });
-      // this.departmentStaffing = data;
-    } catch (error) {
-      console.error("Gagal check department staffing:", error);
     }
   }
 
   async submitSwitch() {
     if (!this.canProceed) return;
 
-    this.loading = true;
+    this.isLoading = true;
     try {
       const switchData = {
-        requester_employee_id: this.selectedEmployee.employee_id,
-        target_employee_id: this.form.target_employee_id || null,
+        employee_id: this.selectedEmployee.employee_id,
+        employee_name: this.selectedEmployee.employee_name,
         schedule_date: this.selectedDate,
-        current_shift_code: this.currentSchedule?.shift_code,
+        day_index: this.selectedDayIndex,
+        current_shift_code: this.currentSchedule?.shift_code || "OFF",
         requested_shift_code: this.form.requested_shift_code,
         switch_type: this.form.switch_type,
         reason: this.form.reason,
-        emergency_override: this.form.emergency_override,
-        conflicts_acknowledged: this.conflicts.map((c) => ({
-          type: c.type,
-          severity: c.severity,
-          acknowledged: true,
-        })),
+        validations_acknowledged: this.validations.map((v) => v.message),
+        auto_approved: true, // Basic implementation auto-approves
       };
 
-      const { data } = await this.workScheduleAPI.RequestScheduleSwitch(
-        switchData
-      );
-
-      if (data.auto_approved) {
-        getToastSuccess("Perubahan jadwal berhasil diterapkan");
-        this.$emit("switch-confirmed", data);
-      } else {
-        getToastSuccess(
-          "Permintaan perubahan jadwal telah disubmit untuk approval"
-        );
-        this.$emit("switch-confirmed", data);
-      }
+      // Emit the switch confirmation
+      this.$emit("switch-confirmed", switchData);
 
       this.closeModal();
     } catch (error: any) {
-      if (error.response?.data?.message) {
-        getToastError(error.response.data.message);
-      } else {
-        getToastError("Gagal submit perubahan jadwal");
-      }
+      getToastError("Gagal memproses pergantian jadwal");
+      console.error("Switch error:", error);
     } finally {
-      this.loading = false;
+      this.isLoading = false;
     }
   }
 
@@ -347,39 +270,21 @@ export default class ScheduleSwitchModal extends Vue {
     }
 
     return {
-      name: shift.shift_name,
+      name: shift.name,
       time: timeDisplay,
-      color: shift.color_code || "#6c757d",
-      category: shift.shift_category,
+      color: shift.color || "#6c757d",
       working_hours: shift.working_hours || 0,
     };
   }
 
-  getConflictIcon(conflictType: string) {
-    const icons = {
-      REST_TIME: "fa-bed",
-      CONSECUTIVE_DAYS: "fa-calendar-times",
-      STAFF_LIMIT: "fa-users",
-      SKILL_REQUIREMENT: "fa-certificate",
-      OVERTIME_LIMIT: "fa-clock",
-    };
-    return (
-      icons[conflictType as keyof typeof icons] || "fa-exclamation-triangle"
-    );
-  }
-
-  getConflictColor(severity: string) {
-    const colors = {
-      ERROR: "text-danger",
-      WARNING: "text-warning",
-      INFO: "text-info",
-    };
-    return colors[severity as keyof typeof colors] || "text-muted";
-  }
-
   // validation
   get schema() {
-    return Yup.object().shape({});
+    return Yup.object().shape({
+      // RequestedShift: Yup.string().required("Pilih shift yang diinginkan"),
+      // Reason: Yup.string()
+      //   .required("Alasan wajib diisi")
+      //   .min(10, "Alasan minimal 10 karakter"),
+    });
   }
 
   get title() {
@@ -397,24 +302,19 @@ export default class ScheduleSwitchModal extends Vue {
   get availableShifts() {
     if (!this.selectedEmployee) return this.shiftOptions;
 
+    // Filter shifts based on employee's department (basic filtering)
     return this.shiftOptions.filter((shift: any) => {
-      // filter berdasarkan department
-      if (
-        shift.applicable_departments &&
-        shift.applicable_departments.length > 0
-      ) {
-        return shift.applicable_departments.includes(
+      // Always allow OFF shift
+      if (shift.code === "OFF") return true;
+
+      // If shift has department restrictions, check them
+      if (shift.departments && shift.departments.length > 0) {
+        return shift.departments.includes(
           this.selectedEmployee.department_code
         );
       }
 
-      // filter berdasarkan position
-      if (shift.applicable_positions && shift.applicable_positions.length > 0) {
-        return shift.applicable_positions.includes(
-          this.selectedEmployee.position_code
-        );
-      }
-
+      // If no department restrictions, allow all shifts
       return true;
     });
   }
@@ -435,47 +335,54 @@ export default class ScheduleSwitchModal extends Vue {
     );
   }
 
-  get criticalConflicts() {
-    return this.conflicts.filter((c) => c.severity === "ERROR");
-  }
-
-  get warningConflicts() {
-    return this.conflicts.filter((c) => c.severity === "WARNING");
-  }
-
   get canProceed() {
-    // Tidak bisa proceed jika ada critical conflicts dan bukan emergency override
-    if (this.criticalConflicts.length > 0 && !this.form.emergency_override) {
-      return false;
-    }
-
-    // Harus ada shift yang dipilih dan reason
-    return this.form.requested_shift_code && this.form.reason.trim().length > 0;
+    // Basic validation: must have shift and reason
+    return (
+      this.form.requested_shift_code &&
+      this.form.reason &&
+      this.form.reason.trim().length >= 10
+    );
   }
 
-  get staffingImpact() {
-    if (!this.departmentStaffing.current_shift_staffing) return null;
+  get currentShiftInfo() {
+    if (!this.currentSchedule) return this.getShiftDisplayInfo("OFF");
+    return this.getShiftDisplayInfo(this.currentSchedule.shift_code);
+  }
 
-    const currentShiftStaff =
-      this.departmentStaffing.current_shift_staffing[
-        this.currentSchedule?.shift_code
-      ] || 0;
-    const newShiftStaff =
-      this.departmentStaffing.current_shift_staffing[
-        this.form.requested_shift_code
-      ] || 0;
+  get newShiftInfo() {
+    if (!this.form.requested_shift_code) return null;
+    return this.getShiftDisplayInfo(this.form.requested_shift_code);
+  }
 
-    return {
-      current_shift_impact: currentShiftStaff - 1,
-      new_shift_impact: newShiftStaff + 1,
-      current_shift_minimum:
-        this.departmentStaffing.minimum_staffing?.[
-          this.currentSchedule?.shift_code
-        ] || 0,
-      new_shift_maximum:
-        this.departmentStaffing.maximum_staffing?.[
-          this.form.requested_shift_code
-        ] || 999,
-    };
+  get hoursDifference() {
+    if (!this.newShiftInfo) return 0;
+    const currentHours = this.currentShiftInfo.working_hours;
+    const newHours = this.newShiftInfo.working_hours;
+    return newHours - currentHours;
+  }
+
+  get dayName() {
+    const dayNames = [
+      "Minggu",
+      "Senin",
+      "Selasa",
+      "Rabu",
+      "Kamis",
+      "Jumat",
+      "Sabtu",
+    ];
+    const date = new Date(this.selectedDate);
+    return dayNames[date.getDay()];
+  }
+
+  get formattedDate() {
+    if (!this.selectedDate) return "";
+    const date = new Date(this.selectedDate);
+    return date.toLocaleDateString("id-ID", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   }
 }

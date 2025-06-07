@@ -10,7 +10,7 @@
   <div @click.stop>
     <div class="schedule-switch-modal">
       <!-- Employee & Date Info Header -->
-      <div class="row mb-4">
+      <div class="row">
         <div class="col-12">
           <div class="card p-3 border-primary">
             <div class="row align-items center">
@@ -183,25 +183,6 @@
                     :loading="loading"
                   />
                 </div>
-
-                <!-- Emergency Override -->
-                <div class="col-md-6" v-if="criticalConflicts.length > 0">
-                  <div class="form-check mt-4">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      v-model="form.emergency_override"
-                      id="emergencyOverride"
-                    />
-                    <label
-                      class="form-check-label text-danger"
-                      for="emergencyOverride"
-                    >
-                      <i class="fa fa-exclamation-triangle mr-1"></i>
-                      Emergency Override (Critical Conflicts)
-                    </label>
-                  </div>
-                </div>
               </div>
 
               <!-- Reason -->
@@ -226,13 +207,13 @@
           </div>
 
           <!-- Conflicts & Validation Results -->
-          <div v-if="conflicts.length > 0" class="card mb-4">
+          <div v-if="validations.length > 0" class="card mb-4">
             <div
               class="card-header"
               :class="{
-            'bg-danger text-white': criticalConflicts.length > 0,
-            'bg-warning': criticalConflicts.length === 0 && warningConflicts.length > 0,
-            'bg-info text-white': criticalConflicts.length === 0 && warningConflicts.length === 0
+            'bg-danger text-white': validations.length > 0,
+            'bg-warning': validations.length === 0 && warningConflicts.length > 0,
+            'bg-info text-white': validations.length === 0 && warningConflicts.length === 0
           }"
             >
               <h6 class="mb-0">
@@ -245,13 +226,13 @@
             </div>
             <div class="card-body">
               <!-- Critical Conflicts -->
-              <div v-if="criticalConflicts.length > 0" class="mb-3">
+              <div v-if="validations.length > 0" class="mb-3">
                 <h6 class="text-danger">
                   <i class="fa fa-times-circle mr-1"></i>Critical Issues (Must
                   be resolved)
                 </h6>
                 <div
-                  v-for="conflict in criticalConflicts"
+                  v-for="conflict in validations"
                   :key="conflict.type"
                   class="alert alert-danger d-flex align-items-center"
                 >
@@ -290,80 +271,6 @@
 
         <!-- Right Column: Impact Analysis & Department Staffing -->
         <div class="col-md-4">
-          <!-- Department Staffing Impact -->
-          <div
-            v-if="departmentStaffing.current_shift_staffing"
-            class="card mb-4"
-          >
-            <div class="card-header bg-secondary text-white">
-              <h6 class="mb-0">
-                <i class="fa fa-users mr-2"></i>Staffing Impact
-              </h6>
-            </div>
-
-            <div class="card-body">
-              <div class="staffing-analysis">
-                <!-- Current Shift Impact -->
-                <div class="mb-3 p-2 border rounded">
-                  <h6 class="text-muted mb-1">
-                    {{currentSchedule?.shift_code}} Shift
-                  </h6>
-                  <div class="d-flex justify-content-between">
-                    <span>Current Staff:</span>
-                    <span
-                      >{{departmentStaffing.current_shift_staffing[currentSchedule?.shift_code]
-                      || 0}}</span
-                    >
-                  </div>
-                  <div class="d-flex justify-content-between">
-                    <span>After Change:</span>
-                    <span
-                      :class="{
-                    'text-danger': staffingImpact?.current_shift_impact < staffingImpact?.current_shift_minimum,
-                    'text-success': staffingImpact?.current_shift_impact >= staffingImpact?.current_shift_minimum
-                  }"
-                    >
-                      {{staffingImpact?.current_shift_impact}}
-                    </span>
-                  </div>
-                  <div class="d-flex justify-content-between">
-                    <span>Minimum Required:</span>
-                    <span>{{staffingImpact?.current_shift_minimum}}</span>
-                  </div>
-                </div>
-
-                <!-- New Shift Impact -->
-                <div class="p-2 border rounded">
-                  <h6 class="text-muted mb-1">
-                    {{form.requested_shift_code}} Shift
-                  </h6>
-                  <div class="d-flex justify-content-between">
-                    <span>Current Staff:</span>
-                    <span
-                      >{{departmentStaffing.current_shift_staffing[form.requested_shift_code]
-                      || 0}}</span
-                    >
-                  </div>
-                  <div class="d-flex justify-content-between">
-                    <span>After Change:</span>
-                    <span
-                      :class="{
-                    'text-danger': staffingImpact?.new_shift_impact > staffingImpact?.new_shift_maximum,
-                    'text-success': staffingImpact?.new_shift_impact <= staffingImpact?.new_shift_maximum
-                  }"
-                    >
-                      {{staffingImpact?.new_shift_impact}}
-                    </span>
-                  </div>
-                  <div class="d-flex justify-content-between">
-                    <span>Maximum Allowed:</span>
-                    <span>{{staffingImpact?.new_shift_maximum}}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!-- Mutual Swap Options -->
           <div
             v-if="form.switch_type === 'MUTUAL_SWAP' && mutualSwapOptions.length > 0"
@@ -473,7 +380,7 @@
               >
                 <i v-if="loading" class="fa fa-spinner fa-spin mr-1"></i>
                 <i v-else class="fa fa-save mr-1"></i>
-                {{loading ? 'Processing...' : (criticalConflicts.length > 0 ?
+                {{loading ? 'Processing...' : (validations.length > 0 ?
                 'Override & Submit' : 'Submit Request')}}
               </button>
             </div>

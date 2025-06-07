@@ -9,7 +9,7 @@
           class="d-flex align-items-center flex-column flex-md-row gap-2 gap-md-0"
         >
           <h3 class="card-title mb-0 mr-3">
-            {{$t('title.weeklySchedule')}} :
+            {{$t('title.weeklySchedule')}}:
             <span class="text-bold">{{currentWeekRange}}</span>
           </h3>
 
@@ -17,23 +17,23 @@
           <div class="schedule-stats d-flex">
             <span class="badge badge-primary p-2 mr-2">
               <i class="fa fa-users mr-1"></i>
-              {{currentWeekData.length}} employees
+              {{filteredEmployees.length}} employees
             </span>
 
-            <span
-              v-if="hasScheduleChanges"
-              class="badge badge-warning p-2 mr-2"
-            >
-              <i class="fa fa-edit mr-1"></i>
-              {{scheduleChanges.length}} unsaved changes
+            <span class="badge badge-info p-2 mr-2 mb-1">
+              <i class="fa fa-clock mr-1"></i>
+              {{summaryData.total_working_hours}}h total
             </span>
-
+            <span class="badge badge-warning p-2 mr-2 mb-1">
+              <i class="fa fa-chart-line mr-1"></i>
+              {{summaryData.avg_hours_per_employee}}h rata-rata
+            </span>
             <span
-              v-if="warningConflicts.length > 0"
-              class="badge badge-warning mr-2"
+              v-if="summaryData.total_overtime_hours > 0"
+              class="badge badge-danger p-2 mr-2 mb-1"
             >
-              <i class="fa fa-exclamation-triangle p-2 mr-1"></i>
-              {{warningConflicts.length}} warnings
+              <i class="fa fa-exclamation-triangle mr-1"></i>
+              {{summaryData.total_overtime_hours}}h lembur
             </span>
           </div>
         </div>
@@ -69,6 +69,54 @@
         </div>
       </div>
     </div>
+
+    <!-- Filters -->
+    <!-- <div class="card-body pt-2">
+      <div class="row">
+        <div class="col-md-3">
+          <select
+            class="form-select form-select-sm"
+            v-model="filters.department"
+            @change="$forceUpdate()"
+          >
+            <option value="">Semua Departemen</option>
+            <option
+              v-for="dept in departmentOptions"
+              :key="dept.code"
+              :value="dept.code"
+            >
+              {{dept.name}}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select
+            class="form-select form-select-sm"
+            v-model="filters.position"
+            @change="$forceUpdate()"
+          >
+            <option value="">Semua Posisi</option>
+            <option value="STAFF">Staff</option>
+            <option value="SUPERVISOR">Supervisor</option>
+            <option value="MANAGER">Manager</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <div class="form-check mt-1">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              v-model="filters.show_conflicts_only"
+              id="showConflictsOnly"
+            />
+            <label class="form-check-label small" for="showConflictsOnly">
+              Tampilkan konflik saja
+            </label>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
     <div class="card-body">
       <div class="table-responsive card">
         <table class="table table-bordered table-hover schedule-table">
@@ -93,7 +141,7 @@
           </thead>
           <tbody>
             <tr
-              v-for="(employee, empIndex) in currentWeekData"
+              v-for="(employee, empIndex) in filteredEmployees"
               :key="empIndex"
               class="employee-row"
             >
@@ -113,7 +161,8 @@
                       >{{employee.position_name}}</small
                     >
                   </div>
-                  <!-- Employee Actions -->
+
+                  <!-- Employee Actions Dropdown -->
                   <div class="dropdown">
                     <button
                       class="btn btn-sm btn-outline-secondary dropdown-toggle"
@@ -123,27 +172,25 @@
                     >
                       <i class="fa fa-ellipsis-v"></i>
                     </button>
-                    <ul
-                      class="dropdown-menu"
-                      :aria-labelledby="`empDropdown${empIndex}`"
-                    >
+                    <ul class="dropdown-menu dropdown-menu-right">
                       <li>
                         <a
                           class="dropdown-item"
                           href="#"
-                          @click="quickSwitchToday(employee)"
+                          @click.prevent="quickSwitchToday(employee)"
                         >
-                          <i class="fa fa-exchange-alt mr-2"></i>Quick Switch
-                          Today
+                          <i class="fa fa-exchange-alt mr-2 text-primary"></i>
+                          Ganti Shift Hari Ini
                         </a>
                       </li>
                       <li>
                         <a
                           class="dropdown-item"
                           href="#"
-                          @click="showSwitchRequestsModal(employee)"
+                          @click.prevent="showSwitchRequestsModal(employee)"
                         >
-                          <i class="fa fa-list mr-2"></i>View Switch Requests
+                          <i class="fa fa-list mr-2 text-info"></i>
+                          Lihat Riwayat Pergantian
                         </a>
                       </li>
                       <li><hr class="dropdown-divider" /></li>
@@ -151,10 +198,10 @@
                         <a
                           class="dropdown-item"
                           href="#"
-                          @click="handleShowForm(employee, $global.modeData.edit)"
+                          @click.prevent="$emit('edit-employee-schedule', employee)"
                         >
-                          <i class="fa fa-edit mr-2"></i>Update Schedule
-                          Template
+                          <i class="fa fa-edit mr-2 text-warning"></i>
+                          Edit Template Jadwal
                         </a>
                       </li>
                     </ul>
@@ -169,63 +216,85 @@
                 @click="openScheduleModal(employee, day, day.day_index)"
                 class="shift-cell text-center align-middle"
                 :class="{
-                    'selected': bulkEditMode && selectedCells.includes(`${employee.employee_id}-${day.day_index}`),
-                    'has-conflict': checkCellConflict(employee.employee_id, day.day_index),
-                    'has-switch-request': todaysSwitchRequests.some(req => 
-                      req.employee_id === employee.employee_id && 
-                      req.schedule_date === day.date
-                    )
-                  }"
-                :title="`Click to switch schedule for ${employee.employee_name} on ${day.name}`"
+                  'cursor-pointer': true,
+                  'table-success': getScheduleCode(employee.employee_id, day.day_index) !== 'OFF',
+                  'table-light': getScheduleCode(employee.employee_id, day.day_index) === 'OFF',
+                }"
+                :title="`Klik untuk ganti jadwal ${employee.employee_name} pada ${day.name}`"
               >
-                <div class="shift-content">
-                  <span
-                    :class="{
-                        'shift-badge': true,
-                        [getShiftBadgeClass(getScheduleCode(employee.employee_id, day.day_index))]: true
+                <div class="shift-content p-2">
+                  <!-- Shift Badge -->
+                  <div class="shift-badge-container mb-1">
+                    <span
+                      class="shift-badge badge badge-lg"
+                      :style="{ 
+                        backgroundColor: getShiftColor(getScheduleCode(employee.employee_id, day.day_index)),
+                        color: 'white',
+                        fontSize: '11px',
+                        padding: '8px 12px'
                       }"
-                    :style="{ backgroundColor: getShiftColor(getScheduleCode(employee.employee_id, day.day_index)) }"
-                  >
-                    {{getScheduleCode(employee.employee_id, day.day_index)}}
-                  </span>
-
-                  <!-- Shift Time -->
-                  <div class="shift-time">
-                    <small>
-                      {{getScheduleTime(employee.employee_id, day.day_index)}}
-                    </small>
+                    >
+                      {{getScheduleCode(employee.employee_id, day.day_index)}}
+                    </span>
                   </div>
 
-                  <!-- Indicators -->
-                  <div class="shift-indicators">
+                  <!-- Shift Details -->
+                  <div class="shift-details">
+                    <div class="shift-name">
+                      <small class="font-weight-bold">
+                        {{getScheduleName(employee.employee_id, day.day_index)}}
+                      </small>
+                    </div>
+
+                    <div
+                      class="shift-time"
+                      v-if="getScheduleTime(employee.employee_id, day.day_index)"
+                    >
+                      <small class="text-muted">
+                        <i class="fa fa-clock mr-1"></i>
+                        {{getScheduleTime(employee.employee_id, day.day_index)}}
+                      </small>
+                    </div>
+
+                    <div
+                      class="shift-hours"
+                      v-if="getSchedule(employee.employee_id, day.day_index)?.working_hours > 0"
+                    >
+                      <small class="text-info">
+                        <i class="fa fa-hourglass-half mr-1"></i>
+                        {{getSchedule(employee.employee_id,
+                        day.day_index)?.working_hours}}h
+                      </small>
+                    </div>
+                  </div>
+
+                  <!-- Status Indicators -->
+                  <div class="shift-indicators mt-1">
+                    <!-- Modified Indicator -->
+                    <div
+                      v-if="getSchedule(employee.employee_id, day.day_index)?.status === 'MODIFIED'"
+                      class="indicator"
+                      title="Jadwal telah diubah"
+                    >
+                      <i class="fa fa-edit text-warning"></i>
+                    </div>
+
                     <!-- Overtime Indicator -->
                     <div
                       v-if="getSchedule(employee.employee_id, day.day_index)?.is_overtime"
-                      class="indicator overtime-indicator"
-                      title="Overtime shift"
+                      class="indicator"
+                      title="Shift lembur"
                     >
                       <i class="fa fa-clock text-warning"></i>
                     </div>
 
-                    <!-- Switch Request Indicator -->
+                    <!-- Confirmed Indicator -->
                     <div
-                      v-if="todaysSwitchRequests.some(req => 
-                          req.employee_id === employee.employee_id && 
-                          req.schedule_date === day.date
-                        )"
-                      class="indicator switch-indicator"
-                      title="Has pending switch request"
+                      v-if="getSchedule(employee.employee_id, day.day_index)?.status === 'CONFIRMED'"
+                      class="indicator"
+                      title="Jadwal sudah dikonfirmasi"
                     >
-                      <i class="fa fa-exchange-alt text-info"></i>
-                    </div>
-
-                    <!-- Conflict Indicator -->
-                    <div
-                      v-if="checkCellConflict(employee.employee_id, day.day_index)"
-                      class="indicator conflict-indicator"
-                      title="Schedule conflict detected"
-                    >
-                      <i class="fa fa-exclamation-triangle text-danger"></i>
+                      <i class="fa fa-check-circle text-success"></i>
                     </div>
                   </div>
                 </div>
@@ -236,7 +305,7 @@
       </div>
 
       <!-- Legend -->
-      <div class="mt-4 card border-info">
+      <div class="mt-3 card border-info">
         <div class="card-header bg-light">
           <h6 class="mb-0">
             <i class="fa fa-info-circle mr-2"></i>
@@ -331,6 +400,28 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Schedule Switch Modal -->
+  <switch-shift-modal
+    :visible="showScheduleSwitchModal"
+    :selectedEmployee="selectedEmployeeForSwitch"
+    :selectedDate="selectedDateForSwitch"
+    :selectedDayIndex="selectedDayIndexForSwitch"
+    :shiftOptions="shiftOptions"
+    :currentSchedule="currentScheduleForSwitch"
+    @close="handleSwitchModalClose"
+    @switch-confirmed="handleSwitchConfirmed"
+  />
+
+  <!-- Loading Overlay -->
+  <div v-if="isLoading" class="loading-overlay">
+    <div class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <p class="mt-2">Memuat jadwal...</p>
     </div>
   </div>
 </section>

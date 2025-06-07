@@ -18,7 +18,8 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import ScheduleSwitchModal from "./components/schedule-switch-modal/schedule-switch-modal.vue";
+import SwitchShiftModal from "./components/schedule-switch-modal/schedule-switch-modal.vue";
+import WeeklyScheduleView from "./components/weekly-schedule-view/weekly-schedule-view.vue";
 import CInputForm from "./components/work-schedule-input-form/work-schedule-input-form.vue";
 
 interface Day {
@@ -28,24 +29,18 @@ interface Day {
   day_index: number;
 }
 
-interface DailySchedule {
+interface SwitchRequest {
+  id: number;
   employee_id: string;
-  day_index: number;
-  shift_code: string;
-  shift_name: string;
-  start_time: string;
-  end_time: string;
-  working_hours: number;
-  is_overtime: boolean;
-  reason?: string;
-  updated_by?: string;
-  updated_at?: string;
-}
-
-interface ScheduleConflict {
-  type: "overlap" | "rest_time" | "consecutive_days" | "department_limit";
-  message: string;
-  severity: "warning" | "error";
+  employee_name: string;
+  schedule_date: string;
+  current_shift_code: string;
+  requested_shift_code: string;
+  reason: string;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
+  requested_at: string;
+  approved_by?: string;
+  approved_at?: string;
 }
 
 const workScheduleAPI = new WorkScheduleAPI();
@@ -59,23 +54,24 @@ const workScheduleAPI = new WorkScheduleAPI();
     CInputForm,
     CSelect,
     CInput,
-    ScheduleSwitchModal,
+    SwitchShiftModal,
+    WeeklyScheduleView,
   },
 })
 export default class WorkSchedule extends Vue {
   // data
   public rowData: any = [];
-  public currentWeekData: any = [];
   public deleteParam: any;
   public currentWeekStart: Date = new Date();
   public weekDays: Day[] = [];
-  public scheduleChanges: DailySchedule[] = [];
+  public switchRequests: SwitchRequest[] = [];
 
-  // options data
+  // Options data
   public employeeOptions: any = [];
-  public workScheduleOptions: any = [];
+  public scheduleOptions: any = [];
   public workScheduleTypeOptions: any = [];
   public shiftOptions: any = [];
+  public departmentOptions: any = [];
 
   // form
   public form: any = {};
@@ -83,25 +79,9 @@ export default class WorkSchedule extends Vue {
   public showForm: boolean = false;
   public inputFormElement: any = ref();
 
-  // modal
-  public modalForm: any = {};
-  public modalParam: any;
-  public showModal: boolean = false;
-  public selectedEmployee: any = null;
-  public selectedDay: Day | null = null;
-  public selectedDayIndex: number = -1;
-
-  public showScheduleSwitchModal: boolean = false;
-  public selectedEmployeeForSwitch: any = null;
-  public selectedDateForSwitch: string = "";
-  public selectedDayIndexForSwitch: number = -1;
-  public currentScheduleForSwitch: any = null;
-  public switchRequests: any[] = [];
-
-  // Schedule management
-  public scheduleConflicts: ScheduleConflict[] = [];
-  public bulkEditMode: boolean = false;
-  public selectedCells: any[] = [];
+  // Weekly Schedule View
+  public weeklyScheduleViewRef: any = ref();
+  public showWeeklyView: boolean = true;
 
   // dialog
   public showDialog: boolean = false;
@@ -416,14 +396,6 @@ export default class WorkSchedule extends Vue {
     this.showForm = true;
   }
 
-  async handleShowModal(params: any, mode: any) {
-    this.showModal = false;
-    await this.$nextTick();
-
-    this.modeData = mode;
-    this.showModal = true;
-  }
-
   handleShowDetail() {}
 
   handleSave(formData: any) {
@@ -438,14 +410,6 @@ export default class WorkSchedule extends Vue {
         this.showForm = false;
       });
     }
-  }
-
-  handleSaveModal() {
-    if (!this.modalForm.new_shift_code) {
-      getToastError("Silakan pilih shift yang baru");
-      return;
-    }
-    this.switchSchedule();
   }
 
   handleEdit(formData: any) {
@@ -485,6 +449,11 @@ export default class WorkSchedule extends Vue {
     this.loadDataGrid(this.searchDefault);
   }
 
+  handleToSwitchShift() {
+    this.$router.push({
+      name: "SwitchShift",
+    });
+  }
   handleToSchedule() {
     this.$router.push({
       name: "ScheduleTemplate",
@@ -501,54 +470,21 @@ export default class WorkSchedule extends Vue {
     });
   }
 
-  onEmployeeChange() {
-    if (this.modalForm.employee_id) {
-      const selectedEmployee = this.employeeOptions.find(
-        (emp: any) => emp.employee_id === this.modalForm.employee_id
-      );
-
-      if (selectedEmployee) {
-        this.modalForm.employee_name = selectedEmployee.name;
-        this.modalForm.department_code = selectedEmployee.department_code;
-        this.modalForm.department_name = selectedEmployee.department_name;
-        this.modalForm.position_code = selectedEmployee.position_code;
-        this.modalForm.position_name = selectedEmployee.position_name;
-        this.modalForm.placement_code = selectedEmployee.placement_code;
-        this.modalForm.placement_name = selectedEmployee.placement_name;
-      }
-    } else {
-      this.modalForm.employee_name = "";
-      this.modalForm.department_code = "";
-      this.modalForm.department_name = "";
-      this.modalForm.position_code = "";
-      this.modalForm.position_name = "";
-      this.modalForm.placement_code = "";
-      this.modalForm.placement_name = "";
-    }
-  }
-
-  openScheduleModal(employee: any, day: Day, dayIndex: number) {
-    this.selectedEmployeeForSwitch = employee;
-    this.selectedDateForSwitch = day.date;
-    this.selectedDayIndexForSwitch = day.day_index;
-
-    // Get current schedule for this employee and day
-    this.currentScheduleForSwitch = this.getSchedule(
-      employee.employee_id,
-      day.day_index
-    );
-
-    this.showScheduleSwitchModal = true;
-  }
-
   quickSwitchToday(employee: any) {
     const today = new Date().toISOString().split("T")[0];
     const todayDay = this.weekDays.find((day) => day.date === today);
 
     if (todayDay) {
-      this.openScheduleModal(employee, todayDay, todayDay.day_index);
+      // Delegate to weekly schedule view component
+      if (this.weeklyScheduleViewRef) {
+        this.weeklyScheduleViewRef.openScheduleModal(
+          employee,
+          todayDay,
+          todayDay.day_index
+        );
+      }
     } else {
-      getToastInfo("Today's schedule is not in the current week view");
+      getToastInfo("Jadwal hari ini tidak dalam tampilan minggu saat ini");
     }
   }
 
@@ -556,39 +492,6 @@ export default class WorkSchedule extends Vue {
     // Implementation for showing employee's switch requests
     console.log("Show switch requests for:", employee.employee_name);
     // This could open another modal showing all pending/approved/rejected requests
-  }
-
-  async handleSwitchConfirmed(switchData: any) {
-    try {
-      console.log("Switch confirmed:", switchData);
-
-      // Update local schedule data immediately if auto-approved
-      if (switchData.auto_approved) {
-        this.updateLocalScheduleData(switchData);
-      }
-
-      // Reload switch requests to show pending items
-      await this.loadPendingSwitchRequests();
-
-      // Refresh current week data
-      // await this.loadCurrentWeekData();
-
-      // Close modal
-      this.showScheduleSwitchModal = false;
-
-      getToastSuccess("Schedule switch processed successfully");
-    } catch (error) {
-      console.error("Error handling switch confirmation:", error);
-      getToastError("Failed to process schedule switch");
-    }
-  }
-
-  handleSwitchModalClose() {
-    this.showScheduleSwitchModal = false;
-    this.selectedEmployeeForSwitch = null;
-    this.selectedDateForSwitch = "";
-    this.selectedDayIndexForSwitch = -1;
-    this.currentScheduleForSwitch = null;
   }
 
   // API REQUEST =======================================================
@@ -668,28 +571,6 @@ export default class WorkSchedule extends Vue {
     }
   }
 
-  async loadEditDataModal(id: any) {
-    try {
-      /*
-      const workScheduleAPI = new WorkScheduleAPI();
-      const { data } = await workScheduleAPI.GetEmployeeWorkSchedule(id);
-      this.inputFormElement.form = this.populateForm(data);
-      */
-
-      const schedule = this.rowData.find((item: any) => item.id === id);
-
-      if (schedule) {
-        this.$nextTick(() => {
-          this.modalForm = this.populateFormModal(schedule);
-        });
-      } else {
-        getToastError(this.$t("messages.attendance.error.notFoundSchedule"));
-      }
-    } catch (error) {
-      getError(error);
-    }
-  }
-
   loadMockData() {
     this.rowData = [
       {
@@ -754,379 +635,215 @@ export default class WorkSchedule extends Vue {
       },
     ];
 
-    this.currentWeekData = [
-      {
-        id: 1,
-        employee_id: "EMP001",
-        employee_name: "John Doe",
-        department_code: "FRONT_OFFICE",
-        department_name: "Front Office",
-        position_code: "STAFF",
-        position_name: "Staff",
-        placement_code: "AMORA_UBUD",
-        placement_name: "Amora Ubud",
-        daily_schedules: [
-          {
-            day_index: 0,
-            shift_code: "OFF",
-            shift_name: "Day Off",
-            start_time: "",
-            end_time: "",
-            working_hours: 0,
-          },
-          {
-            day_index: 1,
-            shift_code: "FO-M",
-            shift_name: "Front Office Morning",
-            start_time: "07:00",
-            end_time: "15:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 2,
-            shift_code: "FO-M",
-            shift_name: "Front Office Morning",
-            start_time: "07:00",
-            end_time: "15:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 3,
-            shift_code: "FO-E",
-            shift_name: "Front Office Evening",
-            start_time: "15:00",
-            end_time: "23:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 4,
-            shift_code: "FO-E",
-            shift_name: "Front Office Evening",
-            start_time: "15:00",
-            end_time: "23:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 5,
-            shift_code: "FO-N",
-            shift_name: "Front Office Night",
-            start_time: "23:00",
-            end_time: "07:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 6,
-            shift_code: "OFF",
-            shift_name: "Day Off",
-            start_time: "",
-            end_time: "",
-            working_hours: 0,
-          },
-        ],
-      },
-      {
-        id: 2,
-        employee_id: "EMP002",
-        employee_name: "Jane Smith",
-        department_code: "HOUSEKEEPING",
-        department_name: "Housekeeping",
-        position_code: "SUPERVISOR",
-        position_name: "Supervisor",
-        placement_code: "AMORA_UBUD",
-        placement_name: "Amora Ubud",
-        daily_schedules: [
-          {
-            day_index: 0,
-            shift_code: "OFF",
-            shift_name: "Day Off",
-            start_time: "",
-            end_time: "",
-            working_hours: 0,
-          },
-          {
-            day_index: 1,
-            shift_code: "HK-M",
-            shift_name: "Housekeeping Morning",
-            start_time: "08:00",
-            end_time: "16:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 2,
-            shift_code: "HK-M",
-            shift_name: "Housekeeping Morning",
-            start_time: "08:00",
-            end_time: "16:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 3,
-            shift_code: "HK-M",
-            shift_name: "Housekeeping Morning",
-            start_time: "08:00",
-            end_time: "16:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 4,
-            shift_code: "HK-M",
-            shift_name: "Housekeeping Morning",
-            start_time: "08:00",
-            end_time: "16:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 5,
-            shift_code: "HK-M",
-            shift_name: "Housekeeping Morning",
-            start_time: "08:00",
-            end_time: "16:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 6,
-            shift_code: "HK-M",
-            shift_name: "Housekeeping Morning",
-            start_time: "08:00",
-            end_time: "16:00",
-            working_hours: 8,
-          },
-        ],
-      },
-      {
-        id: 3,
-        employee_id: "EMP003",
-        employee_name: "Robert Johnson",
-        department_code: "RESTAURANT",
-        department_name: "Restaurant",
-        position_code: "CHEF",
-        position_name: "Chef",
-        placement_code: "AMORA_UBUD",
-        placement_name: "Amora Ubud",
-        daily_schedules: [
-          {
-            day_index: 0,
-            shift_code: "OFF",
-            shift_name: "Day Off",
-            start_time: "",
-            end_time: "",
-            working_hours: 0,
-          },
-          {
-            day_index: 1,
-            shift_code: "FB-B",
-            shift_name: "F&B Breakfast",
-            start_time: "05:00",
-            end_time: "13:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 2,
-            shift_code: "FB-L",
-            shift_name: "F&B Lunch",
-            start_time: "10:00",
-            end_time: "18:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 3,
-            shift_code: "FB-D",
-            shift_name: "F&B Dinner",
-            start_time: "16:00",
-            end_time: "00:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 4,
-            shift_code: "FB-SP1",
-            shift_name: "F&B Split Breakfast/Dinner",
-            start_time: "06:00",
-            end_time: "10:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 5,
-            shift_code: "FB-L",
-            shift_name: "F&B Lunch",
-            start_time: "10:00",
-            end_time: "18:00",
-            working_hours: 8,
-          },
-          {
-            day_index: 6,
-            shift_code: "OFF",
-            shift_name: "Day Off",
-            start_time: "",
-            end_time: "",
-            working_hours: 0,
-          },
-        ],
-      },
-    ];
-
-    this.shiftOptions = [
-      // Day shifts
-      {
-        code: "FO-M",
-        name: "Front Office Morning",
-        start_time: "07:00",
-        end_time: "15:00",
-        working_hours: 8,
-        is_overtime: false,
-        departments: ["FRONT_OFFICE", "GUEST_RELATIONS"],
-        color: "#28a745",
-      },
-      {
-        code: "FO-E",
-        name: "Front Office Evening",
-        start_time: "15:00",
-        end_time: "23:00",
-        working_hours: 8,
-        is_overtime: false,
-        departments: ["FRONT_OFFICE", "GUEST_RELATIONS"],
-        color: "#ffc107",
-      },
-      {
-        code: "FO-N",
-        name: "Front Office Night",
-        start_time: "23:00",
-        end_time: "07:00",
-        working_hours: 8,
-        is_overtime: false,
-        departments: ["FRONT_OFFICE"],
-        color: "#343a40",
-      },
-
-      // Housekeeping shifts
-      {
-        code: "HK-M",
-        name: "Housekeeping Morning",
-        start_time: "08:00",
-        end_time: "16:00",
-        working_hours: 8,
-        is_overtime: false,
-        departments: ["HOUSEKEEPING", "LAUNDRY"],
-        color: "#17a2b8",
-      },
-      {
-        code: "HK-E",
-        name: "Housekeeping Evening",
-        start_time: "14:00",
-        end_time: "22:00",
-        working_hours: 8,
-        is_overtime: false,
-        departments: ["HOUSEKEEPING"],
-        color: "#fd7e14",
-      },
-
-      // F&B shifts
-      {
-        code: "FB-B",
-        name: "F&B Breakfast",
-        start_time: "05:00",
-        end_time: "13:00",
-        working_hours: 8,
-        is_overtime: false,
-        departments: ["RESTAURANT", "KITCHEN", "BAR"],
-        color: "#e83e8c",
-      },
-      {
-        code: "FB-L",
-        name: "F&B Lunch",
-        start_time: "10:00",
-        end_time: "18:00",
-        working_hours: 8,
-        is_overtime: false,
-        departments: ["RESTAURANT", "KITCHEN", "BAR"],
-        color: "#6610f2",
-      },
-      {
-        code: "FB-D",
-        name: "F&B Dinner",
-        start_time: "16:00",
-        end_time: "00:00",
-        working_hours: 8,
-        is_overtime: false,
-        departments: ["RESTAURANT", "KITCHEN", "BAR"],
-        color: "#6f42c1",
-      },
-
-      // Security & Engineering
-      {
-        code: "SEC-D",
-        name: "Security Day",
-        start_time: "06:00",
-        end_time: "18:00",
-        working_hours: 12,
-        is_overtime: true,
-        departments: ["SECURITY"],
-        color: "#dc3545",
-      },
-      {
-        code: "SEC-N",
-        name: "Security Night",
-        start_time: "18:00",
-        end_time: "06:00",
-        working_hours: 12,
-        is_overtime: true,
-        departments: ["SECURITY"],
-        color: "#721c24",
-      },
-      {
-        code: "ENG-M",
-        name: "Engineering Morning",
-        start_time: "07:00",
-        end_time: "15:00",
-        working_hours: 8,
-        is_overtime: false,
-        departments: ["ENGINEERING", "MAINTENANCE"],
-        color: "#20c997",
-      },
-
-      // Split shifts
-      {
-        code: "FB-SP1",
-        name: "F&B Split Breakfast/Dinner",
-        start_time: "06:00",
-        end_time: "10:00",
-        working_hours: 8,
-        is_overtime: false,
-        departments: ["RESTAURANT", "KITCHEN"],
-        color: "#6c757d",
-        is_split: true,
-        split_times: [
-          { start: "06:00", end: "10:00" },
-          { start: "17:00", end: "21:00" },
-        ],
-      },
-      {
-        code: "FB-SP2",
-        name: "F&B Split Lunch/Dinner",
-        start_time: "11:00",
-        end_time: "15:00",
-        working_hours: 8,
-        is_overtime: false,
-        departments: ["RESTAURANT", "KITCHEN"],
-        color: "#adb5bd",
-        is_split: true,
-        split_times: [
-          { start: "11:00", end: "15:00" },
-          { start: "18:00", end: "22:00" },
-        ],
-      },
-
-      // Day off
-      {
-        code: "OFF",
-        name: "Day Off",
-        start_time: "",
-        end_time: "",
-        working_hours: 0,
-        is_overtime: false,
-        departments: [],
-        color: "#6c757d",
-      },
-    ];
+    // this.currentWeekData = [
+    //   {
+    //     id: 1,
+    //     employee_id: "EMP001",
+    //     employee_name: "John Doe",
+    //     department_code: "FRONT_OFFICE",
+    //     department_name: "Front Office",
+    //     position_code: "STAFF",
+    //     position_name: "Staff",
+    //     placement_code: "AMORA_UBUD",
+    //     placement_name: "Amora Ubud",
+    //     daily_schedules: [
+    //       {
+    //         day_index: 0,
+    //         shift_code: "OFF",
+    //         shift_name: "Day Off",
+    //         start_time: "",
+    //         end_time: "",
+    //         working_hours: 0,
+    //       },
+    //       {
+    //         day_index: 1,
+    //         shift_code: "FO-M",
+    //         shift_name: "Front Office Morning",
+    //         start_time: "07:00",
+    //         end_time: "15:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 2,
+    //         shift_code: "FO-M",
+    //         shift_name: "Front Office Morning",
+    //         start_time: "07:00",
+    //         end_time: "15:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 3,
+    //         shift_code: "FO-E",
+    //         shift_name: "Front Office Evening",
+    //         start_time: "15:00",
+    //         end_time: "23:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 4,
+    //         shift_code: "FO-E",
+    //         shift_name: "Front Office Evening",
+    //         start_time: "15:00",
+    //         end_time: "23:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 5,
+    //         shift_code: "FO-N",
+    //         shift_name: "Front Office Night",
+    //         start_time: "23:00",
+    //         end_time: "07:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 6,
+    //         shift_code: "OFF",
+    //         shift_name: "Day Off",
+    //         start_time: "",
+    //         end_time: "",
+    //         working_hours: 0,
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     id: 2,
+    //     employee_id: "EMP002",
+    //     employee_name: "Jane Smith",
+    //     department_code: "HOUSEKEEPING",
+    //     department_name: "Housekeeping",
+    //     position_code: "SUPERVISOR",
+    //     position_name: "Supervisor",
+    //     placement_code: "AMORA_UBUD",
+    //     placement_name: "Amora Ubud",
+    //     daily_schedules: [
+    //       {
+    //         day_index: 0,
+    //         shift_code: "OFF",
+    //         shift_name: "Day Off",
+    //         start_time: "",
+    //         end_time: "",
+    //         working_hours: 0,
+    //       },
+    //       {
+    //         day_index: 1,
+    //         shift_code: "HK-M",
+    //         shift_name: "Housekeeping Morning",
+    //         start_time: "08:00",
+    //         end_time: "16:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 2,
+    //         shift_code: "HK-M",
+    //         shift_name: "Housekeeping Morning",
+    //         start_time: "08:00",
+    //         end_time: "16:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 3,
+    //         shift_code: "HK-M",
+    //         shift_name: "Housekeeping Morning",
+    //         start_time: "08:00",
+    //         end_time: "16:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 4,
+    //         shift_code: "HK-M",
+    //         shift_name: "Housekeeping Morning",
+    //         start_time: "08:00",
+    //         end_time: "16:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 5,
+    //         shift_code: "HK-M",
+    //         shift_name: "Housekeeping Morning",
+    //         start_time: "08:00",
+    //         end_time: "16:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 6,
+    //         shift_code: "HK-M",
+    //         shift_name: "Housekeeping Morning",
+    //         start_time: "08:00",
+    //         end_time: "16:00",
+    //         working_hours: 8,
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     id: 3,
+    //     employee_id: "EMP003",
+    //     employee_name: "Robert Johnson",
+    //     department_code: "RESTAURANT",
+    //     department_name: "Restaurant",
+    //     position_code: "CHEF",
+    //     position_name: "Chef",
+    //     placement_code: "AMORA_UBUD",
+    //     placement_name: "Amora Ubud",
+    //     daily_schedules: [
+    //       {
+    //         day_index: 0,
+    //         shift_code: "OFF",
+    //         shift_name: "Day Off",
+    //         start_time: "",
+    //         end_time: "",
+    //         working_hours: 0,
+    //       },
+    //       {
+    //         day_index: 1,
+    //         shift_code: "FB-B",
+    //         shift_name: "F&B Breakfast",
+    //         start_time: "05:00",
+    //         end_time: "13:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 2,
+    //         shift_code: "FB-L",
+    //         shift_name: "F&B Lunch",
+    //         start_time: "10:00",
+    //         end_time: "18:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 3,
+    //         shift_code: "FB-D",
+    //         shift_name: "F&B Dinner",
+    //         start_time: "16:00",
+    //         end_time: "00:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 4,
+    //         shift_code: "FB-SP1",
+    //         shift_name: "F&B Split Breakfast/Dinner",
+    //         start_time: "06:00",
+    //         end_time: "10:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 5,
+    //         shift_code: "FB-L",
+    //         shift_name: "F&B Lunch",
+    //         start_time: "10:00",
+    //         end_time: "18:00",
+    //         working_hours: 8,
+    //       },
+    //       {
+    //         day_index: 6,
+    //         shift_code: "OFF",
+    //         shift_name: "Day Off",
+    //         start_time: "",
+    //         end_time: "",
+    //         working_hours: 0,
+    //       },
+    //     ],
+    //   },
+    // ];
   }
 
   async loadDropdown() {
@@ -1138,7 +855,7 @@ export default class WorkSchedule extends Vue {
           this.employeeOptions = response.data;
         }),
         workScheduleAPI.GetSchedulePatternOptions().then(response => {
-          this.workScheduleOptions = response.data;
+          this.scheduleOptions = response.data;
         }),
         workScheduleAPI.GetWorkScheduleTypeOptions().then(response => {
           this.workScheduleTypeOptions = response.data;
@@ -1184,7 +901,180 @@ export default class WorkSchedule extends Vue {
         },
       ];
 
-      this.workScheduleOptions = [
+      this.departmentOptions = [
+        { code: "FRONT_OFFICE", name: "Front Office" },
+        { code: "HOUSEKEEPING", name: "Housekeeping" },
+        { code: "RESTAURANT", name: "Restaurant" },
+        { code: "KITCHEN", name: "Kitchen" },
+        { code: "SPA", name: "Spa" },
+        { code: "SECURITY", name: "Security" },
+      ];
+
+      this.shiftOptions = [
+        // Day shifts
+        {
+          code: "FO-M",
+          name: "Front Office Morning",
+          start_time: "07:00",
+          end_time: "15:00",
+          working_hours: 8,
+          is_overtime: false,
+          departments: ["FRONT_OFFICE", "GUEST_RELATIONS"],
+          color: "#28a745",
+        },
+        {
+          code: "FO-E",
+          name: "Front Office Evening",
+          start_time: "15:00",
+          end_time: "23:00",
+          working_hours: 8,
+          is_overtime: false,
+          departments: ["FRONT_OFFICE", "GUEST_RELATIONS"],
+          color: "#ffc107",
+        },
+        {
+          code: "FO-N",
+          name: "Front Office Night",
+          start_time: "23:00",
+          end_time: "07:00",
+          working_hours: 8,
+          is_overtime: false,
+          departments: ["FRONT_OFFICE"],
+          color: "#343a40",
+        },
+
+        // Housekeeping shifts
+        {
+          code: "HK-M",
+          name: "Housekeeping Morning",
+          start_time: "08:00",
+          end_time: "16:00",
+          working_hours: 8,
+          is_overtime: false,
+          departments: ["HOUSEKEEPING", "LAUNDRY"],
+          color: "#17a2b8",
+        },
+        {
+          code: "HK-E",
+          name: "Housekeeping Evening",
+          start_time: "14:00",
+          end_time: "22:00",
+          working_hours: 8,
+          is_overtime: false,
+          departments: ["HOUSEKEEPING"],
+          color: "#fd7e14",
+        },
+
+        // F&B shifts
+        {
+          code: "FB-B",
+          name: "F&B Breakfast",
+          start_time: "05:00",
+          end_time: "13:00",
+          working_hours: 8,
+          is_overtime: false,
+          departments: ["RESTAURANT", "KITCHEN", "BAR"],
+          color: "#e83e8c",
+        },
+        {
+          code: "FB-L",
+          name: "F&B Lunch",
+          start_time: "10:00",
+          end_time: "18:00",
+          working_hours: 8,
+          is_overtime: false,
+          departments: ["RESTAURANT", "KITCHEN", "BAR"],
+          color: "#6610f2",
+        },
+        {
+          code: "FB-D",
+          name: "F&B Dinner",
+          start_time: "16:00",
+          end_time: "00:00",
+          working_hours: 8,
+          is_overtime: false,
+          departments: ["RESTAURANT", "KITCHEN", "BAR"],
+          color: "#6f42c1",
+        },
+
+        // Security & Engineering
+        {
+          code: "SEC-D",
+          name: "Security Day",
+          start_time: "06:00",
+          end_time: "18:00",
+          working_hours: 12,
+          is_overtime: true,
+          departments: ["SECURITY"],
+          color: "#dc3545",
+        },
+        {
+          code: "SEC-N",
+          name: "Security Night",
+          start_time: "18:00",
+          end_time: "06:00",
+          working_hours: 12,
+          is_overtime: true,
+          departments: ["SECURITY"],
+          color: "#721c24",
+        },
+        {
+          code: "ENG-M",
+          name: "Engineering Morning",
+          start_time: "07:00",
+          end_time: "15:00",
+          working_hours: 8,
+          is_overtime: false,
+          departments: ["ENGINEERING", "MAINTENANCE"],
+          color: "#20c997",
+        },
+
+        // Split shifts
+        {
+          code: "FB-SP1",
+          name: "F&B Split Breakfast/Dinner",
+          start_time: "06:00",
+          end_time: "10:00",
+          working_hours: 8,
+          is_overtime: false,
+          departments: ["RESTAURANT", "KITCHEN"],
+          color: "#6c757d",
+          is_split: true,
+          split_times: [
+            { start: "06:00", end: "10:00" },
+            { start: "17:00", end: "21:00" },
+          ],
+        },
+        {
+          code: "FB-SP2",
+          name: "F&B Split Lunch/Dinner",
+          start_time: "11:00",
+          end_time: "15:00",
+          working_hours: 8,
+          is_overtime: false,
+          departments: ["RESTAURANT", "KITCHEN"],
+          color: "#adb5bd",
+          is_split: true,
+          split_times: [
+            { start: "11:00", end: "15:00" },
+            { start: "18:00", end: "22:00" },
+          ],
+        },
+
+        // Day off
+        {
+          code: "OFF",
+          name: "Day Off",
+          start_time: "",
+          end_time: "",
+          working_hours: 0,
+          is_overtime: false,
+          departments: [],
+          color: "#6c757d",
+        },
+      ];
+
+      this.scheduleOptions = [
         {
           code: "FO-ROT",
           name: "Front Office Rotation",
@@ -1347,166 +1237,45 @@ export default class WorkSchedule extends Vue {
     }
   }
 
-  async switchSchedule() {
+  async switchShift(formData: any) {
     try {
-      const conflicts = this.checkScheduleConflicts(
-        this.modalForm.employee_id,
-        this.modalForm.day_index,
-        this.modalForm.new_shift_code
-      );
-      if (conflicts.some((c) => c.severity === "error")) {
-        getToastError(
-          "Tidak dapat mengubah shift karena ada konflik yang harus diselesaikan"
-        );
-        return;
-      }
+      const newSwitchRequest: SwitchRequest = {
+        id: this.switchRequests.length + 1,
+        employee_id: formData.employee_id,
+        employee_name: formData.employee_name || "",
+        schedule_date: formData.schedule_date,
+        current_shift_code: formData.current_shift_code,
+        requested_shift_code: formData.requested_shift_code,
+        reason: formData.reason,
+        status: "APPROVED", // Auto approve for basic implementation
+        requested_at: new Date().toISOString(),
+        approved_by: "System",
+        approved_at: new Date().toISOString(),
+      };
 
-      if (conflicts.some((c) => c.severity === "warning")) {
-        getToastInfo(
-          "Ada peringatan pada perubahan shift ini, silakan periksa kembali"
-        );
-      }
+      this.switchRequests.push(newSwitchRequest);
 
-      const selectedShift = this.shiftOptions.find(
-        (shift: any) => shift.code === this.modalForm.new_shift_code
-      );
+      // Update local schedule data if auto-approved
+      this.updateLocalScheduleData(formData);
 
-      if (!selectedShift) {
-        getToastError("Shift tidak ditemukan");
-        return;
-      }
+      getToastSuccess("Pergantian jadwal berhasil disetujui");
 
-      // Update schedule in currentWeekData
-      const employeeIndex = this.currentWeekData.findIndex(
-        (emp: any) => emp.employee_id === this.modalForm.employee_id
-      );
-
-      if (employeeIndex === -1) return;
-
-      const scheduleIndex = this.currentWeekData[
-        employeeIndex
-      ].daily_schedules.findIndex(
-        (schedule: any) => schedule.day_index === this.modalForm.day_index
-      );
-
-      if (scheduleIndex !== -1) {
-        this.currentWeekData[employeeIndex].daily_schedules[scheduleIndex] = {
-          day_index: this.modalForm.day_index,
-          shift_code: this.modalForm.new_shift_code,
-          shift_name: selectedShift.name,
-          start_time: selectedShift.start_time,
-          end_time: selectedShift.end_time,
-          working_hours: selectedShift.working_hours,
-          is_overtime: selectedShift.is_overtime || false,
-          reason: this.modalForm.reason,
-          updated_at: formatDateTimeUTC(new Date()),
-          updated_by: "Current User",
-        };
-
-        // Track changes
-        this.scheduleChanges.push({
-          employee_id: this.modalForm.employee_id,
-          day_index: this.modalForm.day_index,
-          shift_code: this.modalForm.new_shift_code,
-          shift_name: selectedShift.name,
-          start_time: selectedShift.start_time,
-          end_time: selectedShift.end_time,
-          working_hours: selectedShift.working_hours,
-          is_overtime: selectedShift.is_overtime || false,
-          reason: this.modalForm.reason,
-          updated_by: "Current User",
-          updated_at: formatDateTimeUTC(new Date()),
-        });
-
-        getToastSuccess(this.$t("messages.attendance.success.switchSchedule"));
-      }
-
-      this.showModal = false;
-      this.validateScheduleConflicts();
+      return {
+        success: true,
+        auto_approved: true,
+        data: newSwitchRequest,
+      };
     } catch (error) {
-      getError(error);
+      console.error("Error handling schedule switch:", error);
+      getToastError("Gagal memproses pergantian jadwal");
+      throw error;
     }
   }
 
   updateLocalScheduleData(switchData: any) {
-    const employeeIndex = this.currentWeekData.findIndex(
-      (emp: any) => emp.employee_id === switchData.employee_id
-    );
-
-    if (employeeIndex !== -1) {
-      const scheduleIndex = this.currentWeekData[
-        employeeIndex
-      ].daily_schedules.findIndex(
-        (schedule: any) => schedule.day_index === this.selectedDayIndexForSwitch
-      );
-
-      if (scheduleIndex !== -1) {
-        // Find shift details
-        const newShift = this.shiftOptions.find(
-          (shift: any) => shift.code === switchData.new_shift_code
-        );
-
-        if (newShift) {
-          this.currentWeekData[employeeIndex].daily_schedules[scheduleIndex] = {
-            ...this.currentWeekData[employeeIndex].daily_schedules[
-              scheduleIndex
-            ],
-            shift_code: switchData.new_shift_code,
-            shift_name: newShift.shift_name,
-            start_time: newShift.start_time,
-            end_time: newShift.end_time,
-            working_hours: newShift.working_hours,
-            is_overtime: newShift.is_overtime || false,
-            switch_reason: switchData.reason,
-            updated_at: new Date().toISOString(),
-            updated_by: "Current User",
-          };
-        }
-      }
-    }
-  }
-
-  async loadPendingSwitchRequests() {
-    try {
-      const { data } = await workScheduleAPI.GetPendingSwitchRequests();
-      this.switchRequests = data || [];
-    } catch (error) {
-      console.error("Failed to load pending switch requests:", error);
-    }
-  }
-
-  async approveSwitchRequest(switchId: number, approverNotes?: string) {
-    try {
-      const { data } = await workScheduleAPI.ApproveScheduleSwitch(
-        switchId,
-        approverNotes
-      );
-
-      // Update local data
-      this.updateLocalScheduleData(data);
-
-      // Reload requests
-      await this.loadPendingSwitchRequests();
-      // await this.loadCurrentWeekData();
-
-      getToastSuccess("Switch request approved successfully");
-    } catch (error) {
-      console.error("Failed to approve switch request:", error);
-      getToastError("Failed to approve switch request");
-    }
-  }
-
-  async rejectSwitchRequest(switchId: number, rejectionReason: string) {
-    try {
-      await workScheduleAPI.RejectScheduleSwitch(switchId, rejectionReason);
-
-      // Reload requests
-      await this.loadPendingSwitchRequests();
-
-      getToastSuccess("Switch request rejected");
-    } catch (error) {
-      console.error("Failed to reject switch request:", error);
-      getToastError("Failed to reject switch request");
+    // Update the weekly schedule view component
+    if (this.weeklyScheduleViewRef) {
+      this.weeklyScheduleViewRef.updateScheduleData(switchData);
     }
   }
 
@@ -1595,7 +1364,7 @@ export default class WorkSchedule extends Vue {
   initializeWeek() {
     const currentDate = new Date();
     const day = currentDate.getDay();
-    const diff = currentDate.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+    const diff = currentDate.getDate() - day + (day === 0 ? -6 : 1);
     this.currentWeekStart = new Date(currentDate.setDate(diff));
 
     this.generateWeekDays();
@@ -1631,10 +1400,19 @@ export default class WorkSchedule extends Vue {
     newDate.setDate(newDate.getDate() + direction * 7);
     this.currentWeekStart = newDate;
     this.generateWeekDays();
+
+    this.$emit("week-changed", {
+      weekStart: this.currentWeekStart,
+      weekDays: this.weekDays,
+    });
   }
 
   goToCurrentWeek() {
     this.initializeWeek();
+    this.$emit("week-changed", {
+      weekStart: this.currentWeekStart,
+      weekDays: this.weekDays,
+    });
   }
 
   timeStringToMinutes(timeString: string): number {
@@ -1645,313 +1423,6 @@ export default class WorkSchedule extends Vue {
   formatWorkingDaysText(workingDays: number[]): string {
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     return workingDays.map((day) => dayNames[day]).join(", ");
-  }
-
-  getSchedule(employeeId: string, dayIndex: number) {
-    const employee = this.currentWeekData.find(
-      (emp: any) => emp.employee_id === employeeId
-    );
-
-    if (!employee || !employee.daily_schedules) return undefined;
-
-    return employee.daily_schedules.find(
-      (schedule: any) => schedule.day_index === dayIndex
-    );
-  }
-
-  getScheduleCode(employeeId: string, dayIndex: number): string {
-    const schedule = this.getSchedule(employeeId, dayIndex);
-    return schedule?.shift_code || "OFF";
-  }
-
-  getScheduleName(employeeId: string, dayIndex: number): string {
-    const schedule = this.getSchedule(employeeId, dayIndex);
-    return schedule?.shift_name || "Day Off";
-  }
-
-  getScheduleTime(employeeId: string, dayIndex: number): string {
-    const schedule = this.getSchedule(employeeId, dayIndex);
-    if (!schedule || !schedule.start_time || !schedule.end_time) return "";
-
-    // Handle split shifts
-    const shift = this.shiftOptions.find(
-      (s: any) => s.code === schedule.shift_code
-    );
-    if (shift?.is_split && shift.split_times) {
-      return shift.split_times
-        .map((time: any) => `${time.start}-${time.end}`)
-        .join(", ");
-    }
-
-    return `${schedule.start_time} - ${schedule.end_time}`;
-  }
-
-  getShiftColor(shiftCode: string): string {
-    const shift = this.shiftOptions.find((s: any) => s.code === shiftCode);
-    return shift?.color || "#6c757d";
-  }
-
-  getShiftBadgeClass(shiftCode: string): string {
-    const colorMap: { [key: string]: string } = {
-      "#28a745": "morning",
-      "#ffc107": "evening",
-      "#343a40": "night",
-      "#17a2b8": "regular",
-      "#fd7e14": "flexible",
-      "#6c757d": "off",
-      "#e83e8c": "split",
-      "#dc3545": "security",
-    };
-
-    const color = this.getShiftColor(shiftCode);
-    return colorMap[color] || "off";
-  }
-
-  selectedSchedule(employee: any, dayIndex: number) {
-    const dayNames = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-
-    this.modalForm = {
-      employee_id: employee.employee_id,
-      employee_name: employee.employee_name,
-      day_index: dayIndex,
-      day_name: dayNames[dayIndex],
-      current_schedule: this.getScheduleCode(employee.employee_id, dayIndex),
-    };
-    this.showModal = false;
-  }
-
-  checkScheduleConflicts(
-    employeeId: string,
-    dayIndex: number,
-    newShiftCode: string
-  ): ScheduleConflict[] {
-    const conflicts: ScheduleConflict[] = [];
-    const employee = this.currentWeekData.find(
-      (emp: any) => emp.employee_id === employeeId
-    );
-
-    if (!employee) return conflicts;
-
-    const newShift = this.shiftOptions.find(
-      (shift: any) => shift.code === newShiftCode
-    );
-    if (!newShift) return conflicts;
-
-    // Check consecutive working days
-    const consecutiveDays = this.getConsecutiveWorkingDays(
-      employee,
-      dayIndex,
-      newShiftCode
-    );
-    if (consecutiveDays > 6) {
-      conflicts.push({
-        type: "consecutive_days",
-        message: `Karyawan akan bekerja ${consecutiveDays} hari berturut-turut`,
-        severity: "warning",
-      });
-    }
-
-    // Check rest time between shifts
-    const previousDay = dayIndex - 1;
-    const nextDay = dayIndex + 1;
-
-    if (previousDay >= 0) {
-      const prevSchedule = this.getSchedule(employeeId, previousDay);
-      if (prevSchedule && prevSchedule.shift_code !== "OFF") {
-        const restHours = this.calculateRestHours(
-          prevSchedule.end_time,
-          newShift.start_time
-        );
-        if (restHours < 8) {
-          conflicts.push({
-            type: "rest_time",
-            message: `Waktu istirahat hanya ${restHours} jam (minimum 8 jam)`,
-            severity: "error",
-          });
-        }
-      }
-    }
-
-    if (nextDay < 7) {
-      const nextSchedule = this.getSchedule(employeeId, nextDay);
-      if (nextSchedule && nextSchedule.shift_code !== "OFF") {
-        const restHours = this.calculateRestHours(
-          newShift.end_time,
-          nextSchedule.start_time
-        );
-        if (restHours < 8) {
-          conflicts.push({
-            type: "rest_time",
-            message: `Waktu istirahat ke hari berikutnya hanya ${restHours} jam`,
-            severity: "error",
-          });
-        }
-      }
-    }
-
-    // Check department limits
-    const departmentSchedules = this.getDepartmentSchedulesForDay(
-      employee.department_code,
-      dayIndex
-    );
-    const shiftCount = departmentSchedules.filter(
-      (s) => s.shift_code === newShiftCode
-    ).length;
-
-    // Example: Max 5 people per shift per department
-    if (shiftCount >= 5) {
-      conflicts.push({
-        type: "department_limit",
-        message: `Departemen sudah memiliki ${shiftCount} orang pada shift ini`,
-        severity: "warning",
-      });
-    }
-
-    return conflicts;
-  }
-
-  getConsecutiveWorkingDays(
-    employee: any,
-    changeDayIndex: number,
-    newShiftCode: string
-  ): number {
-    let consecutive = 0;
-    const schedules = [...employee.daily_schedules];
-
-    // Simulate the change
-    const changeIndex = schedules.findIndex(
-      (s) => s.day_index === changeDayIndex
-    );
-    if (changeIndex !== -1) {
-      schedules[changeIndex] = {
-        ...schedules[changeIndex],
-        shift_code: newShiftCode,
-      };
-    }
-
-    // Count consecutive working days
-    for (let i = 0; i < schedules.length; i++) {
-      if (schedules[i].shift_code !== "OFF") {
-        consecutive++;
-      } else {
-        consecutive = 0;
-      }
-    }
-
-    return consecutive;
-  }
-
-  calculateRestHours(endTime: string, startTime: string): number {
-    if (!endTime || !startTime) return 24;
-
-    const [endHour, endMin] = endTime.split(":").map(Number);
-    const [startHour, startMin] = startTime.split(":").map(Number);
-
-    let endMinutes = endHour * 60 + endMin;
-    let startMinutes = startHour * 60 + startMin;
-
-    // Handle next day scenario
-    if (startMinutes < endMinutes) {
-      startMinutes += 24 * 60;
-    }
-
-    const restMinutes = startMinutes - endMinutes;
-    return Math.round((restMinutes / 60) * 10) / 10;
-  }
-
-  getDepartmentSchedulesForDay(
-    departmentCode: string,
-    dayIndex: number
-  ): any[] {
-    const departmentEmployees = this.currentWeekData.filter(
-      (emp: any) => emp.department_code === departmentCode
-    );
-
-    return departmentEmployees.map((emp: any) => {
-      const schedule = emp.daily_schedules.find(
-        (s: any) => s.day_index === dayIndex
-      );
-      return {
-        employee_id: emp.employee_id,
-        shift_code: schedule?.shift_code || "OFF",
-      };
-    });
-  }
-
-  validateScheduleConflicts() {
-    this.scheduleConflicts = [];
-
-    this.currentWeekData.forEach((employee: any) => {
-      employee.daily_schedules.forEach((schedule: any, index: number) => {
-        if (schedule.shift_code !== "OFF") {
-          const conflicts = this.checkScheduleConflicts(
-            employee.employee_id,
-            schedule.day_index,
-            schedule.shift_code
-          );
-          this.scheduleConflicts.push(...conflicts);
-        }
-      });
-    });
-  }
-
-  toggleBulkMode() {
-    this.bulkEditMode = !this.bulkEditMode;
-    this.selectedCells = [];
-    if (this.bulkEditMode) {
-      getToastSuccess(
-        "Bulk edit mode enabled. Click cells to select multiple schedules."
-      );
-    } else {
-      getToastSuccess("Bulk edit mode disabled.");
-    }
-  }
-
-  handleShowTemplates() {
-    getToastSuccess("Schedule templates feature coming soon!");
-  }
-
-  checkCellConflict(employeeId: string, dayIndex: number): boolean {
-    return this.scheduleConflicts.some(
-      (conflict) => conflict.message.includes(employeeId) // Simple check, can be made more sophisticated
-    );
-  }
-
-  getModalConflicts(): ScheduleConflict[] {
-    if (!this.modalForm.new_shift_code || !this.modalForm.employee_id)
-      return [];
-
-    return this.checkScheduleConflicts(
-      this.modalForm.employee_id,
-      this.modalForm.day_index,
-      this.modalForm.new_shift_code
-    );
-  }
-
-  getShiftName(shiftCode: string): string {
-    const shift = this.shiftOptions.find((s: any) => s.code === shiftCode);
-    return shift?.name || "Unknown Shift";
-  }
-
-  getShiftTime(shiftCode: string): string {
-    const shift = this.shiftOptions.find((s: any) => s.code === shiftCode);
-    if (!shift || shiftCode === "OFF") return "";
-
-    if (shift.is_split && shift.split_times) {
-      return shift.split_times
-        .map((time: any) => `${time.start}-${time.end}`)
-        .join(", ");
-    }
-
-    return `${shift.start_time} - ${shift.end_time}`;
   }
 
   // GETTER AND SETTER =======================================================
@@ -1968,36 +1439,11 @@ export default class WorkSchedule extends Vue {
     return `${firstDay} - ${lastDay}`;
   }
 
-  get availableShiftForEmployee(): any[] {
-    if (!this.selectedEmployee) return this.shiftOptions;
-
-    return this.shiftOptions.filter((shift: any) => {
-      if (shift.code === "OFF") return true;
-
-      return (
-        shift.departments.length === 0 ||
-        shift.departments.includes(this.selectedEmployee.department_code)
-      );
-    });
-  }
-
-  get hasScheduleChanges(): boolean {
-    return this.scheduleChanges.length > 0;
-  }
-
-  get criticalConflicts(): ScheduleConflict[] {
-    return this.scheduleConflicts.filter((c) => c.severity === "error");
-  }
-
-  get warningConflicts(): ScheduleConflict[] {
-    return this.scheduleConflicts.filter((c) => c.severity === "warning");
-  }
-
   get pendingSwitchCount(): number {
     return this.switchRequests.filter((req) => req.status === "PENDING").length;
   }
 
-  get todaysSwitchRequests(): any[] {
+  get todaysSwitchRequests(): SwitchRequest[] {
     const today = new Date().toISOString().split("T")[0];
     return this.switchRequests.filter((req) => req.schedule_date === today);
   }

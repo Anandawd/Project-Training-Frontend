@@ -4,14 +4,20 @@ import CModal from "@/components/modal/modal.vue";
 import CSelect from "@/components/select/select.vue";
 import WorkScheduleAPI from "@/services/api/payroll/work-schedule/work-schedule";
 import { getError } from "@/utils/general";
-import { getToastError, getToastInfo, getToastSuccess } from "@/utils/toast";
+import { getToastError, getToastSuccess } from "@/utils/toast";
 import CSearchFilter from "@/views/pages/components/filter/filter.vue";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { reactive } from "vue";
 import { Options, Vue } from "vue-class-component";
-import ScheduleSwitchModal from "./components/schedule-switch-modal/schedule-switch-modal.vue";
-import CInputForm from "./components/work-schedule-input-form/work-schedule-input-form.vue";
+import SwitchShiftModal from "../schedule-switch-modal/schedule-switch-modal.vue";
+
+interface Day {
+  name: string;
+  date: string;
+  full_date: Date;
+  day_index: number;
+}
 
 interface EmployeeSchedule {
   id?: number | string;
@@ -26,11 +32,10 @@ interface EmployeeSchedule {
   daily_schedules: DailySchedule[];
   weekly_hours: number;
   overtime_hours: number;
-  conflicts: ScheduleConflict[];
-  updated_at: string;
-  updated_by: string;
-  created_at: string;
-  created_by: string;
+  updated_at?: string;
+  updated_by?: string;
+  created_at?: string;
+  created_by?: string;
 }
 
 interface DailySchedule {
@@ -43,37 +48,9 @@ interface DailySchedule {
   working_hours: number;
   is_overtime: boolean;
   status: "SCHEDULED" | "CONFIRMED" | "MODIFIED" | "ABSENT" | "COMPLETED";
-  conflicts: string[];
-  switch_requests: any[];
-}
-
-interface ScheduleConflict {
-  type:
-    | "REST_TIME"
-    | "CONSECUTIVE_DAYS"
-    | "STAFF_LIMIT"
-    | "SKILL_REQUIREMENT"
-    | "OVERTIME_LIMIT";
-  severity: "ERROR" | "WARNING" | "INFO";
-  message: string;
-  day_index?: number;
-}
-
-interface WeeklyStats {
-  total_employees: number;
-  total_working_hours: number;
-  total_overtime_hours: number;
-  department_coverage: { [key: string]: number };
-  shift_coverage: { [key: string]: number };
-  conflicts_count: number;
-  pending_switches: number;
-}
-
-interface BulkOperation {
-  type: "ASSIGN_SHIFT" | "COPY_PATTERN" | "APPLY_TEMPLATE" | "MASS_SWITCH";
-  target_employees: string[];
-  target_days: number[];
-  parameters: any;
+  reason?: string;
+  updated_by?: string;
+  updated_at?: string;
 }
 
 const workScheduleAPI = new WorkScheduleAPI();
@@ -84,10 +61,9 @@ const workScheduleAPI = new WorkScheduleAPI();
     CSearchFilter,
     CModal,
     CDialog,
-    CInputForm,
     CSelect,
     CInput,
-    ScheduleSwitchModal,
+    SwitchShiftModal,
   },
   props: {
     modeData: {
@@ -102,75 +78,53 @@ const workScheduleAPI = new WorkScheduleAPI();
       type: Array,
       required: true,
     },
-    employeeOptions: {
-      type: Array,
-      default: (): any[] => [],
-    },
     shiftOptions: {
       type: Array,
-      default: (): any[] => [],
+      required: true,
+    },
+    employeeOptions: {
+      type: Array,
+      required: true,
     },
     departmentOptions: {
       type: Array,
-      default: (): any[] => [],
+      required: true,
     },
   },
-  emits: ["week-changed", "schedule-updated", "conflict-detected"],
+  emits: ["schedule-updated", "week-changed"],
 })
-export default class WorkSchedule extends Vue {
+export default class WeeklyScheduleView extends Vue {
   // Props
   currentWeekStart!: Date;
   weekDays!: any[];
-  employeeOptions!: any[];
   shiftOptions!: any[];
+  employeeOptions!: any[];
   departmentOptions!: any[];
 
   // Data
-  public employeeSchedules: EmployeeSchedule[] = [];
-  public weeklyStats: WeeklyStats = this.getEmptyStats();
+  public currentWeekData: EmployeeSchedule[] = [];
   public selectedCells: Set<string> = new Set();
-  public draggedShift: string | null = null;
   public isLoading = false;
   public modeData: any;
 
-  // modal
-  public availableTemplates: any[] = [];
-  public showTemplateModal = false;
-  public selectedTemplate: any = null;
-
-  // Bulk Operations
-  public bulkMode = false;
-  public bulkOperation: BulkOperation | null = null;
-  public showBulkModal = false;
+  // Schedule Switch Modal
+  public showScheduleSwitchModal = false;
+  public selectedEmployeeForSwitch: any = null;
+  public selectedDateForSwitch = "";
+  public selectedDayIndexForSwitch = -1;
+  public currentScheduleForSwitch: any = null;
 
   // dialog
   public showDialog: boolean = false;
   public dialogMessage: string = "";
   public dialogAction: string = "";
 
-  // Filters & Settings
+  // Filters
   public filters = reactive({
     department: "",
     position: "",
-    shift: "",
-    status: "",
     show_conflicts_only: false,
-    show_overtime_only: false,
   });
-
-  public viewSettings = reactive({
-    group_by_department: false,
-    show_employee_photos: true,
-    show_shift_colors: true,
-    show_working_hours: true,
-    show_conflicts: true,
-    auto_refresh: false,
-    compact_view: false,
-  });
-
-  // Conflict Management
-  public realTimeValidation = true;
-  public conflictSummary: { [key: string]: number } = {};
 
   columnEmployeeOptions = [
     {
@@ -207,21 +161,119 @@ export default class WorkSchedule extends Vue {
   // RECYCLE LIFE FUNCTION =======================================================
   created(): void {
     this.loadData();
-    this.setupRealTimeValidation();
+  }
+
+  // GENERAL FUNCTION =======================================================
+  openScheduleModal(employee: any, day: Day, dayIndex: number) {
+    this.selectedEmployeeForSwitch = employee;
+    this.selectedDateForSwitch = day.date;
+    this.selectedDayIndexForSwitch = dayIndex;
+
+    // Get current schedule for this employee and day
+    this.currentScheduleForSwitch = this.getSchedule(
+      employee.employee_id,
+      dayIndex
+    );
+    this.showScheduleSwitchModal = true;
+  }
+
+  async handleSwitchConfirmed(switchData: any) {
+    try {
+      // Update local schedule data
+      this.updateScheduleData(switchData);
+
+      // Emit event to parent component
+      this.$emit("schedule-updated", switchData);
+
+      // Close modal
+      this.showScheduleSwitchModal = false;
+
+      getToastSuccess("Pergantian jadwal berhasil");
+    } catch (error) {
+      console.error("Error handling switch confirmation:", error);
+      getToastError("Gagal memproses pergantian jadwal");
+    }
+  }
+
+  handleSwitchModalClose() {
+    this.showScheduleSwitchModal = false;
+    this.selectedEmployeeForSwitch = null;
+    this.selectedDateForSwitch = "";
+    this.selectedDayIndexForSwitch = -1;
+    this.currentScheduleForSwitch = null;
+  }
+
+  updateScheduleData(switchData: any) {
+    const employeeIndex = this.currentWeekData.findIndex(
+      (emp) => emp.employee_id === switchData.employee_id
+    );
+
+    if (employeeIndex !== -1) {
+      const scheduleIndex = this.currentWeekData[
+        employeeIndex
+      ].daily_schedules.findIndex(
+        (schedule) => schedule.day_index === this.selectedDayIndexForSwitch
+      );
+
+      if (scheduleIndex !== -1) {
+        // Find shift details
+        const newShift = this.shiftOptions.find(
+          (shift) => shift.code === switchData.requested_shift_code
+        );
+
+        if (newShift) {
+          // Update the schedule
+          this.currentWeekData[employeeIndex].daily_schedules[scheduleIndex] = {
+            ...this.currentWeekData[employeeIndex].daily_schedules[
+              scheduleIndex
+            ],
+            shift_code: switchData.requested_shift_code,
+            shift_name: newShift.name,
+            start_time: newShift.start_time || "",
+            end_time: newShift.end_time || "",
+            working_hours: newShift.working_hours || 0,
+            is_overtime: newShift.is_overtime || false,
+            status: "MODIFIED",
+            reason: switchData.reason,
+            updated_at: new Date().toISOString(),
+            updated_by: "Current User",
+          };
+
+          // Recalculate weekly hours
+          this.recalculateEmployeeHours(this.currentWeekData[employeeIndex]);
+        }
+      }
+    }
+  }
+
+  showSwitchRequestsModal(employee: any) {
+    // Implementation for showing employee's switch requests
+    console.log("Show switch requests for:", employee.employee_name);
+  }
+
+  navigateWeek(direction: number) {
+    this.$emit("week-changed", direction);
+  }
+
+  goToToday() {
+    this.$emit("week-changed", 0); // 0 indicates go to current week
   }
 
   // API REQUEST =======================================================
   async loadData() {
     try {
+      this.isLoading = true;
       this.loadMockData();
       this.loadDropdown();
     } catch (error) {
       getError(error);
+    } finally {
+      this.isLoading = false;
     }
   }
 
   loadMockData() {
-    this.employeeSchedules = [
+    this.currentWeekData = [
       {
         id: 1,
         employee_id: "EMP001",
@@ -233,19 +285,11 @@ export default class WorkSchedule extends Vue {
         placement_code: "AMORA_UBUD",
         placement_name: "Amora Ubud",
         weekly_hours: 40,
-        overtime_hours: 8,
-        conflicts: [
-          {
-            type: "CONSECUTIVE_DAYS",
-            severity: "WARNING",
-            message: "Working 6 consecutive days",
-            day_index: 6,
-          },
-        ],
+        overtime_hours: 0,
         daily_schedules: [
           {
-            day_index: 1,
-            date: this.weekDays[0]?.date,
+            day_index: 1, // Monday
+            date: this.weekDays[0]?.date || "",
             shift_code: "FO-M",
             shift_name: "Front Office Morning",
             start_time: "07:00",
@@ -253,12 +297,10 @@ export default class WorkSchedule extends Vue {
             working_hours: 8,
             is_overtime: false,
             status: "CONFIRMED",
-            conflicts: [],
-            switch_requests: [],
           },
           {
-            day_index: 2,
-            date: this.weekDays[1]?.date,
+            day_index: 2, // Tuesday
+            date: this.weekDays[1]?.date || "",
             shift_code: "FO-M",
             shift_name: "Front Office Morning",
             start_time: "07:00",
@@ -266,66 +308,63 @@ export default class WorkSchedule extends Vue {
             working_hours: 8,
             is_overtime: false,
             status: "SCHEDULED",
-            conflicts: [],
-            switch_requests: [],
           },
           {
-            day_index: 3,
-            date: this.weekDays[2]?.date,
-            shift_code: "FO-M",
-            shift_name: "Front Office Morning",
-            start_time: "07:00",
-            end_time: "15:00",
+            day_index: 3, // Wednesday
+            date: this.weekDays[2]?.date || "",
+            shift_code: "FO-E",
+            shift_name: "Front Office Evening",
+            start_time: "15:00",
+            end_time: "23:00",
             working_hours: 8,
             is_overtime: false,
             status: "SCHEDULED",
-            conflicts: [],
-            switch_requests: [],
           },
           {
-            day_index: 4,
-            date: this.weekDays[3]?.date,
-            shift_code: "FO-M",
-            shift_name: "Front Office Morning",
-            start_time: "07:00",
-            end_time: "15:00",
+            day_index: 4, // Thursday
+            date: this.weekDays[3]?.date || "",
+            shift_code: "FO-E",
+            shift_name: "Front Office Evening",
+            start_time: "15:00",
+            end_time: "23:00",
             working_hours: 8,
             is_overtime: false,
             status: "SCHEDULED",
-            conflicts: [],
-            switch_requests: [],
           },
           {
-            day_index: 5,
-            date: this.weekDays[4]?.date,
-            shift_code: "FO-M",
-            shift_name: "Front Office Morning",
-            start_time: "07:00",
-            end_time: "15:00",
+            day_index: 5, // Friday
+            date: this.weekDays[4]?.date || "",
+            shift_code: "FO-N",
+            shift_name: "Front Office Night",
+            start_time: "23:00",
+            end_time: "07:00",
             working_hours: 8,
             is_overtime: false,
             status: "SCHEDULED",
-            conflicts: [],
-            switch_requests: [],
           },
           {
-            day_index: 6,
-            date: this.weekDays[5]?.date,
-            shift_code: "FO-M",
-            shift_name: "Front Office Morning",
-            start_time: "07:00",
-            end_time: "15:00",
-            working_hours: 8,
+            day_index: 6, // Saturday
+            date: this.weekDays[5]?.date || "",
+            shift_code: "OFF",
+            shift_name: "Day Off",
+            start_time: "",
+            end_time: "",
+            working_hours: 0,
             is_overtime: false,
             status: "SCHEDULED",
-            conflicts: [],
-            switch_requests: [],
+          },
+          {
+            day_index: 0, // Sunday
+            date: this.weekDays[6]?.date || "",
+            shift_code: "OFF",
+            shift_name: "Day Off",
+            start_time: "",
+            end_time: "",
+            working_hours: 0,
+            is_overtime: false,
+            status: "SCHEDULED",
           },
         ],
-        created_at: "2025-01-01",
-        created_by: "Admin",
-        updated_at: "2025-01-01",
-        updated_by: "Admin",
       },
       {
         id: 2,
@@ -337,104 +376,181 @@ export default class WorkSchedule extends Vue {
         position_name: "Supervisor",
         placement_code: "AMORA_UBUD",
         placement_name: "Amora Ubud",
-        weekly_hours: 40,
+        weekly_hours: 48,
         overtime_hours: 8,
-        conflicts: [
-          {
-            type: "CONSECUTIVE_DAYS",
-            severity: "WARNING",
-            message: "Working 6 consecutive days",
-            day_index: 6,
-          },
-        ],
         daily_schedules: [
           {
             day_index: 1,
-            date: this.weekDays[0]?.date,
-            shift_code: "FO-M",
-            shift_name: "Front Office Morning",
-            start_time: "07:00",
-            end_time: "15:00",
+            date: this.weekDays[0]?.date || "",
+            shift_code: "HK-M",
+            shift_name: "Housekeeping Morning",
+            start_time: "08:00",
+            end_time: "16:00",
             working_hours: 8,
             is_overtime: false,
             status: "CONFIRMED",
-            conflicts: [],
-            switch_requests: [],
           },
           {
             day_index: 2,
-            date: this.weekDays[1]?.date,
-            shift_code: "FO-M",
-            shift_name: "Front Office Morning",
-            start_time: "07:00",
-            end_time: "15:00",
+            date: this.weekDays[1]?.date || "",
+            shift_code: "HK-M",
+            shift_name: "Housekeeping Morning",
+            start_time: "08:00",
+            end_time: "16:00",
             working_hours: 8,
             is_overtime: false,
             status: "SCHEDULED",
-            conflicts: [],
-            switch_requests: [],
           },
           {
             day_index: 3,
-            date: this.weekDays[2]?.date,
-            shift_code: "FO-M",
-            shift_name: "Front Office Morning",
-            start_time: "07:00",
-            end_time: "15:00",
+            date: this.weekDays[2]?.date || "",
+            shift_code: "HK-M",
+            shift_name: "Housekeeping Morning",
+            start_time: "08:00",
+            end_time: "16:00",
             working_hours: 8,
             is_overtime: false,
             status: "SCHEDULED",
-            conflicts: [],
-            switch_requests: [],
           },
           {
             day_index: 4,
-            date: this.weekDays[3]?.date,
-            shift_code: "FO-M",
-            shift_name: "Front Office Morning",
-            start_time: "07:00",
-            end_time: "15:00",
+            date: this.weekDays[3]?.date || "",
+            shift_code: "HK-M",
+            shift_name: "Housekeeping Morning",
+            start_time: "08:00",
+            end_time: "16:00",
             working_hours: 8,
             is_overtime: false,
             status: "SCHEDULED",
-            conflicts: [],
-            switch_requests: [],
           },
           {
             day_index: 5,
-            date: this.weekDays[4]?.date,
-            shift_code: "FO-M",
-            shift_name: "Front Office Morning",
-            start_time: "07:00",
-            end_time: "15:00",
+            date: this.weekDays[4]?.date || "",
+            shift_code: "HK-M",
+            shift_name: "Housekeeping Morning",
+            start_time: "08:00",
+            end_time: "16:00",
             working_hours: 8,
             is_overtime: false,
             status: "SCHEDULED",
-            conflicts: [],
-            switch_requests: [],
           },
           {
             day_index: 6,
-            date: this.weekDays[5]?.date,
-            shift_code: "FO-M",
-            shift_name: "Front Office Morning",
-            start_time: "07:00",
-            end_time: "15:00",
+            date: this.weekDays[5]?.date || "",
+            shift_code: "HK-M",
+            shift_name: "Housekeeping Morning",
+            start_time: "08:00",
+            end_time: "16:00",
             working_hours: 8,
             is_overtime: false,
             status: "SCHEDULED",
-            conflicts: [],
-            switch_requests: [],
+          },
+          {
+            day_index: 0,
+            date: this.weekDays[6]?.date || "",
+            shift_code: "OFF",
+            shift_name: "Day Off",
+            start_time: "",
+            end_time: "",
+            working_hours: 0,
+            is_overtime: false,
+            status: "SCHEDULED",
           },
         ],
-        created_at: "2025-01-01",
-        created_by: "Admin",
-        updated_at: "2025-01-01",
-        updated_by: "Admin",
+      },
+      {
+        id: 3,
+        employee_id: "EMP003",
+        employee_name: "Robert Johnson",
+        department_code: "RESTAURANT",
+        department_name: "Restaurant",
+        position_code: "CHEF",
+        position_name: "Chef",
+        placement_code: "AMORA_UBUD",
+        placement_name: "Amora Ubud",
+        weekly_hours: 40,
+        overtime_hours: 0,
+        daily_schedules: [
+          {
+            day_index: 1,
+            date: this.weekDays[0]?.date || "",
+            shift_code: "FB-B",
+            shift_name: "F&B Breakfast",
+            start_time: "05:00",
+            end_time: "13:00",
+            working_hours: 8,
+            is_overtime: false,
+            status: "CONFIRMED",
+          },
+          {
+            day_index: 2,
+            date: this.weekDays[1]?.date || "",
+            shift_code: "FB-L",
+            shift_name: "F&B Lunch",
+            start_time: "10:00",
+            end_time: "18:00",
+            working_hours: 8,
+            is_overtime: false,
+            status: "SCHEDULED",
+          },
+          {
+            day_index: 3,
+            date: this.weekDays[2]?.date || "",
+            shift_code: "FB-D",
+            shift_name: "F&B Dinner",
+            start_time: "16:00",
+            end_time: "00:00",
+            working_hours: 8,
+            is_overtime: false,
+            status: "SCHEDULED",
+          },
+          {
+            day_index: 4,
+            date: this.weekDays[3]?.date || "",
+            shift_code: "FB-B",
+            shift_name: "F&B Breakfast",
+            start_time: "05:00",
+            end_time: "13:00",
+            working_hours: 8,
+            is_overtime: false,
+            status: "SCHEDULED",
+          },
+          {
+            day_index: 5,
+            date: this.weekDays[4]?.date || "",
+            shift_code: "FB-L",
+            shift_name: "F&B Lunch",
+            start_time: "10:00",
+            end_time: "18:00",
+            working_hours: 8,
+            is_overtime: false,
+            status: "SCHEDULED",
+          },
+          {
+            day_index: 6,
+            date: this.weekDays[5]?.date || "",
+            shift_code: "OFF",
+            shift_name: "Day Off",
+            start_time: "",
+            end_time: "",
+            working_hours: 0,
+            is_overtime: false,
+            status: "SCHEDULED",
+          },
+          {
+            day_index: 0,
+            date: this.weekDays[6]?.date || "",
+            shift_code: "OFF",
+            shift_name: "Day Off",
+            start_time: "",
+            end_time: "",
+            working_hours: 0,
+            is_overtime: false,
+            status: "SCHEDULED",
+          },
+        ],
       },
     ];
-
-    this.validateAllSchedules();
   }
 
   async loadDropdown() {
@@ -660,508 +776,126 @@ export default class WorkSchedule extends Vue {
     }
   }
 
-  async loadWeeklyStats() {
-    this.weeklyStats = {
-      total_employees: this.employeeSchedules.length,
-      total_working_hours: this.employeeSchedules.reduce(
-        (sum, emp) => sum + emp.weekly_hours,
-        0
-      ),
-      total_overtime_hours: this.employeeSchedules.reduce(
-        (sum, emp) => sum + emp.overtime_hours,
-        0
-      ),
-      department_coverage: this.calculateDepartmentCoverage(),
-      shift_coverage: this.calculateShiftCoverage(),
-      conflicts_count: this.getTotalConflicts(),
-      pending_switches: this.getPendingSwitches(),
-    };
-  }
-
-  async loadAvailableTemplates() {
-    try {
-      // const { data } = await this.workScheduleAPI.GetScheduleTemplates({ is_active: true });
-      // this.availableTemplates = data;
-
-      this.availableTemplates = [
-        {
-          id: 1,
-          template_name: "Front Office 7-Day Rotation",
-          template_code: "FO-ROT-7D",
-        },
-        { id: 2, template_name: "Housekeeping Fixed", template_code: "HK-FIX" },
-        { id: 3, template_name: "F&B Split Shifts", template_code: "FB-SPLIT" },
-      ];
-    } catch (error) {
-      console.error("Failed to load templates:", error);
-    }
-  }
-
-  // Schedule Operations
-  async updateEmployeeSchedule(
-    employeeId: string,
-    dayIndex: number,
-    shiftCode: string,
-    reason?: string
-  ) {
-    try {
-      const employee = this.employeeSchedules.find(
-        (emp) => emp.employee_id === employeeId
-      );
-      if (!employee) return;
-
-      const daySchedule = employee.daily_schedules.find(
-        (ds) => ds.day_index === dayIndex
-      );
-      if (!daySchedule) return;
-
-      // Validate the change
-      const conflicts = this.validateScheduleChange(
-        employee,
-        dayIndex,
-        shiftCode
-      );
-
-      if (conflicts.some((c) => c.severity === "ERROR")) {
-        getToastError(
-          "Cannot update schedule: " +
-            conflicts.find((c) => c.severity === "ERROR")?.message
-        );
-        return;
-      }
-
-      if (conflicts.some((c) => c.severity === "WARNING")) {
-        getToastError(
-          "Schedule updated with warnings: " +
-            conflicts.find((c) => c.severity === "WARNING")?.message
-        );
-      }
-
-      // Update the schedule
-      const shift = this.shiftOptions.find((s) => s.code === shiftCode);
-      if (shift) {
-        daySchedule.shift_code = shiftCode;
-        daySchedule.shift_name = shift.name;
-        daySchedule.start_time = shift.start_time || "";
-        daySchedule.end_time = shift.end_time || "";
-        daySchedule.working_hours = shift.working_hours || 0;
-        daySchedule.status = "MODIFIED";
-      }
-
-      // Recalculate employee stats
-      this.recalculateEmployeeStats(employee);
-
-      // Revalidate
-      this.validateAllSchedules();
-
-      this.$emit("schedule-updated", {
-        employeeId,
-        dayIndex,
-        shiftCode,
-        reason,
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  validateScheduleChange(
-    employee: EmployeeSchedule,
-    dayIndex: number,
-    newShiftCode: string
-  ): ScheduleConflict[] {
-    // Create a copy of the schedule for validation
-    const tempEmployee = JSON.parse(JSON.stringify(employee));
-    const daySchedule = tempEmployee.daily_schedules.find(
-      (ds: any) => ds.day_index === dayIndex
-    );
-
-    if (daySchedule) {
-      daySchedule.shift_code = newShiftCode;
-      const shift = this.shiftOptions.find((s) => s.code === newShiftCode);
-      if (shift) {
-        daySchedule.working_hours = shift.working_hours || 0;
-      }
-    }
-
-    return this.validateEmployeeSchedule(tempEmployee);
-  }
-
-  recalculateEmployeeStats(employee: EmployeeSchedule) {
+  // HELPER =======================================================
+  recalculateEmployeeHours(employee: EmployeeSchedule) {
     employee.weekly_hours = employee.daily_schedules.reduce(
-      (sum, ds) => sum + ds.working_hours,
+      (sum, schedule) => sum + schedule.working_hours,
       0
     );
     employee.overtime_hours = Math.max(0, employee.weekly_hours - 40);
   }
 
-  // Bulk Operations
-  toggleBulkMode() {
-    this.bulkMode = !this.bulkMode;
-    if (!this.bulkMode) {
-      this.clearSelection();
-    }
+  getSchedule(employeeId: string, dayIndex: number): DailySchedule | undefined {
+    const employee = this.currentWeekData.find(
+      (emp) => emp.employee_id === employeeId
+    );
 
-    getToastInfo(this.bulkMode ? "Bulk mode enabled" : "Bulk mode disabled");
-  }
+    if (!employee || !employee.daily_schedules) return undefined;
 
-  updateBulkOperation() {
-    if (this.selectedCells.size === 0) {
-      this.bulkOperation = null;
-      return;
-    }
-
-    const employees = new Set<string>();
-    const days = new Set<number>();
-
-    this.selectedCells.forEach((cellId) => {
-      const [employeeId, dayIndex] = cellId.split("-");
-      employees.add(employeeId);
-      days.add(parseInt(dayIndex));
-    });
-
-    this.bulkOperation = {
-      type: "ASSIGN_SHIFT",
-      target_employees: Array.from(employees),
-      target_days: Array.from(days),
-      parameters: {},
-    };
-  }
-
-  async executeBulkOperation(operation: BulkOperation) {
-    try {
-      const promises: Promise<any>[] = [];
-
-      operation.target_employees.forEach((employeeId) => {
-        operation.target_days.forEach((dayIndex) => {
-          if (
-            operation.type === "ASSIGN_SHIFT" &&
-            operation.parameters.shift_code
-          ) {
-            promises.push(
-              this.updateEmployeeSchedule(
-                employeeId,
-                dayIndex,
-                operation.parameters.shift_code,
-                operation.parameters.reason
-              )
-            );
-          }
-        });
-      });
-
-      await Promise.all(promises);
-
-      this.clearSelection();
-      this.bulkMode = false;
-
-      getToastSuccess(
-        `Bulk operation completed for ${promises.length} schedule changes`
-      );
-    } catch (error) {
-      getToastError("Bulk operation failed");
-    }
-  }
-
-  // Template Operations
-  async applyTemplateToEmployee(employeeId: string, templateId: number) {
-    try {
-      // const { data } = await this.workScheduleAPI.GetTemplateDetails(templateId);
-      // Apply template logic here
-
-      getToastSuccess("Template applied successfully");
-      await this.loadData();
-    } catch (error) {
-      getToastError("Failed to apply template");
-    }
-  }
-
-  // Utility Methods
-  getEmptyStats(): WeeklyStats {
-    return {
-      total_employees: 0,
-      total_working_hours: 0,
-      total_overtime_hours: 0,
-      department_coverage: {},
-      shift_coverage: {},
-      conflicts_count: 0,
-      pending_switches: 0,
-    };
-  }
-
-  calculateDepartmentCoverage(): { [key: string]: number } {
-    const coverage: { [key: string]: number } = {};
-
-    this.employeeSchedules.forEach((emp) => {
-      if (!coverage[emp.department_code]) {
-        coverage[emp.department_code] = 0;
-      }
-      coverage[emp.department_code] += emp.weekly_hours;
-    });
-
-    return coverage;
-  }
-
-  calculateShiftCoverage(): { [key: string]: number } {
-    const coverage: { [key: string]: number } = {};
-
-    this.employeeSchedules.forEach((emp) => {
-      emp.daily_schedules.forEach((ds) => {
-        if (!coverage[ds.shift_code]) {
-          coverage[ds.shift_code] = 0;
-        }
-        coverage[ds.shift_code] += 1;
-      });
-    });
-
-    return coverage;
-  }
-
-  getTotalConflicts(): number {
-    return this.employeeSchedules.reduce(
-      (sum, emp) => sum + emp.conflicts.length,
-      0
+    return employee.daily_schedules.find(
+      (schedule) => schedule.day_index === dayIndex
     );
   }
 
-  getPendingSwitches(): number {
-    return this.employeeSchedules.reduce(
-      (sum, emp) =>
-        sum +
-        emp.daily_schedules.reduce(
-          (dsSum, ds) => dsSum + ds.switch_requests.length,
-          0
-        ),
-      0
-    );
+  getScheduleCode(employeeId: string, dayIndex: number): string {
+    const schedule = this.getSchedule(employeeId, dayIndex);
+    return schedule?.shift_code || "OFF";
   }
 
-  updateConflictSummary() {
-    this.conflictSummary = {};
-
-    this.employeeSchedules.forEach((emp) => {
-      emp.conflicts.forEach((conflict) => {
-        if (!this.conflictSummary[conflict.type]) {
-          this.conflictSummary[conflict.type] = 0;
-        }
-        this.conflictSummary[conflict.type]++;
-      });
-    });
+  getScheduleName(employeeId: string, dayIndex: number): string {
+    const schedule = this.getSchedule(employeeId, dayIndex);
+    return schedule?.shift_name || "Day Off";
   }
 
-  // HELPER =======================================================
+  getScheduleTime(employeeId: string, dayIndex: number): string {
+    const schedule = this.getSchedule(employeeId, dayIndex);
+    if (!schedule || !schedule.start_time || !schedule.end_time) return "";
 
-  calculateRestHours(endTime: string, startTime: string): number {
-    const [endHour, endMin] = endTime.split(":").map(Number);
-    const [startHour, startMin] = startTime.split(":").map(Number);
-
-    let endMinutes = endHour * 60 + endMin;
-    let startMinutes = startHour * 60 + startMin;
-
-    if (startMinutes < endMinutes) {
-      startMinutes += 24 * 60; // Next day
+    // Handle split shifts if needed
+    const shift = this.shiftOptions.find((s) => s.code === schedule.shift_code);
+    if (shift?.is_split && shift.split_times) {
+      return shift.split_times
+        .map((time: any) => `${time.start}-${time.end}`)
+        .join(", ");
     }
 
-    return Math.round(((startMinutes - endMinutes) / 60) * 10) / 10;
+    return `${schedule.start_time} - ${schedule.end_time}`;
   }
 
-  setupRealTimeValidation() {
-    if (this.realTimeValidation) {
-      // Setup watchers or intervals for real-time validation
-      setInterval(() => {
-        this.validateAllSchedules();
-      }, 30000); // Validate every 30 seconds
-    }
+  getShiftColor(shiftCode: string): string {
+    const shift = this.shiftOptions.find((s) => s.code === shiftCode);
+    return shift?.color || "#6c757d";
   }
 
-  validateAllSchedules() {
-    this.employeeSchedules.forEach((employee) => {
-      employee.conflicts = this.validateEmployeeSchedule(employee);
-    });
+  getShiftBadgeClass(shiftCode: string): string {
+    const colorMap: { [key: string]: string } = {
+      "#28a745": "morning",
+      "#ffc107": "evening",
+      "#343a40": "night",
+      "#17a2b8": "regular",
+      "#fd7e14": "flexible",
+      "#6c757d": "off",
+      "#e83e8c": "split",
+      "#dc3545": "security",
+    };
 
-    this.updateConflictSummary();
-    this.$emit("conflict-detected", this.conflictSummary);
+    const color = this.getShiftColor(shiftCode);
+    return colorMap[color] || "off";
   }
 
-  validateEmployeeSchedule(employee: EmployeeSchedule): ScheduleConflict[] {
-    const conflicts: ScheduleConflict[] = [];
+  quickSwitchToday(employee: any) {
+    const today = new Date().toISOString().split("T")[0];
+    const todayDay = this.weekDays.find((day) => day.date === today);
 
-    // Check consecutive working days
-    let consecutiveDays = 0;
-    let maxConsecutive = 0;
-
-    employee.daily_schedules.forEach((schedule) => {
-      if (schedule.shift_code !== "OFF") {
-        consecutiveDays++;
-        maxConsecutive = Math.max(maxConsecutive, consecutiveDays);
-      } else {
-        consecutiveDays = 0;
-      }
-    });
-
-    if (maxConsecutive > 6) {
-      conflicts.push({
-        type: "CONSECUTIVE_DAYS",
-        severity: "ERROR",
-        message: `Working ${maxConsecutive} consecutive days exceeds limit`,
-      });
-    } else if (maxConsecutive > 5) {
-      conflicts.push({
-        type: "CONSECUTIVE_DAYS",
-        severity: "WARNING",
-        message: `Working ${maxConsecutive} consecutive days`,
-      });
-    }
-
-    // Check overtime limits
-    if (employee.overtime_hours > 20) {
-      conflicts.push({
-        type: "OVERTIME_LIMIT",
-        severity: "ERROR",
-        message: `Overtime hours (${employee.overtime_hours}h) exceed weekly limit`,
-      });
-    }
-
-    // Check rest time between shifts
-    for (let i = 0; i < employee.daily_schedules.length - 1; i++) {
-      const today = employee.daily_schedules[i];
-      const tomorrow = employee.daily_schedules[i + 1];
-
-      if (today.shift_code !== "OFF" && tomorrow.shift_code !== "OFF") {
-        const restHours = this.calculateRestHours(
-          today.end_time,
-          tomorrow.start_time
-        );
-        if (restHours < 8) {
-          conflicts.push({
-            type: "REST_TIME",
-            severity: "ERROR",
-            message: `Insufficient rest time (${restHours}h) between shifts`,
-            day_index: i + 1,
-          });
-        }
-      }
-    }
-
-    return conflicts;
-  }
-
-  toggleCellSelection(employeeId: string, dayIndex: number) {
-    const cellId = `${employeeId}-${dayIndex}`;
-
-    if (this.selectedCells.has(cellId)) {
-      this.selectedCells.delete(cellId);
+    if (todayDay) {
+      this.openScheduleModal(employee, todayDay, todayDay.day_index);
     } else {
-      this.selectedCells.add(cellId);
-    }
-
-    if (this.bulkMode && this.selectedCells.size > 0) {
-      this.updateBulkOperation();
+      getToastError("Hari ini tidak dalam tampilan minggu saat ini");
     }
   }
-
-  selectAllEmployeesForDay(dayIndex: number) {
-    this.employeeSchedules.forEach((emp) => {
-      this.selectedCells.add(`${emp.employee_id}-${dayIndex}`);
-    });
-  }
-
-  selectAllDaysForEmployee(employeeId: string) {
-    for (let i = 1; i <= 7; i++) {
-      this.selectedCells.add(`${employeeId}-${i}`);
-    }
-  }
-
-  clearSelection() {
-    this.selectedCells.clear();
-    this.bulkOperation = null;
-  }
-
-  // Drag & Drop Operations
-  onShiftDragStart(shiftCode: string, event: DragEvent) {
-    this.draggedShift = shiftCode;
-    event.dataTransfer!.effectAllowed = "copy";
-    event.dataTransfer!.setData("text/plain", shiftCode);
-  }
-
-  onCellDragOver(event: DragEvent) {
-    event.preventDefault();
-    event.dataTransfer!.dropEffect = "copy";
-  }
-
-  async onCellDrop(employeeId: string, dayIndex: number, event: DragEvent) {
-    event.preventDefault();
-
-    if (!this.draggedShift) return;
-
-    try {
-      await this.updateEmployeeSchedule(
-        employeeId,
-        dayIndex,
-        this.draggedShift
-      );
-      getToastSuccess("Schedule updated successfully");
-    } catch (error) {
-      getToastError("Failed to update schedule");
-    } finally {
-      this.draggedShift = null;
-    }
-  }
-
   // GETTER AND SETTER =======================================================
   get currentWeekRange(): string {
     if (!this.weekDays.length) return "";
-
     const firstDay = this.weekDays[0].date;
     const lastDay = this.weekDays[this.weekDays.length - 1].date;
-
     return `${firstDay} - ${lastDay}`;
   }
 
   get filteredEmployees(): EmployeeSchedule[] {
-    return this.employeeSchedules.filter((emp) => {
+    return this.currentWeekData.filter((emp) => {
       if (
         this.filters.department &&
         emp.department_code !== this.filters.department
       )
         return false;
-      if (this.filters.show_conflicts_only && emp.conflicts.length === 0)
-        return false;
-      if (this.filters.show_overtime_only && emp.overtime_hours === 0)
+      if (this.filters.position && emp.position_code !== this.filters.position)
         return false;
 
       return true;
     });
   }
 
-  get selectedCellsArray(): string[] {
-    return Array.from(this.selectedCells);
-  }
-
-  get hasCriticalConflicts(): boolean {
-    return this.employeeSchedules.some((emp) =>
-      emp.conflicts.some((conflict) => conflict.severity === "ERROR")
-    );
-  }
-
-  get weeklyStatsDisplay() {
-    return {
-      ...this.weeklyStats,
-      avg_hours_per_employee:
-        this.weeklyStats.total_employees > 0
-          ? (
-              this.weeklyStats.total_working_hours /
-              this.weeklyStats.total_employees
-            ).toFixed(1)
-          : "0",
-      overtime_percentage:
-        this.weeklyStats.total_working_hours > 0
-          ? (
-              (this.weeklyStats.total_overtime_hours /
-                this.weeklyStats.total_working_hours) *
-              100
-            ).toFixed(1)
-          : "0",
+  get summaryData() {
+    const summary = {
+      total_employees: this.currentWeekData.length,
+      total_working_hours: this.currentWeekData.reduce(
+        (sum, emp) => sum + emp.weekly_hours,
+        0
+      ),
+      total_overtime_hours: this.currentWeekData.reduce(
+        (sum, emp) => sum + emp.overtime_hours,
+        0
+      ),
+      avg_hours_per_employee: 0,
     };
+
+    if (summary.total_employees > 0) {
+      summary.avg_hours_per_employee =
+        Math.round(
+          (summary.total_working_hours / summary.total_employees) * 10
+        ) / 10;
+    }
+
+    return summary;
   }
 }
