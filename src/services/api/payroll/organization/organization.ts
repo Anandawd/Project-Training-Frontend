@@ -11,7 +11,7 @@ class OrganizationAPI extends ConfigurationResource {
   // Position Methods
   GetPositionList(params: any) {
     return request({
-      url: "GetPositionList",
+      url: "GetPayCfgInitPositionList",
       method: "get",
       params: params,
     });
@@ -19,7 +19,7 @@ class OrganizationAPI extends ConfigurationResource {
 
   InsertPosition(params: any) {
     return request({
-      url: "InsertPosition",
+      url: "InsertPayCfgInitPositionList",
       method: "post",
       data: params,
     });
@@ -27,14 +27,14 @@ class OrganizationAPI extends ConfigurationResource {
 
   GetPosition(params: any) {
     return request({
-      url: "GetPosition/" + params,
+      url: "GetPayCfgInitPosition/" + params,
       method: "get",
     });
   }
 
   UpdatePosition(params: any) {
     return request({
-      url: "UpdatePosition",
+      url: "UpdateCfgInitPositionList",
       method: "put",
       data: params,
     });
@@ -42,7 +42,7 @@ class OrganizationAPI extends ConfigurationResource {
 
   DeletePosition(params: any) {
     return request({
-      url: "DeletePosition/" + params,
+      url: "DeletePayCfgInitPosition/" + params,
       method: "delete",
     });
   }
@@ -50,7 +50,7 @@ class OrganizationAPI extends ConfigurationResource {
   // Department Methods
   GetDepartmentList(params: any) {
     return request({
-      url: "GetDepartmentList",
+      url: "GetPayCfgInitDepartmentList",
       method: "get",
       params: params,
     });
@@ -58,7 +58,7 @@ class OrganizationAPI extends ConfigurationResource {
 
   InsertDepartment(params: any) {
     return request({
-      url: "InsertDepartment",
+      url: "InsertPayCfgInitDepartmentList",
       method: "post",
       data: params,
     });
@@ -66,14 +66,14 @@ class OrganizationAPI extends ConfigurationResource {
 
   GetDepartment(params: any) {
     return request({
-      url: "GetDepartment/" + params,
+      url: "GetPayCfgInitDepartment/" + params,
       method: "get",
     });
   }
 
   UpdateDepartment(params: any) {
     return request({
-      url: "UpdateDepartment",
+      url: "UpdateCfgInitDepartmentList",
       method: "put",
       data: params,
     });
@@ -81,7 +81,7 @@ class OrganizationAPI extends ConfigurationResource {
 
   DeleteDepartment(params: any) {
     return request({
-      url: "DeleteDepartment/" + params,
+      url: "DeletePayCfgInitDepartment/" + params,
       method: "delete",
     });
   }
@@ -89,7 +89,7 @@ class OrganizationAPI extends ConfigurationResource {
   // Placement Methods
   GetPlacementList(params: any) {
     return request({
-      url: "GetPlacementList",
+      url: "GetPayCfgInitPlacementList",
       method: "get",
       params: params,
     });
@@ -97,7 +97,7 @@ class OrganizationAPI extends ConfigurationResource {
 
   InsertPlacement(params: any) {
     return request({
-      url: "InsertPlacement",
+      url: "InsertPayCfgInitPlacementList",
       method: "post",
       data: params,
     });
@@ -105,14 +105,14 @@ class OrganizationAPI extends ConfigurationResource {
 
   GetPlacement(params: any) {
     return request({
-      url: "GetPlacement/" + params,
+      url: "GetPayCfgInitPlacement/" + params,
       method: "get",
     });
   }
 
   UpdatePlacement(params: any) {
     return request({
-      url: "UpdatePlacement",
+      url: "UpdateCfgInitPlacementList",
       method: "put",
       data: params,
     });
@@ -120,7 +120,7 @@ class OrganizationAPI extends ConfigurationResource {
 
   DeletePlacement(params: any) {
     return request({
-      url: "DeletePlacement/" + params,
+      url: "DeletePayCfgInitPlacement/" + params,
       method: "delete",
     });
   }

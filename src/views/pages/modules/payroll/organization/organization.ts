@@ -40,7 +40,7 @@ export default class Organizaation extends Vue {
   public rowPlacementData: any = [];
 
   // form
-  public dataType: any;
+  public dataType: any = "";
   public showForm: boolean = false;
   public modeData: any;
   positionFormElement: any = ref();
@@ -74,6 +74,7 @@ export default class Organizaation extends Vue {
 
   // GENERAL FUNCTION =======================================================
   async handleShowForm(params: any, mode: any) {
+    this.dataType = "";
     this.showForm = false;
     await this.$nextTick();
 
@@ -85,7 +86,8 @@ export default class Organizaation extends Vue {
     }
 
     this.$nextTick(() => {
-      if (mode === $global.modeData.insert && typeof params === "string") {
+      if (mode === $global.modeData.insert) {
+        console.log("masuk insert");
         switch (this.dataType) {
           case "POSITION":
             this.positionFormElement.initialize();
@@ -157,7 +159,10 @@ export default class Organizaation extends Vue {
         this.handleDelete(params.params);
         break;
       default:
+        this.dataType = "";
+        this.showForm = false;
         this.handleShowForm(params.params, $global.modeData.insert);
+        break;
     }
   }
 
@@ -184,7 +189,7 @@ export default class Organizaation extends Vue {
       // ]);
 
       this.loadDropdown();
-      this.loadMockData();
+      // this.loadMockData();
     } catch (error) {
       getError(error);
     }
