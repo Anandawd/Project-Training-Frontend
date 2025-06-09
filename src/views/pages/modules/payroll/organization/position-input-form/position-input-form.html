@@ -62,31 +62,30 @@
             offset="right"
             class="row mb-1"
             selectType="column"
-            name="positionDepartment"
+            name="DepartmentCode"
             labelName="name"
             keyName="code"
             v-model="form.department_code"
             :label="$t('labels.payroll.employee.department')"
-            :options="positionDepartmentOptions"
+            :options="departmentOptions"
             :columnOptions="columnOptions"
-            multiple
             filter
           >
           </c-select>
         </div>
         <div class="col-md-4">
           <c-select
+            required
             offset="right"
             class="row mb-1"
             selectType="column"
-            name="positionPlacement"
+            name="PlacementCode"
             labelName="name"
             keyName="code"
             v-model="form.placement_code"
             :label="$t('labels.payroll.employee.placement')"
             :options="positionPlacementOptions"
             :columnOptions="columnOptions"
-            multiple
             filter
           >
           </c-select>
@@ -105,13 +104,13 @@
                 class="me-3"
                 :label="$t('labels.active')"
                 v-model="form.status"
-                value="A"
+                value="1"
               ></c-radio>
               <c-radio
                 class="me-3"
                 :label="$t('labels.inactive')"
                 v-model="form.status"
-                value="I"
+                value="0"
               ></c-radio>
             </div>
           </div>

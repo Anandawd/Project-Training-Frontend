@@ -62,13 +62,10 @@ export default class InputForm extends Vue {
     this.form = {
       placement_code: "",
       placement_name: "",
-      country_code: "",
-      country_name: "",
-      city_code: "",
-      city_name: "",
+      country: "",
+      city: "",
       address: "",
-      status: "A",
-      id: undefined,
+      status: "1",
     };
   }
 

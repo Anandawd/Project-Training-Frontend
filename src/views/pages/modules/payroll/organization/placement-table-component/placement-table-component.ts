@@ -1,6 +1,6 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import Checklist from "@/components/ag_grid-framework/checklist.vue";
-import { formatDateTime } from "@/utils/format";
+import { formatDateTime2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -72,25 +72,25 @@ export default class DocumentTableComponent extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.employee.code"),
-        field: "placement_code",
+        field: "code",
         width: 100,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.placementName"),
-        field: "placement_name",
+        field: "name",
         width: 200,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.country"),
-        field: "country_name",
+        field: "country",
         width: 150,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.city"),
-        field: "city_name",
+        field: "city",
         width: 150,
         enableRowGroup: true,
       },
@@ -108,6 +108,13 @@ export default class DocumentTableComponent extends Vue {
         width: 100,
         enableRowGroup: true,
         cellRenderer: "checklistRenderer",
+        valueFormatter: (params: any) => {
+          if (params.value === 1) {
+            return true;
+          } else {
+            return false;
+          }
+        },
       },
       {
         headerName: this.$t("commons.table.updatedAt"),
@@ -116,7 +123,7 @@ export default class DocumentTableComponent extends Vue {
         field: "updated_at",
         width: 120,
         enableRowGroup: true,
-        valueFormatter: formatDateTime,
+        valueFormatter: formatDateTime2,
       },
       {
         headerName: this.$t("commons.table.updatedBy"),
@@ -133,7 +140,7 @@ export default class DocumentTableComponent extends Vue {
         field: "created_at",
         width: 120,
         enableRowGroup: true,
-        valueFormatter: formatDateTime,
+        valueFormatter: formatDateTime2,
       },
       {
         headerName: this.$t("commons.table.createdBy"),

@@ -41,7 +41,7 @@
             labelName="name"
             selectType="column"
             keyName="code"
-            v-model="form.country_code"
+            v-model="form.country"
             :label="$t('labels.payroll.employee.country')"
             :options="countryOptions"
             :columnOptions="columnOptions"
@@ -57,7 +57,7 @@
             selectType="column"
             labelName="name"
             keyName="code"
-            v-model="form.city_code"
+            v-model="form.city"
             :label="$t('labels.payroll.employee.city')"
             :options="cityOptions"
             :columnOptions="columnOptions"
@@ -88,13 +88,13 @@
                 class="me-3"
                 :label="$t('labels.active')"
                 v-model="form.status"
-                value="A"
+                value="1"
               ></c-radio>
               <c-radio
                 class="me-3"
                 :label="$t('labels.inactive')"
                 v-model="form.status"
-                value="I"
+                value="0"
               ></c-radio>
             </div>
           </div>

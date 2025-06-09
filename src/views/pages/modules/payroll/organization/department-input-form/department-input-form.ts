@@ -65,18 +65,13 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      // Category tab
       department_code: "",
       department_name: "",
       description: "",
       placement_code: "",
-      placement_name: "",
-      manager_id: "",
-      manager_name: "",
-      supervisor_id: "",
-      supervisor_name: "",
-      status: "A",
-      id: undefined,
+      employee_manager_id: "",
+      employee_supervisor_id: "",
+      status: "1",
     };
   }
 
@@ -106,6 +101,7 @@ export default class InputForm extends Vue {
     return Yup.object().shape({
       DepartmentCode: Yup.string().required(),
       DepartmentName: Yup.string().required(),
+      PlacementCode: Yup.string().required(),
     });
   }
 

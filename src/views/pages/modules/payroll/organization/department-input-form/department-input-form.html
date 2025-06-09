@@ -44,8 +44,8 @@
         </div>
         <div class="col-md-4">
           <c-select
+            required
             filter
-            multiple
             offset="right"
             class="row mb-1"
             selectType="column"
@@ -65,10 +65,10 @@
             offset="right"
             class="row mb-1"
             selectType="column"
-            name="ManagerCode"
+            name="ManagerId"
             labelName="name"
-            keyName="code"
-            v-model="form.manager_code"
+            keyName="employee_id"
+            v-model="form.employee_manager_id"
             :label="$t('labels.payroll.employee.manager')"
             :columnOptions="columnOptions"
             :options="departmentManagerOptions"
@@ -82,10 +82,10 @@
             offset="right"
             class="row mb-1"
             selectType="column"
-            name="SupervisorCode"
+            name="SupervisorId"
             labelName="name"
-            keyName="code"
-            v-model="form.supervisor_code"
+            keyName="employee_id"
+            v-model="form.employee_supervisor_id"
             :label="$t('labels.payroll.employee.supervisor')"
             :columnOptions="columnOptions"
             :options="departmentSupervisorOptions"
@@ -106,13 +106,13 @@
                 class="me-3"
                 :label="$t('labels.active')"
                 v-model="form.status"
-                value="A"
+                value="1"
               ></c-radio>
               <c-radio
                 class="me-3"
                 :label="$t('labels.inactive')"
                 v-model="form.status"
-                value="I"
+                value="0"
               ></c-radio>
             </div>
           </div>

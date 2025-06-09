@@ -71,16 +71,12 @@ export default class InputForm extends Vue {
       description: "",
       level: "",
       department_code: "",
-      department_name: "",
       placement_code: "",
-      placement_name: "",
-      status: "A",
-      id: undefined,
+      status: "1",
     };
   }
 
   initialize() {
-    console.log("tes");
     this.resetForm();
   }
 
@@ -107,6 +103,7 @@ export default class InputForm extends Vue {
       PositionCode: Yup.string().required(),
       PositionName: Yup.string().required(),
       PositionLevel: Yup.string().required(),
+      PlacementCode: Yup.string().required(),
     });
   }
 
