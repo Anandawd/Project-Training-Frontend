@@ -39,6 +39,24 @@ export default [
     },
   },
   {
+    path: "employee-type",
+    name: "EmployeeType",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/employee/configurations/employee-type/employee-type.vue"
+      ),
+    meta: {
+      pageTitle: "title.employeeType",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.home", url: "/" },
+        { title: "title.management" },
+        { title: "title.employeeType", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
     path: "employee/detail/:id?",
     name: "EmployeeDetail",
     component: () =>

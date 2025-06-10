@@ -82,13 +82,13 @@
                         class="me-3"
                         :label="$t('labels.male')"
                         v-model="form.gender"
-                        value="M"
+                        value="Male"
                       ></c-radio>
                       <c-radio
                         class="me-3"
                         :label="$t('labels.female')"
                         v-model="form.gender"
-                        value="F"
+                        value="Female"
                       ></c-radio>
                     </div>
                   </div>
@@ -120,7 +120,7 @@
                   <c-input
                     name="Phone"
                     id="Phone"
-                    type="text"
+                    type="phone"
                     class="row mb-1"
                     v-model="form.phone"
                     :label="$t('labels.payroll.employee.phoneNumber')"
@@ -204,13 +204,13 @@
                         class="me-3"
                         :label="$t('labels.active')"
                         v-model="form.status"
-                        value="A"
+                        value="1"
                       ></c-radio>
                       <c-radio
                         class="me-3"
                         :label="$t('labels.inactive')"
                         v-model="form.status"
-                        value="I"
+                        value="0"
                       ></c-radio>
                     </div>
                   </div>
@@ -236,13 +236,14 @@
                     offset="right"
                     class="row mb-1"
                     selectType="column"
-                    name="Placement"
+                    name="Position"
                     labelName="name"
                     keyName="code"
-                    v-model="form.placement"
-                    :label="$t('labels.payroll.employee.placement')"
+                    v-model="form.position_code"
+                    :label="$t('labels.payroll.employee.position')"
                     :columnOptions="columnOptions"
-                    :options="placementOptions"
+                    :options="positionOptions"
+                    @change="onPositionChange"
                   >
                   </c-select>
                 </div>
@@ -255,7 +256,7 @@
                     name="Department"
                     labelName="name"
                     keyName="code"
-                    v-model="form.department"
+                    v-model="form.department_code"
                     :label="$t('labels.payroll.employee.department')"
                     :columnOptions="columnOptions"
                     :options="departmentOptions"
@@ -268,18 +269,18 @@
                     offset="right"
                     class="row mb-1"
                     selectType="column"
-                    name="Position"
+                    name="Placement"
                     labelName="name"
                     keyName="code"
-                    v-model="form.position"
-                    :label="$t('labels.payroll.employee.position')"
+                    v-model="form.placement_code"
+                    :label="$t('labels.payroll.employee.placement')"
                     :columnOptions="columnOptions"
-                    :options="filteredPositionOptions"
+                    :options="placementOptions"
                   >
                   </c-select>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-4" v-show="isShowSupervisor">
                   <c-select
                     offset="right"
                     class="row mb-1"
@@ -287,7 +288,7 @@
                     name="supervisor"
                     labelName="name"
                     keyName="code"
-                    v-model="form.supervisor"
+                    v-model="form.supervisor_id"
                     :label="$t('labels.payroll.employee.supervisor')"
                     :columnOptions="columnOptions"
                     :options="filteredSupervisorOptions"
@@ -299,27 +300,24 @@
           </div>
         </div>
 
-        <!-- salary & payment information -->
+        <!-- Payroll information -->
         <div class="accordion-item">
-          <h6
-            class="accordion-header"
-            id="itemSalaryAndPaymentInformationHeader"
-          >
+          <h6 class="accordion-header" id="itemPayrollInformationHeader">
             <button
               type="button"
               class="accordion-button"
               data-bs-toggle="collapse"
-              data-bs-target="#salaryAndPaymentInformation"
-              aria-controls="salaryAndPaymentInformation"
+              data-bs-target="#payrollInformation"
+              aria-controls="payrollInformation"
               aria-expanded="false"
             >
-              {{$t('labels.payroll.employee.salaryAndPaymentInformation')}}
+              {{$t('labels.payroll.employee.payrollInformation')}}
             </button>
           </h6>
           <div
-            id="salaryAndPaymentInformation"
+            id="payrollInformation"
             class="accordion-collapse collapse show p-3"
-            aria-labelledby="salaryAndPaymentInformationHeader"
+            aria-labelledby="payrollInformationHeader"
           >
             <div class="accordion-body">
               <div class="row mb-3">
@@ -337,22 +335,6 @@
                     :options="paymentFrequencyOptions"
                   >
                   </c-select>
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    required
-                    formatted
-                    showZeroNumber
-                    type="number"
-                    name="BaseSalary"
-                    id="BaseSalary"
-                    class="row mb-1"
-                    :max="9999999999"
-                    :min="0"
-                    :label="$t('labels.payroll.employee.baseSalary')"
-                    v-model="form.base_salary"
-                    :disabled="modeData === $global.modeData.edit"
-                  />
                 </div>
                 <div class="col-md-4">
                   <c-select
@@ -380,7 +362,7 @@
                     labelName="name"
                     keyName="code"
                     v-model="form.bank_name"
-                    :label="$t('labels.payroll.employee.bankName')"
+                    :label="$t('labels.payroll.payroll.bank')"
                     :columnOptions="columnOptions"
                     :options="bankOptions"
                   >
@@ -415,22 +397,25 @@
 
         <!-- tax and identification information -->
         <div class="accordion-item">
-          <h6 class="accordion-header" id="itemTaxAndIdentificationDataHeader">
+          <h6
+            class="accordion-header"
+            id="itemTaxAndIdentificationInformationHeader"
+          >
             <button
               type="button"
               class="accordion-button"
               data-bs-toggle="collapse"
-              data-bs-target="#taxAndIdentificationData"
-              aria-controls="taxAndIdentificationData"
+              data-bs-target="#taxAndIdentificationInformation"
+              aria-controls="taxAndIdentificationInformation"
               aria-expanded="false"
             >
-              {{$t('labels.payroll.employee.taxAndIdentificationData')}}
+              {{$t('labels.payroll.employee.taxAndIdentificationInformation')}}
             </button>
           </h6>
           <div
-            id="taxAndIdentificationData"
+            id="taxAndIdentificationInformation"
             class="accordion-collapse collapse show p-3"
-            aria-labelledby="taxAndIdentificationDataHeader"
+            aria-labelledby="taxAndIdentificationInformationHeader"
           >
             <div class="accordion-body">
               <div class="row mb-3">
@@ -453,7 +438,7 @@
                     name="MaritalStatus"
                     labelName="name"
                     keyName="code"
-                    v-model="form.marital_status"
+                    v-model="form.maritial_status"
                     :label="$t('labels.payroll.employee.maritalStatus')"
                     :columnOptions="columnOptions"
                     :options="maritalStatusOptions"
@@ -495,119 +480,27 @@
           </div>
         </div>
 
-        <!-- supporting documents -->
-        <!-- <div class="accordion-item">
-          <h6 class="accordion-header" id="itemSupportingDocumentHeader">
-            <button
-              type="button"
-              class="accordion-button"
-              data-bs-toggle="collapse"
-              data-bs-target="#supportingDocument"
-              aria-controls="supportingDocument"
-              aria-expanded="false"
-            >
-              {{$t('labels.payroll.employee.supportingDocument')}}
-            </button>
-          </h6>
-          <div
-            id="supportingDocument"
-            class="accordion-collapse collapse show p-3"
-            aria-labelledby="supportingDocumentHeader"
-          >
-            <div class="accordion-body">
-              <div class="row mb-3">
-                <div class="col-md-4">
-                  <c-input
-                    type="text"
-                    name="IdentityCardFile"
-                    id="IdentityCardFile"
-                    class="row mb-1"
-                    :label="$t('labels.payroll.employee.identityCardFile')"
-                    v-model="form.identity_card_file"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    type="text"
-                    name="TaxCardFile"
-                    id="TaxCardFile"
-                    class="row mb-1"
-                    :label="$t('labels.payroll.employee.taxCardFile')"
-                    v-model="form.tax_card_file"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    type="text"
-                    name="CvFile"
-                    id="CvFile"
-                    class="row mb-1"
-                    :label="$t('labels.payroll.employee.cvFile')"
-                    v-model="form.cv_file"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    type="text"
-                    name="EmployeeContractFile"
-                    id="EmployeeContractFile"
-                    class="row mb-1"
-                    :label="$t('labels.payroll.employee.employeeContractFile')"
-                    v-model="form.employee_contract_file"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    type="text"
-                    name="OtherDocuments"
-                    id="OtherDocuments"
-                    class="row mb-1"
-                    :label="$t('labels.payroll.employee.otherDocuments')"
-                    v-model="form.other_documents"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
-
         <!-- Attendance and Leave Data -->
         <div class="accordion-item">
-          <h6 class="accordion-header" id="itemAttendanceAndLeaveDataHeader">
+          <h6 class="accordion-header" id="itemLeaveInformationHeader">
             <button
               type="button"
               class="accordion-button"
               data-bs-toggle="collapse"
-              data-bs-target="#attendanceAndLeaveData"
-              aria-controls="attendanceAndLeaveData"
+              data-bs-target="#leaveInformation"
+              aria-controls="leaveInformation"
               aria-expanded="false"
             >
-              {{$t('labels.payroll.employee.attendanceAndLeaveData')}}
+              {{$t('labels.payroll.employee.leaveInformation')}}
             </button>
           </h6>
           <div
-            id="attendanceAndLeaveData"
+            id="leaveInformation"
             class="accordion-collapse collapse show p-3"
-            aria-labelledby="attendanceAndLeaveDataHeader"
+            aria-labelledby="leaveInformationHeader"
           >
             <div class="accordion-body">
               <div class="row mb-3">
-                <div class="col-md-4">
-                  <c-select
-                    offset="right"
-                    class="row mb-1"
-                    selectType="column"
-                    name="WorkSchedule"
-                    labelName="name"
-                    keyName="code"
-                    v-model="form.work_schedule"
-                    :label="$t('labels.payroll.employee.workSchedule')"
-                    :columnOptions="columnOptions"
-                    :options="workScheduleOptions"
-                    :disabled="modeData === $global.modeData.edit"
-                  >
-                  </c-select>
-                </div>
                 <div class="col-md-4">
                   <c-input
                     required
@@ -619,6 +512,7 @@
                     v-model="form.annual_leave_quota"
                     showZeroNumber
                     :disabled="modeData === $global.modeData.edit"
+                    @change="onLeaveQuotaChange"
                   />
                 </div>
                 <div class="col-md-4">
@@ -629,7 +523,7 @@
                     id="RemainingLeave"
                     class="row mb-1"
                     :label="$t('labels.payroll.employee.remainingLeave')"
-                    v-model="form.remaining_leave"
+                    v-model="form.annual_leave_remaining"
                     showZeroNumber
                   />
                 </div>

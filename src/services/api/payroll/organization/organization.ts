@@ -47,6 +47,14 @@ class OrganizationAPI extends ConfigurationResource {
     });
   }
 
+  GetPositionActiveList(params: any) {
+    return request({
+      url: "GetPositionActiveList",
+      method: "get",
+      params: params,
+    });
+  }
+
   // Department Methods
   GetDepartmentList(params: any) {
     return request({
@@ -83,6 +91,14 @@ class OrganizationAPI extends ConfigurationResource {
     return request({
       url: "DeletePayCfgInitDepartment/" + params,
       method: "delete",
+    });
+  }
+
+  GetDepartmentActiveList(params: any) {
+    return request({
+      url: "GetDepartmentActiveList",
+      method: "get",
+      params: params,
     });
   }
 
@@ -125,31 +141,18 @@ class OrganizationAPI extends ConfigurationResource {
     });
   }
 
-  // Options List Methods
-  GetPositionLevelOptions() {
+  GetPlacementActiveList(params: any) {
     return request({
-      url: "GetPositionLevelOptions",
+      url: "GetPlacementActiveList",
       method: "get",
+      params: params,
     });
   }
 
-  GetDepartmentOptions() {
+  // options
+  GetSupervisorByDepartment(params: any) {
     return request({
-      url: "GetDepartmentOptions",
-      method: "get",
-    });
-  }
-
-  GetManagerOptions() {
-    return request({
-      url: "GetManagerOptions",
-      method: "get",
-    });
-  }
-
-  GetSupervisorOptions() {
-    return request({
-      url: "GetSupervisorOptions",
+      url: "GetSupervisorDepartmentListP/" + params,
       method: "get",
     });
   }

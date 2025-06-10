@@ -995,22 +995,33 @@ export default class Organizaation extends Vue {
 
   async loadDropdown() {
     try {
-      // for real implementation
-      // const { data: levelData } = await organizationAPI.GetPositionLevelOptions();
-      // this.positionLevelOptions = levelData;
+      const { data: placementActive } =
+        await organizationAPI.GetPlacementActiveList({
+          Index: 0,
+          Text: "",
+          IndexCheckbox: 1,
+        });
+
+      const { data: departmentActive } =
+        await organizationAPI.GetDepartmentActiveList({
+          Index: 0,
+          Text: "",
+          IndexCheckbox: 1,
+        });
+
+      this.placementOptions = placementActive;
+      this.departmentOptions = departmentActive;
 
       // for demo
       this.positionLevelOptions = [
-        { code: "1", name: "1", SubGroupName: "Level" },
-        { code: "2", name: "2", SubGroupName: "Level" },
-        { code: "3", name: "3", SubGroupName: "Level" },
-        { code: "4", name: "4", SubGroupName: "Level" },
-        { code: "5", name: "5", SubGroupName: "Level" },
+        { code: "1", name: "1" },
+        { code: "2", name: "2" },
+        { code: "3", name: "3" },
+        { code: "4", name: "4" },
+        { code: "5", name: "5" },
+        { code: "6", name: "6" },
+        { code: "7", name: "7" },
       ];
-
-      this.departmentOptions = [...this.rowDepartmentData];
-
-      this.placementOptions = [...this.rowPlacementData];
 
       this.managerOptions = [
         { employee_id: "MGR001", name: "John Smith" },
@@ -1051,35 +1062,27 @@ export default class Organizaation extends Vue {
       ];
 
       this.countryOptions = [
-        { code: "ID", name: "Indonesia" },
-        { code: "SG", name: "Singapore" },
-        { code: "MY", name: "Malaysia" },
-        { code: "TH", name: "Thailand" },
-        { code: "PH", name: "Philippines" },
-        { code: "VN", name: "Vietnam" },
-        { code: "HK", name: "Hong Kong" },
-        { code: "JP", name: "Japan" },
-        { code: "AU", name: "Australia" },
-        { code: "NZ", name: "New Zealand" },
+        { code: "Indonesia", name: "Indonesia" },
+        { code: "Singapore", name: "Singapore" },
+        { code: "Malaysia", name: "Malaysia" },
+        { code: "Thailand", name: "Thailand" },
+        { code: "Philippines", name: "Philippines" },
+        { code: "Vietnam", name: "Vietnam" },
+        { code: "Hong Kong", name: "Hong Kong" },
+        { code: "Japan", name: "Japan" },
+        { code: "Australia", name: "Australia" },
+        { code: "New Zealand", name: "New Zealand" },
       ];
 
       this.cityOptions = [
-        { code: "BALI", name: "Bali" },
-        { code: "JKT", name: "Jakarta" },
-        { code: "BDG", name: "Bandung" },
-        { code: "SBY", name: "Surabaya" },
-        { code: "YOG", name: "Yogyakarta" },
-        { code: "MKS", name: "Makassar" },
-        { code: "KUL", name: "Kuala Lumpur" },
-        { code: "BKK", name: "Bangkok" },
-        { code: "PHU", name: "Phuket" },
-        { code: "MNL", name: "Manila" },
-        { code: "HCM", name: "Ho Chi Minh City" },
-        { code: "HKG", name: "Hong Kong" },
-        { code: "TYO", name: "Tokyo" },
-        { code: "SYD", name: "Sydney" },
-        { code: "MEL", name: "Melbourne" },
-        { code: "AKL", name: "Auckland" },
+        { code: "Bali", name: "Bali" },
+        { code: "Jakarta", name: "Jakarta" },
+        { code: "Bandung", name: "Bandung" },
+        { code: "Surabaya", name: "Surabaya" },
+        { code: "Yogyakarta", name: "Yogyakarta" },
+        { code: "Makassar", name: "Makassar" },
+        { code: "Kuala Lumpur", name: "Kuala Lumpur" },
+        { code: "Bangkok", name: "Bangkok" },
       ];
     } catch (error) {
       getError(error);
@@ -1132,10 +1135,10 @@ export default class Organizaation extends Vue {
       const { status2 } = await organizationAPI.InsertPlacement(formData);
       if (status2.status === 0) {
         getToastSuccess(this.$t("messages.employee.success.savePlacement"));
-        this.showForm = false;
         await this.$nextTick();
         await this.loadDropdown();
         await this.loadPlacementData();
+        this.showForm = false;
       }
     } catch (error) {
       getError(error);
@@ -1147,6 +1150,7 @@ export default class Organizaation extends Vue {
       const { status2 } = await organizationAPI.InsertDepartment(formData);
       if (status2.status === 0) {
         getToastSuccess(this.$t("messages.employee.success.saveDepartment"));
+        await this.$nextTick();
         await this.loadDropdown();
         await this.loadDepartmentData();
         this.showForm = false;
@@ -1161,9 +1165,10 @@ export default class Organizaation extends Vue {
       const { status2 } = await organizationAPI.InsertPosition(formData);
       if (status2.status === 0) {
         getToastSuccess(this.$t("messages.employee.success.savePosition"));
-        this.showForm = false;
+        await this.$nextTick();
         await this.loadDropdown();
         await this.loadPositionData();
+        this.showForm = false;
       }
 
       // await this.$nextTick();
@@ -1359,7 +1364,7 @@ export default class Organizaation extends Vue {
           name: params.placement_name,
           country: params.country,
           city: params.city,
-          // address: params.address,
+          address: params.address,
           status: parseInt(params.status),
           updated_at: params.updated_at,
           updated_by: params.updated_by,

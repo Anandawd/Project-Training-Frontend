@@ -10,7 +10,7 @@ class EmployeeAPI extends ConfigurationResource {
 
   GetEmployeeList(params: any) {
     return request({
-      url: "GetEmployeeList",
+      url: "GetPayEmployeeList",
       method: "get",
       params: params,
     });
@@ -18,7 +18,7 @@ class EmployeeAPI extends ConfigurationResource {
 
   InsertEmployee(params: any) {
     return request({
-      url: "InsertEmployee",
+      url: "InsertPayEmployeeList",
       method: "post",
       data: params,
     });
@@ -26,14 +26,14 @@ class EmployeeAPI extends ConfigurationResource {
 
   GetEmployee(params: any) {
     return request({
-      url: "GetEmployee/" + params,
+      url: "GetPayEmployee/" + params,
       method: "get",
     });
   }
 
   UpdateEmployee(params: any) {
     return request({
-      url: "UpdateEmployee",
+      url: "UpdateEmployeeList",
       method: "put",
       data: params,
     });
@@ -41,10 +41,86 @@ class EmployeeAPI extends ConfigurationResource {
 
   DeleteEmployee(params: any) {
     return request({
-      url: "DeleteEmployee/" + params,
+      url: "DeletePayEmployee/" + params,
       method: "delete",
     });
   }
+
+  // Employee Type
+  GetEmployeeTypeList(params: any) {
+    return request({
+      url: "GetPayCfgInitEmployeeTypeList",
+      method: "get",
+      params: params,
+    });
+  }
+
+  InsertEmployeeType(params: any) {
+    return request({
+      url: "InsertPayCfgInitEmployeeTypeList",
+      method: "post",
+      data: params,
+    });
+  }
+
+  GetEmployeeType(params: any) {
+    return request({
+      url: "GetPayCfgInitEmployeeType/" + params,
+      method: "get",
+    });
+  }
+
+  UpdateEmployeeType(params: any) {
+    return request({
+      url: "UpdateCfgInitEmployeeTypeList",
+      method: "put",
+      data: params,
+    });
+  }
+
+  DeleteEmployeeType(params: any) {
+    return request({
+      url: "DeletePayCfgInitEmployeeType/" + params,
+      method: "delete",
+    });
+  }
+
+  // Options Methods
+  GetGenderOptions() {
+    return request({
+      url: "GetPayConstGenderList",
+      method: "get",
+    });
+  }
+
+  GetPaymentFrequencyOptions() {
+    return request({
+      url: "GetPayConstPaymentFrequencyList",
+      method: "get",
+    });
+  }
+
+  GetMaritalStatusOptions() {
+    return request({
+      url: "GetPayConstMaritalStatusList",
+      method: "get",
+    });
+  }
+
+  GetPaymentMethodOptions() {
+    return request({
+      url: "GetPayConstPaymentMethodList",
+      method: "get",
+    });
+  }
+
+  GetBankOptions() {
+    return request({
+      url: "GetPayConstBankOptionsList",
+      method: "get",
+    });
+  }
+
   // Employee Document Methods
   GetEmployeeDocumentList(employeeId: any, params: any) {
     return request({
@@ -120,49 +196,6 @@ class EmployeeAPI extends ConfigurationResource {
     return request({
       url: "DeleteEmployeeSalary/" + params,
       method: "delete",
-    });
-  }
-
-  // Options Methods
-  GetEmployeeTypeOptions() {
-    return request({
-      url: "GetEmployeeTypeOptions",
-      method: "get",
-    });
-  }
-
-  GetPaymentFrequencyOptions() {
-    return request({
-      url: "GetPaymentFrequencyOptions",
-      method: "get",
-    });
-  }
-
-  GetMaritalStatusOptions() {
-    return request({
-      url: "GetMaritalStatusOptions",
-      method: "get",
-    });
-  }
-
-  GetPaymentMethodOptions() {
-    return request({
-      url: "GetPaymentMethodOptions",
-      method: "get",
-    });
-  }
-
-  GetBankOptions() {
-    return request({
-      url: "GetBankOptions",
-      method: "get",
-    });
-  }
-
-  GetDocumentTypeOptions() {
-    return request({
-      url: "GetDocumentTypeOptions",
-      method: "get",
     });
   }
 }

@@ -15,7 +15,7 @@
         "personalInformation": "Personal Information",
         "employmentInformation": "Employment Information",
         "salaryAndPaymentInformation": "Salary & Payment Information",
-        "taxAndIdentificationData": "Tax & Identification Data",
+        "taxAndIdentificationInformation": "Tax & Identification Information",
         "supportingDocument": "Supporting Document",
         "attendanceAndLeaveData": "Attendance & Leave Data",
         "name": "Name",
@@ -103,7 +103,9 @@
         "difference": "Difference",
         "percentageChange": "Percentage Change",
         "adjustmentSummary": "Adjustment Summary",
-        "documentInformation": "Document Information"
+        "documentInformation": "Document Information",
+        "leaveInformation": "Leave Information",
+        "payrollInformation": "Payroll Information"
       },
       "attendance": {
         "attendanceAndLeave": "Attendance & Leave",
@@ -1790,6 +1792,7 @@
   },
   "title": {
     "t11": "t11",
+    "employeeType": "Employee Type",
     "shiftCategory": "Shift Category",
     "shift": "Shift",
     "schedule": "Schedule",
@@ -2319,6 +2322,7 @@
         "saveDepartment": "Department has been successfully saved",
         "savePlacement": "Placement has been successfully saved",
         "saveSalaryAdjustment": "Salary Adjustment has been successfully saved",
+        "saveEmployeeType": "Employee type has been successfully saved",
         "deleteDocument": "Employee document has been successfully removed",
         "deleteSalary": "Employee salary has been successfully removed",
         "deleteBenefit": "Employee benefit has been successfully removed",
@@ -2326,6 +2330,7 @@
         "deleteDepartment": "Department has been successfully removed",
         "deletePlacement": "Placement has been successfully removed",
         "deleteSalaryAdjustment": "Salary Adjustment has been successfully removed",
+        "deleteEmployeeType": "Employee type has been successfully removed",
         "updateDocument": "Employee document has been successfully updated",
         "updateSalary": "Employee salary information has been successfully updated",
         "updateBenefit": "Employee benefit has been successfully updated",
@@ -2333,6 +2338,7 @@
         "updateDepartment": "Department has been successfully updated",
         "updatePlacement": "Placement has been successfully updated",
         "updateSalaryAdjustment": "Salary Adjustment has been successfully updated",
+        "updateEmployeeType": "Employee type has been successfully updated",
         "approveSalaryAdjustment": "Salary Adjustment has been successfully approved",
         "rejectSalaryAdjustment": "Salary Adjustment has been successfully reject"
       },
@@ -2388,6 +2394,7 @@
         "deletePosition": "Are you sure you want to delete this position?",
         "deleteDepartment": "Are you sure you want to delete this department?",
         "deletePlacement": "Are you sure you want to delete this placement?",
+        "deleteEmployeeType": "Are you sure you want to delete this employee type?",
         "statusChange": "Are you sure you want to change this employee's status to {status}?",
         "salaryChange": "Are you sure you want to update this employee's salary information?",
         "transferDepartment": "Are you sure you want to transfer this employee to {department}?",
@@ -2718,6 +2725,7 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "employeType": "Employee Type",
     "shiftCategory": "Shift Category",
     "schedule": "Schedule",
     "switchSchedule": "Switch Schedule",
@@ -3290,6 +3298,7 @@
           "employeeName": "Employee Name",
           "name": "Name",
           "bank": "Bank",
+          "gender": "Gender",
           "employeeInformation": "Employee Information",
           "financialInformation": "Financial Information",
           "taxAndIdentificationData": "Tax And Identification Data",
@@ -4418,6 +4427,7 @@
     "filter": {
       "payroll": {
         "employee": {
+          "id": "ID",
           "employeeId": "Employee ID",
           "employeeName": "Employee Name",
           "name": "Name",

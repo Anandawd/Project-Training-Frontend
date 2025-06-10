@@ -108,13 +108,6 @@ export default class DocumentTableComponent extends Vue {
         width: 100,
         enableRowGroup: true,
         cellRenderer: "checklistRenderer",
-        valueFormatter: (params: any) => {
-          if (params.value === 1) {
-            return true;
-          } else {
-            return false;
-          }
-        },
       },
       {
         headerName: this.$t("commons.table.updatedAt"),

@@ -2,13 +2,17 @@ import CDatepicker from "@/components/datepicker/datepicker.vue";
 import CInput from "@/components/input/input.vue";
 import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
+import OrganizationAPI from "@/services/api/payroll/organization/organization";
 import { formatDateTimeUTC } from "@/utils/format";
+import { getError } from "@/utils/general";
 import $global from "@/utils/global";
 import { focusOnInvalid } from "@/utils/validation";
 import { Form as CForm } from "vee-validate";
 import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import * as Yup from "yup";
+
+const organizationAPI = new OrganizationAPI();
 
 @Options({
   name: "InputForm",
@@ -80,6 +84,8 @@ export default class InputForm extends Vue {
   positionOptions!: any[];
   placementOptions!: any[];
 
+  supervisorOptions: any[];
+
   inputFormValidation: any = ref();
   public defaultForm: any = {};
   public form: any = reactive({});
@@ -119,54 +125,50 @@ export default class InputForm extends Vue {
     await this.$nextTick();
     this.form = {
       // personal information
-      id: undefined,
+      profile_photo: "",
       employee_id: "",
       first_name: "",
       last_name: "",
-      gender: "M",
+      gender: "Male",
       birth_date: "",
       phone: "",
       email: "",
       address: "",
 
       // employment information
-      hire_date: formatDateTimeUTC(new Date()),
-      end_date: null,
-      status: "A",
+      hire_date: "",
+      end_date: "",
+      status: "1",
       employee_type: "Permanent",
-      position: "",
-      department: "",
-      placement: "",
-      supervisor: "",
+      position_code: "",
+      department_code: "",
+      placement_code: "",
+      supervisor_id: "",
 
       // salary & payment information
       payment_frequency: "Monthly",
-      daily_rate: 0,
-      base_salary: 0,
       payment_method: "Bank Transfer",
-      bank_name: "",
+      bank_name: "BRI",
       bank_account_number: "",
       bank_account_name: "",
 
       // tax and identification data
       tax_number: "",
       identity_number: "",
-      marital_status: "TK0",
+      maritial_status: "TK0",
       health_insurance_number: "",
       social_security_number: "",
+
+      // leave information
+      annual_leave_quota: 0,
+      annual_leave_remaining: 0,
 
       created_at: "",
       created_by: "",
       updated_at: "",
       updated_by: "",
-
-      // attendance and leave data
-      // workSchedule: "",
-      // annualLeaveQuota: "",
-      // remainingLeave: "",
     };
 
-    await this.$nextTick();
     if (this.isEndDateDisabled) {
       this.form.end_date = formatDateTimeUTC(new Date());
     }
@@ -177,11 +179,11 @@ export default class InputForm extends Vue {
   }
 
   onSubmit() {
-    console.log("onSubmit clicked:", this.form);
     this.inputFormValidation.$el.requestSubmit();
   }
 
   onSave() {
+    console.log("form", this.form);
     this.$emit("save", this.form);
   }
 
@@ -191,6 +193,40 @@ export default class InputForm extends Vue {
 
   onInvalidSubmit() {
     focusOnInvalid();
+  }
+
+  onPositionChange() {
+    if (this.form.position_code) {
+      const selected = this.positionOptions.find(
+        (p) => p.code === this.form.position_code
+      );
+      if ((selected && selected.department_code) || selected.placement_code) {
+        this.form.department_code = selected.department_code;
+        this.form.placement_code = selected.placement_code;
+      } else {
+        this.form.department_code = "";
+        this.form.placement_code = "";
+      }
+    }
+  }
+
+  onLeaveQuotaChange() {
+    if (this.form.annual_leave_quota > 0) {
+      this.form.annual_leave_remaining = this.form.annual_leave_quota;
+    } else {
+      this.form.annual_leave_remaining = 0;
+    }
+  }
+
+  async loadSupervisor(params: any) {
+    try {
+      const { data } = await organizationAPI.GetSupervisorByDepartment(params);
+      if (data) {
+        this.supervisorOptions = data;
+      }
+    } catch (error) {
+      getError(error);
+    }
   }
 
   private setEndDateForActiveStatus() {
@@ -203,7 +239,7 @@ export default class InputForm extends Vue {
   get schema() {
     return Yup.object().shape({
       // personal information
-      EmployeeId: Yup.string().required("Employee ID must be fill"),
+      EmployeeId: Yup.string().required(),
       Firstname: Yup.string().required(),
       Lastname: Yup.string().required(),
       // Gender: Yup.string().required(),
@@ -217,7 +253,6 @@ export default class InputForm extends Vue {
       Position: Yup.string().required(),
 
       // salary & payment information
-      BaseSalary: Yup.number().required().min(0),
       PaymentFrequency: Yup.string().required(),
       PaymentMethod: Yup.string().required(),
       BankName: Yup.string().required(),
@@ -242,7 +277,10 @@ export default class InputForm extends Vue {
   }
 
   get isEndDateDisabled() {
-    return this.form.status === "A" && this.form.employee_type === "Permanent";
+    return (
+      (this.form.status === "1" || 1) &&
+      (this.form.employee_type === "Permanent" || "Full-time")
+    );
   }
 
   get defaultEndDate(): string {
@@ -252,20 +290,9 @@ export default class InputForm extends Vue {
     return this.form.end_date || "";
   }
 
-  // Filtered position options based on selected department
-  get filteredPositionOptions() {
-    if (!this.form.department_code) {
-      return this.positionOptions;
-    }
-
-    // In a real implementation, you would filter positions by department
-    return this.positionOptions;
-  }
-
   // Filtered supervisor options based on selected department and placement
-  get filteredSupervisorOptions() {
-    if (!this.form.department_code || !this.form.placement_code) {
-      return [];
+  get supervisorOptionsByDepartment() {
+    if (this.form.department_code) {
     }
 
     // In a real implementation, you would filter supervisors by department and placement
@@ -280,5 +307,18 @@ export default class InputForm extends Vue {
       { code: "EMP011", name: "Thomas Wright", SubGroupName: "Supervisor" },
       { code: "EMP012", name: "David Wilson", SubGroupName: "Supervisor" },
     ];
+  }
+
+  get isShowSupervisor() {
+    if (this.form.position_code) {
+      const selected = this.positionOptions.find(
+        (p) => p.code === this.form.position_code
+      );
+      if (selected.level > 4 && selected.department_code) {
+        this.loadSupervisor(selected.department_code);
+        return true;
+      }
+    }
+    return false;
   }
 }
