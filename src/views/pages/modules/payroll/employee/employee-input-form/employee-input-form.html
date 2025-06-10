@@ -280,18 +280,19 @@
                   </c-select>
                 </div>
 
-                <div class="col-md-4" v-show="isShowSupervisor">
+                <div class="col-md-4" v-show="shouldShowSupervisor">
                   <c-select
                     offset="right"
                     class="row mb-1"
                     selectType="column"
                     name="supervisor"
                     labelName="name"
-                    keyName="code"
+                    keyName="employee_id"
                     v-model="form.supervisor_id"
                     :label="$t('labels.payroll.employee.supervisor')"
-                    :columnOptions="columnOptions"
+                    :columnOptions="columnEmployeeOptions"
                     :options="filteredSupervisorOptions"
+                    filter
                   >
                   </c-select>
                 </div>

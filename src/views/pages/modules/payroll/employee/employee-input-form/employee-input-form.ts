@@ -3,7 +3,6 @@ import CInput from "@/components/input/input.vue";
 import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
 import OrganizationAPI from "@/services/api/payroll/organization/organization";
-import { formatDateTimeUTC } from "@/utils/format";
 import { getError } from "@/utils/general";
 import $global from "@/utils/global";
 import { focusOnInvalid } from "@/utils/validation";
@@ -104,20 +103,46 @@ export default class InputForm extends Vue {
       width: "100",
     },
   ];
+  columnEmployeeOptions = [
+    {
+      label: "name",
+      field: "name",
+      align: "left",
+      width: "200",
+    },
+    {
+      field: "employe_id",
+      label: "employe_id",
+      align: "right",
+      width: "100",
+    },
+  ];
 
   created(): void {
     this.$watch(
       () => [this.form.status, this.form.employee_type],
       () => {
-        if (this.isEndDateDisabled) {
-          this.form.end_date = formatDateTimeUTC(new Date());
+        this.handleEndDateLogic();
+      }
+    );
+
+    this.$watch(
+      () => this.form.department_code,
+      (newDepartment, oldDepartment) => {
+        if (newDepartment !== oldDepartment) {
+          this.form.supervisor_id = "";
+          this.supervisorOptions = [];
+
+          if (this.shouldShowSupervisor && newDepartment) {
+            this.loadSupervisor(newDepartment);
+          }
         }
       }
     );
   }
 
   mounted(): void {
-    this.setEndDateForActiveStatus();
+    this.handleEndDateLogic();
   }
 
   async resetForm() {
@@ -169,9 +194,9 @@ export default class InputForm extends Vue {
       updated_by: "",
     };
 
-    if (this.isEndDateDisabled) {
-      this.form.end_date = formatDateTimeUTC(new Date());
-    }
+    // Reset supervisor options
+    this.supervisorOptions = [];
+    this.handleEndDateLogic();
   }
 
   initialize() {
@@ -183,7 +208,6 @@ export default class InputForm extends Vue {
   }
 
   onSave() {
-    console.log("form", this.form);
     this.$emit("save", this.form);
   }
 
@@ -195,14 +219,25 @@ export default class InputForm extends Vue {
     focusOnInvalid();
   }
 
-  onPositionChange() {
+  async onPositionChange() {
+    this.form.supervisor_id = "";
+    this.supervisorOptions = [];
+
     if (this.form.position_code) {
       const selected = this.positionOptions.find(
         (p) => p.code === this.form.position_code
       );
-      if ((selected && selected.department_code) || selected.placement_code) {
-        this.form.department_code = selected.department_code;
-        this.form.placement_code = selected.placement_code;
+      if (selected) {
+        // Auto-fill department dan placement dari position yang dipilih
+        if (selected.department_code || selected.placement_code) {
+          this.form.department_code = selected.department_code;
+          this.form.placement_code = selected.placement_code;
+        }
+
+        // Load supervisor jika position level > 4 dan department sudah ada
+        if (this.shouldShowSupervisor && this.form.department_code) {
+          await this.loadSupervisor(this.form.department_code);
+        }
       } else {
         this.form.department_code = "";
         this.form.placement_code = "";
@@ -229,10 +264,10 @@ export default class InputForm extends Vue {
     }
   }
 
-  private setEndDateForActiveStatus() {
-    if (this.form.status === "A" && this.form.employee_type === "Permanent") {
-      const today = new Date().toISOString().split("T")[0];
-      this.form.end_date = today;
+  private handleEndDateLogic() {
+    // Jika status aktif (1) dan employee_type Permanent, maka end_date disabled dan dikosongkan
+    if (this.isEndDateDisabled) {
+      this.form.end_date = "";
     }
   }
 
@@ -277,48 +312,41 @@ export default class InputForm extends Vue {
   }
 
   get isEndDateDisabled() {
-    return (
-      (this.form.status === "1" || 1) &&
-      (this.form.employee_type === "Permanent" || "Full-time")
-    );
+    return this.form.status === "1" && this.form.employee_type === "Permanent";
   }
 
   get defaultEndDate(): string {
     if (this.isEndDateDisabled) {
-      return formatDateTimeUTC(new Date());
+      return "";
     }
     return this.form.end_date || "";
   }
 
-  // Filtered supervisor options based on selected department and placement
-  get supervisorOptionsByDepartment() {
-    if (this.form.department_code) {
+  get shouldShowSupervisor(): boolean {
+    console.log("shouldShowSupervisor", this.shouldShowSupervisor);
+    if (!this.form.position_code) {
+      return false;
     }
 
-    // In a real implementation, you would filter supervisors by department and placement
-    return [
-      { code: "EMP001", name: "John Doe", SubGroupName: "Supervisor" },
-      { code: "EMP002", name: "Jane Smith", SubGroupName: "Supervisor" },
-      { code: "EMP003", name: "Robert Johnson", SubGroupName: "Supervisor" },
-      { code: "EMP005", name: "Michael Wilson", SubGroupName: "Supervisor" },
-      { code: "EMP006", name: "Sarah Johnson", SubGroupName: "Supervisor" },
-      { code: "EMP008", name: "Jessica Walker", SubGroupName: "Supervisor" },
-      { code: "EMP009", name: "Daniel Lee", SubGroupName: "Supervisor" },
-      { code: "EMP011", name: "Thomas Wright", SubGroupName: "Supervisor" },
-      { code: "EMP012", name: "David Wilson", SubGroupName: "Supervisor" },
-    ];
+    const selectedPosition = this.positionOptions.find(
+      (p) => p.code === this.form.position_code
+    );
+
+    if (!selectedPosition) {
+      return false;
+    }
+
+    return parseInt(selectedPosition.level) > 4;
   }
 
-  get isShowSupervisor() {
-    if (this.form.position_code) {
-      const selected = this.positionOptions.find(
-        (p) => p.code === this.form.position_code
-      );
-      if (selected.level > 4 && selected.department_code) {
-        this.loadSupervisor(selected.department_code);
-        return true;
-      }
+  get filteredSupervisorOptions() {
+    if (this.supervisorOptions) {
+      return this.supervisorOptions.map((supervisor: any) => ({
+        employee_id: supervisor.employee_id,
+        name: supervisor.first_name,
+      }));
+    } else {
+      return [];
     }
-    return false;
   }
 }
