@@ -32,109 +32,209 @@
           >
             <div class="accordion-body">
               <div class="row mb-3">
-                <div class="col-md-4">
-                  <c-input
-                    required
-                    name="EmployeeId"
-                    id="EmployeeId"
-                    type="text"
-                    class="row mb-1"
-                    v-model="form.employee_id"
-                    :label="$t('labels.payroll.employee.employeeId')"
-                    :disabled="modeData === $global.modeData.edit"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    required
-                    name="Firstname"
-                    id="Firstname"
-                    type="text"
-                    class="row mb-1"
-                    v-model="form.first_name"
-                    :label="$t('labels.payroll.employee.firstname')"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    required
-                    name="Lastname"
-                    id="Lastname"
-                    type="text"
-                    class="row mb-1"
-                    v-model="form.last_name"
-                    :label="$t('labels.payroll.employee.lastname')"
-                  />
-                </div>
-                <div class="col-md-4 mb-sm-1">
-                  <div class="row">
-                    <div class="col-sm-3 col-md-3">
-                      <label
-                        class="form-label"
-                        style="font-size: 13px; font-weight: 700; color: red"
-                        >{{$t('labels.gender')}}</label
-                      >
-                    </div>
+                <div class="col-md-4 mb-sm-4 mb-md-0">
+                  <div
+                    class="d-flex flex-column text-center align-items-center"
+                  >
+                    <label class="form-label fw-bold mb-2">
+                      {{$t('labels.payroll.employee.profilePhoto')}}
+                    </label>
+
                     <div
-                      class="col-sm-9 col-md-9 d-flex align-items-center p-0"
+                      class="photo-preview-container mb-2"
+                      style="position: relative; display: inline-block"
                     >
-                      <c-radio
-                        class="me-3"
-                        :label="$t('labels.male')"
-                        v-model="form.gender"
-                        value="Male"
-                      ></c-radio>
-                      <c-radio
-                        class="me-3"
-                        :label="$t('labels.female')"
-                        v-model="form.gender"
-                        value="Female"
-                      ></c-radio>
+                      <!-- Photo Preview -->
+                      <div
+                        class="photo-preview"
+                        :style="{
+                  width: '150px',
+                  height: '150px',
+                  border: '2px dashed #ddd',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#f8f9fa',
+                  backgroundImage: photoPreviewUrl ? `url(${photoPreviewUrl})` : 'none',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  cursor: 'pointer'
+                }"
+                        @click="triggerPhotoUpload"
+                      >
+                        <div
+                          v-if="!photoPreviewUrl"
+                          class="text-muted text-center"
+                        >
+                          <i class="fa fa-camera fa-2x mb-2"></i>
+                          <div style="font-size: 12px">
+                            Click to upload photo
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Remove Photo Button -->
+                      <button
+                        v-if="photoPreviewUrl"
+                        type="button"
+                        class="btn btn-danger btn-sm"
+                        style="
+                          position: absolute;
+                          top: -8px;
+                          right: -8px;
+                          border-radius: 50%;
+                          width: 24px;
+                          height: 24px;
+                          padding: 0;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        "
+                        @click="removePhoto"
+                        title="Remove Photo"
+                      >
+                        <i class="fa fa-times" style="font-size: 10px"></i>
+                      </button>
+                    </div>
+
+                    <!-- Hidden File Input -->
+                    <input
+                      ref="photoFileInput"
+                      type="file"
+                      name="ProfilePhoto"
+                      id="ProfilePhoto"
+                      accept="image/*"
+                      style="display: none"
+                      @change="handlePhotoChange"
+                    />
+
+                    <!-- Upload Button -->
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary btn-sm"
+                      @click="triggerPhotoUpload"
+                    >
+                      <i class="fa fa-upload me-1"></i>
+                      {{photoPreviewUrl ? 'Change Photo' : 'Upload Photo'}}
+                    </button>
+
+                    <!-- File Info -->
+                    <div
+                      v-if="selectedPhotoFile"
+                      class="mt-2 text-muted"
+                      style="font-size: 11px"
+                    >
+                      <div>{{selectedPhotoFile.name}}</div>
+                      <div>{{formatFileSize(selectedPhotoFile.size)}}</div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-4 mb-1">
-                  <c-datepicker
-                    name="Birthdate"
-                    id="Birthdate"
-                    customLabelClass="col-3"
-                    type="date"
-                    valueType="YYYY-MM-DD"
-                    format="DD/MM/YYYY"
-                    v-model="form.birth_date"
-                    :label="$t('labels.payroll.employee.birthdate')"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    required
-                    name="Email"
-                    id="Email"
-                    type="email"
-                    class="row mb-1"
-                    v-model="form.email"
-                    :label="$t('labels.email')"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    name="Phone"
-                    id="Phone"
-                    type="phone"
-                    class="row mb-1"
-                    v-model="form.phone"
-                    :label="$t('labels.payroll.employee.phoneNumber')"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    name="Address"
-                    id="Address"
-                    type="text"
-                    class="row mb-1"
-                    v-model="form.address"
-                    :label="$t('labels.address')"
-                  />
+                <div class="col-md-8 row m-0">
+                  <div class="col-md-6">
+                    <c-input
+                      required
+                      name="Firstname"
+                      id="Firstname"
+                      type="text"
+                      class="row mb-1"
+                      v-model="form.first_name"
+                      :label="$t('labels.payroll.employee.firstname')"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <c-input
+                      required
+                      name="Lastname"
+                      id="Lastname"
+                      type="text"
+                      class="row mb-1"
+                      v-model="form.last_name"
+                      :label="$t('labels.payroll.employee.lastname')"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <c-input
+                      required
+                      name="EmployeeId"
+                      id="EmployeeId"
+                      type="text"
+                      class="row mb-1"
+                      v-model="form.employee_id"
+                      :label="$t('labels.payroll.employee.employeeId')"
+                      :disabled="modeData === $global.modeData.edit"
+                    />
+                  </div>
+                  <div class="col-md-6 align-content-center">
+                    <div class="row mb-1">
+                      <div class="col-sm-3 col-md-3">
+                        <label
+                          class="form-label"
+                          style="font-size: 13px; font-weight: 700; color: red"
+                          >{{$t('labels.gender')}}</label
+                        >
+                      </div>
+                      <div
+                        class="col-sm-9 col-md-9 d-flex align-items-center p-0"
+                      >
+                        <c-radio
+                          class="me-3"
+                          :label="$t('labels.male')"
+                          v-model="form.gender"
+                          value="Male"
+                        ></c-radio>
+                        <c-radio
+                          class="me-3"
+                          :label="$t('labels.female')"
+                          v-model="form.gender"
+                          value="Female"
+                        ></c-radio>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-1">
+                    <c-datepicker
+                      name="Birthdate"
+                      id="Birthdate"
+                      customLabelClass="col-3"
+                      type="date"
+                      valueType="YYYY-MM-DD"
+                      format="DD/MM/YYYY"
+                      v-model="form.birth_date"
+                      :label="$t('labels.payroll.employee.birthdate')"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <c-input
+                      required
+                      name="Email"
+                      id="Email"
+                      type="email"
+                      class="row mb-1"
+                      v-model="form.email"
+                      :label="$t('labels.email')"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <c-input
+                      name="Phone"
+                      id="Phone"
+                      type="phone"
+                      class="row mb-1"
+                      v-model="form.phone"
+                      :label="$t('labels.payroll.employee.phoneNumber')"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <c-input
+                      name="Address"
+                      id="Address"
+                      type="textarea"
+                      class="row mb-1"
+                      v-model="form.address"
+                      :label="$t('labels.address')"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -290,10 +390,10 @@
                     selectType="column"
                     name="Supervisor"
                     labelName="name"
-                    keyName="code"
+                    keyName="employee_id"
                     v-model="form.supervisor_id"
                     :label="$t('labels.payroll.employee.supervisor')"
-                    :columnOptions="columnOptions"
+                    :columnOptions="columnEmployeeOptions"
                     :options="supervisorOptions"
                     filter
                   >

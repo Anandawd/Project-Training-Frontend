@@ -50,7 +50,7 @@
       :searchDefault="searchDefault"
       @search="refreshData"
     >
-      <template v-slot="{search}">
+      <template v-slot="{search, onRefresh}">
         <div class="col-md-6 d-flex mb-md-4">
           <div class="checklist">
             <input

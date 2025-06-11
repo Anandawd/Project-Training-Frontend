@@ -84,17 +84,18 @@ export default class Employee extends Vue {
   agGridSetting: any;
 
   // RECYCLE LIFE FUNCTION =======================================================
-  created(): void {
-    this.loadData();
+  mounted(): void {
+    this.loadDataGrid();
   }
 
   beforeMount(): void {
     this.searchOptions = [
       { text: this.$t("commons.filter.payroll.employee.employeeId"), value: 0 },
       { text: this.$t("commons.filter.payroll.employee.name"), value: 1 },
-      { text: this.$t("commons.filter.payroll.employee.department"), value: 2 },
-      { text: this.$t("commons.filter.payroll.employee.position"), value: 3 },
-      { text: this.$t("commons.filter.payroll.employee.placement"), value: 4 },
+      { text: this.$t("commons.filter.payroll.employee.position"), value: 2 },
+      { text: this.$t("commons.filter.payroll.employee.department"), value: 3 },
+      { text: this.$t("commons.filter.createdBy"), value: 4 },
+      { text: this.$t("commons.filter.updatedBy"), value: 5 },
     ];
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
@@ -316,6 +317,7 @@ export default class Employee extends Vue {
       if (mode === $global.modeData.insert) {
         this.inputFormElement.initialize();
       } else if (mode === $global.modeData.edit && params) {
+        console.log("handleShowForm", params);
         this.loadEditData(params);
       }
     });
@@ -324,10 +326,10 @@ export default class Employee extends Vue {
   }
 
   handleShowDetail(params: any) {
-    console.log("handleShowDetail", params);
+    const id = params.id;
     this.$router.push({
       name: "EmployeeDetail",
-      params: { id: params.employee_id },
+      params: { id: id },
     });
   }
 
@@ -372,18 +374,15 @@ export default class Employee extends Vue {
     this.loadDataGrid(search);
   }
 
-  onRefresh() {
-    this.loadDataGrid(this.searchDefault);
-  }
-
   // API REQUEST =======================================================
-  async loadData() {
+  async loadDataGrid(search: any = this.searchDefault) {
     try {
-      const { data } = await employeeAPI.GetEmployeeList({
-        Index: 0,
-        Text: "",
-        IndexCheckbox: 1,
-      });
+      let params = {
+        Index: search.index,
+        Text: search.text,
+        IndexCheckBox: search.filter[0],
+      };
+      const { data } = await employeeAPI.GetEmployeeList(params);
       if (data) {
         this.rowData = data;
       }
@@ -393,25 +392,12 @@ export default class Employee extends Vue {
     }
   }
 
-  async loadDataGrid(search: any = this.searchDefault) {
-    try {
-      let params = {
-        Index: search.index,
-        Text: search.text,
-        IndexCheckBox: search.filter[1],
-      };
-      const { data } = await employeeAPI.GetEmployeeList(params);
-      this.rowData = data;
-    } catch (error) {
-      getError(error);
-    }
-  }
-
   async loadEditData(params: any) {
     try {
       const { data } = await employeeAPI.GetEmployee(params.id);
+      console.log("loadEditData", data[0]);
       this.$nextTick(() => {
-        this.inputFormElement.form = this.populateForm(data);
+        this.inputFormElement.form = this.populateForm(data[0]);
       });
     } catch (error) {
       getError(error);

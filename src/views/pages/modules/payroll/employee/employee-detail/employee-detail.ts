@@ -39,7 +39,7 @@ const employeeAPI = new EmployeeAPI();
 export default class EmployeeDetail extends Vue {
   // data
   employeeId: any;
-  employeeData: any = [];
+  employeeData: any = ref([]);
   rowDocumentData: any = [];
   rowSalaryData: any = [];
   rowBenefitData: any = [];
@@ -114,9 +114,8 @@ export default class EmployeeDetail extends Vue {
   // RECYCLE LIFE FUNCTION =======================================================
   created() {
     this.employeeId = this.$route.params.id;
-    this.loadMockData();
-    this.loadDropdown();
-    this.loadEmployeeData();
+    console.log("created", this.employeeId);
+    this.loadData();
   }
 
   // GENERAL FUNCTION =======================================================
@@ -128,12 +127,7 @@ export default class EmployeeDetail extends Vue {
 
     this.$nextTick(() => {
       if (mode === $global.modeData.insert) {
-        if (
-          this.inputFormElement &&
-          typeof this.inputFormElement.initialize === "function"
-        ) {
-          this.inputFormElement.initialize();
-        }
+        this.inputFormElement.initialize();
       } else if (mode === $global.modeData.edit) {
         this.loadEditData(params.id);
       }
@@ -417,17 +411,13 @@ export default class EmployeeDetail extends Vue {
 
   // API REQUEST =======================================================
   async loadData() {
-    // if (!this.employeeId) {
-    //   this.$router.push({ name: "Employee" });
-    //   return;
-    // }
-
     try {
-      await Promise.all([
-        // this.loadPositionData(),
-        // this.loadDepartmentData(),
-        // this.loadPlacementData(),
-      ]);
+      const { data } = await employeeAPI.GetEmployee(this.employeeId);
+      if (data) {
+        this.employeeData = data[0];
+      }
+      console.log("employee", this.employeeData);
+      this.loadDropdown();
     } catch (error) {
       getError(error);
     }

@@ -12,7 +12,7 @@ class EmployeeAPI extends ConfigurationResource {
     return request({
       url: "GetPayEmployeeList",
       method: "get",
-      params: params,
+      params,
     });
   }
 

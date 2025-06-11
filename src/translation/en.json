@@ -105,7 +105,8 @@
         "adjustmentSummary": "Adjustment Summary",
         "documentInformation": "Document Information",
         "leaveInformation": "Leave Information",
-        "payrollInformation": "Payroll Information"
+        "payrollInformation": "Payroll Information",
+        "profilePhoto": "Profile Photo"
       },
       "attendance": {
         "attendanceAndLeave": "Attendance & Leave",

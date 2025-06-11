@@ -78,8 +78,7 @@ export default class InputForm extends Vue {
   positionOptions!: any[];
   placementOptions!: any[];
 
-  supervisorOptions: any[];
-  isLoadingSupervisor: boolean = false;
+  supervisorOptions: any = ref([]);
 
   inputFormValidation: any = ref();
   public defaultForm: any = {};
@@ -103,7 +102,7 @@ export default class InputForm extends Vue {
   columnEmployeeOptions = [
     {
       label: "name",
-      field: "first_name",
+      field: "name",
       align: "left",
       width: "200",
     },
@@ -123,46 +122,24 @@ export default class InputForm extends Vue {
       }
     );
 
-    // Watch department_code untuk load supervisor
     this.$watch(
       () => this.form.department_code,
       async (newDepartment, oldDepartment) => {
         if (newDepartment !== oldDepartment) {
-          console.log(
-            "Department changed:",
-            oldDepartment,
-            "->",
-            newDepartment
-          );
-
-          // Reset supervisor ketika department berubah
           this.form.supervisor_id = "";
           this.supervisorOptions = [];
 
-          // Load supervisor jika department ada dan position level > 4
           if (this.shouldShowSupervisor && newDepartment) {
             await this.loadSupervisor(newDepartment);
-            console.log(
-              "watcher department code: data placement",
-              this.placementOptions
-            );
-            console.log(
-              "watcher department code: data supervisor",
-              this.supervisorOptions
-            );
           }
         }
       }
     );
 
-    // Watch position_code untuk auto-fill department dan load supervisor
     this.$watch(
       () => this.form.position_code,
       async (newPosition, oldPosition) => {
         if (newPosition !== oldPosition) {
-          console.log("Position changed:", oldPosition, "->", newPosition);
-
-          // Reset supervisor ketika position berubah
           this.form.supervisor_id = "";
           this.supervisorOptions = [];
 
@@ -172,7 +149,6 @@ export default class InputForm extends Vue {
             );
 
             if (selectedPosition) {
-              // Auto-fill department dan placement dari position yang dipilih
               if (selectedPosition.department_code) {
                 this.form.department_code = selectedPosition.department_code;
               }
@@ -180,7 +156,6 @@ export default class InputForm extends Vue {
                 this.form.placement_code = selectedPosition.placement_code;
               }
 
-              // Load supervisor jika position level > 4 dan department sudah ada
               if (this.shouldShowSupervisor && this.form.department_code) {
                 await this.loadSupervisor(this.form.department_code);
               }
@@ -246,7 +221,6 @@ export default class InputForm extends Vue {
 
     // Reset supervisor options
     this.supervisorOptions = [];
-    this.isLoadingSupervisor = false;
     this.handleEndDateLogic();
   }
 
@@ -280,7 +254,6 @@ export default class InputForm extends Vue {
       );
 
       if (selected) {
-        // Auto-fill department dan placement dari position yang dipilih
         if (selected.department_code) {
           this.form.department_code = selected.department_code;
         }
@@ -288,12 +261,7 @@ export default class InputForm extends Vue {
           this.form.placement_code = selected.placement_code;
         }
 
-        // Load supervisor jika position level > 4 dan department sudah ada
         if (this.shouldShowSupervisor && this.form.department_code) {
-          console.log(
-            "Loading supervisor for department:",
-            this.form.department_code
-          );
           await this.loadSupervisor(this.form.department_code);
         }
       } else {
@@ -322,15 +290,13 @@ export default class InputForm extends Vue {
 
   async loadSupervisor(params: any) {
     try {
-      // this.supervisorOptions = [...this.departmentOptions];
       const { data } = await organizationAPI.GetSupervisorByDepartment(params);
-      console.log("loadSupervisor data", data);
+
       if (data) {
         this.supervisorOptions = data.map((s: any) => ({
-          code: s.employee_id,
+          employee_id: s.employee_id,
           name: `${s.first_name} ${s.last_name}`,
         }));
-        console.log("supervisorOptions", this.supervisorOptions);
       }
     } catch (error) {
       getError(error);
@@ -410,20 +376,4 @@ export default class InputForm extends Vue {
     const positionLevel = parseInt(selectedPosition.level);
     return positionLevel > 4 && this.form.department_code;
   }
-
-  // get filteredSupervisorOptions() {
-  //   console.log("filteredSupervisorOptions", this.supervisorOptions);
-  //   // return this.supervisorOptions ? this.supervisorOptions : [];
-  //   if (this.supervisorOptions && this.supervisorOptions.length > 0) {
-  //     console.log(
-  //       "filteredSupervisorOptions if called",
-  //       this.supervisorOptions
-  //     );
-  //     return this.supervisorOptions.map((supervisor: any) => ({
-  //       employee_id: supervisor.employee_id,
-  //       name: `${supervisor.first_name} ${supervisor.last_name}`.trim(),
-  //     }));
-  //   }
-  //   return [];
-  // }
 }

@@ -70,10 +70,16 @@
           <div class="col-md-8">
             <!-- personal information -->
             <div class="border p-4">
-              <h5 class="text-bold mb-1">
-                {{employeeData.full_name}} | {{employeeData.employee_id}}
+              <h5 class="text-bold mb-3">
+                {{employeeData.first_name}} {{employeeData.last_name}}
               </h5>
               <p class="mb-2 text-gray">{{employeeData.position}}</p>
+              <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong>{{$t('labels.payroll.employee.employeeId')}}</strong>
+                </div>
+                <div class="col-9">: {{employeeData.employee_id}}</div>
+              </div>
               <div class="row mb-2">
                 <div class="col-3 text-muted">
                   <strong>{{$t('labels.payroll.employee.gender')}}</strong>
@@ -124,13 +130,13 @@
                 <div class="col-3 text-muted">
                   <strong>{{$t('labels.payroll.employee.placement')}}</strong>
                 </div>
-                <div class="col-7">: {{employeeData.placement}}</div>
+                <div class="col-7">: {{employeeData.Placement}}</div>
               </div>
               <div class="row mb-2">
                 <div class="col-3 text-muted">
                   <strong>{{$t('labels.payroll.employee.department')}}</strong>
                 </div>
-                <div class="col-7">: {{employeeData.department}}</div>
+                <div class="col-7">: {{employeeData.Department}}</div>
               </div>
               <div class="row mb-2">
                 <div class="col-3 text-muted">
