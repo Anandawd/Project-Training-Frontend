@@ -142,7 +142,14 @@ export default class InputForm extends Vue {
           // Load supervisor jika department ada dan position level > 4
           if (this.shouldShowSupervisor && newDepartment) {
             await this.loadSupervisor(newDepartment);
-            console.log("watcher department", this.supervisorOptions);
+            console.log(
+              "watcher department code: data placement",
+              this.placementOptions
+            );
+            console.log(
+              "watcher department code: data supervisor",
+              this.supervisorOptions
+            );
           }
         }
       }
@@ -319,7 +326,10 @@ export default class InputForm extends Vue {
       const { data } = await organizationAPI.GetSupervisorByDepartment(params);
       console.log("loadSupervisor data", data);
       if (data) {
-        this.supervisorOptions = [...data];
+        this.supervisorOptions = data.map((s: any) => ({
+          code: s.employee_id,
+          name: `${s.first_name} ${s.last_name}`,
+        }));
         console.log("supervisorOptions", this.supervisorOptions);
       }
     } catch (error) {
