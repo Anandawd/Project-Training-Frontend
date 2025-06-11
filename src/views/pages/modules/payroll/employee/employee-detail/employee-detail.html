@@ -27,6 +27,7 @@
     <!-- update form -->
     <transition name="fade" mode="out-in">
       <employee-input-form
+        class="px-2"
         ref="inputFormElement"
         v-show="showForm"
         :schema="schema"
@@ -128,9 +129,9 @@
               </div>
               <div class="row mb-2">
                 <div class="col-3 text-muted">
-                  <strong>{{$t('labels.payroll.employee.placement')}}</strong>
+                  <strong>{{$t('labels.payroll.employee.position')}}</strong>
                 </div>
-                <div class="col-7">: {{employeeData.Placement}}</div>
+                <div class="col-7">: {{employeeData.Position}}</div>
               </div>
               <div class="row mb-2">
                 <div class="col-3 text-muted">
@@ -140,18 +141,34 @@
               </div>
               <div class="row mb-2">
                 <div class="col-3 text-muted">
-                  <strong>{{$t('labels.payroll.employee.hireDate')}}</strong>
+                  <strong>{{$t('labels.payroll.employee.placement')}}</strong>
                 </div>
-                <div class="col-7">: {{employeeData.hire_date}}</div>
+                <div class="col-7">: {{employeeData.Placement}}</div>
               </div>
               <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong>{{$t('labels.payroll.employee.hireDate')}}</strong>
+                </div>
+                <div class="col-7">
+                  : {{formatHireDate(employeeData.hire_date)}}
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-3 text-muted">
+                  <strong>{{$t('labels.payroll.employee.endDate')}}</strong>
+                </div>
+                <div class="col-7">
+                  : {{formatHireDate(employeeData.end_date)}}
+                </div>
+              </div>
+              <!-- <div class="row mb-2">
                 <div class="col-3 text-muted">
                   <strong>{{$t('labels.payroll.employee.baseSalary')}}</strong>
                 </div>
                 <div class="col-7">
                   : Rp {{employeeData.base_salary?.toLocaleString()}}
                 </div>
-              </div>
+              </div> -->
               <div class="row mb-2">
                 <div class="col-3 text-muted">
                   <strong>{{$t('labels.status')}}</strong>

@@ -2341,7 +2341,9 @@
         "updateSalaryAdjustment": "Salary Adjustment has been successfully updated",
         "updateEmployeeType": "Employee type has been successfully updated",
         "approveSalaryAdjustment": "Salary Adjustment has been successfully approved",
-        "rejectSalaryAdjustment": "Salary Adjustment has been successfully reject"
+        "rejectSalaryAdjustment": "Salary Adjustment has been successfully reject",
+        "photoSelected": "Profile Photo has been successfully selected",
+        "photoRemoved": "Profile Photo has been successfully removed"
       },
       "error": {
         "save": "An error occurred while saving employee data. Please try again",
