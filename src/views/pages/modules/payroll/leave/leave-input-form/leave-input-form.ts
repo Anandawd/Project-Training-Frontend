@@ -66,8 +66,8 @@ export default class InputForm extends Vue {
       width: "200",
     },
     {
-      field: "employee_id",
       label: "id",
+      field: "employee_id",
       align: "right",
       width: "100",
     },

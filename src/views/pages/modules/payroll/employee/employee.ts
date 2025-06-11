@@ -409,9 +409,7 @@ export default class Employee extends Vue {
 
   async loadEditData(params: any) {
     try {
-      console.log("id", params.id);
       const { data } = await employeeAPI.GetEmployee(params.id);
-      console.log("edit data", data);
       this.$nextTick(() => {
         this.inputFormElement.form = this.populateForm(data);
       });

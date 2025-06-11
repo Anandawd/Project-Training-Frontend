@@ -51,10 +51,6 @@ const organizationAPI = new OrganizationAPI();
       type: Array,
       default: (): any[] => [],
     },
-    documentTypeOptions: {
-      type: Array,
-      default: (): any[] => [],
-    },
     departmentOptions: {
       type: Array,
       default: (): any[] => [],
@@ -78,12 +74,12 @@ export default class InputForm extends Vue {
   maritalStatusOptions!: any[];
   paymentMethodOptions!: any[];
   bankOptions!: any[];
-  documentTypeOptions!: any[];
   departmentOptions!: any[];
   positionOptions!: any[];
   placementOptions!: any[];
 
   supervisorOptions: any[];
+  isLoadingSupervisor: boolean = false;
 
   inputFormValidation: any = ref();
   public defaultForm: any = {};
@@ -103,16 +99,17 @@ export default class InputForm extends Vue {
       width: "100",
     },
   ];
+
   columnEmployeeOptions = [
     {
       label: "name",
-      field: "name",
+      field: "first_name",
       align: "left",
       width: "200",
     },
     {
-      field: "employe_id",
-      label: "employe_id",
+      label: "id",
+      field: "employee_id",
       align: "right",
       width: "100",
     },
@@ -126,15 +123,61 @@ export default class InputForm extends Vue {
       }
     );
 
+    // Watch department_code untuk load supervisor
     this.$watch(
       () => this.form.department_code,
-      (newDepartment, oldDepartment) => {
+      async (newDepartment, oldDepartment) => {
         if (newDepartment !== oldDepartment) {
+          console.log(
+            "Department changed:",
+            oldDepartment,
+            "->",
+            newDepartment
+          );
+
+          // Reset supervisor ketika department berubah
           this.form.supervisor_id = "";
           this.supervisorOptions = [];
 
+          // Load supervisor jika department ada dan position level > 4
           if (this.shouldShowSupervisor && newDepartment) {
-            this.loadSupervisor(newDepartment);
+            await this.loadSupervisor(newDepartment);
+            console.log("watcher department", this.supervisorOptions);
+          }
+        }
+      }
+    );
+
+    // Watch position_code untuk auto-fill department dan load supervisor
+    this.$watch(
+      () => this.form.position_code,
+      async (newPosition, oldPosition) => {
+        if (newPosition !== oldPosition) {
+          console.log("Position changed:", oldPosition, "->", newPosition);
+
+          // Reset supervisor ketika position berubah
+          this.form.supervisor_id = "";
+          this.supervisorOptions = [];
+
+          if (newPosition) {
+            const selectedPosition = this.positionOptions.find(
+              (p) => p.code === newPosition
+            );
+
+            if (selectedPosition) {
+              // Auto-fill department dan placement dari position yang dipilih
+              if (selectedPosition.department_code) {
+                this.form.department_code = selectedPosition.department_code;
+              }
+              if (selectedPosition.placement_code) {
+                this.form.placement_code = selectedPosition.placement_code;
+              }
+
+              // Load supervisor jika position level > 4 dan department sudah ada
+              if (this.shouldShowSupervisor && this.form.department_code) {
+                await this.loadSupervisor(this.form.department_code);
+              }
+            }
           }
         }
       }
@@ -196,6 +239,7 @@ export default class InputForm extends Vue {
 
     // Reset supervisor options
     this.supervisorOptions = [];
+    this.isLoadingSupervisor = false;
     this.handleEndDateLogic();
   }
 
@@ -227,21 +271,37 @@ export default class InputForm extends Vue {
       const selected = this.positionOptions.find(
         (p) => p.code === this.form.position_code
       );
+
       if (selected) {
         // Auto-fill department dan placement dari position yang dipilih
-        if (selected.department_code || selected.placement_code) {
+        if (selected.department_code) {
           this.form.department_code = selected.department_code;
+        }
+        if (selected.placement_code) {
           this.form.placement_code = selected.placement_code;
         }
 
         // Load supervisor jika position level > 4 dan department sudah ada
         if (this.shouldShowSupervisor && this.form.department_code) {
+          console.log(
+            "Loading supervisor for department:",
+            this.form.department_code
+          );
           await this.loadSupervisor(this.form.department_code);
         }
       } else {
         this.form.department_code = "";
         this.form.placement_code = "";
       }
+    }
+  }
+
+  async onDepartmentChange() {
+    this.form.supervisor_id = "";
+    this.supervisorOptions = [];
+
+    if (this.shouldShowSupervisor && this.form.department_code) {
+      await this.loadSupervisor(this.form.department_code);
     }
   }
 
@@ -255,9 +315,12 @@ export default class InputForm extends Vue {
 
   async loadSupervisor(params: any) {
     try {
+      // this.supervisorOptions = [...this.departmentOptions];
       const { data } = await organizationAPI.GetSupervisorByDepartment(params);
+      console.log("loadSupervisor data", data);
       if (data) {
-        this.supervisorOptions = data;
+        this.supervisorOptions = [...data];
+        console.log("supervisorOptions", this.supervisorOptions);
       }
     } catch (error) {
       getError(error);
@@ -265,7 +328,6 @@ export default class InputForm extends Vue {
   }
 
   private handleEndDateLogic() {
-    // Jika status aktif (1) dan employee_type Permanent, maka end_date disabled dan dikosongkan
     if (this.isEndDateDisabled) {
       this.form.end_date = "";
     }
@@ -323,7 +385,6 @@ export default class InputForm extends Vue {
   }
 
   get shouldShowSupervisor(): boolean {
-    console.log("shouldShowSupervisor", this.shouldShowSupervisor);
     if (!this.form.position_code) {
       return false;
     }
@@ -336,17 +397,23 @@ export default class InputForm extends Vue {
       return false;
     }
 
-    return parseInt(selectedPosition.level) > 4;
+    const positionLevel = parseInt(selectedPosition.level);
+    return positionLevel > 4 && this.form.department_code;
   }
 
-  get filteredSupervisorOptions() {
-    if (this.supervisorOptions) {
-      return this.supervisorOptions.map((supervisor: any) => ({
-        employee_id: supervisor.employee_id,
-        name: supervisor.first_name,
-      }));
-    } else {
-      return [];
-    }
-  }
+  // get filteredSupervisorOptions() {
+  //   console.log("filteredSupervisorOptions", this.supervisorOptions);
+  //   // return this.supervisorOptions ? this.supervisorOptions : [];
+  //   if (this.supervisorOptions && this.supervisorOptions.length > 0) {
+  //     console.log(
+  //       "filteredSupervisorOptions if called",
+  //       this.supervisorOptions
+  //     );
+  //     return this.supervisorOptions.map((supervisor: any) => ({
+  //       employee_id: supervisor.employee_id,
+  //       name: `${supervisor.first_name} ${supervisor.last_name}`.trim(),
+  //     }));
+  //   }
+  //   return [];
+  // }
 }
