@@ -412,7 +412,9 @@ export default class EmployeeDetail extends Vue {
   // API REQUEST =======================================================
   async loadData() {
     try {
-      const { data } = await employeeAPI.GetEmployee(this.employeeId);
+      const { data } = await employeeAPI.GetEmployeeByEmployeeID(
+        this.employeeId
+      );
       if (data) {
         this.employeeData = data[0];
       }

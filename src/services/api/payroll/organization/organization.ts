@@ -1,4 +1,4 @@
-import request from "@/utils/axios";
+import request from "@/utils/axios-development";
 import ConfigurationResource from "../../configuration/configuration-resource";
 
 const uri = "";
@@ -174,3 +174,4 @@ class OrganizationAPI extends ConfigurationResource {
 }
 
 export { OrganizationAPI as default };
+

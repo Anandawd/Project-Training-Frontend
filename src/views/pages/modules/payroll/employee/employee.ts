@@ -175,6 +175,15 @@ export default class Employee extends Vue {
         valueFormatter: formatDate,
       },
       {
+        headerName: this.$t("commons.table.payroll.employee.endDate"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "end_date",
+        width: 100,
+        enableRowGroup: true,
+        valueFormatter: formatDate,
+      },
+      {
         headerName: this.$t("commons.table.payroll.employee.email"),
         field: "email",
         width: 180,
@@ -317,7 +326,6 @@ export default class Employee extends Vue {
       if (mode === $global.modeData.insert) {
         this.inputFormElement.initialize();
       } else if (mode === $global.modeData.edit && params) {
-        console.log("handleShowForm", params);
         this.loadEditData(params);
       }
     });
@@ -326,10 +334,10 @@ export default class Employee extends Vue {
   }
 
   handleShowDetail(params: any) {
-    const id = params.id;
+    const employeeId = params.employee_id;
     this.$router.push({
       name: "EmployeeDetail",
-      params: { id: id },
+      params: { id: employeeId },
     });
   }
 
@@ -385,6 +393,8 @@ export default class Employee extends Vue {
       const { data } = await employeeAPI.GetEmployeeList(params);
       if (data) {
         this.rowData = data;
+      } else {
+        this.rowData = [];
       }
       this.loadDropdown();
     } catch (error) {
@@ -395,7 +405,6 @@ export default class Employee extends Vue {
   async loadEditData(params: any) {
     try {
       const { data } = await employeeAPI.GetEmployee(params.id);
-      console.log("loadEditData", data[0]);
       this.$nextTick(() => {
         this.inputFormElement.form = this.populateForm(data[0]);
       });
@@ -445,7 +454,6 @@ export default class Employee extends Vue {
 
   async insertData(formData: any) {
     try {
-      console.log("insertData", formData);
       const { status2 } = await employeeAPI.InsertEmployee(formData);
       if (status2.status == 0) {
         getToastSuccess(this.$t("messages.employee.success.save"));

@@ -49,8 +49,7 @@ export default [
       pageTitle: "title.employeeType",
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
-        { title: "title.home", url: "/" },
-        { title: "title.management" },
+        { title: "title.employee", url: "/employee" },
         { title: "title.employeeType", active: true },
       ],
       menu: getRouterMenu(menu, 1),
@@ -89,6 +88,23 @@ export default [
         { title: "title.home", url: "/" },
         { title: "title.management" },
         { title: "title.salaryAdjustment", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
+    path: "adjustment-reason",
+    name: "AdjustmentReason",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/salary-adjustment/configurations/adjustment-reason/adjustment-reason.vue"
+      ),
+    meta: {
+      pageTitle: "title.adjustmentReason",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.salaryAdjustment", url: "/payroll/salary-adjustment" },
+        { title: "title.adjustmentReason", active: true },
       ],
       menu: getRouterMenu(menu, 1),
     },

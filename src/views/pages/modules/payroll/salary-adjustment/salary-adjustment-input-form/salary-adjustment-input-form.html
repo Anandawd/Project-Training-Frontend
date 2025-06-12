@@ -34,16 +34,17 @@
               <div class="row mb-3">
                 <div class="col-md-4">
                   <c-select
+                    filter
                     required
                     offset="right"
                     class="row mb-1"
                     selectType="column"
                     name="SelectEmployee"
-                    labelName="name"
+                    labelName="FullName"
                     keyName="employee_id"
                     v-model="form.employee_id"
                     :label="$t('labels.payroll.attendance.selectEmployee')"
-                    :columnOptions="columnOptions"
+                    :columnOptions="columnEmployeeOptions"
                     :options="employeeOptions"
                     @change="onEmployeeChange"
                     :disabled="modeData === $global.modeData.edit"
@@ -53,23 +54,34 @@
                 <div class="col-md-4">
                   <c-input
                     disabled
-                    type="text"
-                    name="Department"
-                    id="Department"
+                    name="Position"
+                    id="Position"
                     class="row mb-1"
-                    :label="$t('labels.payroll.employee.department')"
-                    v-model="form.department_code"
+                    type="text"
+                    v-model="form.Position"
+                    :label="$t('labels.payroll.employee.position')"
                   />
                 </div>
                 <div class="col-md-4">
                   <c-input
                     disabled
-                    name="Position"
-                    id="Position"
+                    name="Department"
+                    id="Department"
                     class="row mb-1"
                     type="text"
-                    v-model="form.position_code"
-                    :label="$t('labels.payroll.employee.position')"
+                    v-model="form.Department"
+                    :label="$t('labels.payroll.employee.department')"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    name="Placement"
+                    id="Placement"
+                    class="row mb-1"
+                    type="text"
+                    v-model="form.Placement"
+                    :label="$t('labels.payroll.employee.placement')"
                   />
                 </div>
               </div>
@@ -172,18 +184,18 @@
                     formatted
                     showZeroNumber
                     type="number"
-                    name="currentSalary"
-                    id="currentSalary"
+                    name="BaseSalary"
+                    id="BaseSalary"
                     class="row mb-1"
                     :max="9999999999"
                     :min="0"
-                    :label="$t('labels.payroll.employee.currentSalary')"
-                    v-model="form.current_salary"
+                    :label="$t('labels.payroll.employee.baseSalary')"
+                    v-model="form.base_salary"
                     @change="onCurrentSalaryChange"
-                    :disabled="true"
+                    :disabled="showNewSalary"
                   />
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4" v-show="showNewSalary">
                   <c-input
                     required
                     formatted

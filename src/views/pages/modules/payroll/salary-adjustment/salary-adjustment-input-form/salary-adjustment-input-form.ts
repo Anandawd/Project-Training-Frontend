@@ -42,10 +42,10 @@ export default class InputForm extends Vue {
 
   public form: any = reactive({});
 
-  columnOptions = [
+  columnEmployeeOptions = [
     {
       label: "name",
-      field: "name",
+      field: "FullName",
       align: "left",
       width: "200",
     },
@@ -57,24 +57,41 @@ export default class InputForm extends Vue {
     },
   ];
 
+  columnOptions = [
+    {
+      label: "name",
+      field: "name",
+      align: "left",
+      width: "200",
+    },
+    {
+      field: "code",
+      label: "code",
+      align: "right",
+      width: "100",
+    },
+  ];
+
   // actions
   async resetForm() {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      id: null,
       employee_id: "",
-      employee_name: "",
-      department_code: "",
-      department_name: "",
-      position_code: "",
-      position_name: "",
       adjustment_reason_code: "",
-      adjustment_reason_name: "",
-      effective_date: new Date().toISOString().split("T")[0],
-      current_salary: 0,
+      effective_date: "",
+      end_date: "",
+      base_salary: 0,
       new_salary: 0,
+      status: "PENDING",
+      is_current: 1,
+      difference_amount: 0,
+      percentage_change: 0,
       remark: "",
+      created_at: "",
+      created_by: "",
+      updated_at: "",
+      updated_by: "",
     };
   }
 
@@ -89,14 +106,16 @@ export default class InputForm extends Vue {
   onSave() {
     const formData = {
       ...this.form,
-      difference_amount: this.form.new_salary - this.form.current_salary,
+      difference_amount: this.form.new_salary - this.form.base_salary,
       percentage_change:
-        this.form.current_salary > 0
-          ? ((this.form.new_salary - this.form.current_salary) /
-              this.form.current_salary) *
+        this.form.base_salary > 0
+          ? ((this.form.new_salary - this.form.base_salary) /
+              this.form.base_salary) *
             100
           : 0,
     };
+
+    console.log("form", this.form);
     this.$emit("save", formData);
   }
 
@@ -119,41 +138,38 @@ export default class InputForm extends Vue {
       );
 
       if (selectedEmployee) {
-        this.form.employee_name = selectedEmployee.name;
-        this.form.department_code = selectedEmployee.department_code;
-        this.form.department_name = selectedEmployee.department_name;
-        this.form.position_code = selectedEmployee.position_code;
-        this.form.position_name = selectedEmployee.position_name;
-        this.form.current_salary = selectedEmployee.current_salary;
+        this.form.employee_id = selectedEmployee.employee_id;
+        this.form.Position = selectedEmployee.Position;
+        this.form.Department = selectedEmployee.Department;
+        this.form.Placement = selectedEmployee.Placement;
+        this.form.base_salary = selectedEmployee.base_salary;
       }
     } else {
-      this.form.employee_name = "";
+      this.form.employee_id = "";
       this.form.department_code = "";
-      this.form.department_name = "";
       this.form.position_code = "";
-      this.form.position_name = "";
-      this.form.current_salary = 0;
+      this.form.base_salary = 0;
     }
   }
 
-  onCurrentSalaryChange() {
+  onBaseSalaryChange() {
     // Auto-calculate percentage if new salary is already set
-    if (this.form.current_salary > 0 && this.form.new_salary > 0) {
+    if (this.form.base_salary > 0 && this.form.new_salary > 0) {
       this.calculatePercentage();
     }
   }
 
   onNewSalaryChange() {
     // Auto-calculate percentage when new salary changes
-    if (this.form.current_salary > 0 && this.form.new_salary > 0) {
+    if (this.form.base_salary > 0 && this.form.new_salary > 0) {
       this.calculatePercentage();
     }
   }
 
   calculatePercentage() {
-    if (this.form.current_salary > 0) {
-      const difference = this.form.new_salary - this.form.current_salary;
-      const percentage = (difference / this.form.current_salary) * 100;
+    if (this.form.base_salary > 0) {
+      const difference = this.form.new_salary - this.form.base_salary;
+      const percentage = (difference / this.form.base_salary) * 100;
       // Store calculated values for display (optional)
       this.form.calculated_difference = difference;
       this.form.calculated_percentage = percentage;
@@ -178,21 +194,21 @@ export default class InputForm extends Vue {
   }
 
   get salaryDifference() {
-    if (this.form.current_salary && this.form.new_salary) {
-      return this.form.new_salary - this.form.current_salary;
+    if (this.form.base_salary && this.form.new_salary > 0) {
+      return this.form.new_salary - this.form.base_salary;
     }
     return 0;
   }
 
   get percentageChange() {
     if (
-      this.form.current_salary &&
+      this.form.base_salary &&
       this.form.new_salary &&
-      this.form.current_salary > 0
+      this.form.base_salary > 0
     ) {
       return (
-        ((this.form.new_salary - this.form.current_salary) /
-          this.form.current_salary) *
+        ((this.form.new_salary - this.form.base_salary) /
+          this.form.base_salary) *
         100
       );
     }
@@ -204,5 +220,9 @@ export default class InputForm extends Vue {
     if (difference > 0) return "increase";
     if (difference < 0) return "decrease";
     return "same";
+  }
+
+  get showNewSalary() {
+    return this.form.adjustment_reason_code !== "INITIAL";
   }
 }

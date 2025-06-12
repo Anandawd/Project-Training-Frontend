@@ -1,7 +1,14 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
-import { formatDate, formatDateTimeUTC, formatNumber2 } from "@/utils/format";
+import EmployeeAPI from "@/services/api/payroll/employee/employee";
+import SalaryAdjustmentAPI from "@/services/api/payroll/salary-adjustment/salary-adjustment";
+import {
+  formatDate,
+  formatDateTime2,
+  formatDateTimeUTC,
+  formatNumber2,
+} from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -15,6 +22,9 @@ import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import CInputForm from "./salary-adjustment-input-form/salary-adjustment-input-form.vue";
+
+const employeeAPI = new EmployeeAPI();
+const salaryAdjustmentAPI = new SalaryAdjustmentAPI();
 
 @Options({
   components: {
@@ -51,7 +61,7 @@ export default class SalaryAdjustment extends Vue {
   searchDefault: any = {
     index: 0,
     text: "",
-    filter: [1],
+    filter: [2],
   };
 
   // Ag grid variable
@@ -72,7 +82,7 @@ export default class SalaryAdjustment extends Vue {
 
   // RECYCLE LIFE FUNCTION =======================================================
   created(): void {
-    this.loadData();
+    this.loadDataGrid();
   }
 
   beforeMount(): void {
@@ -84,6 +94,8 @@ export default class SalaryAdjustment extends Vue {
         text: this.$t("commons.filter.payroll.employee.adjustmentReason"),
         value: 3,
       },
+      { text: this.$t("commons.filter.createdBy"), value: 4 },
+      { text: this.$t("commons.filter.updatedBy"), value: 5 },
     ];
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
@@ -124,14 +136,20 @@ export default class SalaryAdjustment extends Vue {
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.department"),
-        field: "department_name",
+        headerName: this.$t("commons.table.payroll.employee.position"),
+        field: "PositionName",
         width: 150,
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.adjustmentReason"),
-        field: "adjustment_reason_name",
+        headerName: this.$t("commons.table.payroll.employee.department"),
+        field: "DepartmentName",
+        width: 150,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.placement"),
+        field: "PlacementName",
         width: 150,
         enableRowGroup: true,
       },
@@ -148,7 +166,7 @@ export default class SalaryAdjustment extends Vue {
         headerName: this.$t("commons.table.payroll.employee.currentSalary"),
         headerClass: "align-header-right",
         cellClass: "text-right",
-        field: "current_salary",
+        field: "base_salary",
         width: 120,
         enableRowGroup: true,
         valueFormatter: formatNumber2,
@@ -229,16 +247,15 @@ export default class SalaryAdjustment extends Vue {
         headerClass: "align-header-center",
         cellClass: "text-center",
         field: "updated_at",
-        width: 100,
-        enableRowGroup: true,
-        valueFormatter: formatDate,
+        width: 120,
+        valueFormatter: formatDateTime2,
       },
       {
         headerName: this.$t("commons.table.updatedBy"),
         headerClass: "align-header-center",
         cellClass: "text-center",
         field: "updated_by",
-        width: 100,
+        width: 120,
         enableRowGroup: true,
       },
       {
@@ -246,16 +263,15 @@ export default class SalaryAdjustment extends Vue {
         headerClass: "align-header-center",
         cellClass: "text-center",
         field: "created_at",
-        width: 100,
-        enableRowGroup: true,
-        valueFormatter: formatDate,
+        width: 120,
+        valueFormatter: formatDateTime2,
       },
       {
         headerName: this.$t("commons.table.createdBy"),
         headerClass: "align-header-center",
         cellClass: "text-center",
         field: "created_by",
-        width: 100,
+        width: 120,
         enableRowGroup: true,
       },
     ];
@@ -345,7 +361,7 @@ export default class SalaryAdjustment extends Vue {
       if (mode === $global.modeData.insert) {
         this.inputFormElement.initialize();
       } else {
-        this.loadEditData(params.id);
+        this.loadEditData(params);
       }
     });
     this.showForm = true;
@@ -357,13 +373,9 @@ export default class SalaryAdjustment extends Vue {
     const formattedData = this.formatData(formData);
 
     if (this.modeData === $global.modeData.insert) {
-      this.insertData(formattedData).then(() => {
-        this.showForm = false;
-      });
+      this.insertData(formattedData);
     } else {
-      this.updateData(formattedData).then(() => {
-        this.showForm = false;
-      });
+      this.updateData(formattedData);
     }
   }
 
@@ -408,6 +420,12 @@ export default class SalaryAdjustment extends Vue {
     this.showDialog = true;
   }
 
+  handleToAdjustmentReason() {
+    this.$router.push({
+      name: "AdjustmentReason",
+    });
+  }
+
   confirmAction() {
     if (this.dialogAction === "delete") {
       this.deleteData();
@@ -420,7 +438,6 @@ export default class SalaryAdjustment extends Vue {
   }
 
   refreshData(search: any) {
-    this.searchOptions = { ...search };
     this.loadDataGrid(search);
   }
 
@@ -429,91 +446,33 @@ export default class SalaryAdjustment extends Vue {
   }
 
   // API REQUEST =======================================================
-  async loadData() {
+  async loadDataGrid(search: any = this.searchDefault) {
     try {
-      this.loadMockData();
+      let params = {
+        Index: search.index,
+        Text: search.text,
+        IndexCheckBox: search.filter[0],
+      };
+      const { data } = await salaryAdjustmentAPI.GetSalaryAdjustmentList(
+        params
+      );
+      if (data) {
+        this.rowData = data;
+      } else {
+        this.rowData = [];
+      }
       this.loadDropdown();
     } catch (error) {
       getError(error);
     }
   }
 
-  async loadDataGrid(search: any = this.searchDefault) {
+  async loadEditData(params: any) {
     try {
-      /*
-      let params = {
-        Index: search.index,
-        Text: search.text,
-        IndexCheckBox: search.filter[0],
-      };
-      const { data } = await salaryAdjustmentAPI.GetSalaryAdjustmentList(params);
-      this.rowData = data;
-      */
-
-      let filteredData = [...this.rowData];
-
-      if (search.text && search.text.trim()) {
-        let searchText = search.text.toLowerCase().trim();
-        let searchIndex = search.index;
-
-        filteredData = filteredData.filter((item: any) => {
-          switch (searchIndex) {
-            case 0: // Employee ID
-              return item.employee_id.toLowerCase().includes(searchText);
-            case 1: // Employee Name
-              return item.employee_name.toLowerCase().includes(searchText);
-            case 2: // Department
-              return item.department_name.toLowerCase().includes(searchText);
-            case 3: // Adjustment Reason
-              return item.adjustment_reason_name.includes(searchText);
-            default:
-              return true;
-          }
-        });
-      }
-
-      if (search.filter && search.filter.length > 0) {
-        const statusFilter = parseInt(search.filter[0]);
-        if (statusFilter !== 0) {
-          filteredData = filteredData.filter((item: any) => {
-            switch (statusFilter) {
-              case 1: // Pending
-                return item.status === "PENDING";
-              case 2: // Approved
-                return item.status === "APPROVED";
-              case 3: // Rejected
-                return item.status === "REJECTED";
-              default:
-                return true;
-            }
-          });
-        }
-      }
-
-      if (this.gridApi) {
-        this.gridApi.setRowData(filteredData);
-      }
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadEditData(id: any) {
-    try {
-      /*
-      const { data } = await salaryAdjustmentAPI.GetSalaryAdjustment(id);
-      this.populateForm(data);
-      */
-
-      const adjustment = this.rowData.find((adj: any) => adj.id === id);
-
-      if (adjustment) {
-        this.$nextTick(() => {
-          this.inputFormElement.form = this.populateForm(adjustment);
-        });
-      } else {
-        getToastError(this.$t("messages.employee.error.notFoundSalary"));
-      }
+      const { data } = await salaryAdjustmentAPI.GetSalaryAdjustment(params.id);
+      this.$nextTick(() => {
+        this.inputFormElement.form = this.populateForm(data[0]);
+      });
     } catch (error) {
       getError(error);
     }
@@ -627,100 +586,15 @@ export default class SalaryAdjustment extends Vue {
 
   async loadDropdown() {
     try {
-      /*
       const promises = [
-        salaryAdjustmentAPI.GetEmployeeOptions().then(response => {
+        employeeAPI.GetEmployeeList({}).then((response) => {
           this.employeeOptions = response.data;
         }),
-        salaryAdjustmentAPI.GetAdjustmentReasonOptions().then(response => {
+        salaryAdjustmentAPI.GetAdjustmentReasonList({}).then((response) => {
           this.adjustmentReasonOptions = response.data;
         }),
       ];
-
       await Promise.all(promises);
-      */
-
-      this.employeeOptions = [
-        {
-          employee_id: "EMP001",
-          name: "John Doe",
-          current_salary: 9000000,
-          department_code: "OPERATIONS",
-          department_name: "Operations",
-          position_code: "MANAGER",
-          position_name: "Manager",
-          SubGroupName: "Employee",
-        },
-        {
-          employee_id: "EMP002",
-          name: "Jane Smith",
-          current_salary: 13500000,
-          department_code: "HUMAN_RESOURCES",
-          department_name: "Human Resources",
-          position_code: "STAFF",
-          position_name: "Staff",
-          SubGroupName: "Employee",
-        },
-        {
-          employee_id: "EMP003",
-          name: "Robert Johnson",
-          current_salary: 18000000,
-          department_code: "Finance",
-          department_name: "Finance",
-          position_code: "STAFF",
-          position_name: "Staff",
-          SubGroupName: "Employee",
-        },
-        {
-          employee_id: "EMP004",
-          name: "Emily Davis",
-          current_salary: 7500000,
-          department_code: "INFORMATION_TECHNOLOGY",
-          department_name: "Information Technology",
-          position_code: "STAFF",
-          position_name: "Staff",
-          SubGroupName: "Employee",
-        },
-        {
-          employee_id: "EMP005",
-          name: "Michael Wilson",
-          current_salary: 15000000,
-          department_code: "INFORMATION_TECHNOLOGY",
-          department_name: "Information Technology",
-          position_code: "STAFF",
-          position_name: "Staff",
-          SubGroupName: "Employee",
-        },
-      ];
-
-      this.adjustmentReasonOptions = [
-        { code: "PROMOTION", name: "Promotion", SubGroupName: "Reason" },
-        {
-          code: "ANNUAL_REVIEW",
-          name: "Annual Review",
-          SubGroupName: "Reason",
-        },
-        {
-          code: "PERFORMANCE",
-          name: "Performance Based",
-          SubGroupName: "Reason",
-        },
-        {
-          code: "MARKET_ADJUSTMENT",
-          name: "Market Adjustment",
-          SubGroupName: "Reason",
-        },
-        {
-          code: "COST_OF_LIVING",
-          name: "Cost of Living",
-          SubGroupName: "Reason",
-        },
-        {
-          code: "JOB_RECLASSIFICATION",
-          name: "Job Reclassification",
-          SubGroupName: "Reason",
-        },
-      ];
     } catch (error) {
       getError(error);
     }
@@ -728,57 +602,17 @@ export default class SalaryAdjustment extends Vue {
 
   async insertData(formData: any) {
     try {
-      /*
-      const { status2 } = await salaryAdjustmentAPI.InsertSalaryAdjustment(formData);
+      console.log("insertData", formData);
+      const { status2 } = await salaryAdjustmentAPI.InsertSalaryAdjustment(
+        formData
+      );
       if (status2.status == 0) {
-        getToastSuccess(this.$t("messages.saveSuccess"));
-        this.showForm = false;
+        getToastSuccess(
+          this.$t("messages.employee.success.saveSalaryAdjustment")
+        );
         this.loadDataGrid(this.searchDefault);
+        this.showForm = false;
       }
-      */
-
-      const newId = Math.max(...this.rowData.map((adj: any) => adj.id)) + 1;
-
-      const selectedReason = this.adjustmentReasonOptions.find(
-        (item: any) => item.code === formData.adjustment_reason_code
-      );
-
-      const differenceAmount = formData.new_salary - formData.current_salary;
-      const percentageChange =
-        (differenceAmount / formData.current_salary) * 100;
-
-      const newAdjustment = {
-        id: newId,
-        employee_id: formData.employee_id,
-        employee_name: formData.employee_name,
-        department_code: formData.department_code,
-        department_name: formData.department_name,
-        position_code: formData.position_code,
-        position_name: formData.position_name,
-        adjustment_reason_code: selectedReason.code,
-        adjustment_reason_name: selectedReason.name,
-        effective_date: formData.effective_date,
-        current_salary: formData.current_salary,
-        new_salary: formData.new_salary,
-        difference_amount: differenceAmount,
-        percentage_change: percentageChange,
-        status: "PENDING",
-        remark: formData.remark || "",
-        created_at: formatDateTimeUTC(new Date()),
-        created_by: "Current User",
-        updated_at: formatDateTimeUTC(new Date()),
-        updated_by: "Current User",
-      };
-
-      this.rowData.push(newAdjustment);
-      this.searchDefault.filter = [1];
-
-      await this.$nextTick();
-      await this.loadDataGrid(this.searchDefault);
-
-      getToastSuccess(
-        this.$t("messages.employee.success.saveSalaryAdjustment")
-      );
     } catch (error) {
       getError(error);
     }
@@ -786,56 +620,16 @@ export default class SalaryAdjustment extends Vue {
 
   async updateData(formData: any) {
     try {
-      /*
-      const { status2 } = await salaryAdjustmentAPI.UpdateSalaryAdjustment(formData);
+      const { status2 } = await salaryAdjustmentAPI.UpdateSalaryAdjustment(
+        formData
+      );
       if (status2.status == 0) {
+        getToastSuccess(
+          this.$t("messages.employee.success.updateSalaryAdjustment")
+        );
         this.loadDataGrid(this.searchDefault);
         this.showForm = false;
-        getToastSuccess(this.$t("messages.saveSuccess"));
       }
-      */
-
-      const index = this.rowData.findIndex(
-        (adj: any) => adj.id === formData.id
-      );
-      if (index !== -1) {
-        const selectedEmployee = this.employeeOptions.find(
-          (emp: any) => emp.code === formData.employee_id
-        );
-
-        const differenceAmount = formData.new_salary - formData.current_salary;
-        const percentageChange =
-          (differenceAmount / formData.current_salary) * 100;
-
-        this.rowData[index] = {
-          ...this.rowData[index],
-          employee_id: formData.employee_id,
-          employee_name: selectedEmployee
-            ? selectedEmployee.name
-            : this.rowData[index].employee_name,
-          department_name: selectedEmployee
-            ? selectedEmployee.department
-            : this.rowData[index].department_name,
-          adjustment_reason_code: formData.adjustment_reason_code,
-          effective_date: formData.effective_date,
-          current_salary: formData.current_salary,
-          new_salary: formData.new_salary,
-          difference_amount: differenceAmount,
-          percentage_change: percentageChange,
-          remark: formData.remark || "",
-          updated_at: formatDateTimeUTC(new Date()),
-          updated_by: "Current User",
-        };
-      }
-
-      this.searchDefault.filter = [1];
-
-      await this.$nextTick();
-      await this.loadDataGrid(this.searchDefault);
-
-      getToastSuccess(
-        this.$t("messages.employee.success.updateSalaryAdjustment")
-      );
     } catch (error) {
       getError(error);
     }
@@ -843,25 +637,15 @@ export default class SalaryAdjustment extends Vue {
 
   async deleteData() {
     try {
-      /*
-      const { status2 } = await salaryAdjustmentAPI.DeleteSalaryAdjustment(this.deleteParam);
+      const { status2 } = await salaryAdjustmentAPI.DeleteSalaryAdjustment(
+        this.deleteParam
+      );
       if (status2.status == 0) {
+        getToastSuccess(
+          this.$t("messages.employee.success.deleteSalaryAdjustment")
+        );
         this.loadDataGrid(this.searchDefault);
-        getToastSuccess(this.$t("messages.deleteSuccess"));
       }
-      */
-
-      this.rowData = this.rowData.filter(
-        (item: any) => item.id !== this.deleteParam
-      );
-
-      this.searchDefault.filter = [1];
-
-      await this.$nextTick();
-      await this.loadDataGrid(this.searchDefault);
-      getToastSuccess(
-        this.$t("messages.employee.success.deleteSalaryAdjustment")
-      );
     } catch (error) {
       getError(error);
     }
@@ -934,38 +718,51 @@ export default class SalaryAdjustment extends Vue {
   formatData(params: any) {
     return {
       id: params.id,
+      // employee information
       employee_id: params.employee_id,
-      employee_name: params.employee_name,
-      department_code: params.department_code,
-      department_name: params.department_name,
-      position_code: params.position_code,
-      position_name: params.position_name,
+
+      // adjustment information
       adjustment_reason_code: params.adjustment_reason_code,
-      adjustment_reason_name: params.adjustment_reason_name,
-      effective_date: params.effective_date,
-      current_salary: parseFloat(params.current_salary),
+      effective_date: formatDateTimeUTC(params.effective_date),
+      end_date: formatDateTimeUTC(params.end_date),
+      base_salary: parseFloat(params.base_salary),
       new_salary: parseFloat(params.new_salary),
-      difference_amount: params.difference_amount,
-      percentage_change: params.percentage_change,
+      status: params.status,
+      is_current: parseInt(params.is_current),
+      difference_amount: parseFloat(params.difference_amount),
+      percentage_change: parseFloat(params.percentage_change),
       remark: params.remark,
+
+      // modified
+      created_at: params.created_at,
+      created_by: params.created_by,
+      updated_at: params.updated_at,
+      updated_by: params.updated_by,
     };
   }
 
   populateForm(params: any) {
     return {
       id: params.id,
+      // employee information
       employee_id: params.employee_id,
-      employee_name: params.employee_name,
-      department_code: params.department_code,
-      department_name: params.department_name,
-      position_code: params.position_code,
-      position_name: params.position_name,
+
+      // adjustment information
       adjustment_reason_code: params.adjustment_reason_code,
-      adjustment_reason_name: params.adjustment_reason_name,
       effective_date: params.effective_date,
-      current_salary: params.current_salary,
-      new_salary: params.new_salary,
+      base_salary: parseFloat(params.base_salary),
+      new_salary: parseFloat(params.new_salary),
+      status: params.status,
+      is_current: parseInt(params.is_current),
+      difference_amount: parseFloat(params.difference_amount),
+      percentage_change: parseFloat(params.percentage_change),
       remark: params.remark,
+
+      // modified
+      created_at: params.created_at,
+      created_by: params.created_by,
+      updated_at: params.updated_at,
+      updated_by: params.updated_by,
     };
   }
 
