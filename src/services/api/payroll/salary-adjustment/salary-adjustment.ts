@@ -16,6 +16,14 @@ class SalaryAdjustmentAPI extends ConfigurationResource {
     });
   }
 
+  GetSalaryAdjustmentListIsCurrent(params: any) {
+    return request({
+      url: "GetPayEmployeeSalaryByIsCurrent",
+      method: "get",
+      params: params,
+    });
+  }
+
   InsertSalaryAdjustment(params: any) {
     return request({
       url: "InsertPayEmployeeSalaryList",
@@ -84,44 +92,22 @@ class SalaryAdjustmentAPI extends ConfigurationResource {
       method: "delete",
     });
   }
+
   // Approve/Reject Salary Adjustment
-  ApproveSalaryAdjustment(params: any) {
+  UpdateStatusSalaryAdjustment(params: any, status: any) {
     return request({
-      url: "ApproveSalaryAdjustment",
-      method: "post",
+      url: `UpdatePayEmployeeSalaryStatus/${params}/${status}`,
+      method: "put",
       data: params,
     });
   }
 
-  RejectSalaryAdjustment(params: any) {
+  // options
+  GetEmployeeSalaryAdjustmentOptions(params: any) {
     return request({
-      url: "RejectSalaryAdjustment",
-      method: "post",
-      data: params,
-    });
-  }
-
-  // Get Employee Options for dropdown
-  GetEmployeeOptions() {
-    return request({
-      url: "GetEmployeeOptions",
+      url: "GetPayEmployeeSalaryOption",
       method: "get",
-    });
-  }
-
-  // Get Adjustment Reason Options
-  GetAdjustmentReasonOptions() {
-    return request({
-      url: "GetAdjustmentReasonOptions",
-      method: "get",
-    });
-  }
-
-  // Get Department Options
-  GetDepartmentOptions() {
-    return request({
-      url: "GetDepartmentOptions",
-      method: "get",
+      params: params,
     });
   }
 }

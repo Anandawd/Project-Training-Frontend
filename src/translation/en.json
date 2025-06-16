@@ -3399,7 +3399,8 @@
           "currentSalary": "Current Salary",
           "newSalary": "New Salary",
           "difference": "Difference",
-          "percentage": "Percentage"
+          "percentage": "Percentage",
+          "applied": "Applied"
         },
         "payroll": {
           "name": "Name",
@@ -4192,6 +4193,7 @@
       "fullVerify": "Full Verify",
       "approve": "Approve",
       "reject": "Reject",
+      "canceled": "Canceled",
       "downloadPayslip": "Download Payslip",
       "salary": "Salary",
       "process": "Process",

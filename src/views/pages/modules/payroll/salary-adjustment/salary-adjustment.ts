@@ -1,4 +1,5 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
+import Checklist from "@/components/ag_grid-framework/checklist.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
 import EmployeeAPI from "@/services/api/payroll/employee/employee";
@@ -197,7 +198,9 @@ export default class SalaryAdjustment extends Vue {
         width: 100,
         enableRowGroup: true,
         valueFormatter: (params: any) => {
-          return params.value ? `${params.value.toFixed(2)}%` : "0%";
+          const value = parseFloat(params.value);
+
+          return !isNaN(value) ? `${value.toFixed(2)}%` : "0%";
         },
       },
       {
@@ -225,6 +228,10 @@ export default class SalaryAdjustment extends Vue {
               badgeClass = "bg-danger";
               statusText = "Rejected";
               break;
+            case "cancelled":
+              badgeClass = "bg-danger";
+              statusText = "Cancelled";
+              break;
             case "APPLIED":
               badgeClass = "bg-primary";
               statusText = "Applied";
@@ -235,6 +242,15 @@ export default class SalaryAdjustment extends Vue {
           }
           return `<span class="badge ${badgeClass} py-1 px-3">${statusText}</span>`;
         },
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.applied"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "is_current",
+        width: 80,
+        enableRowGroup: true,
+        cellRenderer: "checklistRenderer",
       },
       {
         headerName: this.$t("commons.table.remark"),
@@ -278,6 +294,7 @@ export default class SalaryAdjustment extends Vue {
     this.context = { componentParent: this };
     this.frameworkComponents = {
       actionGrid: ActionGrid,
+      checklistRenderer: Checklist,
     };
     this.rowGroupPanelShow = "always";
     this.statusBar = {
@@ -334,6 +351,12 @@ export default class SalaryAdjustment extends Vue {
         disabled: !this.paramsData || this.paramsData.status !== "PENDING",
         icon: generateIconContextMenuAgGrid("reject_icon24"),
         action: () => this.handleReject(this.paramsData),
+      },
+      {
+        name: this.$t("commons.contextMenu.cancelled"),
+        disabled: !this.paramsData || this.paramsData.status !== "PENDING",
+        icon: generateIconContextMenuAgGrid("cancelled_icon24"),
+        action: () => this.handleCanceled(this.paramsData),
       },
     ];
     return result;
@@ -420,6 +443,22 @@ export default class SalaryAdjustment extends Vue {
     this.showDialog = true;
   }
 
+  handleCanceled(params: any) {
+    if (!params || params.status !== "PENDING") {
+      getToastError(
+        this.$t("messages.employee.error.cannotCanceledNonPending")
+      );
+      return;
+    }
+
+    this.approveParam = params;
+    this.dialogMessage = this.$t(
+      "messages.employee.confirm.cancelledSalaryAdjustment"
+    );
+    this.dialogAction = "reject";
+    this.showDialog = true;
+  }
+
   handleToAdjustmentReason() {
     this.$router.push({
       name: "AdjustmentReason",
@@ -433,16 +472,14 @@ export default class SalaryAdjustment extends Vue {
       this.approveData();
     } else if (this.dialogAction === "reject") {
       this.rejectData();
+    } else if (this.dialogAction === "cancelled") {
+      this.cancelledData();
     }
     this.showDialog = false;
   }
 
   refreshData(search: any) {
     this.loadDataGrid(search);
-  }
-
-  onRefresh() {
-    this.loadDataGrid(this.searchDefault);
   }
 
   // API REQUEST =======================================================
@@ -478,123 +515,23 @@ export default class SalaryAdjustment extends Vue {
     }
   }
 
-  loadMockData() {
-    this.rowData = [
-      {
-        id: 1,
-        employee_id: "EMP001",
-        employee_name: "John Doe",
-        department_name: "Operations",
-        position_name: "Junior Manager",
-        adjustment_reason_code: "PROMOTION",
-        adjustment_reason_name: "Promotion",
-        effective_date: "2025-02-01",
-        current_salary: 9000000,
-        new_salary: 11000000,
-        difference_amount: 2000000,
-        percentage_change: 22.22,
-        status: "PENDING",
-        remark: "Promotion to Senior Operations Manager",
-        created_at: "2025-01-15",
-        created_by: "HR Manager",
-        updated_at: "2025-01-15",
-        updated_by: "HR Manager",
-      },
-      {
-        id: 2,
-        employee_id: "EMP002",
-        employee_name: "Jane Smith",
-        department_name: "Human Resources",
-        position_name: "Staff",
-        adjustment_reason_code: "ANNUAL_REVIEW",
-        adjustment_reason_name: "Annual Review",
-        effective_date: "2025-01-01",
-        current_salary: 13500000,
-        new_salary: 14500000,
-        difference_amount: 1000000,
-        percentage_change: 7.41,
-        status: "APPROVED",
-        remark: "Annual salary review - performance based increase",
-        created_at: "2024-12-20",
-        created_by: "Operations Director",
-        updated_at: "2025-01-02",
-        updated_by: "CEO",
-      },
-      {
-        id: 3,
-        employee_id: "EMP004",
-        employee_name: "Emily Davis",
-        department_name: "Information Technology",
-        position_name: "Staff",
-        adjustment_reason_code: "MARKET_ADJUSTMENT",
-        adjustment_reason_name: "Market Adjustment",
-        effective_date: "2025-03-01",
-        current_salary: 7500000,
-        new_salary: 8500000,
-        difference_amount: 1000000,
-        percentage_change: 13.33,
-        status: "PENDING",
-        remark: "Market adjustment for IT specialists",
-        created_at: "2025-01-10",
-        created_by: "IT Director",
-        updated_at: "2025-01-10",
-        updated_by: "IT Director",
-      },
-      {
-        id: 4,
-        employee_id: "EMP007",
-        employee_name: "James Carter",
-        department_name: "Security",
-        position_name: "Staff",
-        adjustment_reason_code: "PERFORMANCE",
-        adjustment_reason_name: "Performance",
-        effective_date: "2024-12-01",
-        current_salary: 6000000,
-        new_salary: 6300000,
-        difference_amount: 300000,
-        percentage_change: 5.0,
-        status: "APPLIED",
-        remark: "Performance-based salary increase",
-        created_at: "2024-11-15",
-        created_by: "Security Manager",
-        updated_at: "2024-12-01",
-        updated_by: "HR Manager",
-      },
-      {
-        id: 5,
-        employee_id: "EMP008",
-        employee_name: "Jessica Walker",
-        department_name: "Housekeeping",
-        position_name: "Staff",
-        adjustment_reason_code: "COST_OF_LIVING",
-        adjustment_reason_name: "Cost of Living",
-        effective_date: "2025-01-15",
-        current_salary: 9000000,
-        new_salary: 8500000,
-        difference_amount: -500000,
-        percentage_change: -5.56,
-        status: "REJECTED",
-        remark:
-          "Cost of living adjustment request denied due to budget constraints",
-        created_at: "2024-12-05",
-        created_by: "Housekeeping Manager",
-        updated_at: "2025-01-05",
-        updated_by: "Finance Director",
-      },
-    ];
-  }
-
   async loadDropdown() {
     try {
       const promises = [
-        employeeAPI.GetEmployeeList({}).then((response) => {
-          this.employeeOptions = response.data;
-        }),
+        salaryAdjustmentAPI
+          .GetEmployeeSalaryAdjustmentOptions({})
+          .then((response) => {
+            this.employeeOptions = response.data;
+          }),
+
         salaryAdjustmentAPI.GetAdjustmentReasonList({}).then((response) => {
           this.adjustmentReasonOptions = response.data;
         }),
       ];
+
       await Promise.all(promises);
+
+      console.log("employeeOptions", this.employeeOptions);
     } catch (error) {
       getError(error);
     }
@@ -653,31 +590,18 @@ export default class SalaryAdjustment extends Vue {
 
   async approveData() {
     try {
-      /*
-      const { status2 } = await salaryAdjustmentAPI.ApproveSalaryAdjustment({ id: this.deleteParam });
+      const { status2 } =
+        await salaryAdjustmentAPI.UpdateStatusSalaryAdjustment(
+          this.approveParam.id,
+          "APPROVED"
+        );
       if (status2.status == 0) {
+        getToastSuccess(
+          this.$t("messages.employee.success.approveSalaryAdjustment")
+        );
         this.loadDataGrid(this.searchDefault);
-        getToastSuccess(this.$t("messages.salaryAdjustment.success.approve"));
+        this.showDialog = false;
       }
-      */
-
-      const index = this.rowData.findIndex(
-        (item: any) => item.id === this.approveParam.id
-      );
-      if (index !== -1) {
-        this.rowData[index].status = "APPROVED";
-        this.rowData[index].updated_at = formatDateTimeUTC(new Date());
-        this.rowData[index].updated_by = "Current User";
-      }
-
-      this.searchDefault.filter = [1];
-
-      await this.$nextTick();
-      await this.loadDataGrid(this.searchDefault);
-      getToastSuccess(
-        this.$t("messages.employee.success.approveSalaryAdjustment")
-      );
-      this.showDialog = false;
     } catch (error) {
       getError(error);
     }
@@ -685,30 +609,37 @@ export default class SalaryAdjustment extends Vue {
 
   async rejectData() {
     try {
-      /*
-      const { status2 } = await salaryAdjustmentAPI.RejectSalaryAdjustment({ id: this.deleteParam });
+      const { status2 } =
+        await salaryAdjustmentAPI.UpdateStatusSalaryAdjustment(
+          this.approveParam.id,
+          "REJECTED"
+        );
       if (status2.status == 0) {
+        getToastSuccess(
+          this.$t("messages.employee.success.rejectSalaryAdjustment")
+        );
         this.loadDataGrid(this.searchDefault);
-        getToastSuccess(this.$t("messages.salaryAdjustment.success.reject"));
+        this.showDialog = false;
       }
-      */
+    } catch (error) {
+      getError(error);
+    }
+  }
 
-      const index = this.rowData.findIndex(
-        (item: any) => item.id === this.approveParam.id
-      );
-      if (index !== -1) {
-        this.rowData[index].status = "REJECTED";
-        this.rowData[index].updated_at = formatDateTimeUTC(new Date());
-        this.rowData[index].updated_by = "Current User";
+  async cancelledData() {
+    try {
+      const { status2 } =
+        await salaryAdjustmentAPI.UpdateStatusSalaryAdjustment(
+          this.approveParam.id,
+          "cancelled"
+        );
+      if (status2.status == 0) {
+        getToastSuccess(
+          this.$t("messages.employee.success.cancelledSalaryAdjustment")
+        );
+        this.loadDataGrid(this.searchDefault);
+        this.showDialog = false;
       }
-      this.searchDefault.filter = [1];
-
-      await this.$nextTick();
-      await this.loadDataGrid(this.searchDefault);
-      getToastSuccess(
-        this.$t("messages.employee.success.rejectSalaryAdjustment")
-      );
-      this.showDialog = false;
     } catch (error) {
       getError(error);
     }
@@ -746,6 +677,10 @@ export default class SalaryAdjustment extends Vue {
       id: params.id,
       // employee information
       employee_id: params.employee_id,
+      employee_name: params.employee_name,
+      Position: params.PositionName,
+      Department: params.DepartmentName,
+      Placement: params.PlacementName,
 
       // adjustment information
       adjustment_reason_code: params.adjustment_reason_code,

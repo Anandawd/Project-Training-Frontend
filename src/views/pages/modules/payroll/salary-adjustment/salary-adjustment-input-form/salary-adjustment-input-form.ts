@@ -50,7 +50,7 @@ export default class InputForm extends Vue {
       width: "200",
     },
     {
-      field: "employee_id",
+      field: "EmployeeId",
       label: "id",
       align: "right",
       width: "100",
@@ -78,13 +78,16 @@ export default class InputForm extends Vue {
     await this.$nextTick();
     this.form = {
       employee_id: "",
+      Position: "",
+      Department: "",
+      Placement: "",
       adjustment_reason_code: "",
       effective_date: "",
       end_date: "",
       base_salary: 0,
       new_salary: 0,
       status: "PENDING",
-      is_current: 1,
+      is_current: 0,
       difference_amount: 0,
       percentage_change: 0,
       remark: "",
@@ -106,13 +109,8 @@ export default class InputForm extends Vue {
   onSave() {
     const formData = {
       ...this.form,
-      difference_amount: this.form.new_salary - this.form.base_salary,
-      percentage_change:
-        this.form.base_salary > 0
-          ? ((this.form.new_salary - this.form.base_salary) /
-              this.form.base_salary) *
-            100
-          : 0,
+      difference_amount: this.salaryDifference,
+      percentage_change: this.percentageChange,
     };
 
     console.log("form", this.form);
@@ -134,21 +132,29 @@ export default class InputForm extends Vue {
   onEmployeeChange() {
     if (this.form.employee_id) {
       const selectedEmployee = this.employeeOptions.find(
-        (emp: any) => emp.employee_id === this.form.employee_id
+        (emp: any) => emp.EmployeeId === this.form.employee_id
       );
 
       if (selectedEmployee) {
-        this.form.employee_id = selectedEmployee.employee_id;
-        this.form.Position = selectedEmployee.Position;
-        this.form.Department = selectedEmployee.Department;
-        this.form.Placement = selectedEmployee.Placement;
-        this.form.base_salary = selectedEmployee.base_salary;
+        this.form.employee_id = selectedEmployee.EmployeeId;
+        this.form.Position = selectedEmployee.PositionName;
+        this.form.Department = selectedEmployee.DepartmentName;
+        this.form.Placement = selectedEmployee.PlacementName;
+        this.form.base_salary = selectedEmployee.BaseSalary;
       }
     } else {
       this.form.employee_id = "";
       this.form.department_code = "";
       this.form.position_code = "";
       this.form.base_salary = 0;
+    }
+  }
+
+  onAdjustmentReasonChange() {
+    if (this.form.adjustment_reason_code === "INITIAL") {
+      this.form.new_salary = this.form.base_salary;
+    } else {
+      this.form.new_salary = 0;
     }
   }
 
@@ -178,7 +184,10 @@ export default class InputForm extends Vue {
 
   // validation
   get schema() {
-    return Yup.object().shape({});
+    return Yup.object().shape({
+      SelectEmployee: Yup.string().required(),
+      AdjustmentReason: Yup.string().required(),
+    });
   }
 
   get title() {
@@ -194,18 +203,20 @@ export default class InputForm extends Vue {
   }
 
   get salaryDifference() {
-    if (this.form.base_salary && this.form.new_salary > 0) {
+    if (this.form.adjustment_reason_code === "INITIAL") {
+      return 0;
+    }
+    if (this.form.base_salary > 0 && this.form.new_salary > 0) {
       return this.form.new_salary - this.form.base_salary;
     }
     return 0;
   }
 
   get percentageChange() {
-    if (
-      this.form.base_salary &&
-      this.form.new_salary &&
-      this.form.base_salary > 0
-    ) {
+    if (this.form.adjustment_reason_code === "INITIAL") {
+      return 0;
+    }
+    if (this.form.base_salary > 0 && this.form.new_salary > 0) {
       return (
         ((this.form.new_salary - this.form.base_salary) /
           this.form.base_salary) *
@@ -224,5 +235,24 @@ export default class InputForm extends Vue {
 
   get showNewSalary() {
     return this.form.adjustment_reason_code !== "INITIAL";
+  }
+
+  // get disabledBaseSalary() {
+  //   return this.showNewSalary && this.modeData === $global.modeData.edit;
+  // }
+
+  get disabledBaseSalary() {
+    return (
+      !this.form.adjustment_reason_code ||
+      this.form.adjustment_reason_code !== "INITIAL" ||
+      this.modeData === $global.modeData.edit
+    );
+  }
+
+  get disabledNewSalary() {
+    return (
+      !this.form.adjustment_reason_code ||
+      this.form.adjustment_reason_code === "INITIAL"
+    );
   }
 }

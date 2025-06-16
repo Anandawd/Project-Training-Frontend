@@ -43,7 +43,7 @@
       :searchDefault="searchDefault"
       @search="refreshData"
     >
-      <template v-slot="{search}">
+      <template v-slot="{search, onRefresh}">
         <div class="col-md-6 d-flex mb-md-4">
           <div class="checklist">
             <input
@@ -53,7 +53,7 @@
               id="all"
               v-model="search.filter[0]"
               value="0"
-              @change="refreshData(search)"
+              @change="onRefresh"
             />
             <label for="all">{{ $t('commons.filter.checkList.all') }}</label>
           </div>
@@ -65,7 +65,7 @@
               id="showPending"
               v-model="search.filter[0]"
               value="1"
-              @change="refreshData(search)"
+              @change="onRefresh"
             />
             <label for="showPending"
               >{{ $t('commons.filter.checkList.pending') }}</label
@@ -79,7 +79,7 @@
               id="showApproved"
               v-model="search.filter[0]"
               value="2"
-              @change="refreshData(search)"
+              @change="onRefresh"
             />
             <label for="showApproved"
               >{{ $t('commons.filter.checkList.approved') }}</label
@@ -93,10 +93,24 @@
               id="showRejected"
               v-model="search.filter[0]"
               value="3"
-              @change="refreshData(search)"
+              @change="onRefresh"
             />
             <label for="showRejected"
               >{{ $t('commons.filter.checkList.rejected') }}</label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showCancelled"
+              id="showCancelled"
+              v-model="search.filter[0]"
+              value="4"
+              @change="onRefresh"
+            />
+            <label for="showCancelled"
+              >{{ $t('commons.filter.checkList.cancelled') }}</label
             >
           </div>
         </div>

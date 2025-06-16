@@ -41,7 +41,7 @@
                     selectType="column"
                     name="SelectEmployee"
                     labelName="FullName"
-                    keyName="employee_id"
+                    keyName="EmployeeId"
                     v-model="form.employee_id"
                     :label="$t('labels.payroll.attendance.selectEmployee')"
                     :columnOptions="columnEmployeeOptions"
@@ -131,15 +131,14 @@
                 <div class="col-md-4 mb-1">
                   <c-datepicker
                     required
-                    id="effectiveDate"
+                    id="EffectiveDate"
                     customLabelClass="col-3"
                     :label="$t('labels.payroll.employee.effectiveDate')"
                     type="date"
                     valueType="YYYY-MM-DD"
                     format="DD/MM/YYYY"
-                    name="effectiveDate"
+                    name="EffectiveDate"
                     v-model="form.effective_date"
-                    :disabled="modeData === $global.modeData.edit"
                   />
                 </div>
                 <div class="col-md-4">
@@ -191,11 +190,11 @@
                     :min="0"
                     :label="$t('labels.payroll.employee.baseSalary')"
                     v-model="form.base_salary"
-                    @change="onCurrentSalaryChange"
-                    :disabled="showNewSalary"
+                    @change="onBaseSalaryChange"
+                    :disabled="disabledBaseSalary"
                   />
                 </div>
-                <div class="col-md-4" v-show="showNewSalary">
+                <div class="col-md-4">
                   <c-input
                     required
                     formatted
@@ -209,6 +208,7 @@
                     :label="$t('labels.payroll.employee.newSalary')"
                     v-model="form.new_salary"
                     @change="onNewSalaryChange"
+                    :disabled="disabledNewSalary"
                   />
                 </div>
                 <div class="col-md-4">
