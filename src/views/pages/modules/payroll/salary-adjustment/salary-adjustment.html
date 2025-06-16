@@ -55,7 +55,10 @@
               value="0"
               @change="onRefresh"
             />
-            <label for="all">{{ $t('commons.filter.checkList.all') }}</label>
+            <label for="all"
+              >{{ $t('commons.filter.checkList.all') }}
+              <span class="text-muted">({{ statusCounts.all }})</span>
+            </label>
           </div>
           <div class="checklist">
             <input
@@ -68,7 +71,10 @@
               @change="onRefresh"
             />
             <label for="showPending"
-              >{{ $t('commons.filter.checkList.pending') }}</label
+              >{{ $t('commons.filter.checkList.pending') }}
+              <span class="text-muted"
+                >({{ statusCounts.pending }})</span
+              ></label
             >
           </div>
           <div class="checklist">
@@ -82,7 +88,10 @@
               @change="onRefresh"
             />
             <label for="showApproved"
-              >{{ $t('commons.filter.checkList.approved') }}</label
+              >{{ $t('commons.filter.checkList.approved') }}
+              <span class="text-muted"
+                >({{ statusCounts.approved }})</span
+              ></label
             >
           </div>
           <div class="checklist">
@@ -96,21 +105,27 @@
               @change="onRefresh"
             />
             <label for="showRejected"
-              >{{ $t('commons.filter.checkList.rejected') }}</label
+              >{{ $t('commons.filter.checkList.rejected') }}
+              <span class="text-muted"
+                >({{ statusCounts.rejected }})</span
+              ></label
             >
           </div>
           <div class="checklist">
             <input
               class="mr-1"
               type="radio"
-              name="showCancelled"
-              id="showCancelled"
+              name="showApplied"
+              id="showApplied"
               v-model="search.filter[0]"
               value="4"
               @change="onRefresh"
             />
-            <label for="showCancelled"
-              >{{ $t('commons.filter.checkList.cancelled') }}</label
+            <label for="showApplied"
+              >{{ $t('commons.filter.checkList.applied') }}
+              <span class="text-muted"
+                >({{ statusCounts.is_current }})</span
+              ></label
             >
           </div>
         </div>

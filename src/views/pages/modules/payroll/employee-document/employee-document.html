@@ -3,6 +3,15 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
+        title="Document Type"
+        type="button"
+        class="btn btn-warning mr-1"
+        @click="handleToDocumentType"
+      >
+        <i class="fa fa-cogs mr-1" aria-hidden="true"></i>{{
+        $t('buttons.documentType') }}
+      </button>
+      <button
         title="Insert Document"
         type="button"
         class="btn btn-primary mr-1"

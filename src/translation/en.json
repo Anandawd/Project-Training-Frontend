@@ -1811,6 +1811,7 @@
   },
   "title": {
     "t11": "t11",
+    "documentType": "Document Type",
     "adjustmentReason": "Adjustment Reason",
     "employeeType": "Employee Type",
     "shiftCategory": "Shift Category",
@@ -2421,6 +2422,7 @@
         "deletePlacement": "Are you sure you want to delete this placement?",
         "deleteEmployeeType": "Are you sure you want to delete this employee type?",
         "deleteAdjustmentReason": "Are you sure you want to delete this adjustment reason?",
+        "deleteSalaryAdjustment": "Are you sure you want to delete this salary adjustment?",
         "statusChange": "Are you sure you want to change this employee's status to {status}?",
         "salaryChange": "Are you sure you want to update this employee's salary information?",
         "transferDepartment": "Are you sure you want to transfer this employee to {department}?",
@@ -2429,7 +2431,8 @@
         "salaryDelete": "Are you sure you want to delete this employee salary?",
         "benefitDelete": "Are you sure you want to delete this employee benefit?",
         "cancelChanges": "You have unsaved changes. Are you sure you want to cancel?",
-        "approveSalaryAdjustment": "Are you sure you want to approve this salary adjustment?"
+        "approveSalaryAdjustment": "Are you sure you want to approve this salary adjustment?",
+        "rejectSalaryAdjustment": "Are you sure you want to reject this salary adjustment?"
       }
     },
     "attendance": {
@@ -2751,6 +2754,7 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "documentType": "Document Type",
     "adjustmentReason": "Adjustment Reason",
     "employeType": "Employee Type",
     "shiftCategory": "Shift Category",
@@ -3400,7 +3404,9 @@
           "newSalary": "New Salary",
           "difference": "Difference",
           "percentage": "Percentage",
-          "applied": "Applied"
+          "applied": "Applied",
+          "required": "Required",
+          "allowExpiry": "Allow Expiry"
         },
         "payroll": {
           "name": "Name",
@@ -4708,6 +4714,7 @@
       "document#": "Document #",
       "uom": "UOM",
       "checkList": {
+        "applied": "Applied",
         "waitList": "Wait List",
         "checkedOut": "Checked Out",
         "cancelled": "Cancelled",

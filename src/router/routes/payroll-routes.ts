@@ -128,6 +128,23 @@ export default [
     },
   },
   {
+    path: "document-type",
+    name: "DocumentType",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/employee-document/configurations/document-type/document-type.vue"
+      ),
+    meta: {
+      pageTitle: "title.documentType",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.legalDocument", url: "/payroll/legal-document" },
+        { title: "title.documentType", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
     path: "organization",
     name: "Organization",
     component: () =>

@@ -123,8 +123,9 @@
                     keyName="code"
                     v-model="form.adjustment_reason_code"
                     :label="$t('labels.payroll.employee.adjustmentReason')"
-                    :options="adjustmentReasonOptions"
-                    :disabled="modeData === $global.modeData.edit"
+                    :options="filteredAdjustmentReasonOptions"
+                    :disabled="disabledAdjustmentReason"
+                    @change="onAdjustmentReasonChange"
                   >
                   </c-select>
                 </div>

@@ -3,6 +3,7 @@ import CInput from "@/components/input/input.vue";
 import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
 import $global from "@/utils/global";
+import { getToastError } from "@/utils/toast";
 import { focusOnInvalid } from "@/utils/validation";
 import { Form as CForm } from "vee-validate";
 import { reactive, ref } from "vue";
@@ -38,7 +39,7 @@ export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
   employeeOptions!: any[];
-  adjustmentReasonOptions!: any[];
+  adjustmentReasonOptions: any[] = reactive([]);
 
   public form: any = reactive({});
 
@@ -140,17 +141,37 @@ export default class InputForm extends Vue {
         this.form.Position = selectedEmployee.PositionName;
         this.form.Department = selectedEmployee.DepartmentName;
         this.form.Placement = selectedEmployee.PlacementName;
-        this.form.base_salary = selectedEmployee.BaseSalary;
+        this.form.adjustment_reason_code = "";
+        if (selectedEmployee.NewSalary > 0) {
+          this.form.base_salary = selectedEmployee.NewSalary;
+        } else {
+          this.form.base_salary = selectedEmployee.BaseSalary;
+        }
+        this.form.new_salary = 0;
       }
     } else {
       this.form.employee_id = "";
-      this.form.department_code = "";
-      this.form.position_code = "";
+      this.form.Position = "";
+      this.form.Department = "";
+      this.form.Placement = "";
+      this.form.adjustment_reason_code = "";
       this.form.base_salary = 0;
+      this.form.new_salary = 0;
     }
   }
 
   onAdjustmentReasonChange() {
+    if (
+      this.form.base_salary > 0 &&
+      this.form.adjustment_reason_code === "INITIAL"
+    ) {
+      this.form.adjustment_reason_code = "";
+      getToastError(
+        this.$t("messages.employee.error.cannotSelectInitialWithExistingSalary")
+      );
+      return;
+    }
+
     if (this.form.adjustment_reason_code === "INITIAL") {
       this.form.new_salary = this.form.base_salary;
     } else {
@@ -233,16 +254,9 @@ export default class InputForm extends Vue {
     return "same";
   }
 
-  get showNewSalary() {
-    return this.form.adjustment_reason_code !== "INITIAL";
-  }
-
-  // get disabledBaseSalary() {
-  //   return this.showNewSalary && this.modeData === $global.modeData.edit;
-  // }
-
   get disabledBaseSalary() {
     return (
+      !this.form.employee_id ||
       !this.form.adjustment_reason_code ||
       this.form.adjustment_reason_code !== "INITIAL" ||
       this.modeData === $global.modeData.edit
@@ -251,8 +265,31 @@ export default class InputForm extends Vue {
 
   get disabledNewSalary() {
     return (
+      !this.form.employee_id ||
       !this.form.adjustment_reason_code ||
       this.form.adjustment_reason_code === "INITIAL"
     );
+  }
+
+  get disabledAdjustmentReason() {
+    return !this.form.employee_id;
+  }
+
+  get filteredAdjustmentReasonOptions() {
+    if (!this.form.employee_id) {
+      return [];
+    }
+
+    const baseSalary = parseFloat(this.form.base_salary) || 0;
+
+    if (baseSalary === 0) {
+      return this.adjustmentReasonOptions.filter(
+        (option: any) => option.code === "INITIAL"
+      );
+    } else {
+      return this.adjustmentReasonOptions.filter(
+        (option: any) => option.code !== "INITIAL"
+      );
+    }
   }
 }

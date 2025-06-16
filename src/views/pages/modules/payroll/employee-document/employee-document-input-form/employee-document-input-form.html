@@ -39,7 +39,7 @@
                     class="row mb-1"
                     selectType="column"
                     name="SelectEmployee"
-                    labelName="name"
+                    labelName="FullName"
                     keyName="employee_id"
                     v-model="form.employee_id"
                     :label="$t('labels.payroll.attendance.selectEmployee')"
@@ -53,23 +53,34 @@
                 <div class="col-md-4">
                   <c-input
                     disabled
-                    type="text"
-                    name="Department"
-                    id="Department"
+                    name="Position"
+                    id="Position"
                     class="row mb-1"
-                    :label="$t('labels.payroll.employee.department')"
-                    v-model="form.department_name"
+                    type="text"
+                    v-model="form.Position"
+                    :label="$t('labels.payroll.employee.position')"
                   />
                 </div>
                 <div class="col-md-4">
                   <c-input
                     disabled
-                    name="Position"
-                    id="Position"
+                    type="text"
+                    name="Department"
+                    id="Department"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.department')"
+                    v-model="form.Department"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    disabled
+                    name="Placement"
+                    id="Placement"
                     class="row mb-1"
                     type="text"
-                    v-model="form.position_name"
-                    :label="$t('labels.payroll.employee.position')"
+                    v-model="form.Placement"
+                    :label="$t('labels.payroll.employee.placement')"
                   />
                 </div>
               </div>
@@ -109,6 +120,7 @@
                     v-model="form.document_type_code"
                     :label="$t('labels.payroll.employee.documentType')"
                     :options="documentTypeOptions"
+                    @change="onDocumentTypeChange"
                   />
                 </div>
                 <div class="col-md-4 mb-1">
@@ -145,7 +157,7 @@
                     v-model="form.issue_date"
                   />
                 </div>
-                <div class="col-md-4 mb-1">
+                <div class="col-md-4 mb-1" v-show="showExpiryDate">
                   <c-datepicker
                     name="ExpiryDate"
                     id="ExpiryDate"

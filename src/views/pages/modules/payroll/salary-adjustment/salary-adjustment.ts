@@ -2,7 +2,6 @@ import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import Checklist from "@/components/ag_grid-framework/checklist.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
-import EmployeeAPI from "@/services/api/payroll/employee/employee";
 import SalaryAdjustmentAPI from "@/services/api/payroll/salary-adjustment/salary-adjustment";
 import {
   formatDate,
@@ -24,7 +23,6 @@ import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import CInputForm from "./salary-adjustment-input-form/salary-adjustment-input-form.vue";
 
-const employeeAPI = new EmployeeAPI();
 const salaryAdjustmentAPI = new SalaryAdjustmentAPI();
 
 @Options({
@@ -62,8 +60,17 @@ export default class SalaryAdjustment extends Vue {
   searchDefault: any = {
     index: 0,
     text: "",
-    filter: [2],
+    filter: [4],
   };
+
+  // stats
+  public statusCounts: any = ref({
+    all: 0,
+    pending: 0,
+    approved: 0,
+    rejected: 0,
+    is_current: 0,
+  });
 
   // Ag grid variable
   gridOptions: any = {};
@@ -82,7 +89,7 @@ export default class SalaryAdjustment extends Vue {
   agGridSetting: any;
 
   // RECYCLE LIFE FUNCTION =======================================================
-  created(): void {
+  mounted(): void {
     this.loadDataGrid();
   }
 
@@ -90,13 +97,13 @@ export default class SalaryAdjustment extends Vue {
     this.searchOptions = [
       { text: this.$t("commons.filter.payroll.employee.employeeId"), value: 0 },
       { text: this.$t("commons.filter.payroll.employee.name"), value: 1 },
-      { text: this.$t("commons.filter.payroll.employee.department"), value: 2 },
+      { text: this.$t("commons.filter.payroll.employee.position"), value: 2 },
+      { text: this.$t("commons.filter.payroll.employee.department"), value: 3 },
+      { text: this.$t("commons.filter.payroll.employee.placement"), value: 4 },
       {
-        text: this.$t("commons.filter.payroll.employee.adjustmentReason"),
-        value: 3,
+        text: this.$t("commons.filter.remark"),
+        value: 5,
       },
-      { text: this.$t("commons.filter.createdBy"), value: 4 },
-      { text: this.$t("commons.filter.updatedBy"), value: 5 },
     ];
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
@@ -155,6 +162,12 @@ export default class SalaryAdjustment extends Vue {
         enableRowGroup: true,
       },
       {
+        headerName: this.$t("commons.table.payroll.employee.adjustmentReason"),
+        field: "AdjustmentReasonName",
+        width: 150,
+        enableRowGroup: true,
+      },
+      {
         headerName: this.$t("commons.table.payroll.employee.effectiveDate"),
         headerClass: "align-header-center",
         cellClass: "text-center",
@@ -164,7 +177,7 @@ export default class SalaryAdjustment extends Vue {
         valueFormatter: formatDate,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.currentSalary"),
+        headerName: this.$t("commons.table.payroll.employee.baseSalary"),
         headerClass: "align-header-right",
         cellClass: "text-right",
         field: "base_salary",
@@ -352,12 +365,6 @@ export default class SalaryAdjustment extends Vue {
         icon: generateIconContextMenuAgGrid("reject_icon24"),
         action: () => this.handleReject(this.paramsData),
       },
-      {
-        name: this.$t("commons.contextMenu.cancelled"),
-        disabled: !this.paramsData || this.paramsData.status !== "PENDING",
-        icon: generateIconContextMenuAgGrid("cancelled_icon24"),
-        action: () => this.handleCanceled(this.paramsData),
-      },
     ];
     return result;
   }
@@ -403,13 +410,22 @@ export default class SalaryAdjustment extends Vue {
   }
 
   handleEdit(formData: any) {
+    if (!formData || formData.status !== "PENDING") {
+      getToastError(this.$t("messages.employee.error.cannotApproveNonPending"));
+      return;
+    }
     this.handleShowForm(formData, $global.modeData.edit);
   }
 
   handleDelete(params: any) {
+    if (!params || params.status !== "PENDING") {
+      getToastError(this.$t("messages.employee.error.cannotApproveNonPending"));
+      return;
+    }
+
     this.deleteParam = params.id;
     this.dialogMessage = this.$t(
-      "messages.employee.delete.deleteSalaryAdjustment"
+      "messages.employee.confirm.deleteSalaryAdjustment"
     );
     this.dialogAction = "delete";
     this.showDialog = true;
@@ -420,7 +436,6 @@ export default class SalaryAdjustment extends Vue {
       getToastError(this.$t("messages.employee.error.cannotApproveNonPending"));
       return;
     }
-
     this.approveParam = params;
     this.dialogMessage = this.$t(
       "messages.employee.confirm.approveSalaryAdjustment"
@@ -430,30 +445,9 @@ export default class SalaryAdjustment extends Vue {
   }
 
   handleReject(params: any) {
-    if (!params || params.status !== "PENDING") {
-      getToastError(this.$t("messages.employee.error.cannotRejectNonPending"));
-      return;
-    }
-
     this.approveParam = params;
     this.dialogMessage = this.$t(
       "messages.employee.confirm.rejectSalaryAdjustment"
-    );
-    this.dialogAction = "reject";
-    this.showDialog = true;
-  }
-
-  handleCanceled(params: any) {
-    if (!params || params.status !== "PENDING") {
-      getToastError(
-        this.$t("messages.employee.error.cannotCanceledNonPending")
-      );
-      return;
-    }
-
-    this.approveParam = params;
-    this.dialogMessage = this.$t(
-      "messages.employee.confirm.cancelledSalaryAdjustment"
     );
     this.dialogAction = "reject";
     this.showDialog = true;
@@ -472,8 +466,6 @@ export default class SalaryAdjustment extends Vue {
       this.approveData();
     } else if (this.dialogAction === "reject") {
       this.rejectData();
-    } else if (this.dialogAction === "cancelled") {
-      this.cancelledData();
     }
     this.showDialog = false;
   }
@@ -498,6 +490,10 @@ export default class SalaryAdjustment extends Vue {
       } else {
         this.rowData = [];
       }
+
+      const { data: statusData } =
+        await salaryAdjustmentAPI.GetAdjustmentSalaryCount({});
+      this.statusCounts = statusData;
       this.loadDropdown();
     } catch (error) {
       getError(error);
@@ -530,8 +526,6 @@ export default class SalaryAdjustment extends Vue {
       ];
 
       await Promise.all(promises);
-
-      console.log("employeeOptions", this.employeeOptions);
     } catch (error) {
       getError(error);
     }
@@ -539,7 +533,6 @@ export default class SalaryAdjustment extends Vue {
 
   async insertData(formData: any) {
     try {
-      console.log("insertData", formData);
       const { status2 } = await salaryAdjustmentAPI.InsertSalaryAdjustment(
         formData
       );
@@ -617,25 +610,6 @@ export default class SalaryAdjustment extends Vue {
       if (status2.status == 0) {
         getToastSuccess(
           this.$t("messages.employee.success.rejectSalaryAdjustment")
-        );
-        this.loadDataGrid(this.searchDefault);
-        this.showDialog = false;
-      }
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async cancelledData() {
-    try {
-      const { status2 } =
-        await salaryAdjustmentAPI.UpdateStatusSalaryAdjustment(
-          this.approveParam.id,
-          "cancelled"
-        );
-      if (status2.status == 0) {
-        getToastSuccess(
-          this.$t("messages.employee.success.cancelledSalaryAdjustment")
         );
         this.loadDataGrid(this.searchDefault);
         this.showDialog = false;

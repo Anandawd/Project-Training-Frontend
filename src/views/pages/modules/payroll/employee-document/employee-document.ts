@@ -2,6 +2,8 @@ import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
+import EmployeeAPI from "@/services/api/payroll/employee/employee";
+import LegalDocumentsAPI from "@/services/api/payroll/legal-documents/legal-document";
 import { formatDate, formatDateTime2, formatDateTimeUTC } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
@@ -9,13 +11,16 @@ import {
   getError,
 } from "@/utils/general";
 import $global from "@/utils/global";
-import { getToastError, getToastSuccess } from "@/utils/toast";
+import { getToastSuccess } from "@/utils/toast";
 import CSearchFilter from "@/views/pages/components/filter/filter.vue";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import CInputForm from "./employee-document-input-form/employee-document-input-form.vue";
+
+const legalDocumentAPI = new LegalDocumentsAPI();
+const employeeAPI = new EmployeeAPI();
 
 @Options({
   components: {
@@ -54,6 +59,14 @@ export default class PayrollApprovals extends Vue {
     filter: [0],
   };
 
+  // stats
+  public statusCounts: any = ref({
+    all: 0,
+    valid: 0,
+    expiringSoon: 0,
+    expired: 0,
+  });
+
   // AG GRID VARIABLE
   gridOptions: any = {};
   columnDefs: any;
@@ -71,8 +84,8 @@ export default class PayrollApprovals extends Vue {
   agGridSetting: any;
 
   // RECYCLE LIFE FUNCTION =======================================================
-  created(): void {
-    this.loadData();
+  mounted(): void {
+    this.loadDataGrid();
   }
 
   beforeMount(): void {
@@ -83,12 +96,15 @@ export default class PayrollApprovals extends Vue {
         value: 1,
       },
       {
-        text: this.$t("commons.filter.payroll.employee.documentType"),
-        value: 2,
-      },
-      {
         text: this.$t("commons.filter.payroll.employee.fileName"),
         value: 3,
+      },
+      { text: this.$t("commons.filter.payroll.employee.position"), value: 2 },
+      { text: this.$t("commons.filter.payroll.employee.department"), value: 3 },
+      { text: this.$t("commons.filter.payroll.employee.placement"), value: 4 },
+      {
+        text: this.$t("commons.filter.remark"),
+        value: 5,
       },
     ];
     this.agGridSetting = $global.agGrid;
@@ -119,16 +135,14 @@ export default class PayrollApprovals extends Vue {
         width: 120,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.documentId"),
-        headerClass: "align-header-center",
+        headerName: this.$t("commons.table.payroll.employee.id"),
         field: "employee_id",
         width: 100,
         enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.employee"),
-        headerClass: "align-header-center",
-        field: "employee_name",
+        field: "FullName",
         width: 100,
         enableRowGroup: true,
       },
@@ -325,18 +339,12 @@ export default class PayrollApprovals extends Vue {
   handleMenu() {}
 
   handleSave(formData: any) {
-    console.log("formData di handleSave", formData);
     const formattedData = this.formatData(formData);
-    console.log("formattedData di handleSave", formattedData);
 
     if (this.modeData === $global.modeData.insert) {
-      this.insertData(formattedData).then(() => {
-        this.showForm = false;
-      });
+      this.insertData(formattedData);
     } else {
-      this.updateData(formattedData).then(() => {
-        this.showForm = false;
-      });
+      this.updateData(formattedData);
     }
   }
 
@@ -351,6 +359,12 @@ export default class PayrollApprovals extends Vue {
     this.showDialog = true;
   }
 
+  handleToDocumentType() {
+    this.$router.push({
+      name: "DocumentType",
+    });
+  }
+
   handlePrint(formatData: any) {}
 
   handleDownload(formatData: any) {}
@@ -363,79 +377,28 @@ export default class PayrollApprovals extends Vue {
   }
 
   refreshData(search: any) {
-    this.searchOptions = { ...search };
     this.loadDataGrid(search);
   }
 
-  onRefresh() {
-    this.loadDataGrid(this.searchDefault);
-  }
-
   // API REQUEST =======================================================
-  async loadData() {
-    try {
-      this.loadMockData();
-      this.loadDropdown();
-    } catch (error) {
-      getError(error);
-    }
-  }
-
   async loadDataGrid(search: any = this.searchDefault) {
     try {
-      /*
       let params = {
         Index: search.index,
         Text: search.text,
         IndexCheckBox: search.filter[0],
       };
-      const { data } = await salaryAdjustmentAPI.GetSalaryAdjustmentList(params);
-      this.rowData = data;
-      */
-
-      let filteredData = [...this.rowData];
-
-      if (search.text && search.text.trim()) {
-        let searchText = search.text.toLowerCase().trim();
-        let searchIndex = search.index;
-
-        filteredData = filteredData.filter((item: any) => {
-          switch (searchIndex) {
-            case 0: // Employee ID
-              return item.employee_id.toLowerCase().includes(searchText);
-            case 1: // Employee Name
-              return item.employee_name.toLowerCase().includes(searchText);
-            case 2: // Department
-              return item.document_type_name.toLowerCase().includes(searchText);
-            case 3: // Adjustment Reason
-              return item.file_name.includes(searchText);
-            default:
-              return true;
-          }
-        });
+      const { data } = await legalDocumentAPI.GetLegalDocumentsList(params);
+      if (data) {
+        this.rowData = data;
+      } else {
+        this.rowData = [];
       }
 
-      if (search.filter && search.filter.length > 0) {
-        const statusFilter = parseInt(search.filter[0]);
-        if (statusFilter !== 0) {
-          filteredData = filteredData.filter((item: any) => {
-            switch (statusFilter) {
-              case 1:
-                return item.status.toUpperCase() === "VALID";
-              case 2:
-                return item.status.toUpperCase() === "EXPIRING SOON";
-              case 3:
-                return item.status.toUpperCase() === "EXPIRED";
-              default:
-                return true;
-            }
-          });
-        }
-      }
-
-      if (this.gridApi) {
-        this.gridApi.setRowData(filteredData);
-      }
+      // const { data: statusData } =
+      //   await salaryAdjustmentAPI.GetAdjustmentSalaryCount({});
+      // this.statusCounts = statusData;
+      this.loadDropdown();
     } catch (error) {
       getError(error);
     }
@@ -443,65 +406,17 @@ export default class PayrollApprovals extends Vue {
 
   async loadDropdown() {
     try {
-      this.employeeOptions = [
-        {
-          employee_id: "EMP001",
-          name: "John Doe",
-          current_salary: 9000000,
-          department_code: "OPERATIONS",
-          department_name: "Operations",
-          position_code: "MANAGER",
-          position_name: "Manager",
-          SubGroupName: "Employee",
-        },
-        {
-          employee_id: "EMP002",
-          name: "Jane Smith",
-          current_salary: 13500000,
-          department_code: "HUMAN_RESOURCES",
-          department_name: "Human Resources",
-          position_code: "STAFF",
-          position_name: "Staff",
-          SubGroupName: "Employee",
-        },
-        {
-          employee_id: "EMP003",
-          name: "Robert Johnson",
-          current_salary: 18000000,
-          department_code: "Finance",
-          department_name: "Finance",
-          position_code: "STAFF",
-          position_name: "Staff",
-          SubGroupName: "Employee",
-        },
-        {
-          employee_id: "EMP004",
-          name: "Emily Davis",
-          current_salary: 7500000,
-          department_code: "INFORMATION_TECHNOLOGY",
-          department_name: "Information Technology",
-          position_code: "STAFF",
-          position_name: "Staff",
-          SubGroupName: "Employee",
-        },
-        {
-          employee_id: "EMP005",
-          name: "Michael Wilson",
-          current_salary: 15000000,
-          department_code: "INFORMATION_TECHNOLOGY",
-          department_name: "Information Technology",
-          position_code: "STAFF",
-          position_name: "Staff",
-          SubGroupName: "Employee",
-        },
+      const promises = [
+        employeeAPI.GetEmployeeList({}).then((response) => {
+          this.employeeOptions = response.data;
+        }),
+
+        legalDocumentAPI.GetDocumentTypeList({}).then((response) => {
+          this.documentTypeOptions = response.data;
+        }),
       ];
-      this.documentTypeOptions = [
-        { code: "KTP", name: "KTP" },
-        { code: "PASSPORT", name: "Passport" },
-        { code: "NPWP", name: "NPWP" },
-        { code: "CERTIFICATE", name: "Certificate" },
-        { code: "CV", name: "CV" },
-      ];
+
+      await Promise.all(promises);
     } catch (error) {
       getError(error);
     }
@@ -607,22 +522,12 @@ export default class PayrollApprovals extends Vue {
     ];
   }
 
-  async loadEditData(id: any) {
+  async loadEditData(params: any) {
     try {
-      /*
-      const { data } = await documentAPI.GetDocument(id);
-      this.populateForm(data);
-      */
-
-      const document = this.rowData.find((item: any) => item.id === id);
-
-      if (document) {
-        this.$nextTick(() => {
-          this.inputFormElement.form = this.populateForm(document);
-        });
-      } else {
-        getToastError(this.$t("messages.employee.error.notFoundDocument"));
-      }
+      const { data } = await legalDocumentAPI.GetLegalDocument(params.id);
+      this.$nextTick(() => {
+        this.inputFormElement.form = this.populateForm(data[0]);
+      });
     } catch (error) {
       getError(error);
     }
@@ -630,54 +535,13 @@ export default class PayrollApprovals extends Vue {
 
   async insertData(formData: any) {
     try {
-      /*
-      const { status2 } = await salaryAdjustmentAPI.InsertSalaryAdjustment(formData);
+      console.log("insertData", formData);
+      const { status2 } = await legalDocumentAPI.InsertLegalDocuments(formData);
       if (status2.status == 0) {
-        getToastSuccess(this.$t("messages.saveSuccess"));
-        this.showForm = false;
+        getToastSuccess(this.$t("messages.employee.success.saveDocument"));
         this.loadDataGrid(this.searchDefault);
+        this.showForm = false;
       }
-      */
-
-      const newId = Math.max(...this.rowData.map((item: any) => item.id)) + 1;
-
-      const selectedDocument = this.documentTypeOptions.find(
-        (item: any) => item.code === formData.document_type_code
-      );
-
-      const newDocument = {
-        id: newId,
-        employee_id: formData.employee_id,
-        employee_name: formData.employee_name,
-        document_type_code: selectedDocument.code,
-        document_type_name: selectedDocument.name,
-        file_name: formData.file
-          ? formData.file.name
-          : `document_${formData.id}.pdf`,
-        file_path: formData.file
-          ? `/uploads/${formData.file.name}`
-          : `/uploads/document_${formData.id}.pdf`,
-        file_type: formData.file ? formData.file.type : "application/pdf",
-        file_size: formData.file ? formData.file.size : 1024000,
-        issue_date: formData.issue_date,
-        expiry_date: formData.expiry_date,
-        remark: formData.remark,
-        status: this.calculateDocumentStatus(formData.expiry_date),
-        created_at: formatDateTimeUTC(new Date()),
-        created_by: "Current User",
-        updated_at: formatDateTimeUTC(new Date()),
-        updated_by: "Current User",
-      };
-
-      console.log("insertData", this.rowData);
-
-      this.rowData.push(newDocument);
-      this.searchDefault.filter = [0];
-
-      await this.$nextTick();
-      await this.loadDataGrid(this.searchDefault);
-
-      getToastSuccess(this.$t("messages.employee.success.saveDocument"));
     } catch (error) {
       getError(error);
     }
@@ -685,49 +549,12 @@ export default class PayrollApprovals extends Vue {
 
   async updateData(formData: any) {
     try {
-      /*
-      const { status2 } = await salaryAdjustmentAPI.UpdateSalaryAdjustment(formData);
+      const { status2 } = await legalDocumentAPI.UpdateLegalDocument(formData);
       if (status2.status == 0) {
+        getToastSuccess(this.$t("messages.employee.success.updateDocument"));
         this.loadDataGrid(this.searchDefault);
         this.showForm = false;
-        getToastSuccess(this.$t("messages.saveSuccess"));
       }
-      */
-
-      const iDocument = this.rowData.findIndex(
-        (item: any) => item.id === formData.id
-      );
-      if (iDocument !== -1) {
-        this.rowData[iDocument] = {
-          ...this.rowData[iDocument],
-          document_type: formData.document_type,
-          file_name: formData.file
-            ? formData.file.name
-            : this.rowData[iDocument].file_name,
-          file_path: formData.file
-            ? `/uploads/${formData.file.name}`
-            : this.rowData[iDocument].file_path,
-          file_type: formData.file
-            ? formData.file.type
-            : this.rowData[iDocument].file_type,
-          file_size: formData.file
-            ? formData.file.size
-            : this.rowData[iDocument].file_size,
-          issue_date: formData.issue_date,
-          expiry_date: formData.expiry_date || null,
-          remark: formData.remark || "",
-          status: this.calculateDocumentStatus(formData.expiry_date),
-          updated_at: formatDateTimeUTC(new Date()),
-          updated_by: "Current User",
-        };
-      }
-
-      this.searchDefault.filter = [0];
-
-      await this.$nextTick();
-      await this.loadDataGrid(this.searchDefault);
-
-      getToastSuccess(this.$t("messages.employee.success.updateDocument"));
     } catch (error) {
       getError(error);
     }
@@ -735,23 +562,13 @@ export default class PayrollApprovals extends Vue {
 
   async deleteData() {
     try {
-      /*
-      const { status2 } = await salaryAdjustmentAPI.DeleteSalaryAdjustment(this.deleteParam);
-      if (status2.status == 0) {
-        this.loadDataGrid(this.searchDefault);
-        getToastSuccess(this.$t("messages.deleteSuccess"));
-      }
-      */
-
-      this.rowData = this.rowData.filter(
-        (item: any) => item.id !== this.deleteParam
+      const { status2 } = await legalDocumentAPI.DeleteLegalDocument(
+        this.deleteParam
       );
-
-      this.searchDefault.filter = [1];
-
-      await this.$nextTick();
-      await this.loadDataGrid(this.searchDefault);
-      getToastSuccess(this.$t("messages.employee.success.deleteDocument"));
+      if (status2.status == 0) {
+        getToastSuccess(this.$t("messages.employee.success.deleteDocument"));
+        this.loadDataGrid(this.searchDefault);
+      }
     } catch (error) {
       getError(error);
     }
@@ -762,15 +579,21 @@ export default class PayrollApprovals extends Vue {
     return {
       id: params.id,
       employee_id: params.employee_id,
-      employee_name: params.employee_name,
       document_type_code: params.document_type_code,
-      document_type_name: params.document_type_name,
-      file: params.file,
-      file_name: params.file_name,
-      issue_date: params.issue_date,
-      expiry_date: params.expiry_date,
+      issue_date: formatDateTimeUTC(params.issue_date),
+      expiry_date: formatDateTimeUTC(params.expiry_date),
       remark: params.remark,
-      status: params.staus,
+
+      file_name: params.file_name,
+      file_path: params.file_path,
+      file_size: parseInt(params.file_size),
+      file_type: params.file_type,
+
+      // modified
+      // created_at: formatDateTimeUTC(params.created_at),
+      // created_by: params.created_by,
+      // updated_at: formatDateTimeUTC(params.updated_at),
+      // updated_by: params.updated_by,
     };
   }
 
@@ -778,15 +601,19 @@ export default class PayrollApprovals extends Vue {
     return {
       id: params.id,
       employee_id: params.employee_id,
-      employee_name: params.employee_name,
       document_type_code: params.document_type_code,
-      document_type_name: params.document_type_name,
       file: params.file,
       file_name: params.file_name,
       issue_date: params.issue_date,
       expiry_date: params.expiry_date,
       remark: params.remark,
       status: params.status,
+
+      // modified
+      created_at: params.created_at,
+      created_by: params.created_by,
+      updated_at: params.updated_at,
+      updated_by: params.updated_by,
     };
   }
 

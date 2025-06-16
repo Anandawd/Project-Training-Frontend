@@ -1,3 +1,4 @@
+import CCheckbox from "@/components/checkbox/checkbox.vue";
 import CDatepicker from "@/components/datepicker/datepicker.vue";
 import CInput from "@/components/input/input.vue";
 import CRadio from "@/components/radio/radio.vue";
@@ -17,19 +18,12 @@ import * as Yup from "yup";
     CSelect,
     CDatepicker,
     CRadio,
+    CCheckbox,
   },
   props: {
     modeData: {
       type: Number,
       require: true,
-    },
-    employeeOptions: {
-      type: Array,
-      default: (): any[] => [],
-    },
-    documentTypeOptions: {
-      type: Array,
-      default: (): any[] => [],
     },
   },
   emits: ["save", "close"],
@@ -37,21 +31,19 @@ import * as Yup from "yup";
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
-  employeeOptions!: any[];
-  documentTypeOptions!: any[];
 
-  public defaultForm: any = {};
-  public form: any = reactive({});
+  public form = reactive({});
 
   columnOptions = [
     {
       label: "name",
-      field: "FullName",
+      field: "name",
       align: "left",
       width: "200",
+      filter: true,
     },
     {
-      field: "employee_id",
+      field: "code",
       label: "code",
       align: "right",
       width: "100",
@@ -63,17 +55,11 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      id: "",
-      employee_id: "",
-      document_type_code: "",
-      file_name: "",
-      file_path: "",
-      file_size: 0,
-      file_type: "",
-      issue_date: "",
-      expiry_date: "",
+      code: "",
+      name: "",
       remark: "",
-      status: "",
+      is_required: 0,
+      is_allow_expiry: 0,
     };
   }
 
@@ -86,7 +72,6 @@ export default class InputForm extends Vue {
   }
 
   onSave() {
-    console.log("onSave", this.form);
     this.$emit("save", this.form);
   }
 
@@ -102,47 +87,11 @@ export default class InputForm extends Vue {
     focusOnInvalid();
   }
 
-  onEmployeeChange() {
-    if (this.form.employee_id) {
-      const selectedEmployee = this.employeeOptions.find(
-        (emp: any) => emp.employee_id === this.form.employee_id
-      );
-
-      if (selectedEmployee) {
-        this.form.employee_name = selectedEmployee.FullName;
-        this.form.Position = selectedEmployee.Position;
-        this.form.Department = selectedEmployee.Department;
-        this.form.Placement = selectedEmployee.Placement;
-      }
-    } else {
-      this.form.employee_name = "";
-      this.form.Position = "";
-      this.form.Department = "";
-      this.form.Placement = "";
-    }
-  }
-
-  onDocumentTypeChange() {
-    const selected = this.documentTypeOptions.find(
-      (d: any) => d.code === this.form.document_type_code
-    );
-
-    if (selected) {
-      this.form.document_type_code = selected.code;
-      this.form.is_allow_expiry = selected.is_allow_expiry;
-    } else {
-      this.form.document_type_code = "";
-      this.form.is_allow_expiry = 0;
-    }
-  }
-
   // validation
   get schema() {
     return Yup.object().shape({
-      SelectEmployee: Yup.string().required(),
-      DocumentType: Yup.string().required(),
-      DocumentFile: Yup.string().required(),
-      IssueDate: Yup.date().required(),
+      Code: Yup.string().required(),
+      Name: Yup.string().required(),
     });
   }
 
@@ -156,9 +105,5 @@ export default class InputForm extends Vue {
         `${this.$route.meta.pageTitle}`
       )}`;
     }
-  }
-
-  get showExpiryDate() {
-    return this.form.is_allow_expiry === 1;
   }
 }

@@ -1,4 +1,4 @@
-import request from "@/utils/axios";
+import request from "@/utils/axios-development";
 import ConfigurationResource from "../../configuration/configuration-resource";
 
 const uri = "";
@@ -10,7 +10,7 @@ class LegalDocumentsAPI extends ConfigurationResource {
 
   GetLegalDocumentsList(params: any) {
     return request({
-      url: "GetLegalDocumentsList",
+      url: "GetPayEmployeeDocumentList",
       method: "get",
       params: params,
     });
@@ -18,56 +18,70 @@ class LegalDocumentsAPI extends ConfigurationResource {
 
   InsertLegalDocuments(params: any) {
     return request({
-      url: "InsertLegalDocuments",
+      url: "InsertPayEmployeeDocumentList",
       method: "post",
       data: params,
     });
   }
 
-  GetLegalDocuments(params: any) {
+  GetLegalDocument(params: any) {
     return request({
-      url: "GetLegalDocuments/" + params,
+      url: "GetPayEmployeeDocument/" + params,
       method: "get",
     });
   }
 
-  UpdateLegalDocuments(params: any) {
+  UpdateLegalDocument(params: any) {
     return request({
-      url: "UpdateLegalDocuments",
+      url: "UpdateEmployeeDocumentList",
       method: "put",
       data: params,
     });
   }
 
-  DeleteLegalDocuments(params: any) {
+  DeleteLegalDocument(params: any) {
     return request({
-      url: "DeleteLegalDocuments/" + params,
+      url: "DeletePayEmployeeDocument/" + params,
       method: "delete",
     });
   }
 
-  // Approve/Reject Salary Adjustment
-  ApproveLegalDocuments(params: any) {
+  // document type
+  GetDocumentTypeList(params: any) {
     return request({
-      url: "ApproveLegalDocuments",
-      method: "post",
-      data: params,
-    });
-  }
-
-  RejectLegalDocuments(params: any) {
-    return request({
-      url: "RejectLegalDocuments",
-      method: "post",
-      data: params,
-    });
-  }
-
-  // Get Employee Options for dropdown
-  GetEmployeeOptions() {
-    return request({
-      url: "GetEmployeeOptions",
+      url: "GetPayCfgInitDocumentTypeList",
       method: "get",
+      params: params,
+    });
+  }
+
+  InsertDocumentType(params: any) {
+    return request({
+      url: "InsertPayCfgInitDocumentTypeList",
+      method: "post",
+      data: params,
+    });
+  }
+
+  GetDocumentType(params: any) {
+    return request({
+      url: "GetPayCfgInitDocumentType/" + params,
+      method: "get",
+    });
+  }
+
+  UpdateDocumentType(params: any) {
+    return request({
+      url: "UpdateCfgInitDocumentTypeList",
+      method: "put",
+      data: params,
+    });
+  }
+
+  DeleteDocumentType(params: any) {
+    return request({
+      url: "DeletePayCfgInitDocumentType/" + params,
+      method: "delete",
     });
   }
 }

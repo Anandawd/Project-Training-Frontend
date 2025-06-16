@@ -1,0 +1,34 @@
+.checklist {
+  label {
+    font-size: 13px;
+    margin-bottom: 0;
+
+    .text-muted {
+      font-size: 12px;
+    }
+
+    .fw-bold {
+      font-weight: 600;
+      font-size: 12px;
+    }
+  }
+
+  input[type="radio"] {
+    margin-right: 5px;
+  }
+}
+
+// Responsive untuk mobile
+// @media (max-width: 768px) {
+//   .checklist {
+//     margin-bottom: 8px;
+
+//     label {
+//       font-size: 12px;
+
+//       .fw-bold {
+//         font-size: 11px;
+//       }
+//     }
+//   }
+// }

@@ -110,6 +110,15 @@ class SalaryAdjustmentAPI extends ConfigurationResource {
       params: params,
     });
   }
+
+  // utils
+  GetAdjustmentSalaryCount(params: any) {
+    return request({
+      url: "GetPayEmployeeSalaryCount",
+      method: "get",
+      params: params,
+    });
+  }
 }
 
 export { SalaryAdjustmentAPI as default };
