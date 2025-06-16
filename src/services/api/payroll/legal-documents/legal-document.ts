@@ -16,7 +16,7 @@ class LegalDocumentsAPI extends ConfigurationResource {
     });
   }
 
-  InsertLegalDocuments(params: any) {
+  InsertLegalDocument(params: any) {
     return request({
       url: "InsertPayEmployeeDocumentList",
       method: "post",

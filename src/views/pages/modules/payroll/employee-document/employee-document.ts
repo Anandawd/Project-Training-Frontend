@@ -536,7 +536,7 @@ export default class PayrollApprovals extends Vue {
   async insertData(formData: any) {
     try {
       console.log("insertData", formData);
-      const { status2 } = await legalDocumentAPI.InsertLegalDocuments(formData);
+      const { status2 } = await legalDocumentAPI.InsertLegalDocument(formData);
       if (status2.status == 0) {
         getToastSuccess(this.$t("messages.employee.success.saveDocument"));
         this.loadDataGrid(this.searchDefault);
@@ -577,7 +577,6 @@ export default class PayrollApprovals extends Vue {
   // HELPER =======================================================
   formatData(params: any) {
     return {
-      id: params.id,
       employee_id: params.employee_id,
       document_type_code: params.document_type_code,
       issue_date: formatDateTimeUTC(params.issue_date),
@@ -590,10 +589,10 @@ export default class PayrollApprovals extends Vue {
       file_type: params.file_type,
 
       // modified
-      // created_at: formatDateTimeUTC(params.created_at),
-      // created_by: params.created_by,
-      // updated_at: formatDateTimeUTC(params.updated_at),
-      // updated_by: params.updated_by,
+      created_at: formatDateTimeUTC(params.created_at),
+      created_by: params.created_by,
+      updated_at: formatDateTimeUTC(params.updated_at),
+      updated_by: params.updated_by,
     };
   }
 

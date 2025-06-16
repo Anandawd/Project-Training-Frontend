@@ -74,6 +74,10 @@ export default class InputForm extends Vue {
       expiry_date: "",
       remark: "",
       status: "",
+      created_at: "",
+      created_by: "",
+      updated_at: "",
+      updated_by: "",
     };
   }
 
@@ -140,8 +144,8 @@ export default class InputForm extends Vue {
   get schema() {
     return Yup.object().shape({
       SelectEmployee: Yup.string().required(),
-      DocumentType: Yup.string().required(),
-      DocumentFile: Yup.string().required(),
+      // DocumentType: Yup.string().required(),
+      // DocumentFile: Yup.string().required(),
       IssueDate: Yup.date().required(),
     });
   }
