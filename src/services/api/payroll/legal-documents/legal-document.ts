@@ -21,9 +21,9 @@ class LegalDocumentsAPI extends ConfigurationResource {
       url: "InsertPayEmployeeDocumentList",
       method: "post",
       data: params,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      // headers: {
+      //   "Content-Type": "multipart/form-data",
+      // },
     });
   }
 

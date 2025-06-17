@@ -546,21 +546,27 @@ export default class PayrollApprovals extends Vue {
   async insertData(formData: any) {
     try {
       console.log("insertData", formData);
-      // const uploadData = new FormData();
+      const uploadData = new FormData();
 
-      // uploadData.append("employee_id", formData.employee_id);
-      // uploadData.append("document_type_code", formData.document_type_code);
-      // uploadData.append("issue_date", formData.issue_date);
-      // uploadData.append("expiry_date", formData.expiry_date);
-      // uploadData.append("status", formData.status);
-      // uploadData.append("remark", formData.remark);
+      uploadData.append("employee_id", formData.employee_id);
+      uploadData.append("document_type_code", formData.document_type_code);
+      uploadData.append("issue_date", formData.issue_date);
+      uploadData.append("expiry_date", formData.expiry_date);
+      uploadData.append("status", formData.status);
+      uploadData.append("remark", formData.remark);
 
-      // if (this.inputFormElement.selectedFile) {
-      //   uploadData.append("file_content", this.inputFormElement.selectedFile);
-      // }
+      if (this.inputFormElement.selectedFile) {
+        uploadData.append("file_content", this.inputFormElement.selectedFile);
+        console.log(
+          "insertData selected file",
+          this.inputFormElement.selectedFile
+        );
+      }
 
-      // console.log("FormData prepared:", uploadData);
-      const { status2 } = await legalDocumentAPI.InsertLegalDocument(formData);
+      console.log("FormData prepared:", uploadData);
+      const { status2 } = await legalDocumentAPI.InsertLegalDocument(
+        uploadData
+      );
       if (status2.status == 0) {
         getToastSuccess(this.$t("messages.employee.success.saveDocument"));
         this.loadDataGrid(this.searchDefault);

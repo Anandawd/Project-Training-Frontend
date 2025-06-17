@@ -145,20 +145,7 @@ export default class InputForm extends Vue {
   async onSave() {
     console.log("onSave", this.form);
     this.form.status = this.calculateDocumentStatus();
-    let formData = { ...this.form };
-
-    // Convert file to base64 if file exists
-    if (this.selectedFile) {
-      try {
-        const base64Content = await this.convertFileToBase64(this.selectedFile);
-        formData.file_content = base64Content;
-      } catch (error) {
-        getToastError("Gagal memproses file");
-        return;
-      }
-    }
-
-    this.$emit("save", formData);
+    this.$emit("save", this.form);
   }
 
   checkForm() {
