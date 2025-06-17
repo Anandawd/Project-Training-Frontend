@@ -148,7 +148,7 @@ export default class PayrollApprovals extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.employee.documentType"),
-        field: "document_type_name",
+        field: "DocumentType",
         width: 150,
         enableRowGroup: true,
       },
@@ -524,9 +524,11 @@ export default class PayrollApprovals extends Vue {
 
   async loadEditData(params: any) {
     try {
-      const { data } = await legalDocumentAPI.GetLegalDocument(params.id);
+      console.log("oarams", params);
+      const { data } = await legalDocumentAPI.GetLegalDocument(params);
+      console.log("loadEditData", data);
       this.$nextTick(() => {
-        this.inputFormElement.form = this.populateForm(data[0]);
+        this.inputFormElement.form = this.populateForm(data);
       });
     } catch (error) {
       getError(error);
@@ -581,12 +583,14 @@ export default class PayrollApprovals extends Vue {
       document_type_code: params.document_type_code,
       issue_date: formatDateTimeUTC(params.issue_date),
       expiry_date: formatDateTimeUTC(params.expiry_date),
+      status: params.status,
       remark: params.remark,
 
       file_name: params.file_name,
       file_path: params.file_path,
       file_size: parseInt(params.file_size),
       file_type: params.file_type,
+      // file_content: params.file_content,
 
       // modified
       created_at: formatDateTimeUTC(params.created_at),
@@ -601,12 +605,16 @@ export default class PayrollApprovals extends Vue {
       id: params.id,
       employee_id: params.employee_id,
       document_type_code: params.document_type_code,
-      file: params.file,
-      file_name: params.file_name,
       issue_date: params.issue_date,
       expiry_date: params.expiry_date,
       remark: params.remark,
       status: params.status,
+
+      file_name: params.file_name,
+      file_path: params.file_path,
+      file_size: parseInt(params.file_size),
+      file_type: params.file_type,
+      // file_content: params.file_content,
 
       // modified
       created_at: params.created_at,

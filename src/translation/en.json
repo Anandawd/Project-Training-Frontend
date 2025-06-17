@@ -124,7 +124,16 @@
         "level7Description": "Entry Level",
         "level7Examples": "Example: Trainee, Intern, Junior Staff",
         "importantNote": "Important",
-        "levelSelectionNote": "Please ensure to select the appropriate level that matches the position and job responsibilities. The selected level will affect organizational structure and reporting."
+        "levelSelectionNote": "Please ensure to select the appropriate level that matches the position and job responsibilities. The selected level will affect organizational structure and reporting.",
+        "selectFile": "Select File",
+        "noFileSelected": "No file selected",
+        "selectedFile": "Selected File",
+        "uploadNewFileToReplace": "Upload a new file to replace",
+        "fileUploadGuidelines": "File Upload Guidelines",
+        "allowedFileTypes": "Allowed File Types",
+        "maxFileSize": "Maximum File Size",
+        "recommendation": "Recommendation",
+        "usePDFForBestCompatibility": "Use PDF for best compatibility"
       },
       "attendance": {
         "attendanceAndLeave": "Attendance & Leave",
@@ -401,6 +410,7 @@
         "loanInstallment": "Loan Installment"
       }
     },
+    "chooseFile": "Choose File",
     "reminderDate": "Reminder Date",
     "done": "Done",
     "updateReservationRate": "Update Reservation Rate",

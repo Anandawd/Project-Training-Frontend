@@ -1,0 +1,55 @@
+.c-input-file {
+  .file-input-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+
+    > * {
+      margin: 0 !important;
+      vertical-align: middle !important;
+      line-height: 1.5 !important;
+    }
+
+    .btn {
+      flex-shrink: 0;
+    }
+
+    .selected-files,
+    .placeholder {
+      flex: none;
+      text-align: center;
+      margin: 0 !important;
+      background-color: white;
+    }
+
+    .selected-files {
+      .selected-file {
+        justify-content: center;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 6px 12px;
+
+        .file-name {
+          font-size: 0.875rem;
+          max-width: 180px;
+        }
+
+        .btn-link {
+          margin-left: 8px;
+          padding: 0;
+
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+    }
+
+    .placeholder {
+      color: #6c757d;
+      cursor: default !important;
+    }
+  }
+}
