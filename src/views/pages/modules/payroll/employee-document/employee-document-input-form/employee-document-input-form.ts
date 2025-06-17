@@ -47,6 +47,7 @@ export default class InputForm extends Vue {
   selectedFile: File | null = null;
   isUploading: boolean = false;
   uploadProgress: number = 0;
+  fileInputRef: any = ref();
 
   // File Preview Properties
   public filePreview: any = reactive({
@@ -97,6 +98,9 @@ export default class InputForm extends Vue {
     this.form = {
       id: "",
       employee_id: "",
+      Position: "",
+      Department: "",
+      Placement: "",
       document_type_code: "",
 
       file: "",
@@ -104,12 +108,13 @@ export default class InputForm extends Vue {
       file_path: "",
       file_size: 0,
       file_type: "",
-      // file_content: "",
+      file_content: "",
 
       issue_date: "",
       expiry_date: "",
       remark: "",
       status: "",
+
       created_at: "",
       created_by: "",
       updated_at: "",
@@ -118,19 +123,42 @@ export default class InputForm extends Vue {
 
     this.selectedFile = null;
     this.clearFileData();
+    await this.$nextTick();
+    if (this.fileInputRef && this.fileInputRef.selectedFiles) {
+      this.fileInputRef.selectedFiles = [];
+    }
   }
 
-  initialize() {
+  async initialize() {
     this.resetForm();
+
+    if (this.modeData === $global.modeData.edit) {
+      await this.$nextTick();
+      await this.loadExistingFile();
+    }
   }
 
   onSubmit() {
     this.inputFormValidation.$el.requestSubmit();
   }
 
-  onSave() {
+  async onSave() {
     console.log("onSave", this.form);
-    this.$emit("save", this.form);
+    this.form.status = this.calculateDocumentStatus();
+    let formData = { ...this.form };
+
+    // Convert file to base64 if file exists
+    if (this.selectedFile) {
+      try {
+        const base64Content = await this.convertFileToBase64(this.selectedFile);
+        formData.file_content = base64Content;
+      } catch (error) {
+        getToastError("Gagal memproses file");
+        return;
+      }
+    }
+
+    this.$emit("save", formData);
   }
 
   checkForm() {
@@ -176,6 +204,55 @@ export default class InputForm extends Vue {
     } else {
       this.form.document_type_code = "";
       this.form.is_allow_expiry = 0;
+    }
+  }
+
+  async loadExistingFile() {
+    if (
+      this.modeData === $global.modeData.edit &&
+      this.form.file_name &&
+      this.form.file_path
+    ) {
+      try {
+        const mockFile = this.createMockFileFromData();
+
+        if (mockFile) {
+          await this.generateFilePreview(mockFile);
+
+          this.filePreview.fileName = this.form.file_name;
+          this.filePreview.fileSize = this.formatFileSize(this.form.file_size);
+          this.filePreview.mimeType = this.form.file_type;
+          this.filePreview.show = true;
+
+          const baseUrl = "http://127.0.0.1:9000";
+          this.filePreview.url = `${baseUrl}${this.form.file_path}${this.form.file_name}`;
+        }
+      } catch (error) {
+        console.warn("Could not load existing file preview:", error);
+      }
+    }
+  }
+
+  createMockFileFromData(): File | null {
+    if (!this.form.file_name || !this.form.file_type) {
+      return null;
+    }
+
+    try {
+      const blob = new Blob([], { type: this.form.file_type });
+      const file = new File([blob], this.form.file_name, {
+        type: this.form.file_type,
+        lastModified: Date.now(),
+      });
+      Object.defineProperty(file, "size", {
+        value: this.form.file_size,
+        writable: false,
+      });
+
+      return file;
+    } catch (error) {
+      console.error("Error creating mock file:", error);
+      return null;
     }
   }
 
@@ -266,6 +343,10 @@ export default class InputForm extends Vue {
     this.form.file_type = "";
     this.form.file_path = "";
     this.cleanupPreview();
+
+    if (this.fileInputRef && this.fileInputRef.selectedFiles) {
+      this.fileInputRef.selectedFiles = [];
+    }
   }
 
   // FILE PREVIEW METHODS =================================
@@ -443,6 +524,19 @@ export default class InputForm extends Vue {
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  }
+
+  calculateDocumentStatus(): string {
+    if (!this.form.expiry_date) return "VALID";
+
+    const today = new Date();
+    const expiry = new Date(this.form.expiry_date);
+    const diffTime = expiry.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return "EXPIRED";
+    // if (diffDays <= 30) return "EXPIRING SOON";
+    return "VALID";
   }
   // validation
   get schema() {

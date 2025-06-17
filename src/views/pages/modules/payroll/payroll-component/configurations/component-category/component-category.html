@@ -3,16 +3,7 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
-        title="Document Type"
-        type="button"
-        class="btn btn-warning mr-1"
-        @click="handleToDocumentType"
-      >
-        <i class="fa fa-cogs mr-1" aria-hidden="true"></i>{{
-        $t('buttons.documentType') }}
-      </button>
-      <button
-        title="Insert Document"
+        title="Insert Schedule"
         type="button"
         class="btn btn-primary mr-1"
         @click="handleShowForm('', $global.modeData.insert)"
@@ -23,15 +14,12 @@
     </div>
 
     <!-- insert form -->
-    <transition>
+    <transition name="fade">
       <c-input-form
         class="px-2"
         ref="inputFormElement"
         v-show="showForm"
-        :schema="schema"
         :modeData="modeData"
-        :employeeOptions="employeeOptions"
-        :documentTypeOptions="documentTypeOptions"
         @save="handleSave"
         @close="showForm=false"
       />
@@ -43,58 +31,12 @@
       :searchDefault="searchDefault"
       @search="refreshData"
     >
-      <template v-slot="{search, onRefresh}">
-        <div class="col-md-6 d-flex mb-md-4">
-          <div class="checklist">
-            <input
-              class="mr-1"
-              type="radio"
-              name="all"
-              id="all"
-              v-model="search.filter[0]"
-              value="0"
-              @change="onRefresh"
-            />
-            <label for="all"
-              >{{ $t('commons.filter.checkList.showAll') }}</label
-            >
-          </div>
-          <div class="checklist">
-            <input
-              class="mr-1"
-              type="radio"
-              name="showValid"
-              id="showValid"
-              v-model="search.filter[0]"
-              value="1"
-              @change="onRefresh"
-            />
-            <label for="showValid"
-              >{{ $t('commons.filter.checkList.valid') }}</label
-            >
-          </div>
-          <div class="checklist">
-            <input
-              class="mr-1"
-              type="radio"
-              name="showExpired"
-              id="showExpired"
-              v-model="search.filter[0]"
-              value="2"
-              @change="onRefresh"
-            />
-            <label for="showExpired"
-              >{{ $t('commons.filter.checkList.expired') }}</label
-            >
-          </div>
-        </div>
-      </template>
     </c-search-filter>
 
-    <!-- table -->
+    <!-- content -->
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">{{$t('title.legalDocument')}}</h3>
+        <h3 class="card-title">{{$t('title.employeeType')}}</h3>
       </div>
       <div class="card-body">
         <ag-grid-vue

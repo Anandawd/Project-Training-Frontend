@@ -111,7 +111,6 @@ export default class PayrollApprovals extends Vue {
     this.gridOptions = {
       actionGrid: {
         menu: true,
-        insert: true,
         edit: true,
         delete: true,
       },
@@ -527,8 +526,17 @@ export default class PayrollApprovals extends Vue {
       console.log("oarams", params);
       const { data } = await legalDocumentAPI.GetLegalDocument(params);
       console.log("loadEditData", data);
-      this.$nextTick(() => {
+      // this.$nextTick(() => {
+      //   this.inputFormElement.form = this.populateForm(data);
+      // });
+
+      this.$nextTick(async () => {
         this.inputFormElement.form = this.populateForm(data);
+
+        await this.$nextTick();
+        if (this.inputFormElement.loadExistingFile) {
+          await this.inputFormElement.loadExistingFile();
+        }
       });
     } catch (error) {
       getError(error);
@@ -538,6 +546,20 @@ export default class PayrollApprovals extends Vue {
   async insertData(formData: any) {
     try {
       console.log("insertData", formData);
+      // const uploadData = new FormData();
+
+      // uploadData.append("employee_id", formData.employee_id);
+      // uploadData.append("document_type_code", formData.document_type_code);
+      // uploadData.append("issue_date", formData.issue_date);
+      // uploadData.append("expiry_date", formData.expiry_date);
+      // uploadData.append("status", formData.status);
+      // uploadData.append("remark", formData.remark);
+
+      // if (this.inputFormElement.selectedFile) {
+      //   uploadData.append("file_content", this.inputFormElement.selectedFile);
+      // }
+
+      // console.log("FormData prepared:", uploadData);
       const { status2 } = await legalDocumentAPI.InsertLegalDocument(formData);
       if (status2.status == 0) {
         getToastSuccess(this.$t("messages.employee.success.saveDocument"));
@@ -579,18 +601,23 @@ export default class PayrollApprovals extends Vue {
   // HELPER =======================================================
   formatData(params: any) {
     return {
+      id: params.id ? params.id : null,
       employee_id: params.employee_id,
+
       document_type_code: params.document_type_code,
       issue_date: formatDateTimeUTC(params.issue_date),
       expiry_date: formatDateTimeUTC(params.expiry_date),
       status: params.status,
       remark: params.remark,
 
+      // metadata -> database
       file_name: params.file_name,
       file_path: params.file_path,
       file_size: parseInt(params.file_size),
       file_type: params.file_type,
-      // file_content: params.file_content,
+
+      // file ori -> backend
+      file_content: params.file_content,
 
       // modified
       created_at: formatDateTimeUTC(params.created_at),
@@ -604,11 +631,14 @@ export default class PayrollApprovals extends Vue {
     return {
       id: params.id,
       employee_id: params.employee_id,
+      Position: params.Position,
+      Department: params.Department,
+      Placement: params.Placement,
       document_type_code: params.document_type_code,
       issue_date: params.issue_date,
       expiry_date: params.expiry_date,
-      remark: params.remark,
       status: params.status,
+      remark: params.remark,
 
       file_name: params.file_name,
       file_path: params.file_path,
