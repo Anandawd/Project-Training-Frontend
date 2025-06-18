@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { useField } from "vee-validate";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 export default {
   name: "c-input-file",
@@ -30,6 +30,9 @@ export default {
     buttonClass: { type: String, default: "btn-outline-primary" },
     buttonIcon: { type: String, default: "fa fa-upload" },
     showPlaceholder: { type: Boolean, default: true },
+
+    existingFileName: { type: String, default: "" },
+    showExistingFile: { type: Boolean, default: false },
   },
   emits: ["update:modelValue"],
   setup(props: any, { emit }: any) {
@@ -52,6 +55,18 @@ export default {
         selectedFiles.value = [props.modelValue];
       }
     }
+
+    const displayPlaceholder = computed(() => {
+      if (selectedFiles.value.length > 0) {
+        return false;
+      }
+
+      if (props.showExistingFile && props.existingFileName) {
+        return ` ${props.existingFileName}`;
+      }
+
+      return props.placeholder || "No file selected";
+    });
 
     const handleFileChange = (event: any) => {
       const files = Array.from(event.target.files || []);
@@ -91,6 +106,7 @@ export default {
       inputValue,
       errorMessage,
       meta,
+      displayPlaceholder,
     };
   },
 };

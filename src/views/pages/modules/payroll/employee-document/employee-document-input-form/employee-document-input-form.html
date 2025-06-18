@@ -170,22 +170,13 @@
                     :required="modeData === $global.modeData.insert"
                     accept=".pdf,.jpg,.jpeg,.png"
                     :buttonText="$t('labels.payroll.employee.selectFile')"
+                    :existing-file-name="form.file_name"
+                    :show-existing-file="showExistingFile && modeData === $global.modeData.edit"
                     @update:modelValue="onFileChange"
                   />
                 </div>
               </div>
               <div class="row mb-3">
-                <div class="container">
-                  <div class="row">
-                    <div
-                      class="col-lg-3"
-                      v-for="(item, index) in photos"
-                      :key="index"
-                    >
-                      <img :src="item.url" class="w-100" />
-                    </div>
-                  </div>
-                </div>
                 <!-- File Preview -->
                 <div class="col-md-12 mb-3" v-if="filePreview.show">
                   <div class="card border-primary">

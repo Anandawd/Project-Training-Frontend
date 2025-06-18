@@ -47,8 +47,15 @@
           </div>
         </div>
 
-        <span v-else-if="showPlaceholder" class="placeholder text-muted">
-          {{ placeholder || 'No file selected' }}
+        <span
+          v-else-if="showPlaceholder"
+          class="placeholder"
+          :class="[
+            showExistingFile && existingFileName ? 'text-muted' : 'text-muted',
+            showExistingFile && existingFileName ? 'existing-file-placeholder' : ''
+          ]"
+        >
+          {{ displayPlaceholder }}
         </span>
       </div>
     </div>

@@ -48,6 +48,7 @@ export default class InputForm extends Vue {
 
   // file properties
   selectedFile: File | null = null;
+  showExistingFile: boolean = false;
   isUploading: boolean = false;
   uploadProgress: number = 0;
   fileInputRef: any = ref();
@@ -199,6 +200,7 @@ export default class InputForm extends Vue {
         this.filePreview.fileSize = this.formatFileSize(this.form.file_size);
         this.filePreview.mimeType = this.form.file_type;
         this.filePreview.url = `${baseUrl}/GetPayEmployeeDocumentImage/${this.form.file_name}`;
+        this.showExistingFile = true;
         console.log("loadExistingFile", this.filePreview.url);
       } catch (error) {
         console.warn("Could not load existing file preview:", error);
@@ -223,7 +225,12 @@ export default class InputForm extends Vue {
 
       // Store the file and update form data
       this.selectedFile = file;
-      this.formatFileData(file);
+      if (this.modeData === $global.modeData.insert) {
+        const autoFileName = this.generateAutoFileName(file);
+        this.formatFileDataWithAutoName(file, autoFileName);
+      } else {
+        this.formatFileData(file);
+      }
 
       // Generate preview
       await this.generateFilePreview(file);
@@ -276,6 +283,13 @@ export default class InputForm extends Vue {
 
   formatFileData(file: File) {
     this.form.file_name = file.name;
+    this.form.file_size = parseInt(file.size.toString());
+    this.form.file_type = file.type;
+    this.form.file_path = "";
+  }
+
+  formatFileDataWithAutoName(file: File, fileName: string) {
+    this.form.file_name = fileName;
     this.form.file_size = parseInt(file.size.toString());
     this.form.file_type = file.type;
     this.form.file_path = "";
@@ -385,6 +399,16 @@ export default class InputForm extends Vue {
       img.onerror = reject;
       img.src = url;
     });
+  }
+
+  generateAutoFileName(file: File): string {
+    const fileExtension = file.name.split(".").pop()?.toLowerCase() || "";
+
+    const employeeId = this.form.employee_id || "Unknown";
+
+    const documentTypeCode = this.form.document_type_code || "Document";
+
+    return `${employeeId}-${documentTypeCode}.${fileExtension}`;
   }
 
   // FILE TYPE CHECKERS ===================================
