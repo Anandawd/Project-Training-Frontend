@@ -12,7 +12,7 @@ import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import * as Yup from "yup";
 
-const legalDocumentsAPI = new LegalDocumentsAPI();
+const legalDocumentAPI = new LegalDocumentsAPI();
 
 @Options({
   name: "InputForm",
@@ -129,7 +129,6 @@ export default class InputForm extends Vue {
 
   async initialize() {
     this.resetForm();
-
     if (this.modeData === $global.modeData.edit) {
       await this.$nextTick();
       await this.loadExistingFile();
@@ -193,58 +192,22 @@ export default class InputForm extends Vue {
   }
 
   async loadExistingFile() {
-    if (
-      this.modeData === $global.modeData.edit &&
-      this.form.file_name &&
-      this.form.file_path
-    ) {
+    if (this.modeData === $global.modeData.edit && this.form.file_name) {
       try {
-        const mockFile = this.createMockFileFromData();
-
-        if (mockFile) {
-          await this.generateFilePreview(mockFile);
-
-          this.filePreview.fileName = this.form.file_name;
-          this.filePreview.fileSize = this.formatFileSize(this.form.file_size);
-          this.filePreview.mimeType = this.form.file_type;
-          this.filePreview.show = true;
-
-          const baseUrl = "http://127.0.0.1:9000";
-          this.filePreview.url = `${baseUrl}${this.form.file_path}${this.form.file_name}`;
-        }
+        const baseUrl = "http://25.7.35.69:9000";
+        this.filePreview.fileName = this.form.file_name;
+        this.filePreview.fileSize = this.formatFileSize(this.form.file_size);
+        this.filePreview.mimeType = this.form.file_type;
+        this.filePreview.url = `${baseUrl}/GetPayEmployeeDocumentImage/${this.form.file_name}`;
+        console.log("loadExistingFile", this.filePreview.url);
       } catch (error) {
         console.warn("Could not load existing file preview:", error);
       }
     }
   }
 
-  createMockFileFromData(): File | null {
-    if (!this.form.file_name || !this.form.file_type) {
-      return null;
-    }
-
-    try {
-      const blob = new Blob([], { type: this.form.file_type });
-      const file = new File([blob], this.form.file_name, {
-        type: this.form.file_type,
-        lastModified: Date.now(),
-      });
-      Object.defineProperty(file, "size", {
-        value: this.form.file_size,
-        writable: false,
-      });
-
-      return file;
-    } catch (error) {
-      console.error("Error creating mock file:", error);
-      return null;
-    }
-  }
-
   // FILE HANDLING ========================================
   async onFileChange(file: File | null) {
-    console.log("File changed:", file);
-
     if (!file) {
       this.clearFileData();
       return;
@@ -315,7 +278,7 @@ export default class InputForm extends Vue {
     this.form.file_name = file.name;
     this.form.file_size = parseInt(file.size.toString());
     this.form.file_type = file.type;
-    this.form.file_path = "/uploads/legal-document/";
+    this.form.file_path = "";
   }
 
   clearFileData() {
@@ -334,6 +297,7 @@ export default class InputForm extends Vue {
   // FILE PREVIEW METHODS =================================
   async generateFilePreview(file: File) {
     try {
+      console.log("generateFilePreview", file);
       this.filePreview.processing = true;
       this.filePreview.progress = 0;
 
@@ -373,6 +337,8 @@ export default class InputForm extends Vue {
   async generateImagePreview(file: File) {
     this.filePreview.type = "image";
     this.filePreview.url = URL.createObjectURL(file);
+
+    console.log("generateImagePreview", this.filePreview.url);
 
     await this.updateProgress(50);
 

@@ -522,7 +522,6 @@ export default class PayrollApprovals extends Vue {
 
   async loadEditData(params: any) {
     try {
-      console.log("oarams", params);
       const { data } = await legalDocumentAPI.GetLegalDocument(params);
       console.log("loadEditData", data);
       // this.$nextTick(() => {
@@ -533,6 +532,7 @@ export default class PayrollApprovals extends Vue {
         this.inputFormElement.form = this.populateForm(data);
 
         await this.$nextTick();
+
         if (this.inputFormElement.loadExistingFile) {
           await this.inputFormElement.loadExistingFile();
         }
@@ -640,7 +640,6 @@ export default class PayrollApprovals extends Vue {
       // issueDate = params.issue_date.split("T")[0];
       // expiryDate = params.expiry_date.split("T")[0];
     }
-    console.log("formatData", { issueDate, expiryDate });
     return {
       id: params.id ? params.id : null,
       employee_id: params.employee_id,
