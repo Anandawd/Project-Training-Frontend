@@ -133,7 +133,8 @@
         "allowedFileTypes": "Allowed File Types",
         "maxFileSize": "Maximum File Size",
         "recommendation": "Recommendation",
-        "usePDFForBestCompatibility": "Use PDF for best compatibility"
+        "usePDFForBestCompatibility": "Use PDF for best compatibility",
+        "previewFile": "Preview File"
       },
       "attendance": {
         "attendanceAndLeave": "Attendance & Leave",

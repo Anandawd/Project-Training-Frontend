@@ -195,14 +195,26 @@ export default class InputForm extends Vue {
   async loadExistingFile() {
     if (this.modeData === $global.modeData.edit && this.form.file_name) {
       try {
-        const baseUrl = "http://25.7.35.69:9000";
+        this.filePreview.processing = true;
+        this.filePreview.progress = 0;
+
         this.filePreview.fileName = this.form.file_name;
         this.filePreview.fileSize = this.formatFileSize(this.form.file_size);
         this.filePreview.mimeType = this.form.file_type;
+
+        await this.updateProgress(20);
+
+        const baseUrl = "http://25.7.35.69:9000";
         this.filePreview.url = `${baseUrl}/GetPayEmployeeDocumentImage/${this.form.file_name}`;
+
+        await this.updateProgress(100);
+
+        this.filePreview.processing = false;
+        this.filePreview.show = true;
         this.showExistingFile = true;
-        console.log("loadExistingFile", this.filePreview.url);
+        console.log("loadExistingFile url", this.filePreview.url);
       } catch (error) {
+        this.filePreview.processing = false;
         console.warn("Could not load existing file preview:", error);
       }
     }
@@ -223,14 +235,8 @@ export default class InputForm extends Vue {
         return;
       }
 
-      // Store the file and update form data
       this.selectedFile = file;
-      if (this.modeData === $global.modeData.insert) {
-        const autoFileName = this.generateAutoFileName(file);
-        this.formatFileDataWithAutoName(file, autoFileName);
-      } else {
-        this.formatFileData(file);
-      }
+      this.formatFileData(file);
 
       // Generate preview
       await this.generateFilePreview(file);
@@ -288,13 +294,6 @@ export default class InputForm extends Vue {
     this.form.file_path = "";
   }
 
-  formatFileDataWithAutoName(file: File, fileName: string) {
-    this.form.file_name = fileName;
-    this.form.file_size = parseInt(file.size.toString());
-    this.form.file_type = file.type;
-    this.form.file_path = "";
-  }
-
   clearFileData() {
     this.selectedFile = null;
     this.form.file_name = "";
@@ -342,7 +341,6 @@ export default class InputForm extends Vue {
       this.filePreview.processing = false;
       this.filePreview.show = true;
     } catch (error) {
-      console.error("Error generating preview:", error);
       this.filePreview.processing = false;
       getToastError("Gagal membuat preview file");
     }
@@ -399,16 +397,6 @@ export default class InputForm extends Vue {
       img.onerror = reject;
       img.src = url;
     });
-  }
-
-  generateAutoFileName(file: File): string {
-    const fileExtension = file.name.split(".").pop()?.toLowerCase() || "";
-
-    const employeeId = this.form.employee_id || "Unknown";
-
-    const documentTypeCode = this.form.document_type_code || "Document";
-
-    return `${employeeId}-${documentTypeCode}.${fileExtension}`;
   }
 
   // FILE TYPE CHECKERS ===================================
@@ -476,20 +464,6 @@ export default class InputForm extends Vue {
   }
 
   // EXISTING METHODS =====================================
-  async convertFileToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        const base64 = result.split(",")[1];
-        resolve(base64);
-      };
-      reader.onerror = () =>
-        reject(new Error("Failed to convert file to base64"));
-      reader.readAsDataURL(file);
-    });
-  }
-
   formatFileSize(bytes: number): string {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;

@@ -97,14 +97,11 @@ export default class PayrollApprovals extends Vue {
       },
       {
         text: this.$t("commons.filter.payroll.employee.fileName"),
-        value: 3,
+        value: 2,
       },
-      { text: this.$t("commons.filter.payroll.employee.position"), value: 2 },
-      { text: this.$t("commons.filter.payroll.employee.department"), value: 3 },
-      { text: this.$t("commons.filter.payroll.employee.placement"), value: 4 },
       {
         text: this.$t("commons.filter.remark"),
-        value: 5,
+        value: 3,
       },
     ];
     this.agGridSetting = $global.agGrid;
@@ -173,6 +170,7 @@ export default class PayrollApprovals extends Vue {
         field: "expiry_date",
         width: 120,
         enableRowGroup: true,
+        valueFormatter: formatDate,
       },
       {
         headerName: this.$t("commons.table.status"),
@@ -392,10 +390,6 @@ export default class PayrollApprovals extends Vue {
       } else {
         this.rowData = [];
       }
-
-      // const { data: statusData } =
-      //   await salaryAdjustmentAPI.GetAdjustmentSalaryCount({});
-      // this.statusCounts = statusData;
       this.loadDropdown();
     } catch (error) {
       getError(error);
@@ -632,13 +626,15 @@ export default class PayrollApprovals extends Vue {
     let issueDate;
     let expiryDate;
     if (this.modeData === $global.modeData.insert) {
+      // issueDate = params.issue_date.split("T")[0];
+      // expiryDate = params.expiry_date.split("T")[0];
       issueDate = params.issue_date;
       expiryDate = params.expiry_date;
     } else {
-      issueDate = params.issue_date;
-      expiryDate = params.expiry_date;
-      // issueDate = params.issue_date.split("T")[0];
-      // expiryDate = params.expiry_date.split("T")[0];
+      // issueDate = params.issue_date;
+      // expiryDate = params.expiry_date;
+      issueDate = params.issue_date.split("T")[0];
+      expiryDate = params.expiry_date.split("T")[0];
     }
     return {
       id: params.id ? params.id : null,
@@ -692,23 +688,6 @@ export default class PayrollApprovals extends Vue {
       updated_at: params.updated_at,
       updated_by: params.updated_by,
     };
-  }
-
-  calculateDocumentStatus(expiryDate: string): string {
-    if (!expiryDate) return "Valid";
-
-    const today = new Date();
-    const expiry = new Date(expiryDate);
-
-    if (isNaN(expiry.getTime())) return "Valid";
-
-    if (expiry < today) {
-      return "Expired";
-    } else if (expiry.getTime() - today.getTime() < 30 * 24 * 60 * 60 * 1000) {
-      return "Expiring Soon";
-    } else {
-      return "Valid";
-    }
   }
 
   // GETTER AND SETTER =======================================================
