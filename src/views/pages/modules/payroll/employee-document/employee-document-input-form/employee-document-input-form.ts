@@ -3,6 +3,7 @@ import CInputFile from "@/components/input-file/input-file.vue";
 import CInput from "@/components/input/input.vue";
 import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
+import LegalDocumentsAPI from "@/services/api/payroll/legal-documents/legal-document";
 import $global from "@/utils/global";
 import { getToastError, getToastSuccess } from "@/utils/toast";
 import { focusOnInvalid } from "@/utils/validation";
@@ -10,6 +11,8 @@ import { Form as CForm } from "vee-validate";
 import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import * as Yup from "yup";
+
+const legalDocumentsAPI = new LegalDocumentsAPI();
 
 @Options({
   name: "InputForm",
@@ -70,7 +73,6 @@ export default class InputForm extends Vue {
     "image/jpeg",
     "image/jpg",
     "image/png",
-    "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   ];
 
@@ -123,10 +125,6 @@ export default class InputForm extends Vue {
 
     this.selectedFile = null;
     this.clearFileData();
-    await this.$nextTick();
-    if (this.fileInputRef && this.fileInputRef.selectedFiles) {
-      this.fileInputRef.selectedFiles = [];
-    }
   }
 
   async initialize() {
@@ -298,8 +296,6 @@ export default class InputForm extends Vue {
     // Check file type
     const allowedTypes = [
       "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "image/jpeg",
       "image/jpg",
       "image/png",
@@ -308,8 +304,7 @@ export default class InputForm extends Vue {
     if (!allowedTypes.includes(file.type)) {
       return {
         isValid: false,
-        message:
-          "Tipe file tidak diizinkan. Gunakan PDF, DOC, DOCX, JPG, atau PNG",
+        message: "Tipe file tidak diizinkan. Gunakan PDF, JPEG, JPG, atau PNG",
       };
     }
 
@@ -515,6 +510,9 @@ export default class InputForm extends Vue {
 
   calculateDocumentStatus(): string {
     if (!this.form.expiry_date) return "VALID";
+    if (this.form.expiry_date === "0001-01-01T00:00:00Z") return "VALID";
+    if (this.form.expiry_date === "0001-01-01") return "VALID";
+    console.log("calculateDocumentStatus call");
 
     const today = new Date();
     const expiry = new Date(this.form.expiry_date);

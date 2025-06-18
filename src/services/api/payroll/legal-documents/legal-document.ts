@@ -21,9 +21,9 @@ class LegalDocumentsAPI extends ConfigurationResource {
       url: "InsertPayEmployeeDocumentList",
       method: "post",
       data: params,
-      // headers: {
-      //   "Content-Type": "multipart/form-data",
-      // },
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
   }
 
@@ -46,6 +46,14 @@ class LegalDocumentsAPI extends ConfigurationResource {
     return request({
       url: "DeletePayEmployeeDocument/" + params,
       method: "delete",
+    });
+  }
+
+  // utils
+  GetDocumentContent(params: any) {
+    return request({
+      url: "/GetPayEmployeeDocumentImage/" + params,
+      method: "get",
     });
   }
 

@@ -4,7 +4,8 @@ import CDialog from "@/components/dialog/dialog.vue";
 import CInput from "@/components/input/input.vue";
 import CModal from "@/components/modal/modal.vue";
 import CSelect from "@/components/select/select.vue";
-import EmployeeAPI from "@/services/api/payroll/employee/employee";
+import OrganizationAPI from "@/services/api/payroll/organization/organization";
+import PayrollComponentsAPI from "@/services/api/payroll/payroll-components/payroll-component";
 import { formatDateTime2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
@@ -18,9 +19,10 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import CInputForm from "./employee-type-input-form/employee-type-input-form.vue";
+import CInputForm from "./component-category-input-form/component-category-input-form.vue";
 
-const employeeAPI = new EmployeeAPI();
+const payrollComponentsAPI = new PayrollComponentsAPI();
+const organizationAPI = new OrganizationAPI();
 
 @Options({
   components: {
@@ -37,6 +39,10 @@ export default class ShiftConfigurations extends Vue {
   // Data
   public rowData: any[] = [];
   public deleteParam: any;
+
+  // options data
+  public typeOptions: any = [];
+  public placementOptions: any = [];
 
   // form
   public form: any = {};
@@ -75,8 +81,8 @@ export default class ShiftConfigurations extends Vue {
   detailCellRenderer: any;
 
   // RECYCLE LIFE FUNCTION ===================================================
-  created(): void {
-    this.loadData();
+  mounted(): void {
+    this.loadDataGrid();
   }
 
   beforeMount(): void {
@@ -126,6 +132,33 @@ export default class ShiftConfigurations extends Vue {
         field: "name",
         width: 200,
         enableRowGroup: false,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.description"),
+        field: "description",
+        width: 200,
+        enableRowGroup: false,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.type"),
+        field: "type",
+        width: 100,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.placement"),
+        field: "Placement",
+        width: 100,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.status"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "status",
+        width: 80,
+        enableRowGroup: true,
+        cellRenderer: "checklistRenderer",
       },
       {
         headerName: this.$t("commons.table.remark"),
@@ -280,7 +313,7 @@ export default class ShiftConfigurations extends Vue {
   handleDelete(params: any) {
     this.deleteParam = params.id;
     this.dialogMessage = this.$t(
-      "messages.employee.confirm.deleteEmployeeType"
+      "messages.payroll.confirm.deleteComponentCategory"
     );
     this.dialogAction = "delete";
     this.showDialog = true;
@@ -297,33 +330,39 @@ export default class ShiftConfigurations extends Vue {
     this.loadDataGrid(search);
   }
 
-  onRefresh() {
-    this.loadDataGrid(this.searchDefault);
-  }
-
   // API REQUEST =======================================================
-  async loadData() {
-    try {
-      const { data } = await employeeAPI.GetEmployeeTypeList({
-        Index: 0,
-        Text: "",
-      });
-      if (data) {
-        this.rowData = data;
-      }
-    } catch (error) {
-      getError(error);
-    }
-  }
-
   async loadDataGrid(search: any = this.searchDefault) {
     try {
       let params = {
         Index: search.index,
         Text: search.text,
       };
-      const { data } = await employeeAPI.GetEmployeeTypeList(params);
-      this.rowData = data;
+      const { data } = await payrollComponentsAPI.GetComponentCategoryList(
+        params
+      );
+      if (data) {
+        this.rowData = data;
+      } else {
+        this.rowData = [];
+      }
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadDropdown() {
+    try {
+      const promises = [
+        organizationAPI.GetPlacementActiveList({}).then((response) => {
+          this.placementOptions = response.data;
+        }),
+
+        // payrollComponentsAPI.GetAdjustmentReasonList({}).then((response) => {
+        //   this.adjustmentReasonOptions = response.data;
+        // }),
+      ];
+
+      await Promise.all(promises);
     } catch (error) {
       getError(error);
     }
@@ -331,7 +370,7 @@ export default class ShiftConfigurations extends Vue {
 
   async loadEditData(id: any) {
     try {
-      const { data } = await employeeAPI.GetEmployeeType(id);
+      const { data } = await payrollComponentsAPI.GetComponentCategory(id);
       if (data) {
         this.$nextTick(() => {
           this.inputFormElement.form = this.populateForm(data);
@@ -344,9 +383,13 @@ export default class ShiftConfigurations extends Vue {
 
   async insertData(formData: any) {
     try {
-      const { status2 } = await employeeAPI.InsertEmployeeType(formData);
+      const { status2 } = await payrollComponentsAPI.InsertComponentCategory(
+        formData
+      );
       if (status2.status == 0) {
-        getToastSuccess(this.$t("messages.employee.success.saveEmployeeType"));
+        getToastSuccess(
+          this.$t("messages.payroll.success.saveComponentCategory")
+        );
         this.loadDataGrid(this.searchDefault);
         this.showForm = false;
       }
@@ -357,10 +400,12 @@ export default class ShiftConfigurations extends Vue {
 
   async updateData(formData: any) {
     try {
-      const { status2 } = await employeeAPI.UpdateEmployeeType(formData);
+      const { status2 } = await payrollComponentsAPI.UpdateComponentCategory(
+        formData
+      );
       if (status2.status == 0) {
         getToastSuccess(
-          this.$t("messages.employee.success.updateEmployeeType")
+          this.$t("messages.payroll.success.updateComponentCategory")
         );
         this.loadDataGrid(this.searchDefault);
         this.showForm = false;
@@ -372,12 +417,12 @@ export default class ShiftConfigurations extends Vue {
 
   async deleteData() {
     try {
-      const { status2 } = await employeeAPI.DeleteEmployeeType(
+      const { status2 } = await payrollComponentsAPI.DeleteComponentCategory(
         this.deleteParam
       );
       if (status2.status == 0) {
         getToastSuccess(
-          this.$t("messages.employee.success.deleteEmployeeType")
+          this.$t("messages.payroll.success.deleteComponentCategory")
         );
         this.loadDataGrid(this.searchDefault);
         this.deleteParam = null;
@@ -393,6 +438,10 @@ export default class ShiftConfigurations extends Vue {
       id: params.id,
       code: params.code,
       name: params.name,
+      description: params.description,
+      type_code: params.type_code,
+      status: parseInt(params.status),
+      placement_code: params.placement_code,
       remark: params.remark,
       updated_at: params.updated_at,
       updated_by: params.updated_by,
@@ -406,6 +455,12 @@ export default class ShiftConfigurations extends Vue {
       id: params.id,
       code: params.code,
       name: params.name,
+      description: params.description,
+      type_code: params.type_code,
+      Type: params.Type,
+      status: params.status,
+      placement_code: params.placement_code,
+      Placement: params.Placement,
       remark: params.remark,
       updated_at: params.updated_at,
       updated_by: params.updated_by,

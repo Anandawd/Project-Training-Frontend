@@ -1,3 +1,3 @@
-<template src="./employee-type-input-form.html"></template>
-<script src="./employee-type-input-form.ts" lang="ts"></script>
-<style src="./employee-type-input-form.scss" lang="scss"></style>
+<template src="./component-category-input-form.html"></template>
+<script src="./component-category-input-form.ts" lang="ts"></script>
+<style src="./component-category-input-form.scss" lang="scss"></style>

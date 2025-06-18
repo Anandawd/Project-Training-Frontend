@@ -496,6 +496,12 @@ export default class PayrollComponents extends Vue {
     // this.showDialog = true;
   }
 
+  handleToComponentCategory() {
+    this.$router.push({
+      name: "ComponentCategory",
+    });
+  }
+
   refreshData(search: any) {
     this.loadDataGrid(search);
   }

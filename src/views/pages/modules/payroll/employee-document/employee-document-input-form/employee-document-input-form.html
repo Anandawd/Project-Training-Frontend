@@ -168,7 +168,7 @@
                     v-model="form.file"
                     :label="$t('labels.payroll.employee.documentFile')"
                     :required="modeData === $global.modeData.insert"
-                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    accept=".pdf,.jpg,.jpeg,.png"
                     :buttonText="$t('labels.payroll.employee.selectFile')"
                     @update:modelValue="onFileChange"
                   />

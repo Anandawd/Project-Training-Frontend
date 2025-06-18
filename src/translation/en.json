@@ -1821,6 +1821,7 @@
   },
   "title": {
     "t11": "t11",
+    "componentCategory": "Component Category",
     "documentType": "Document Type",
     "adjustmentReason": "Adjustment Reason",
     "employeeType": "Employee Type",
@@ -2764,6 +2765,7 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "componentCategory": "Component Category",
     "documentType": "Document Type",
     "adjustmentReason": "Adjustment Reason",
     "employeType": "Employee Type",

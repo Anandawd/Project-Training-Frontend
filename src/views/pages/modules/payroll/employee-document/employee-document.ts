@@ -173,7 +173,6 @@ export default class PayrollApprovals extends Vue {
         field: "expiry_date",
         width: 120,
         enableRowGroup: true,
-        valueFormatter: formatDate,
       },
       {
         headerName: this.$t("commons.table.status"),
@@ -563,7 +562,12 @@ export default class PayrollApprovals extends Vue {
         );
       }
 
+      // Debug FormData content
       console.log("FormData prepared:", uploadData);
+      for (let pair of uploadData.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
+      }
+
       const { status2 } = await legalDocumentAPI.InsertLegalDocument(
         uploadData
       );
@@ -579,7 +583,26 @@ export default class PayrollApprovals extends Vue {
 
   async updateData(formData: any) {
     try {
-      const { status2 } = await legalDocumentAPI.UpdateLegalDocument(formData);
+      console.log("updateData", formData);
+      const uploadData = new FormData();
+
+      uploadData.append("id", formData.id);
+      uploadData.append("employee_id", formData.employee_id);
+      uploadData.append("document_type_code", formData.document_type_code);
+      uploadData.append("issue_date", formData.issue_date);
+      uploadData.append("expiry_date", formData.expiry_date);
+      uploadData.append("status", formData.status);
+      uploadData.append("remark", formData.remark);
+
+      if (this.inputFormElement.selectedFile) {
+        uploadData.append("file_content", this.inputFormElement.selectedFile);
+      } else {
+        uploadData.append("file_content", "");
+      }
+
+      const { status2 } = await legalDocumentAPI.UpdateLegalDocument(
+        uploadData
+      );
       if (status2.status == 0) {
         getToastSuccess(this.$t("messages.employee.success.updateDocument"));
         this.loadDataGrid(this.searchDefault);
@@ -606,13 +629,25 @@ export default class PayrollApprovals extends Vue {
 
   // HELPER =======================================================
   formatData(params: any) {
+    let issueDate;
+    let expiryDate;
+    if (this.modeData === $global.modeData.insert) {
+      issueDate = params.issue_date;
+      expiryDate = params.expiry_date;
+    } else {
+      issueDate = params.issue_date;
+      expiryDate = params.expiry_date;
+      // issueDate = params.issue_date.split("T")[0];
+      // expiryDate = params.expiry_date.split("T")[0];
+    }
+    console.log("formatData", { issueDate, expiryDate });
     return {
       id: params.id ? params.id : null,
       employee_id: params.employee_id,
 
       document_type_code: params.document_type_code,
-      issue_date: formatDateTimeUTC(params.issue_date),
-      expiry_date: formatDateTimeUTC(params.expiry_date),
+      issue_date: issueDate,
+      expiry_date: expiryDate,
       status: params.status,
       remark: params.remark,
 

@@ -25,12 +25,22 @@ import * as Yup from "yup";
       type: Number,
       require: true,
     },
+    typeOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    placementOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
   },
   emits: ["save", "close"],
 })
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
+  typeOptions!: any[];
+  placementOptions!: any[];
 
   public form = reactive({});
 
@@ -57,6 +67,10 @@ export default class InputForm extends Vue {
     this.form = {
       code: "",
       name: "",
+      description: "",
+      type_code: "",
+      placement_code: "",
+      status: "1",
       remark: "",
     };
   }
@@ -90,6 +104,7 @@ export default class InputForm extends Vue {
     return Yup.object().shape({
       Code: Yup.string().required(),
       Name: Yup.string().required(),
+      Type: Yup.string().required(),
     });
   }
 

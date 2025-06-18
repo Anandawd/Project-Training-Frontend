@@ -38,6 +38,70 @@
             name="Description"
             id="Description"
             class="row mb-1"
+            :label="$t('labels.description')"
+            v-model="form.description"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            selectType="column"
+            name="Type"
+            labelName="name"
+            keyName="code"
+            v-model="form.type_code"
+            :label="$t('labels.payroll.payroll.type')"
+            :columnOptions="columnOptions"
+            :options="typeOptions"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            offset="right"
+            class="row mb-1"
+            selectType="column"
+            name="Placement"
+            labelName="name"
+            keyName="code"
+            v-model="form.placement_code"
+            :label="$t('labels.payroll.employee.placement')"
+            :columnOptions="columnOptions"
+            :options="placementOptions"
+          />
+        </div>
+        <div class="col-md-4 mb-sm-1">
+          <div class="row">
+            <div class="col-sm-3">
+              <label
+                class="form-label"
+                style="font-size: 12px; font-weight: 700; color: red"
+                >{{$t('labels.status')}}</label
+              >
+            </div>
+            <div class="col-sm-9 d-flex align-items-center p-0">
+              <c-radio
+                class="me-3"
+                :label="$t('labels.active')"
+                v-model="form.status"
+                value="1"
+              ></c-radio>
+              <c-radio
+                class="me-3"
+                :label="$t('labels.inactive')"
+                v-model="form.status"
+                value="0"
+              ></c-radio>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <c-input
+            type="text"
+            name="Remark"
+            id="Remark"
+            class="row mb-1"
             :label="$t('labels.remark')"
             v-model="form.remark"
           />
