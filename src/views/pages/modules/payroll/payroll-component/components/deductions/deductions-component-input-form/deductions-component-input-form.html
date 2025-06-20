@@ -1,0 +1,354 @@
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">{{title}}</div>
+    <div class="card-body">
+      <div id="parrentAccordion" class="accordion">
+        <!-- component information -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemComponentInformationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#componentInformation"
+              aria-controls="componentInformation"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.payroll.componentInformation')}}
+            </button>
+          </h6>
+          <div
+            id="componentInformation"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="componentInformationHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="text"
+                    name="Code"
+                    id="Code"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.payroll.code')"
+                    v-model="form.code"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="text"
+                    name="Name"
+                    id="Name"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.payroll.name')"
+                    v-model="form.name"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="Description"
+                    id="Description"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.description')"
+                    v-model="form.description"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    filter
+                    required
+                    offset="right"
+                    selectType="column"
+                    class="row mb-1"
+                    name="Category"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.category_code"
+                    :label="$t('labels.payroll.payroll.category')"
+                    :options="deductionsCategoryOptions"
+                    :columnOptions="columnOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    offset="right"
+                    selectType="column"
+                    class="row mb-1"
+                    name="Unit"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.unit"
+                    :label="$t('labels.payroll.payroll.unit')"
+                    :options="filteredUnitOptions"
+                    :columnOptions="columnUnitOptions"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    showZeroNumber
+                    formatted
+                    type="number"
+                    name="DefaultAmount"
+                    id="DefaultAmount"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.payroll.defaultAmount')"
+                    :max="9999999999"
+                    :min="0"
+                    v-model="form.default_amount"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    showZeroNumber
+                    type="number"
+                    name="Qty"
+                    id="Qty"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.payroll.quantity')"
+                    v-model="form.default_quantity"
+                  />
+                </div>
+
+                <div class="col-md-4 mb-sm-1">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <label
+                        class="form-label"
+                        style="font-size: 12px; font-weight: 700; color: red"
+                        >{{$t('labels.status')}}</label
+                      >
+                    </div>
+                    <div class="col-sm-9 d-flex align-items-center p-0">
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.active')"
+                        v-model="form.active"
+                        value="1"
+                      ></c-radio>
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.inactive')"
+                        v-model="form.active"
+                        value="0"
+                      ></c-radio>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- configuration information -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemConfigurationInformationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#configurationInformation"
+              aria-controls="configurationInformation"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.payroll.configurationInformation')}}
+            </button>
+          </h6>
+          <div
+            id="configurationInformation"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="configurationInformationHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4 mb-sm-1">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <label
+                        class="form-label"
+                        style="font-size: 12px; font-weight: 700; color: red"
+                        >{{$t('labels.payroll.payroll.fixedAmount')}}</label
+                      >
+                    </div>
+                    <div class="col-sm-9 d-flex align-items-center p-0">
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.yes')"
+                        v-model="form.is_fixed"
+                        value="1"
+                      ></c-radio>
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.no')"
+                        v-model="form.is_fixed"
+                        value="0"
+                      ></c-radio>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-sm-1">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <label
+                        class="form-label"
+                        style="font-size: 12px; font-weight: 700; color: red"
+                        >{{$t('labels.payroll.payroll.taxable')}}</label
+                      >
+                    </div>
+                    <div class="col-sm-9 d-flex align-items-center p-0">
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.yes')"
+                        v-model="form.is_taxable"
+                        value="1"
+                      ></c-radio>
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.no')"
+                        v-model="form.is_taxable"
+                        value="0"
+                      ></c-radio>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-sm-1">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <label
+                        class="form-label"
+                        style="font-size: 12px; font-weight: 700; color: red"
+                        >{{$t('labels.payroll.payroll.includedBpjsEmployee')}}</label
+                      >
+                    </div>
+                    <div class="col-sm-9 d-flex align-items-center p-0">
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.yes')"
+                        v-model="form.is_included_in_bpjs_employee"
+                        value="1"
+                      ></c-radio>
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.no')"
+                        v-model="form.is_included_in_bpjs_employee"
+                        value="0"
+                      ></c-radio>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-sm-1">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <label
+                        class="form-label"
+                        style="font-size: 12px; font-weight: 700; color: red"
+                        >{{$t('labels.payroll.payroll.includedBpjsHealth')}}</label
+                      >
+                    </div>
+                    <div class="col-sm-9 d-flex align-items-center p-0">
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.yes')"
+                        v-model="form.is_included_in_bpjs_health"
+                        value="1"
+                      ></c-radio>
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.no')"
+                        v-model="form.is_included_in_bpjs_health"
+                        value="0"
+                      ></c-radio>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-sm-1">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <label
+                        class="form-label"
+                        style="font-size: 12px; font-weight: 700; color: red"
+                        >{{$t('labels.payroll.payroll.includedProrate')}}</label
+                      >
+                    </div>
+                    <div class="col-sm-9 d-flex align-items-center p-0">
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.yes')"
+                        v-model="form.is_prorated"
+                        value="1"
+                      ></c-radio>
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.no')"
+                        v-model="form.is_prorated"
+                        value="0"
+                      ></c-radio>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-sm-1">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <label
+                        class="form-label"
+                        style="font-size: 12px; font-weight: 700; color: red"
+                        >{{$t('labels.payroll.payroll.showInPayslip')}}</label
+                      >
+                    </div>
+                    <div class="col-sm-9 d-flex align-items-center p-0">
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.yes')"
+                        v-model="form.is_show_in_payslip"
+                        value="1"
+                      ></c-radio>
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.no')"
+                        v-model="form.is_show_in_payslip"
+                        value="0"
+                      ></c-radio>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- buttons -->
+      <div class="d-flex justify-content-end mt-2">
+        <button
+          type="button"
+          class="btn btn-danger mr-1 px-3"
+          @click="onClose"
+          :disabled="isSaving"
+        >
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.close')}}
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary px-3"
+          @click="onSubmit"
+          :disabled="isSaving"
+        >
+          <i class="fa fa-save"></i>
+          {{$t('buttons.save')}}
+        </button>
+      </div>
+    </div>
+  </div>
+</c-form>

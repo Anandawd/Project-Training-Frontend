@@ -8,13 +8,12 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import EarningsInputForm from "../payroll-component/earnings-component-input-form/earnings-component-input-form.vue";
-import DepartmentInputForm from "./department-input-form/department-input-form.vue";
-import DepartmentTableComponent from "./department-table-component/department-table-component.vue";
-import PlacementInputForm from "./placement-input-form/placement-input-form.vue";
-import PlacementTableComponent from "./placement-table-component/placement-table-component.vue";
-import PositionInputForm from "./position-input-form/position-input-form.vue";
-import PositionTableComponent from "./position-table-component/position-table-component.vue";
+import DepartmentInputForm from "./components/department/department-input-form/department-input-form.vue";
+import DepartmentTableComponent from "./components/department/department-table-component.vue";
+import PlacementInputForm from "./components/placement/placement-input-form/placement-input-form.vue";
+import PlacementTableComponent from "./components/placement/placement-table-component.vue";
+import PositionInputForm from "./components/position/position-input-form/position-input-form.vue";
+import PositionTableComponent from "./components/position/position-table-component.vue";
 
 const organizationAPI = new OrganizationAPI();
 
@@ -26,7 +25,6 @@ const organizationAPI = new OrganizationAPI();
     PositionInputForm,
     DepartmentInputForm,
     PlacementInputForm,
-    EarningsInputForm,
     DepartmentTableComponent,
     PositionTableComponent,
     PlacementTableComponent,
@@ -46,7 +44,7 @@ export default class Organizaation extends Vue {
   departmentFormElement: any = ref();
   placementFormElement: any = ref();
 
-  // child components refs
+  // table refs
   positionTableRef: any = ref();
   departmentTableRef: any = ref();
   placementTableRef: any = ref();
@@ -67,7 +65,7 @@ export default class Organizaation extends Vue {
   public deleteParam: any = null;
 
   // RECYCLE LIFE FUNCTION =======================================================
-  created() {
+  mounted() {
     this.loadData();
   }
 
@@ -95,6 +93,7 @@ export default class Organizaation extends Vue {
             break;
         }
       } else if (mode === $global.modeData.edit && params) {
+        console.log("edit", params);
         this.loadEditData(params);
       }
     });
@@ -104,32 +103,33 @@ export default class Organizaation extends Vue {
 
   handleSave(formData: any) {
     const formattedData = this.formatData(formData);
-    console.log("formattedData", formattedData);
 
     if (this.modeData === $global.modeData.insert) {
-      switch (this.dataType) {
-        case "PLACEMENT":
-          this.insertPlacement(formattedData);
-          break;
-        case "DEPARTMENT":
-          this.insertDepartment(formattedData);
-          break;
-        case "POSITION":
-          this.insertPosition(formattedData);
-          break;
-      }
+      this.insertData(formattedData);
+      // switch (this.dataType) {
+      //   case "PLACEMENT":
+      //     this.insertPlacement(formattedData);
+      //     break;
+      //   case "DEPARTMENT":
+      //     this.insertDepartment(formattedData);
+      //     break;
+      //   case "POSITION":
+      //     this.insertPosition(formattedData);
+      //     break;
+      // }
     } else {
-      switch (this.dataType) {
-        case "PLACEMENT":
-          this.updatePlacement(formattedData);
-          break;
-        case "DEPARTMENT":
-          this.updateDepartment(formattedData);
-          break;
-        case "POSITION":
-          this.updatePosition(formattedData);
-          break;
-      }
+      this.updateData(formattedData);
+      // switch (this.dataType) {
+      //   case "PLACEMENT":
+      //     this.updatePlacement(formattedData);
+      //     break;
+      //   case "DEPARTMENT":
+      //     this.updateDepartment(formattedData);
+      //     break;
+      //   case "POSITION":
+      //     this.updatePosition(formattedData);
+      //     break;
+      // }
     }
   }
 
@@ -180,17 +180,7 @@ export default class Organizaation extends Vue {
 
   confirmAction() {
     this.showDialog = false;
-    switch (this.dataType) {
-      case "PLACEMENT":
-        this.deletePlacement();
-        break;
-      case "DEPARTMENT":
-        this.deleteDepartment();
-        break;
-      case "POSITION":
-        this.deletePosition();
-        break;
-    }
+    this.deleteData();
 
     this.dataType = "";
     this.showDialog = false;
@@ -198,7 +188,7 @@ export default class Organizaation extends Vue {
   }
 
   refreshData(search: any) {
-    this.loadDataGrid();
+    this.loadDataGrid(search);
   }
 
   // API REQUEST =======================================================
@@ -239,55 +229,31 @@ export default class Organizaation extends Vue {
 
   async loadEditData(params: any) {
     try {
-      // for real implementation
-      // if (type === "position") {
-      //   const { data } = await organizationAPI.GetPosition(params.id);
-      //   await this.$nextTick();
-      //   this.populateForm(data);
-      // } else if (type === "department") {
-      //   const { data } = await organizationAPI.GetDepartment(params.id);
-      //   await this.$nextTick();
-      //   this.populateForm(data);
-      // } else if (type === "placement") {
-      //   const { data } = await organizationAPI.GetPlacement(params.id);
-      //   await this.$nextTick();
-      //   this.populateForm(data);
-      // }
-
-      // for demo
       switch (this.dataType) {
         case "POSITION":
-          const position = this.rowPositionData.find(
-            (item: any) => item.id === params.id
+          const { data: position } = await organizationAPI.GetPosition(
+            params.id
           );
 
-          if (position) {
-            this.$nextTick(() => {
-              this.positionFormElement.form = this.populateForm(position);
-            });
-          }
+          this.$nextTick(() => {
+            this.positionFormElement.form = this.populateForm(position);
+          });
           break;
         case "DEPARTMENT":
-          const department = this.rowDepartmentData.find(
-            (item: any) => item.id === params.id
+          const { data: department } = await organizationAPI.GetDepartment(
+            params.id
           );
-
-          if (department) {
-            this.$nextTick(() => {
-              this.departmentFormElement.form = this.populateForm(department);
-            });
-          }
+          this.$nextTick(() => {
+            this.departmentFormElement.form = this.populateForm(department);
+          });
           break;
         case "PLACEMENT":
-          const placement = this.rowPlacementData.find(
-            (item: any) => item.id === params.id
+          const { data: placement } = await organizationAPI.GetPlacement(
+            params.id
           );
-
-          if (placement) {
-            this.$nextTick(() => {
-              this.placementFormElement.form = this.populateForm(placement);
-            });
-          }
+          this.$nextTick(() => {
+            this.placementFormElement.form = this.populateForm(placement);
+          });
           break;
       }
     } catch (error) {
@@ -442,143 +408,146 @@ export default class Organizaation extends Vue {
     }
   }
 
-  async insertPlacement(formData: any) {
+  async insertData(formData: any) {
     try {
-      const { status2 } = await organizationAPI.InsertPlacement(formData);
-      if (status2.status === 0) {
-        getToastSuccess(this.$t("messages.employee.success.savePlacement"));
-        this.$nextTick();
-        this.loadDropdown();
-        this.loadPlacementData();
-        this.showForm = false;
+      switch (this.dataType) {
+        case "POSITION":
+          const { status2: position } = await organizationAPI.InsertPosition(
+            formData
+          );
+          if (position.status === 0) {
+            getToastSuccess(this.$t("messages.employee.success.savePosition"));
+            this.$nextTick();
+            this.loadPositionData();
+            this.loadDropdown();
+            this.showForm = false;
+          }
+          break;
+        case "DEPARTMENT":
+          const { status2: department } =
+            await organizationAPI.InsertDepartment(formData);
+          if (department.status === 0) {
+            getToastSuccess(
+              this.$t("messages.employee.success.saveDepartment")
+            );
+            this.$nextTick();
+            this.loadDepartmentData();
+            this.loadDropdown();
+            this.showForm = false;
+          }
+          break;
+        case "PLACEMENT":
+          const { status2: placement } = await organizationAPI.InsertPlacement(
+            formData
+          );
+          if (placement.status === 0) {
+            getToastSuccess(this.$t("messages.employee.success.savePlacement"));
+            this.$nextTick();
+            this.loadPlacementData();
+            this.loadDropdown();
+            this.showForm = false;
+          }
+          break;
       }
     } catch (error) {
       getError(error);
     }
   }
 
-  async insertDepartment(formData: any) {
+  async updateData(formData: any) {
     try {
-      const { status2 } = await organizationAPI.InsertDepartment(formData);
-      if (status2.status === 0) {
-        getToastSuccess(this.$t("messages.employee.success.saveDepartment"));
-        this.$nextTick();
-        this.loadDropdown();
-        this.loadDepartmentData();
-        this.showForm = false;
+      switch (this.dataType) {
+        case "POSITION":
+          const { status2: position } = await organizationAPI.UpdatePosition(
+            formData
+          );
+          if (position.status === 0) {
+            getToastSuccess(
+              this.$t("messages.employee.success.updatePosition")
+            );
+            this.$nextTick();
+            this.loadPositionData();
+            this.loadDropdown();
+            this.showForm = false;
+          }
+          break;
+        case "DEPARTMENT":
+          const { status2: department } =
+            await organizationAPI.UpdateDepartment(formData);
+          if (department.status === 0) {
+            getToastSuccess(
+              this.$t("messages.employee.success.updateDepartment")
+            );
+            this.$nextTick();
+            this.loadDepartmentData();
+            this.loadDropdown();
+            this.showForm = false;
+          }
+          break;
+        case "PLACEMENT":
+          const { status2: placement } = await organizationAPI.UpdatePlacement(
+            formData
+          );
+          if (placement.status === 0) {
+            getToastSuccess(
+              this.$t("messages.employee.success.updatePlacement")
+            );
+            this.$nextTick();
+            this.loadPlacementData();
+            this.loadDropdown();
+            this.showForm = false;
+          }
+          break;
       }
     } catch (error) {
       getError(error);
     }
   }
 
-  async insertPosition(formData: any) {
+  async deleteData() {
     try {
-      const { status2 } = await organizationAPI.InsertPosition(formData);
-      if (status2.status === 0) {
-        getToastSuccess(this.$t("messages.employee.success.savePosition"));
-        this.$nextTick();
-        this.loadDropdown();
-        this.loadPositionData();
-        this.showForm = false;
-      }
-
-      // await this.$nextTick();
-      // await this.loadDataGrid();
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async updatePlacement(formData: any) {
-    try {
-      const { status2 } = await organizationAPI.UpdatePlacement(formData);
-      if (status2.status === 0) {
-        getToastSuccess(this.$t("messages.employee.success.updatePlacement"));
-        this.$nextTick();
-        this.loadDropdown();
-        this.loadPlacementData();
-        this.showForm = false;
-      }
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async updateDepartment(formData: any) {
-    try {
-      const { status2 } = await organizationAPI.UpdateDepartment(formData);
-      if (status2.status === 0) {
-        getToastSuccess(this.$t("messages.employee.success.updateDepartment"));
-        this.$nextTick();
-        this.loadDropdown();
-        this.loadDepartmentData();
-        this.showForm = false;
-      }
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async updatePosition(formData: any) {
-    try {
-      const { status2 } = await organizationAPI.UpdatePosition(formData);
-      if (status2.status === 0) {
-        getToastSuccess(this.$t("messages.employee.success.updatePosition"));
-        this.$nextTick();
-        this.loadDropdown();
-        this.loadPositionData();
-        this.showForm = false;
-      }
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async deletePlacement() {
-    try {
-      const params = this.deleteParam;
-      const { status2 } = await organizationAPI.DeletePlacement(params.id);
-      if (status2.status === 0) {
-        getToastSuccess(this.$t("messages.employee.success.deletePlacement"));
-        this.$nextTick();
-        this.loadDropdown();
-        this.loadPlacementData();
-        this.deleteParam = null;
-      }
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async deleteDepartment() {
-    try {
-      const params = this.deleteParam;
-
-      const { status2 } = await organizationAPI.DeleteDepartment(params.id);
-      if (status2.status === 0) {
-        getToastSuccess(this.$t("messages.employee.success.deleteDepartment"));
-        this.$nextTick();
-        this.loadDropdown();
-        this.loadDepartmentData();
-        this.deleteParam = null;
-      }
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async deletePosition() {
-    try {
-      const params = this.deleteParam;
-
-      const { status2 } = await organizationAPI.DeletePosition(params.id);
-      if (status2.status === 0) {
-        getToastSuccess(this.$t("messages.employee.success.deletePosition"));
-        this.$nextTick();
-        this.loadDropdown();
-        this.loadPositionData();
-        this.deleteParam = null;
+      switch (this.dataType) {
+        case "POSITION":
+          const { status2: position } = await organizationAPI.DeletePosition(
+            this.deleteParam.id
+          );
+          if (position.status === 0) {
+            getToastSuccess(
+              this.$t("messages.employee.success.deletePosition")
+            );
+            this.$nextTick();
+            this.loadPositionData();
+            this.loadDropdown();
+            this.deleteParam = null;
+          }
+          break;
+        case "DEPARTMENT":
+          const { status2: department } =
+            await organizationAPI.DeleteDepartment(this.deleteParam.id);
+          if (department.status === 0) {
+            getToastSuccess(
+              this.$t("messages.employee.success.deleteDepartment")
+            );
+            this.$nextTick();
+            this.loadDepartmentData();
+            this.loadDropdown();
+            this.deleteParam = null;
+          }
+          break;
+        case "PLACEMENT":
+          const { status2: placement } = await organizationAPI.DeletePlacement(
+            this.deleteParam.id
+          );
+          if (placement.status === 0) {
+            getToastSuccess(
+              this.$t("messages.employee.success.deletePlacement")
+            );
+            this.$nextTick();
+            this.loadPlacementData();
+            this.loadDropdown();
+            this.deleteParam = null;
+          }
+          break;
       }
     } catch (error) {
       getError(error);

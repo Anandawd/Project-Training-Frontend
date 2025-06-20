@@ -397,7 +397,10 @@ export default [
       pageTitle: "title.componentCategory",
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
-        { title: "title.legalDocument", url: "/payroll/payroll-components" },
+        {
+          title: "title.payrollComponents",
+          url: "/payroll/payroll-components",
+        },
         { title: "title.componentCategory", active: true },
       ],
       menu: getRouterMenu(menu, 1),

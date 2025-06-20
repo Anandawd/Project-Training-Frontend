@@ -1,4 +1,3 @@
-import CCheckbox from "@/components/checkbox/checkbox.vue";
 import CDatepicker from "@/components/datepicker/datepicker.vue";
 import CInput from "@/components/input/input.vue";
 import CRadio from "@/components/radio/radio.vue";
@@ -18,18 +17,25 @@ import * as Yup from "yup";
     CSelect,
     CDatepicker,
     CRadio,
-    CCheckbox,
   },
   props: {
     modeData: {
       type: Number,
       require: true,
     },
-    typeOptions: {
+    isSaving: {
+      type: Boolean,
+      default: false,
+    },
+    // placementOptions: {
+    //   type: Array,
+    //   default: (): any[] => [],
+    // },
+    deductionsCategoryOptions: {
       type: Array,
       default: (): any[] => [],
     },
-    placementOptions: {
+    unitOptions: {
       type: Array,
       default: (): any[] => [],
     },
@@ -37,14 +43,17 @@ import * as Yup from "yup";
   emits: ["save", "close"],
 })
 export default class InputForm extends Vue {
+  // placementOptions!: any[];
+  deductionsCategoryOptions!: any[];
+  unitOptions!: any[];
+
   inputFormValidation: any = ref();
   modeData: any;
-  typeOptions!: any[];
-  placementOptions!: any[];
+  isSaving: any;
 
-  public form = reactive({});
+  public form: any = reactive({});
 
-  columnTypeOptions = [
+  columnUnitOptions = [
     {
       label: "name",
       field: "name",
@@ -58,6 +67,7 @@ export default class InputForm extends Vue {
     //   width: "100",
     // },
   ];
+
   columnOptions = [
     {
       label: "name",
@@ -74,17 +84,32 @@ export default class InputForm extends Vue {
     },
   ];
 
-  // actions
   async resetForm() {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
+      id: "",
       code: "",
       name: "",
       description: "",
-      type: "",
-      status: "1",
-      remark: "",
+      category_code: "",
+      type: "Deductions",
+      // placement_code: "",
+      default_amount: 0,
+      default_quantity: 1,
+      unit: "",
+      formula: "",
+      is_fixed: "0",
+      is_taxable: "1",
+      is_included_in_bpjs_health: "1",
+      is_included_in_bpjs_employee: "1",
+      is_prorated: "1",
+      is_show_in_payslip: "1",
+      active: "1",
+      updated_at: "",
+      updated_by: "",
+      created_at: "",
+      created_by: "",
     };
   }
 
@@ -94,14 +119,11 @@ export default class InputForm extends Vue {
 
   onSubmit() {
     this.inputFormValidation.$el.requestSubmit();
+    // this.onSave();
   }
 
   onSave() {
     this.$emit("save", this.form);
-  }
-
-  checkForm() {
-    console.log(this.form);
   }
 
   onClose() {
@@ -117,19 +139,34 @@ export default class InputForm extends Vue {
     return Yup.object().shape({
       Code: Yup.string().required(),
       Name: Yup.string().required(),
-      Type: Yup.string().required(),
+      Category: Yup.string().required(),
+      Qty: Yup.number().required().min(1),
+      // Taxable: Yup.string().required(),
+      // IncludedBpjsEmplyoee: Yup.string().required(),
+      // IncludedBpjsHealth: Yup.string().required(),
+      // IncludedProrate: Yup.string().required(),
+      // ShowInPayslip: Yup.string().required(),
+      // Status: Yup.string().required(),
     });
   }
 
   get title() {
     if (this.modeData === $global.modeData.insert) {
       return `${this.$t("commons.insert")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
+        "commons.table.payroll.payroll.deductionsComponent"
       )}`;
     } else if (this.modeData === $global.modeData.edit) {
       return `${this.$t("commons.update")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
+        "commons.table.payroll.payroll.deductionsComponent"
       )}`;
     }
+  }
+
+  get filteredUnitOptions() {
+    const data = this.unitOptions.filter(
+      (unit: any) => unit.code !== "Percentage"
+    );
+
+    return data;
   }
 }

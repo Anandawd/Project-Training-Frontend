@@ -46,8 +46,83 @@ class PayrollComponentsAPI extends ConfigurationResource {
     });
   }
 
+  // earnings
+  GetEarningsComponentList() {
+    return request({
+      url: "GetPayrollComponentEarningsList",
+      method: "get",
+    });
+  }
+
+  InsertEarningsComponent(params: any) {
+    return request({
+      url: "InsertPayPayrollComponentList",
+      method: "post",
+      data: params,
+    });
+  }
+
+  GetEarningsComponent(params: any) {
+    return request({
+      url: "GetPayPayrollComponent/" + params,
+      method: "get",
+    });
+  }
+
+  UpdateEarningsComponent(params: any) {
+    return request({
+      url: "UpdatePayrollComponentList",
+      method: "put",
+      data: params,
+    });
+  }
+
+  DeleteEarningsComponent(params: any) {
+    return request({
+      url: "DeletePayPayrollComponent/" + params,
+      method: "delete",
+    });
+  }
+  // deductions
+  GetDeductionsComponentList() {
+    return request({
+      url: "GetPayrollComponentDeductionsList",
+      method: "get",
+    });
+  }
+
+  InsertDeductionsComponent(params: any) {
+    return request({
+      url: "InsertPayPayrollComponentList",
+      method: "post",
+      data: params,
+    });
+  }
+
+  GetDeductionsComponent(params: any) {
+    return request({
+      url: "GetPayPayrollComponent/" + params,
+      method: "get",
+    });
+  }
+
+  UpdateDeductionsComponent(params: any) {
+    return request({
+      url: "UpdatePayrollComponentList",
+      method: "put",
+      data: params,
+    });
+  }
+
+  DeleteDeductionsComponent(params: any) {
+    return request({
+      url: "DeletePayPayrollComponent/" + params,
+      method: "delete",
+    });
+  }
+
   // statutory
-  GetStatutoryList(params: any) {
+  GetStatutoryComponentList(params: any) {
     return request({
       url: "GetPayStatutoryComponentList",
       method: "get",
@@ -121,6 +196,52 @@ class PayrollComponentsAPI extends ConfigurationResource {
     return request({
       url: "DeletePayCfgInitComponentCategory/" + params,
       method: "delete",
+    });
+  }
+
+  GetCategoryTypeOptions(params: any) {
+    return request({
+      url: "GetPayConstComponentTypeList",
+      method: "get",
+      params: params,
+    });
+  }
+
+  // options
+  GetCategoryTypeList() {
+    return request({
+      url: "GetPayConstCfgComponentTypeList",
+      method: "get",
+    });
+  }
+  GetComponentTypeList() {
+    return request({
+      url: "GetPayConstComponentTypeList",
+      method: "get",
+    });
+  }
+  GetComponentUnitList() {
+    return request({
+      url: "GetPayConstComponentUnitList",
+      method: "get",
+    });
+  }
+  GetEarningsCategoryList() {
+    return request({
+      url: "GetComponentEarningsList",
+      method: "get",
+    });
+  }
+  GetDeductionsCategoryList() {
+    return request({
+      url: "GetComponentDeductionsList",
+      method: "get",
+    });
+  }
+  GetStatutoryCategoryList() {
+    return request({
+      url: "GetComponentStatutoryList",
+      method: "get",
     });
   }
 }

@@ -23,57 +23,57 @@ import * as Yup from "yup";
       type: Number,
       require: true,
     },
+    isSaving: {
+      type: Boolean,
+      default: false,
+    },
+    // placementOptions: {
+    //   type: Array,
+    //   default: (): any[] => [],
+    // },
+    typeOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    unitOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
   },
   emits: ["save", "close"],
 })
 export default class InputForm extends Vue {
+  // placementOptions!: any[];
+  typeOptions!: any[];
+  unitOptions!: any[];
+
   inputFormValidation: any = ref();
   modeData: any;
-  public isSave: boolean = false;
-  public activeTab: string = "statutory";
+  isSaving: any;
 
   public form: any = reactive({});
 
-  // form settings
-  public formats: Array<any> = [
-    { code: 1, name: ",0.;-,0." },
-    { code: 2, name: ",0.0;-,0.0" },
-    { code: 3, name: ",0.00;-,0.00" },
-    { code: 4, name: ",0.000;-,0.000" },
+  columnTypeOptions = [
+    {
+      label: "name",
+      field: "name",
+      align: "left",
+      width: "200",
+    },
+    // {
+    //   field: "code",
+    //   label: "code",
+    //   align: "right",
+    //   width: "100",
+    // },
   ];
-
-  typeOptions: any = [
-    {
-      SubGroupName: "Type",
-      code: "T01",
-      name: "Earnings",
-    },
-    {
-      SubGroupName: "Type",
-      code: "T02",
-      name: "Deductions",
-    },
-  ];
-
-  booleanOptions: any = [
-    {
-      SubGroupName: "Options",
-      code: "YES",
-      name: "Yes",
-    },
-    {
-      SubGroupName: "Options",
-      code: "NO",
-      name: "No",
-    },
-  ];
-
   columnOptions = [
     {
       label: "name",
       field: "name",
       align: "left",
       width: "200",
+      filter: true,
     },
     {
       field: "code",
@@ -87,20 +87,25 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      // Statutory tab
-      statutoryCode: "",
-      statutoryName: "",
-      statutoryDescription: "",
-      statutoryType: "",
-      statutoryDefaultAmount: 0,
-      statutoryQty: 1,
-      statutoryUnit: "",
-      statutoryTaxable: "NO",
-      statutoryIncludedProrate: "YES",
-      statutoryShowInPayslip: "YES",
-      statutoryStatus: "A",
-      entityType: "statutory",
-      id: undefined,
+      id: "",
+      code: "",
+      name: "",
+      type: "",
+      description: "",
+      unit: "",
+      default_amount: 0,
+      default_percentage: 0,
+      min_amount: 0,
+      max_amount: 0,
+      formula: "",
+      is_fixed: "0",
+      is_taxable: "1",
+      is_show_in_payslip: "1",
+      active: "1",
+      updated_at: "",
+      updated_by: "",
+      created_at: "",
+      created_by: "",
     };
   }
 
@@ -109,8 +114,8 @@ export default class InputForm extends Vue {
   }
 
   onSubmit() {
-    // this.inputFormValidation.$el.requestSubmit();
-    this.onSave();
+    this.inputFormValidation.$el.requestSubmit();
+    // this.onSave();
   }
 
   onSave() {
@@ -128,20 +133,15 @@ export default class InputForm extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      statutoryCode: Yup.string().required("Code is required"),
-      statutoryName: Yup.string().required("Name is required"),
-      statutoryType: Yup.string().required("Type is required"),
-      statutoryQty: Yup.number()
-        .required("Quantity is required")
-        .min(1, "Quantity must be at least 1"),
-      statutoryTaxable: Yup.string().required("Taxable field is required"),
-      statutoryIncludedProrate: Yup.string().required(
-        "Prorate field is required"
-      ),
-      statutoryShowInPayslip: Yup.string().required(
-        "Show in Payslip field is required"
-      ),
-      statutoryStatus: Yup.string().required("Status is required"),
+      Code: Yup.string().required(),
+      Name: Yup.string().required(),
+      Type: Yup.string().required(),
+      // Taxable: Yup.string().required(),
+      // IncludedBpjsEmplyoee: Yup.string().required(),
+      // IncludedBpjsHealth: Yup.string().required(),
+      // IncludedProrate: Yup.string().required(),
+      // ShowInPayslip: Yup.string().required(),
+      // Status: Yup.string().required(),
     });
   }
 
@@ -155,5 +155,9 @@ export default class InputForm extends Vue {
         "commons.table.payroll.payroll.statutoryComponent"
       )}`;
     }
+  }
+
+  get showDefaultAmount() {
+    return this.form.unit !== "Percentage";
   }
 }

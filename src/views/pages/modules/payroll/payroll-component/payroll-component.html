@@ -15,7 +15,7 @@
         title="Insert Earnings"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('earnings', $global.modeData.insert)"
+        @click="handleShowForm('EARNINGS', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insertEarnings') }}
@@ -24,7 +24,7 @@
         title="Insert Deductions"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('deductions', $global.modeData.insert)"
+        @click="handleShowForm('DEDUCTIONS', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insertDeductions') }}
@@ -33,47 +33,37 @@
         title="Insert Statutory"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleShowForm('statutory', $global.modeData.insert)"
+        @click="handleShowForm('STATUTORY', $global.modeData.insert)"
       >
         <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
         $t('buttons.insertStatutory') }}
-      </button>
-      <button
-        title="Insert Category"
-        type="button"
-        class="btn btn-primary mr-1"
-        @click="handleShowForm('category', $global.modeData.insert)"
-      >
-        <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
-        $t('buttons.insertCategory') }}
       </button>
     </div>
 
     <!-- insert form -->
     <transition name="fade" mode="out-in">
       <earnings-input-form
+        class="px-2"
         ref="earningsFormElement"
-        v-if="showForm && currentFormType === 'earnings'"
+        v-show="showForm && dataType === 'EARNINGS'"
+        :earningsCategoryOptions="earningsCategoryOptions"
+        :unitOptions="unitOptions"
         :modeData="modeData"
+        :isSaving="isSaving"
         @save="handleSave"
         @close="showForm=false"
       />
-      <!-- <component
-        class="px-2"
-        :is="getCurrentFormComponent()"
-        ref="getCurrentFormRef()"
-        v-if="showForm"
-        :modeData="modeData"
-        @save="handleSave"
-        @close="showForm=false"
-      /> -->
     </transition>
 
     <transition name="fade" mode="out-in">
       <deductions-input-form
+        class="px-2"
         ref="deductionsFormElement"
-        v-if="showForm && currentFormType === 'deductions'"
+        v-show="showForm && dataType === 'DEDUCTIONS'"
+        :deductionsCategoryOptions="deductionsCategoryOptions"
+        :unitOptions="unitOptions"
         :modeData="modeData"
+        :isSaving="isSaving"
         @save="handleSave"
         @close="showForm=false"
       />
@@ -81,19 +71,13 @@
 
     <transition name="fade" mode="out-in">
       <statutory-input-form
+        class="px-2"
         ref="statutoryFormElement"
-        v-if="showForm && currentFormType === 'statutory'"
+        v-show="showForm && dataType === 'STATUTORY'"
+        :typeOptions="typeOptions"
+        :unitOptions="unitOptions"
         :modeData="modeData"
-        @save="handleSave"
-        @close="showForm=false"
-      />
-    </transition>
-
-    <transition name="fade" mode="out-in">
-      <category-input-form
-        ref="categoryFormElement"
-        v-if="showForm && currentFormType === 'category'"
-        :modeData="modeData"
+        :isSaving="isSaving"
         @save="handleSave"
         @close="showForm=false"
       />
@@ -150,52 +134,26 @@
                   {{$t('labels.payroll.payroll.statutory')}}
                 </button>
               </li>
-              <li class="nav-item" role="presentation">
-                <button
-                  id="category-tab"
-                  class="nav-link"
-                  role="tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#table-category"
-                  aria-controls="table-category"
-                  aria-selected="false"
-                  tabindex="-1"
-                >
-                  {{$t('labels.payroll.payroll.category')}}
-                </button>
-              </li>
             </ul>
           </div>
 
           <!-- tab content -->
           <div class="tab-content mt-3">
-            <!-- table department -->
+            <!-- table earnings -->
             <div
               id="table-earnings"
               class="tab-pane active show fade"
               role="tabpanel"
               aria-labelledby="earnings-tab"
             >
-              <ag-grid-vue
-                :style="agGridSetting.styleAgGridFrame"
-                :class="agGridSetting.themeAgGrid"
-                :columnDefs="columnDefs"
+              <earnings-table-component
+                ref="earningsTableRef"
                 :rowData="rowEarningsData"
-                :paginationPageSize="paginationPageSize"
-                :gridOptions="Object.assign({}, gridOptions, { id: 'earnings-tab-grid' })"
-                :context="context"
-                :frameworkComponents="frameworkComponents"
-                :enableCellChangeFlash="true"
-                :rowSelection="rowSelection"
-                :getContextMenuItems="getContextMenu"
-                :defaultColDef="agGridSetting.defColDef"
-                :rowGroupPanelShow="rowGroupPanelShow"
-                :suppressDragLeaveHidesColumns="true"
-                :suppressMakeColumnVisibleAfterUnGroup=" true"
-                :statusBar="statusBar"
-                @grid-ready="(params) => onGridReady(params, 'earnings-tab-grid')"
-                @cellContextMenu="handleRowRightClicked"
-              ></ag-grid-vue>
+                @insert="handleTableAction"
+                @edit="handleTableAction"
+                @delete="handleTableAction"
+              >
+              </earnings-table-component>
             </div>
 
             <!-- table deductions -->
@@ -205,26 +163,14 @@
               role="tabpanel"
               aria-labelledby="deductions-tab"
             >
-              <ag-grid-vue
-                :style="agGridSetting.styleAgGridFrame"
-                :class="agGridSetting.themeAgGrid"
-                :columnDefs="columnDefs"
+              <deductions-table-component
+                ref="deductionsTableRef"
                 :rowData="rowDeductionsData"
-                :paginationPageSize="paginationPageSize"
-                :gridOptions="Object.assign({}, gridOptions, { id: 'deductions-tab-grid' })"
-                :context="context"
-                :frameworkComponents="frameworkComponents"
-                :enableCellChangeFlash="true"
-                :rowSelection="rowSelection"
-                :getContextMenuItems="getContextMenu"
-                :defaultColDef="agGridSetting.defColDef"
-                :rowGroupPanelShow="rowGroupPanelShow"
-                :suppressDragLeaveHidesColumns="true"
-                :suppressMakeColumnVisibleAfterUnGroup=" true"
-                :statusBar="statusBar"
-                @grid-ready="(params) => onGridReady(params, 'deductions-tab-grid')"
-                @cellContextMenu="handleRowRightClicked"
-              ></ag-grid-vue>
+                @insert="handleTableAction"
+                @edit="handleTableAction"
+                @delete="handleTableAction"
+              >
+              </deductions-table-component>
             </div>
 
             <!-- table statutory -->
@@ -234,55 +180,14 @@
               role="tabpanel"
               aria-labelledby="statutory-tab"
             >
-              <ag-grid-vue
-                :style="agGridSetting.styleAgGridFrame"
-                :class="agGridSetting.themeAgGrid"
-                :columnDefs="columnStatutoryDefs"
+              <statutory-table-component
+                ref="statutoryTableRef"
                 :rowData="rowStatutoryData"
-                :paginationPageSize="paginationPageSize"
-                :gridOptions="Object.assign({}, gridOptions, { id: 'statutory-tab-grid' })"
-                :context="context"
-                :frameworkComponents="frameworkComponents"
-                :enableCellChangeFlash="true"
-                :rowSelection="rowSelection"
-                :getContextMenuItems="getContextMenu"
-                :defaultColDef="agGridSetting.defColDef"
-                :rowGroupPanelShow="rowGroupPanelShow"
-                :suppressDragLeaveHidesColumns="true"
-                :suppressMakeColumnVisibleAfterUnGroup=" true"
-                :statusBar="statusBar"
-                @grid-ready="(params) => onGridReady(params, 'statutory-tab-grid')"
-                @cellContextMenu="handleRowRightClicked"
-              ></ag-grid-vue>
-            </div>
-
-            <!-- table category -->
-            <div
-              id="table-category"
-              class="tab-pane fade"
-              role="tabpanel"
-              aria-labelledby="category-tab"
-            >
-              <ag-grid-vue
-                :style="agGridSetting.styleAgGridFrame"
-                :class="agGridSetting.themeAgGrid"
-                :columnDefs="columnCategoryDefs"
-                :rowData="rowCategoryData"
-                :paginationPageSize="paginationPageSize"
-                :gridOptions="Object.assign({}, gridOptions, { id: 'category-tab-grid' })"
-                :context="context"
-                :frameworkComponents="frameworkComponents"
-                :enableCellChangeFlash="true"
-                :rowSelection="rowSelection"
-                :getContextMenuItems="getContextMenu"
-                :defaultColDef="agGridSetting.defColDef"
-                :rowGroupPanelShow="rowGroupPanelShow"
-                :suppressDragLeaveHidesColumns="true"
-                :suppressMakeColumnVisibleAfterUnGroup=" true"
-                :statusBar="statusBar"
-                @grid-ready="(params) => onGridReady(params, 'category-tab-grid')"
-                @cellContextMenu="handleRowRightClicked"
-              ></ag-grid-vue>
+                @insert="handleTableAction"
+                @edit="handleTableAction"
+                @delete="handleTableAction"
+              >
+              </statutory-table-component>
             </div>
           </div>
         </div>
@@ -294,10 +199,10 @@
       v-show="showDialog"
       dialogTitle="Confirm"
       size="sm"
-      @confirm="deleteData"
+      @confirm="confirmAction"
       @cancel="showDialog=false"
     >
-      <template #body> Are you sure to delete this data? </template>
+      <template #body> {{dialogMessage}} </template>
     </c-dialog>
   </div>
 </section>

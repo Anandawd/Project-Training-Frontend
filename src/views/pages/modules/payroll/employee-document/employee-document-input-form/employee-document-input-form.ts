@@ -193,30 +193,28 @@ export default class InputForm extends Vue {
   }
 
   async loadExistingFile() {
-    if (this.modeData === $global.modeData.edit && this.form.file_name) {
-      try {
-        this.filePreview.processing = true;
-        this.filePreview.progress = 0;
+    try {
+      this.filePreview.processing = true;
+      this.filePreview.progress = 0;
 
-        this.filePreview.fileName = this.form.file_name;
-        this.filePreview.fileSize = this.formatFileSize(this.form.file_size);
-        this.filePreview.mimeType = this.form.file_type;
+      this.filePreview.fileName = this.form.file_name;
+      this.filePreview.fileSize = this.formatFileSize(this.form.file_size);
+      this.filePreview.mimeType = this.form.file_type;
 
-        await this.updateProgress(20);
+      await this.updateProgress(20);
 
-        const baseUrl = "http://25.7.35.69:9000";
-        this.filePreview.url = `${baseUrl}/GetPayEmployeeDocumentImage/${this.form.file_name}`;
+      const baseUrl = "http://25.7.35.69:9000";
+      this.filePreview.url = `${baseUrl}/GetPayEmployeeDocumentImage/${this.form.file_name}`;
 
-        await this.updateProgress(100);
+      await this.updateProgress(100);
 
-        this.filePreview.processing = false;
-        this.filePreview.show = true;
-        this.showExistingFile = true;
-        console.log("loadExistingFile url", this.filePreview.url);
-      } catch (error) {
-        this.filePreview.processing = false;
-        console.warn("Could not load existing file preview:", error);
-      }
+      this.filePreview.processing = false;
+      // this.filePreview.show = true;
+      this.showExistingFile = true;
+      console.log("loadExistingFile url", this.filePreview.url);
+    } catch (error) {
+      this.filePreview.processing = false;
+      console.warn("Could not load existing file preview:", error);
     }
   }
 

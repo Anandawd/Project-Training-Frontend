@@ -146,12 +146,6 @@ export default class ShiftConfigurations extends Vue {
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.placement"),
-        field: "Placement",
-        width: 100,
-        enableRowGroup: true,
-      },
-      {
         headerName: this.$t("commons.table.payroll.employee.status"),
         headerClass: "align-header-center",
         cellClass: "text-center",
@@ -159,12 +153,6 @@ export default class ShiftConfigurations extends Vue {
         width: 80,
         enableRowGroup: true,
         cellRenderer: "checklistRenderer",
-      },
-      {
-        headerName: this.$t("commons.table.remark"),
-        field: "remark",
-        width: 200,
-        enableRowGroup: false,
       },
       {
         headerName: this.$t("commons.table.updatedAt"),
@@ -345,6 +333,7 @@ export default class ShiftConfigurations extends Vue {
       } else {
         this.rowData = [];
       }
+      this.loadDropdown();
     } catch (error) {
       getError(error);
     }
@@ -357,9 +346,9 @@ export default class ShiftConfigurations extends Vue {
           this.placementOptions = response.data;
         }),
 
-        // payrollComponentsAPI.GetAdjustmentReasonList({}).then((response) => {
-        //   this.adjustmentReasonOptions = response.data;
-        // }),
+        payrollComponentsAPI.GetComponentTypeList().then((response) => {
+          this.typeOptions = response.data;
+        }),
       ];
 
       await Promise.all(promises);
@@ -439,10 +428,8 @@ export default class ShiftConfigurations extends Vue {
       code: params.code,
       name: params.name,
       description: params.description,
-      type_code: params.type_code,
+      type: params.type,
       status: parseInt(params.status),
-      placement_code: params.placement_code,
-      remark: params.remark,
       updated_at: params.updated_at,
       updated_by: params.updated_by,
       created_at: params.created_at,
@@ -456,12 +443,9 @@ export default class ShiftConfigurations extends Vue {
       code: params.code,
       name: params.name,
       description: params.description,
-      type_code: params.type_code,
-      Type: params.Type,
+      type: params.type,
       status: params.status,
-      placement_code: params.placement_code,
       Placement: params.Placement,
-      remark: params.remark,
       updated_at: params.updated_at,
       updated_by: params.updated_by,
       created_at: params.created_at,

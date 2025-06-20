@@ -528,7 +528,7 @@ export default class PayrollApprovals extends Vue {
         await this.$nextTick();
 
         if (this.inputFormElement.loadExistingFile) {
-          await this.inputFormElement.loadExistingFile();
+          this.inputFormElement.loadExistingFile();
         }
       });
     } catch (error) {
