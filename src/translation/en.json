@@ -401,7 +401,8 @@
         "fixedAmount": "Fixed Amount",
         "defaultPercentage": "Default Percentage",
         "minAmount": "Min. Amount",
-        "maxAmount": "Max. Amount"
+        "maxAmount": "Max. Amount",
+        "startDate": "Start Date"
       },
       "reimbursement": {
         "reimbursement": "Reimbursement",
@@ -2542,25 +2543,30 @@
         "saveEarnings": "Component earnings has been successfully saved",
         "saveDeductions": "Component deductions has been successfully saved",
         "saveStatutory": "Component statutory has been successfully saved",
+        "savePayrollPeriods": "Payroll periods has been successfully saved",
         "deleteComponentCategory": "Component category has been successfully removed",
         "deleteEarnings": "Component earnings has been successfully removed",
         "deleteDeductions": "Component deductions has been successfully removed",
         "deleteStatutory": "Component statutory has been successfully removed",
+        "deletePayrollPeriods": "Payroll periods has been successfully removed",
         "updateComponentCategory": "Component category has been successfully updated",
         "updateEarnings": "Component earnings has been successfully updated",
         "updateDeductions": "Component deductions has been successfully updated",
-        "updateStatutory": "Component statutory has been successfully updated"
+        "updateStatutory": "Component statutory has been successfully updated",
+        "updatePayrollPeriods": "Payroll periods has been successfully updated"
       },
       "error": {
         "save": "An error occurred while saving employee data. Please try again",
         "update": "Failed to update employee information. Please check your data and try again",
-        "delete": "Failed to delete employee. The employee may be referenced in other modules"
+        "delete": "Failed to delete employee. The employee may be referenced in other modules",
+        "cannotEditNonDraft": "Can only edit draft payroll periods"
       },
       "confirm": {
         "deleteComponentCategory": "Are you sure you want to delete this component category?",
         "deleteEarnings": "Are you sure you want to delete this component earnings?",
         "deleteDeductions": "Are you sure you want to delete this component deductions?",
-        "deleteStatutory": "Are you sure you want to delete this component statutory?"
+        "deleteStatutory": "Are you sure you want to delete this component statutory?",
+        "deletePayrollPeriods": "Are you sure you want to delete this payroll periods?"
       },
       "confirmBulkApprove": "Are you sure you want to approve all selected payroll records?",
       "confirmBulkReject": "Are you sure you want to reject all selected payroll records?",
@@ -4758,6 +4764,9 @@
       "document#": "Document #",
       "uom": "UOM",
       "checkList": {
+        "draft": "Draft",
+        "processing": "Processing",
+        "completed": "Completed",
         "applied": "Applied",
         "waitList": "Wait List",
         "checkedOut": "Checked Out",

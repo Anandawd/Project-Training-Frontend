@@ -179,11 +179,9 @@ export default class Organizaation extends Vue {
   }
 
   confirmAction() {
-    this.showDialog = false;
     this.deleteData();
 
     this.dataType = "";
-    this.showDialog = false;
     this.dialogAction = "";
   }
 

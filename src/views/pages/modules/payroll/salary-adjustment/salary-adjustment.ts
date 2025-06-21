@@ -241,7 +241,7 @@ export default class SalaryAdjustment extends Vue {
               badgeClass = "bg-danger";
               statusText = "Rejected";
               break;
-            case "cancelled":
+            case "CANCELLED":
               badgeClass = "bg-danger";
               statusText = "Cancelled";
               break;

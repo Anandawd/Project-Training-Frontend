@@ -13,15 +13,15 @@
       <div class="row mb-3">
         <div class="col-md-4">
           <c-select
-            multiple
+            filter
             required
             offset="right"
             class="row mb-1"
             selectType="column"
-            name="placement"
+            name="Placement"
             labelName="name"
             keyName="code"
-            v-model="form.placement"
+            v-model="form.placement_code"
             :label="$t('labels.payroll.employee.placement')"
             :columnOptions="columnOptions"
             :options="placementOptions"
@@ -30,12 +30,23 @@
         <div class="col-md-4">
           <c-input
             required
-            id="periodName"
+            name="Code"
+            id="Code"
             class="row mb-1"
             type="text"
-            name="periodName"
-            v-model="form.periodName"
-            :label="$t('labels.payroll.payroll.periodName')"
+            v-model="form.period_code"
+            :label="$t('labels.payroll.payroll.code')"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            name="Name"
+            id="Name"
+            class="row mb-1"
+            type="text"
+            v-model="form.period_name"
+            :label="$t('labels.payroll.payroll.name')"
           />
         </div>
         <div class="col-md-4">
@@ -43,10 +54,10 @@
             required
             offset="right"
             class="row mb-1"
-            name="periodType"
+            name="Type"
             labelName="name"
             keyName="code"
-            v-model="form.periodType"
+            v-model="form.period_type"
             :label="$t('labels.payroll.payroll.periodType')"
             :options="periodTypeOptions"
           />
@@ -54,48 +65,48 @@
         <div class="col-md-4 mb-1">
           <c-datepicker
             required
-            id="startDate"
+            name="StartDate"
+            id="StartDate"
             customLabelClass="col-3"
-            label="Start Date"
+            :label="$t('labels.payroll.payroll.startDate')"
             type="date"
             valueType="YYYY-MM-DD"
             format="DD/MM/YYYY"
-            name="startDate"
-            v-model="form.startDate"
+            v-model="form.start_date"
           />
         </div>
         <div class="col-md-4 mb-1">
           <c-datepicker
             required
-            id="endDate"
+            name="EndDate"
+            id="EndDate"
             customLabelClass="col-3"
-            label="End Date"
+            :label="$t('labels.payroll.employee.endDate')"
             type="date"
             valueType="YYYY-MM-DD"
             format="DD/MM/YYYY"
-            name="endDate"
-            v-model="form.endDate"
+            v-model="form.end_date"
           />
         </div>
         <div class="col-md-4 mb-1">
           <c-datepicker
             required
-            id="Payment Date"
+            name="PaymentDate"
+            id="PaymentDate"
             customLabelClass="col-3"
-            label="Payment Date"
+            :label="$t('labels.payroll.payroll.paymentDate')"
             type="date"
             valueType="YYYY-MM-DD"
             format="DD/MM/YYYY"
-            name="paymentDate"
-            v-model="form.paymentDate"
+            v-model="form.payment_date"
           />
         </div>
         <div class="col-md-4 mb-1">
           <c-input
-            id="remark"
+            name="Remark"
+            id="Remark"
             class="row mb-1"
             type="textarea"
-            name="remark"
             v-model="form.remark"
             :label="$t('labels.remark')"
           />
@@ -104,11 +115,21 @@
 
       <!-- buttons -->
       <div class="d-flex justify-content-end mt-2">
-        <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">
+        <button
+          type="button"
+          class="btn btn-danger mr-1 px-3"
+          @click="onClose"
+          :disabled="isSaving"
+        >
           <i class="fa fa-times" aria-hidden="true"></i>
           {{$t('buttons.close')}}
         </button>
-        <button type="button" class="btn btn-primary px-3" @click="onSubmit">
+        <button
+          type="button"
+          class="btn btn-primary px-3"
+          @click="onSubmit"
+          :disabled="isSaving"
+        >
           <i class="fa fa-save"></i>
           {{$t('buttons.save')}}
         </button>

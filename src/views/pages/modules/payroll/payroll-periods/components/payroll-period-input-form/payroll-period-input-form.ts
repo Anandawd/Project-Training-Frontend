@@ -23,60 +23,29 @@ import * as Yup from "yup";
       type: Number,
       require: true,
     },
+    isSaving: {
+      type: Boolean,
+      default: false,
+    },
+    placementOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
+    periodTypeOptions: {
+      type: Array,
+      default: (): any[] => [],
+    },
   },
   emits: ["save", "close"],
 })
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
-  public isSave: boolean = false;
+  isSaving: any;
+  placementOptions!: any[];
+  periodTypeOptions!: any[];
 
-  public defaultForm: any = {};
   public form: any = reactive({});
-  public formDetail: any = reactive({});
-
-  // form settings
-  public formats: Array<any> = [
-    { code: 1, name: ",0.;-,0." },
-    { code: 2, name: ",0.0;-,0.0" },
-    { code: 3, name: ",0.00;-,0.00" },
-    { code: 4, name: ",0.000;-,0.000" },
-  ];
-
-  placementOptions: any = [
-    {
-      SubGroupName: "Placement",
-      code: "AMORA-UBUD",
-      name: "Amora Ubud",
-    },
-    {
-      SubGroupName: "Placement",
-      code: "AMORA-CANGGU",
-      name: "Amora Canggu",
-    },
-  ];
-  periodTypeOptions: any = [
-    {
-      SubGroupName: "Period Type",
-      code: "PT001",
-      name: "Daily",
-    },
-    {
-      SubGroupName: "Period Type",
-      code: "PT002",
-      name: "Weekly",
-    },
-    {
-      SubGroupName: "Period Type",
-      code: "PT003",
-      name: "Bi-Weekly",
-    },
-    {
-      SubGroupName: "Period Type",
-      code: "PT004",
-      name: "Monthly",
-    },
-  ];
 
   columnOptions = [
     {
@@ -84,6 +53,7 @@ export default class InputForm extends Vue {
       field: "name",
       align: "left",
       width: "200",
+      filter: true,
     },
     {
       field: "code",
@@ -98,13 +68,25 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      placement: "",
-      periodName: "",
-      periodType: "",
-      startDate: "",
-      endDate: "",
-      paymentDate: "",
+      id: "",
+      period_code: "",
+      period_name: "",
+      period_type: "",
+      placement_code: "",
+
+      default_tax_income_type: "",
+      default_tax_method: "",
+      start_date: "",
+      end_date: "",
+      payment_date: "",
+      status: "DRAFT",
       remark: "",
+
+      // modified
+      created_at: "",
+      created_by: "",
+      updated_at: "",
+      updated_by: "",
     };
   }
 
@@ -135,12 +117,13 @@ export default class InputForm extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      placement: Yup.string().required("Placement is required"),
-      periodName: Yup.string().required("Period name is required"),
-      periodType: Yup.string().required("Period type is required"),
-      startDate: Yup.string().required("Start date is required"),
-      endDate: Yup.string().required("End date is required"),
-      paymentDate: Yup.string().required("Payment date is required"),
+      Code: Yup.string().required(),
+      Name: Yup.string().required(),
+      Type: Yup.string().required(),
+      Placement: Yup.string().required(),
+      StartDate: Yup.string().required(),
+      EndDate: Yup.string().required(),
+      PaymentDate: Yup.string().required(),
     });
   }
 
@@ -151,10 +134,6 @@ export default class InputForm extends Vue {
       )}`;
     } else if (this.modeData === $global.modeData.edit) {
       return `${this.$t("commons.update")} ${this.$t(
-        `${this.$route.meta.pageTitle}`
-      )}`;
-    } else if (this.modeData === $global.modeData.duplicate) {
-      return `${this.$t("commons.duplicate")} ${this.$t(
         `${this.$route.meta.pageTitle}`
       )}`;
     }

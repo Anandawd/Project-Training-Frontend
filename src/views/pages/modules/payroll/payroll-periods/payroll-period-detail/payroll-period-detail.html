@@ -63,7 +63,7 @@
               <div class="col-4 text-muted">
                 <strong>Placement</strong>
               </div>
-              <div class="col-8">: {{periodData.placement}}</div>
+              <div class="col-8">: {{periodData.placement_code}}</div>
             </div>
             <div class="row mb-2">
               <div class="col-4 text-muted">
@@ -75,9 +75,7 @@
               <div class="col-4 text-muted">
                 <strong>{{$t('labels.payroll.payroll.periodDate')}}</strong>
               </div>
-              <div class="col-8">
-                : {{periodData.start_date}} - {{periodData.end_date}}
-              </div>
+              <div class="col-8">: {{periodData.period_date}}</div>
             </div>
             <div class="row mb-2">
               <div class="col-4 text-muted">
@@ -114,6 +112,12 @@
             </div>
             <div class="row mb-2">
               <div class="col-4 text-muted">
+                <strong>{{$t('labels.payroll.payroll.updatedBy')}}</strong>
+              </div>
+              <div class="col-8">: {{periodData.updated_by}}</div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-4 text-muted">
                 <strong>{{$t('labels.payroll.payroll.updatedAt')}}</strong>
               </div>
               <div class="col-8">: {{periodData.updated_at}}</div>
@@ -136,7 +140,9 @@
                 <span class="info-box-text"
                   >{{$t('labels.payroll.payroll.totalEmployee')}}</span
                 >
-                <span class="info-box-number">{{totalEmployees}}</span>
+                <span class="info-box-number"
+                  >{{statusCounts.total_employee}}</span
+                >
               </div>
             </div>
           </div>
@@ -147,7 +153,7 @@
                   >{{$t('labels.payroll.payroll.totalGrossSalary')}}</span
                 >
                 <span class="info-box-number"
-                  >Rp {{totalGrossSalary.toLocaleString()}}</span
+                  >Rp {{statusCounts.total_gross}}</span
                 >
               </div>
             </div>
@@ -159,7 +165,7 @@
                   >{{$t('labels.payroll.payroll.totalDeductions')}}</span
                 >
                 <span class="info-box-number"
-                  >Rp {{totalDeductions.toLocaleString()}}</span
+                  >Rp {{statusCounts.total_deductions}}</span
                 >
               </div>
             </div>
@@ -171,7 +177,7 @@
                   >{{$t('labels.payroll.payroll.totalNetSalary')}}</span
                 >
                 <span class="info-box-number"
-                  >Rp {{totalNetSalary.toLocaleString()}}</span
+                  >Rp {{statusCounts.total_net}}</span
                 >
               </div>
             </div>
@@ -186,26 +192,12 @@
         <h3 class="card-title">{{$t('title.employeePayrollList')}}</h3>
       </div>
       <div class="card-body">
-        <ag-grid-vue
-          :style="agGridSetting.styleAgGridFrame"
-          :class="agGridSetting.themeAgGrid"
-          :columnDefs="columnDefs"
-          :rowData="rowData"
-          :paginationPageSize="paginationPageSize"
-          :gridOptions="gridOptions"
-          :context="context"
-          :frameworkComponents="frameworkComponents"
-          :enableCellChangeFlash="true"
-          :rowSelection="rowSelection"
-          :getContextMenuItems="getContextMenu"
-          :defaultColDef="agGridSetting.defColDef"
-          :rowGroupPanelShow="rowGroupPanelShow"
-          :suppressDragLeaveHidesColumns="true"
-          :suppressMakeColumnVisibleAfterUnGroup=" true"
-          :statusBar="statusBar"
-          @grid-ready="onGridReady"
-          @cellContextMenu="handleRowRightClicked"
-        ></ag-grid-vue>
+        <employee-payroll-table
+          ref="employeePayrollTableRef"
+          :rowData="rowEmployeeData"
+          @edit="handleTableAction"
+          @delete="handleTableAction"
+        />
       </div>
     </div>
 
@@ -336,6 +328,7 @@
       v-show="showDialog"
       dialogTitle="Confirm"
       size="sm"
+      :isSaving="isSaving"
       @confirm="confirmAction"
       @cancel="showDialog=false"
     >
