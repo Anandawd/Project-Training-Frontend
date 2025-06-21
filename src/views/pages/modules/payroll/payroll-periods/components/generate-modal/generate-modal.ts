@@ -56,15 +56,39 @@ export default class GenerateModal extends Vue {
   taxIncomeOptions: any[] = [];
   taxMethodOptions: any[] = [];
 
+  // selector options
+  public selectEmployeeOptions: any = [
+    { code: "all", name: "All Employees" },
+    { code: "position", name: "By Position" },
+    { code: "department", name: "By Department" },
+    { code: "specific", name: "Select Specific Employees" },
+  ];
+
   // Form data
   form: any = reactive({
     select_employee: "",
-    departments: [],
-    positions: [],
-    selectedEmployees: [],
+    departments: "",
+    positions: "",
+    selectedEmployees: "",
     tax_income_type: "",
     tax_method: "",
   });
+
+  columnOptions = [
+    {
+      label: "name",
+      field: "name",
+      align: "left",
+      width: "200",
+      filter: true,
+    },
+    {
+      field: "code",
+      label: "code",
+      align: "right",
+      width: "100",
+    },
+  ];
 
   // methods
   async handleGenerate() {
@@ -91,51 +115,20 @@ export default class GenerateModal extends Vue {
     this.form.selectedEmployees = [];
   }
 
-  // computed
-  // get showSelectionArea(): boolean {
-  //   return ["department", "position", "specific"].includes(
-  //     this.form.select_employee
-  //   );
-  // }
+  get isFormValid(): boolean {
+    if (!this.form.tax_income_type || !this.form.tax_method) {
+      return false;
+    }
 
-  // get selectedDepartmentNames() {
-  //   return this.form.departments
-  //     .map((deptCode: string) =>
-  //       this.departmentsOptions.find((d) => d.code === deptCode)
-  //     )
-  //     .filter(Boolean);
-  // }
-
-  // get selectedPositionNames() {
-  //   return this.form.positions
-  //     .map((posCode: string) =>
-  //       this.positionsOptions.find((p) => p.code === posCode)
-  //     )
-  //     .filter(Boolean);
-  // }
-
-  // get selectedEmployeeNames() {
-  //   return this.form.selectedEmployees
-  //     .map((empCode: string) =>
-  //       this.employeesOptions.find((e) => e.code === empCode)
-  //     )
-  //     .filter(Boolean);
-  // }
-
-  // get isFormValid(): boolean {
-  //   if (!this.form.tax_income_type || !this.form.tax_method) {
-  //     return false;
-  //   }
-
-  //   switch (this.form.select_employee) {
-  //     case "department":
-  //       return this.form.departments.length > 0;
-  //     case "position":
-  //       return this.form.positions.length > 0;
-  //     case "specific":
-  //       return this.form.selectedEmployees.length > 0;
-  //     default:
-  //       return true;
-  //   }
-  // }
+    switch (this.form.select_employee) {
+      case "department":
+        return this.form.departments.length > 0;
+      case "position":
+        return this.form.positions.length > 0;
+      case "specific":
+        return this.form.selectedEmployees.length > 0;
+      default:
+        return true;
+    }
+  }
 }

@@ -2562,7 +2562,8 @@
         "updateEarnings": "Component earnings has been successfully updated",
         "updateDeductions": "Component deductions has been successfully updated",
         "updateStatutory": "Component statutory has been successfully updated",
-        "updatePayrollPeriods": "Payroll periods has been successfully updated"
+        "updatePayrollPeriods": "Payroll periods has been successfully updated",
+        "submitForApproval": "Payroll has been submitted for approval"
       },
       "error": {
         "save": "An error occurred while saving employee data. Please try again",
@@ -2571,6 +2572,7 @@
         "cannotEditNonDraft": "Can only edit draft payroll periods"
       },
       "confirm": {
+        "submitForApproval": "Are you sure you want to submit this payroll for approval?",
         "saveAndBack": "You have unsaved changes. Do you want to save before going back?",
         "deleteComponentCategory": "Are you sure you want to delete this component category?",
         "deleteEarnings": "Are you sure you want to delete this component earnings?",

@@ -16,7 +16,7 @@
           title="Save Draft"
           type="button"
           class="btn btn-secondary mr-1"
-          @click="handleSave"
+          @click="handleSaveDraft"
           :disabled="!canEdit"
         >
           <i class="fa fa-save mr-1" aria-hidden="true"></i>{{
@@ -36,7 +36,7 @@
           title="Generate Payroll"
           type="button"
           class="btn btn-primary mr-1"
-          @click="handleShowModal"
+          @click="showGenerateModal = true"
         >
           <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
           $t('buttons.generate') }}
