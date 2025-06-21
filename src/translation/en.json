@@ -402,7 +402,16 @@
         "defaultPercentage": "Default Percentage",
         "minAmount": "Min. Amount",
         "maxAmount": "Max. Amount",
-        "startDate": "Start Date"
+        "startDate": "Start Date",
+        "updatedBy": "Updated By",
+        "totalTakeHomePay": "Total Take Home Pay",
+        "employeeSelection": "Employee Selection",
+        "employeeSelectionInstruction": "Choose which employees to include in payroll generation",
+        "taxConfiguration": "Tax Configuration",
+        "taxConfigurationInstruction": "Configure tax calculation methods and income types",
+        "generateSummary": "Generation Summary",
+        "generateSummaryInstruction": "Review settings before generating payroll",
+        "generateActionsIntruction": "All calculations will be saved as draft and can be reviewed before submission"
       },
       "reimbursement": {
         "reimbursement": "Reimbursement",
@@ -2562,6 +2571,7 @@
         "cannotEditNonDraft": "Can only edit draft payroll periods"
       },
       "confirm": {
+        "saveAndBack": "You have unsaved changes. Do you want to save before going back?",
         "deleteComponentCategory": "Are you sure you want to delete this component category?",
         "deleteEarnings": "Are you sure you want to delete this component earnings?",
         "deleteDeductions": "Are you sure you want to delete this component deductions?",
@@ -3523,7 +3533,8 @@
           "earningsComponent": "Earnings Component",
           "deductionsComponent": "Deductions Component",
           "statutoryComponent": "Statutory Component",
-          "categoryComponent": "Category Component"
+          "categoryComponent": "Category Component",
+          "deductionSalary": "Deduction Salary"
         },
         "attendance": {
           "cycleDays": "Cycle Days",

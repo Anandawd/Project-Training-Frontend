@@ -11,6 +11,8 @@ import { AgGridVue } from "ag-grid-vue3";
 import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import EmployeePayrollTable from "../components/employee-payroll-table/employee-payroll-table.vue";
+import GenerateModal from "../components/generate-modal/generate-modal.vue";
+import PayrollPeriodSummary from "../components/payroll-period-summary/payroll-period-summary.vue";
 
 const payrollPeriodsAPI = new PayrollPeriodsAPI();
 const payrollAPI = new PayrollAPI();
@@ -22,6 +24,8 @@ const payrollAPI = new PayrollAPI();
     CDialog,
     CSelect,
     EmployeePayrollTable,
+    PayrollPeriodSummary,
+    GenerateModal,
   },
 })
 export default class Employee extends Vue {
@@ -93,11 +97,11 @@ export default class Employee extends Vue {
   public deleteParam: any;
 
   // modal
-  public showGenerateModal: boolean = false;
+  public showGenerateModal: boolean = true;
   public showEmployeeSelectorModal: boolean = false;
 
-  // table ref
-  employeePayrollTableRef: any;
+  // table refs
+  employeePayrollTableRef: any = ref();
 
   // AG GRID VARIABLE
   gridOptions: any = {};
@@ -122,7 +126,8 @@ export default class Employee extends Vue {
   // RECYCLE LIFE FUNCTION =======================================================
   created() {
     this.periodId = this.$route.params.id as string;
-    this.loadData();
+    // this.loadData();
+    this.loadMockData();
     console.log("periodId", this.periodId);
 
     // Watch for form changes to update generateOptions
@@ -160,7 +165,7 @@ export default class Employee extends Vue {
         this.handleToEmployeePayroll(params.params);
         break;
       case "DELETE":
-        this.handleDelete(params.params);
+        this.handleDeleteEmployeePayroll(params.params);
         break;
       default:
         break;
@@ -190,7 +195,7 @@ export default class Employee extends Vue {
     }
   }
 
-  handleDelete(params: any) {
+  handleDeleteEmployeePayroll(params: any) {
     this.deleteParam = { ...params };
     this.dialogAction = "delete";
     this.dialogMessage = this.$t(
@@ -257,23 +262,17 @@ export default class Employee extends Vue {
     this.showGenerateModal = true;
   }
 
-  async handleSaveModal() {
-    try {
-      const success = await this.generatePayroll();
-      if (success) {
-        this.showGenerateModal = false;
-      }
-    } catch (error) {
-      getError(error);
-    }
+  handleGenerate(params: any) {
+    console.log("handleGenerate params", params);
+    this.generatePayroll();
   }
 
   confirmAction() {
     if (this.dialogAction === "submit") {
       this.handleSubmit();
     } else if (this.dialogAction === "delete") {
-      this.deleteData();
-    } else if (this.dialogAction === "saveAndhandleBack") {
+      this.deleteEmployeePayroll();
+    } else if (this.dialogAction === "saveAndBack") {
       this.handleSave().then((success) => {
         if (success) {
           this.$router.push({
@@ -297,16 +296,18 @@ export default class Employee extends Vue {
   }
 
   handleBack() {
-    if (this.form.status === "Draft") {
-      this.dialogMessage =
-        "You have unsaved changes. Do you want to save before going back?";
-      this.dialogAction = "saveAndhandleBack";
-      this.showDialog = true;
-    } else {
-      this.$router.push({
-        name: "PayrollPeriods",
-      });
-    }
+    this.$router.push({
+      name: "Periods",
+    });
+    // if (this.form.status.toUpperCase() === "DRAFT") {
+    //   this.dialogMessage = this.$t("messages.payroll.confirm.saveAndBack");
+    //   this.dialogAction = "saveAndBack";
+    //   this.showDialog = true;
+    // } else {
+    //   this.$router.push({
+    //     name: "Periods",
+    //   });
+    // }
   }
 
   // API REQUEST =======================================================
@@ -416,32 +417,17 @@ export default class Employee extends Vue {
         this.periodData = [];
       }
 
-      console.log("data", this.periodData);
       console.log("data", data);
-      // await Promise.all([this.loadDepartments(), this.loadPositions()]);
-
-      // if (this.periodData.id) {
-      //   await this.loadEmployeePayrolls();
-      // }
+      console.log("periodData", this.periodData);
+      // await Promise.all([this.loadDepartmentOptions(), this.loadPositionOptions()]);
+      // this.loadEmployeePayroll();
+      this.loadMockData();
     } catch (error) {
       getError(error);
     }
   }
 
-  async loadDataGrid() {
-    if (this.employeePayrollTableRef) {
-      this.employeePayrollTableRef.refreshGrid();
-    }
-  }
-
-  async loadPeriodData(params: any) {
-    try {
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  async loadMockPeriodData() {
+  async loadMockData() {
     this.rowEmployeeData = [
       {
         id: 1,
@@ -483,20 +469,40 @@ export default class Employee extends Vue {
         status: "Draft",
       },
     ];
+
+    this.statusCounts = {
+      total_employee: 10,
+      total_gross: 20000000,
+      total_deductions: 1000000,
+      total_net: 19000000,
+    };
   }
 
-  async loadEmployeePayrolls() {
+  async loadEmployeePayroll() {
+    // tambahkan GetPayrollListByPeriodCode
+    const { data } = await payrollAPI.GetPayrollList({});
+    if (data) {
+      this.rowEmployeeData = data;
+    } else {
+      this.rowEmployeeData = [];
+    }
+    // if (this.employeePayrollTableRef) {
+    //   this.employeePayrollTableRef.refreshGrid();
+    // }
+  }
+
+  async loadEmployeeOptions() {
     try {
       // In a real implementation, this would be an API call
       // const { data } = await payrollAPI.GetEmployeePayrolls(this.periodData.id);
       // this.rowEmployeeData = data;
-      // For now, we're using the mock data loaded in loadMockPeriodData
+      // For now, we're using the mock data loaded in loadMockData
     } catch (error) {
       getError(error);
     }
   }
 
-  async loadDepartments() {
+  async loadDepartmentOptions() {
     try {
       // In a real implementation, this would be an API call
       // const { data } = await payrollAPI.GetDepartments();
@@ -508,7 +514,7 @@ export default class Employee extends Vue {
     }
   }
 
-  async loadPositions() {
+  async loadPositionOptions() {
     try {
       // In a real implementation, this would be an API call
       // const { data } = await payrollAPI.GetPositions();
@@ -520,7 +526,7 @@ export default class Employee extends Vue {
     }
   }
 
-  async deleteData() {
+  async deleteEmployeePayroll() {
     try {
       const { status2 } = await payrollPeriodsAPI.GetPayrollPeriods(
         this.deleteParam.id
@@ -530,7 +536,7 @@ export default class Employee extends Vue {
           this.$t("messages.payroll.success.deleteEmployeePayroll")
         );
         this.$nextTick();
-        this.loadDataGrid();
+        this.loadEmployeePayroll();
       }
     } catch (error) {
       getError(error);
@@ -543,17 +549,21 @@ export default class Employee extends Vue {
   // HELPER =======================================================
   getStatusBadgeClass(status: string): string {
     switch (status) {
-      case "Draft":
+      case "DRAFT":
         return "text-bg-secondary";
-      case "Pending":
+      case "PENDING":
         return "text-bg-warning";
-      case "Approve":
+      case "APPROVED":
         return "text-bg-success";
-      case "Ready to Payment":
+      case "READY TO PAYMENT":
         return "text-bg-info";
-      case "Completed":
+      case "PROCESSING":
+        return "text-bg-info";
+      case "COMPLETED":
         return "text-bg-primary";
-      case "Rejected":
+      case "COMPLETED":
+        return "text-bg-primary";
+      case "PROCESSING":
         return "text-bg-danger";
       default:
         return "text-bg-secondary";

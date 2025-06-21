@@ -37,7 +37,6 @@
           type="button"
           class="btn btn-primary mr-1"
           @click="handleShowModal"
-          :disabled="!canEdit"
         >
           <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
           $t('buttons.generate') }}
@@ -133,56 +132,7 @@
         <h3 class="card-title">{{$t('title.periodSummary')}}</h3>
       </div>
       <div class="card-body">
-        <div class="row">
-          <div class="col-md-6 col-lg-3 mb-3">
-            <div class="info-box bg-info">
-              <div class="info-box-content">
-                <span class="info-box-text"
-                  >{{$t('labels.payroll.payroll.totalEmployee')}}</span
-                >
-                <span class="info-box-number"
-                  >{{statusCounts.total_employee}}</span
-                >
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-3 mb-3">
-            <div class="info-box bg-success">
-              <div class="info-box-content">
-                <span class="info-box-text"
-                  >{{$t('labels.payroll.payroll.totalGrossSalary')}}</span
-                >
-                <span class="info-box-number"
-                  >Rp {{statusCounts.total_gross}}</span
-                >
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-3 mb-3">
-            <div class="info-box bg-danger">
-              <div class="info-box-content">
-                <span class="info-box-text"
-                  >{{$t('labels.payroll.payroll.totalDeductions')}}</span
-                >
-                <span class="info-box-number"
-                  >Rp {{statusCounts.total_deductions}}</span
-                >
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-lg-3 mb-3">
-            <div class="info-box bg-warning">
-              <div class="info-box-content">
-                <span class="info-box-text"
-                  >{{$t('labels.payroll.payroll.totalNetSalary')}}</span
-                >
-                <span class="info-box-number"
-                  >Rp {{statusCounts.total_net}}</span
-                >
-              </div>
-            </div>
-          </div>
-        </div>
+        <payroll-period-summary :statusCounts="statusCounts" />
       </div>
     </div>
 
@@ -201,127 +151,18 @@
       </div>
     </div>
 
-    <!-- modal -->
-    <c-modal
-      v-show="showGenerateModal"
-      :title="$t('buttons.generatePayroll')"
-      size="lg"
+    <generate-modal
+      :isGenerating="isGenerating"
+      :showGenerateModal="showGenerateModal"
+      :period-data="periodData"
+      :positions-options="positionsOptions"
+      :departments-options="departmentsOptions"
+      :employees-options="employeesOptions"
+      :tax-income-options="taxIncomeOptions"
+      :tax-method-options="taxMethodOptions"
       @close="showGenerateModal = false"
-      @save="handleSaveModal"
-      :isSaving="isGenerating"
-    >
-      <div @click.stop>
-        <div class="row">
-          <!-- select option -->
-          <div class="col-md-6">
-            <c-select
-              required
-              offset="right"
-              class="row mb-1"
-              name="selectEmployee"
-              labelName="name"
-              keyName="code"
-              v-model="form.select_employee"
-              :label="$t('labels.payroll.payroll.selectEmployee')"
-              :options="selectEmployeeOptions"
-              @change="onSelectEmployeeChange"
-            />
-          </div>
-
-          <!-- option department -->
-          <div class="col-md-6" v-if="form.select_employee === 'department'">
-            <c-select
-              required
-              offset="right"
-              class="row mb-1"
-              name="departments"
-              labelName="name"
-              keyName="code"
-              v-model="form.departments"
-              :label="$t('labels.payroll.payroll.selectDepartment')"
-              :options="departmentsOptions"
-              multiple
-            />
-          </div>
-          <div class="col-md-6" v-if="form.select_employee === 'position'">
-            <c-select
-              required
-              offset="right"
-              class="row mb-1"
-              name="positions"
-              labelName="name"
-              keyName="code"
-              v-model="form.positions"
-              :label="$t('labels.payroll.payroll.selectPosition')"
-              :options="positionsOptions"
-              multiple
-            />
-          </div>
-          <div class="col-md-6" v-if="form.select_employee === 'specific'">
-            <c-select
-              required
-              offset="right"
-              class="row mb-1"
-              name="selectedEmployees"
-              labelName="name"
-              keyName="code"
-              v-model="form.selectedEmployees"
-              :label="$t('labels.payroll.payroll.selectSpecificEmployees')"
-              :options="employeesOptions"
-              multiple
-            />
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <c-select
-              required
-              offset="right"
-              class="row mb-1"
-              name="taxIncome"
-              labelName="name"
-              keyName="code"
-              v-model="form.tax_income_type"
-              :label="$t('labels.payroll.payroll.taxIncome')"
-              :options="taxIncomeOptions"
-            />
-          </div>
-          <div class="col-md-6">
-            <c-select
-              required
-              offset="right"
-              class="row mb-1"
-              name="taxMethod"
-              labelName="name"
-              keyName="code"
-              v-model="form.tax_method"
-              :label="$t('labels.payroll.payroll.taxMethod')"
-              :options="taxMethodOptions"
-            />
-          </div>
-        </div>
-        <!-- button -->
-        <div class="d-flex justify-content-end mt-2">
-          <button
-            type="button"
-            class="btn btn-danger mr-1 px-3"
-            @click="showGenerateModal = false"
-          >
-            <i class="fa fa-times" aria-hidden="true"></i>
-            {{$t('buttons.cancel')}}
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary px-3"
-            @click="handleSaveModal"
-          >
-            <i class="fa fa-play"></i>
-            {{$t('buttons.generate')}}
-          </button>
-        </div>
-      </div>
-    </c-modal>
+      @generate="handleGenerate"
+    />
 
     <!-- dialog -->
     <c-dialog

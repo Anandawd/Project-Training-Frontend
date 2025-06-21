@@ -66,9 +66,11 @@ export default class Employee extends Vue {
   // stats
   public statusCounts: any = ref({
     all: 0,
+    draft: 0,
     pending: 0,
     approved: 0,
     rejected: 0,
+    processing: 0,
     completed: 0,
   });
 

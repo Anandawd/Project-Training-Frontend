@@ -43,6 +43,9 @@ export default class DeductionsTable extends Vue {
   detailCellRenderer: any;
 
   // RECYCLE LIFE FUNCTION ===================================================
+  created(): void {
+    console.log("table created");
+  }
   beforeMount(): void {
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
@@ -96,42 +99,53 @@ export default class DeductionsTable extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.employee.baseSalary"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
         field: "base_salary",
-        width: 120,
+        width: 130,
         enableRowGroup: true,
         valueFormatter: formatNumber2,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.grossSalary"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
         field: "gross_salary",
-        width: 120,
+        width: 130,
         enableRowGroup: true,
         valueFormatter: formatNumber2,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.totalDeductions"),
+        headerName: this.$t("commons.table.payroll.payroll.deductionSalary"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
         field: "total_deductions",
-        width: 120,
+        width: 130,
         enableRowGroup: true,
         valueFormatter: formatNumber2,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.pph21"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
         field: "tax",
-        width: 120,
+        width: 130,
         enableRowGroup: true,
         valueFormatter: formatNumber2,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.takeHomePay"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
         field: "net_salary",
-        width: 120,
+        width: 130,
         enableRowGroup: true,
         valueFormatter: formatNumber2,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.status"),
         headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "status",
         width: 100,
         enableRowGroup: true,
