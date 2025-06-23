@@ -1,6 +1,8 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import Checklist from "@/components/ag_grid-framework/checklist.vue";
-import { formatDate, formatDateTime } from "@/utils/format";
+import CDialog from "@/components/dialog/dialog.vue";
+import CModal from "@/components/modal/modal.vue";
+import { formatDate, formatDateTime, formatNumber2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -13,6 +15,8 @@ import { Options, Vue } from "vue-class-component";
 @Options({
   components: {
     AgGridVue,
+    CModal,
+    CDialog,
   },
   props: {
     employeeId: {
@@ -23,18 +27,17 @@ import { Options, Vue } from "vue-class-component";
       type: Array,
       default: (): any[] => [],
     },
-    documentTypeOptions: {
+    adjustmentReasonOptions: {
       type: Array,
       default: (): any[] => [],
     },
   },
-  emits: ["insert", "edit", "delete", "print", "download"],
+  emits: ["insert", "edit", "delete"],
 })
-export default class DocumentTableComponent extends Vue {
-  public modeData!: any;
+export default class SalaryTableComponent extends Vue {
   public employeeId!: string;
   public rowData!: any[];
-  public documentTypeOptions!: any[];
+  public adjustmentReasonOptions!: any[];
 
   // AG GRID VARIABLE
   gridOptions: any = {};
@@ -54,15 +57,12 @@ export default class DocumentTableComponent extends Vue {
   detailCellRenderer: any;
 
   // RECYCLE LIFE FUNCTION ===================================================
-
   beforeMount(): void {
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
       actionGrid: {
-        menu: true,
         insert: true,
         edit: true,
-        delete: true,
       },
       rowHeight: $global.agGrid.rowHeightDefault,
       headerHeight: $global.agGrid.headerHeight,
@@ -81,54 +81,49 @@ export default class DocumentTableComponent extends Vue {
         sortable: false,
         cellRenderer: "actionGrid",
         colId: "params",
-        width: 120,
+        width: 100,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.documentType"),
-        field: "document_type",
+        headerName: this.$t("commons.table.payroll.employee.adjustmentReason"),
+        field: "adjustment_reason",
         width: 150,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.employee.fileName"),
-        field: "file_name",
-        width: 200,
         enableRowGroup: false,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.issueDate"),
+        headerName: this.$t("commons.table.payroll.employee.effectiveDate"),
         headerClass: "align-header-center",
         cellClass: "text-center",
-        field: "issue_date",
+        field: "effective_date",
         width: 120,
         enableRowGroup: true,
         valueFormatter: formatDate,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.expiryDate"),
+        headerName: this.$t("commons.table.payroll.employee.endDate"),
         headerClass: "align-header-center",
         cellClass: "text-center",
-        field: "expiry_date",
+        field: "end_date",
         width: 120,
         enableRowGroup: true,
         valueFormatter: formatDate,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.baseSalary"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
+        field: "base_salary",
+        width: 150,
+        enableRowGroup: true,
+        valueFormatter: formatNumber2,
       },
       {
         headerName: this.$t("commons.table.status"),
         headerClass: "align-header-center",
         cellClass: "text-center",
-        field: "status",
+        field: "is_current",
         width: 100,
-        cellRenderer: (params: any) => {
-          const status = params.value;
-          let badgeClass = "";
-
-          if (status === "Valid") badgeClass = "bg-success";
-          else if (status === "Expired") badgeClass = "bg-danger";
-          else badgeClass = "bg-secondary";
-
-          return `<span class="badge ${badgeClass} py-1 px-4">${status}</span>`;
-        },
+        enableRowGroup: true,
+        cellRenderer: "checklistRenderer",
       },
       {
         headerName: this.$t("commons.table.remark"),
@@ -210,34 +205,14 @@ export default class DocumentTableComponent extends Vue {
     const result = [
       {
         name: this.$t("commons.contextMenu.insert"),
-        disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("add_icon24"),
         action: () => this.handleInsert(),
       },
       {
         name: this.$t("commons.contextMenu.update"),
-        disabled: !this.paramsData,
+        disabled: !this.paramsData || !this.paramsData.is_current,
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () => this.handleEdit(this.paramsData),
-      },
-      {
-        name: this.$t("commons.contextMenu.delete"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("delete_icon24"),
-        action: () => this.handleDelete(this.paramsData),
-      },
-      "separator",
-      {
-        name: this.$t("commons.contextMenu.print"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("print_icon24"),
-        action: () => this.handlePrint(this.paramsData),
-      },
-      {
-        name: this.$t("commons.contextMenu.download"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("download_icon24"),
-        action: () => this.handleDownload(this.paramsData),
       },
     ];
     return result;
@@ -256,26 +231,16 @@ export default class DocumentTableComponent extends Vue {
     }
   }
 
-  handleMenu() {}
-
   handleInsert() {
-    this.$emit("insert", { type: "DOCUMENT" });
+    this.$emit("insert", { type: "SALARY" });
   }
 
   handleEdit(params: any) {
-    this.$emit("edit", { type: "DOCUMENT", event: "EDIT", params });
+    this.$emit("edit", { type: "SALARY", params });
   }
 
   handleDelete(params: any) {
-    this.$emit("delete", { type: "DOCUMENT", event: "DELETE", params });
-  }
-
-  handlePrint(params: any) {
-    this.$emit("print", { type: "DOCUMENT", event: "PRINT", params });
-  }
-
-  handleDownload(params: any) {
-    this.$emit("download", { type: "DOCUMENT", event: "DOWNLOAD", params });
+    this.$emit("delete", { type: "SALARY", params });
   }
 
   refreshGrid() {

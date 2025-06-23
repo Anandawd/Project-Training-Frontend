@@ -262,7 +262,6 @@ export default class BenefitTableComponent extends Vue {
     const result = [
       {
         name: this.$t("commons.contextMenu.insert"),
-        disabled: !this.paramsData,
         icon: generateIconContextMenuAgGrid("add_icon24"),
         action: () => this.handleInsert(),
       },

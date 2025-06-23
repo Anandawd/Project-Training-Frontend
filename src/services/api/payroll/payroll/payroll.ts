@@ -45,6 +45,15 @@ class PayrollAPI extends ConfigurationResource {
       method: "delete",
     });
   }
+
+  // employee detail
+  GetPayrollComponentListByEmployeeId(params: any) {
+    return request({
+      url: "GetPayrollComponentListByEmployeeId",
+      method: "get",
+      params: params,
+    });
+  }
 }
 
 export { PayrollAPI as default };

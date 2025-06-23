@@ -6,7 +6,7 @@
         title="Back"
         type="button"
         class="btn btn-secondary mr-1"
-        @click="handleBack()"
+        @click="handleBack"
       >
         <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>{{
         $t('buttons.back') }}
@@ -56,19 +56,17 @@
 
     <!-- insert form -->
     <transition>
-      <div class="px-2">
-        <c-input-form
-          ref="inputFormElement"
-          v-show="showForm"
-          :modeData="modeData"
-          :employeeId="employeeId"
-          :periodId="periodId"
-          :existingComponents="payrollComponents"
-          :schema="schema"
-          @save="handleSave('', $global.modePayroll.component)"
-          @close="showForm=false"
-        />
-      </div>
+      <c-input-form
+        class="px-2"
+        ref="inputFormElement"
+        v-show="showForm"
+        :modeData="modeData"
+        :employeeId="employeeId"
+        :existingComponents="payrollComponents"
+        :schema="schema"
+        @save="handleSave('', $global.modePayroll.component)"
+        @close="showForm=false"
+      />
     </transition>
 
     <!-- modal prorate -->
@@ -170,12 +168,12 @@
           <div class="col-md-4">
             <c-input
               disabled
-              id="placement"
+              id="position"
               class="row mb-1"
               type="text"
-              name="placement"
-              v-model="employee.placement"
-              :label="$t('labels.payroll.employee.placement')"
+              name="position"
+              v-model="employee.position"
+              :label="$t('labels.payroll.employee.position')"
             />
           </div>
           <div class="col-md-4">
@@ -192,23 +190,12 @@
           <div class="col-md-4">
             <c-input
               disabled
-              id="position"
+              id="placement"
               class="row mb-1"
               type="text"
-              name="position"
-              v-model="employee.position"
-              :label="$t('labels.payroll.employee.position')"
-            />
-          </div>
-          <div class="col-md-4">
-            <c-input
-              disabled
-              id="gender"
-              class="row mb-1"
-              type="text"
-              name="gender"
-              v-model="employee.gender"
-              :label="$t('labels.payroll.employee.gender')"
+              name="placement"
+              v-model="employee.placement"
+              :label="$t('labels.payroll.employee.placement')"
             />
           </div>
           <div class="col-md-4">
@@ -233,28 +220,7 @@
               :label="$t('labels.payroll.employee.maritialStatus')"
             />
           </div>
-          <div class="col-md-4">
-            <c-input
-              disabled
-              id="taxNumber"
-              class="row mb-1"
-              type="text"
-              name="position"
-              v-model="employee.tax_number"
-              :label="$t('labels.payroll.employee.taxNumber')"
-            />
-          </div>
-          <div class="col-md-4">
-            <c-input
-              disabled
-              id="employeeType"
-              class="row mb-1"
-              type="text"
-              name="employeeType"
-              v-model="employee.employee_type"
-              :label="$t('labels.payroll.employee.employeeType')"
-            />
-          </div>
+
           <div class="col-md-4">
             <c-input
               disabled

@@ -31,7 +31,7 @@ const payrollAPI = new PayrollAPI();
 export default class Employee extends Vue {
   // data
   public modeData: any;
-  public periodId: string = "";
+  public periodCode: string = "";
   public periodData: any = ref([]);
   public rowEmployeeData: any = [];
   public employees: any = [];
@@ -88,48 +88,32 @@ export default class Employee extends Vue {
   formatNumberValue = formatNumberValue;
 
   // RECYCLE LIFE FUNCTION =======================================================
-  created() {
-    this.periodId = this.$route.params.id as string;
+
+  created(): void {
+    this.periodCode = this.$route.params.code as string;
+    console.log("route", this.$route.params);
+    console.log("periodCode", this.periodCode);
+    this.loadMockData();
+  }
+
+  mounted() {
+    this.periodCode = this.$route.params.id as string;
+    console.log("route", this.$route.params);
+    console.log("periodCode", this.periodCode);
+
     // this.loadData();
     this.loadMockData();
-    console.log("periodId", this.periodId);
-
-    // Watch for form changes to update generateOptions
-    // watch(
-    //   () => this.form.select_employee,
-    //   (newValue) => {
-    //     this.generateOptions.selectionMode = newValue;
-    //   }
-    // );
-    // watch(
-    //   () => this.form.departments,
-    //   (newValue) => {
-    //     this.generateOptions.departmentId = newValue;
-    //   }
-    // );
-    // watch(
-    //   () => this.form.positions,
-    //   (newValue) => {
-    //     this.generateOptions.positionId = newValue;
-    //   }
-    // );
-
-    // watch(
-    //   () => this.form.selectedEmployees,
-    //   (newValue) => {
-    //     this.generateOptions.selectedEmployeeIds = newValue;
-    //   }
-    // );
   }
 
   // GENERAL FUNCTION =======================================================
   handleTableAction(params: any) {
+    console.log("handleTableAction", params);
     switch (params.event) {
       case "EDIT":
         this.handleToEmployeePayroll(params.params);
         break;
       case "DELETE":
-        this.handleDeleteEmployeePayroll(params.params);
+        this.handledeletePayroll(params.params);
         break;
       default:
         break;
@@ -144,12 +128,12 @@ export default class Employee extends Vue {
 
   handleSaveDraft() {}
 
-  handleDeleteEmployeePayroll(params: any) {
-    this.deleteParam = params.id;
+  handledeletePayroll(params: any) {
+    this.deleteParam = params;
     this.dialogAction = "delete";
-    this.dialogMessage = this.$t(
-      "messages.payroll.confirm.deleteEmployeePayroll"
-    );
+    this.dialogMessage = this.$t("messages.payroll.confirm.deletePayroll", {
+      employeeName: params.employee_name,
+    });
     this.showDialog = true;
   }
 
@@ -162,18 +146,22 @@ export default class Employee extends Vue {
     if (this.dialogAction === "submit") {
       this.submitPayroll();
     } else if (this.dialogAction === "delete") {
-      this.deleteEmployeePayroll();
+      this.deletePayroll();
     } else if (this.dialogAction === "saveAndBack") {
-      this.savePayroll();
+      this.savePayrollPeriod();
     }
   }
 
   handleToEmployeePayroll(employee: any) {
+    this.periodCode = "pay0001";
+    console.log("handleToEmployeePayroll employeeID:", employee.employee_id);
+    console.log("handleToEmployeePayroll periodCOde", this.periodCode);
+
     this.$router.push({
       name: "EmployeePayrollDetail",
       params: {
-        periodId: this.periodData.id,
-        employeeId: employee.id,
+        periodCode: this.periodCode,
+        employeeId: employee.employee_id,
       },
     });
   }
@@ -215,7 +203,9 @@ export default class Employee extends Vue {
 
   async loadData() {
     try {
-      const { data } = await payrollPeriodsAPI.GetPayrollPeriods(this.periodId);
+      const { data } = await payrollPeriodsAPI.GetPayrollPeriods(
+        this.periodCode
+      );
       if (data) {
         this.periodData = data;
       } else {
@@ -225,7 +215,7 @@ export default class Employee extends Vue {
       console.log("data", data);
       console.log("periodData", this.periodData);
       // await Promise.all([this.loadDepartmentOptions(), this.loadPositionOptions()]);
-      // this.loadEmployeePayroll();
+      // this.loadPayroll();
       this.loadMockData();
     } catch (error) {
       getError(error);
@@ -236,7 +226,7 @@ export default class Employee extends Vue {
     this.rowEmployeeData = [
       {
         id: 1,
-        employe_id: "EMP001",
+        employee_id: "EMP001",
         employee_name: "John Doe",
         department_name: "IT",
         position_name: "Developer",
@@ -249,7 +239,7 @@ export default class Employee extends Vue {
       },
       {
         id: 2,
-        employe_id: "EMP002",
+        employee_id: "EMP002",
         employee_name: "Jane Smith",
         department_name: "Marketing",
         position_name: "Manager",
@@ -262,7 +252,7 @@ export default class Employee extends Vue {
       },
       {
         id: 3,
-        employe_id: "EMP003",
+        employee_id: "EMP003",
         employee_name: "Robert Johnson",
         department_name: "Finance",
         position_name: "Accountant",
@@ -337,9 +327,9 @@ export default class Employee extends Vue {
     ];
   }
 
-  async loadEmployeePayroll() {
+  async loadPayroll() {
     // tambahkan GetPayrollListByPeriodCode
-    const { data } = await payrollAPI.GetPayrollList({});
+    const { data } = await payrollAPI.GetPayrollList(this.periodData);
     if (data) {
       this.rowEmployeeData = data;
     } else {
@@ -397,10 +387,12 @@ export default class Employee extends Vue {
     }
   }
 
-  async savePayroll() {
+  async savePayrollPeriod() {
     try {
       this.isSaving = true;
-      getToastSuccess(this.$t("messages.payroll.success.savePayrollPeriods"));
+      getToastSuccess(
+        this.$t("messages.payroll.success.savePayrollPeriodPeriods")
+      );
     } catch (error) {
       getError(error);
     } finally {
@@ -409,18 +401,18 @@ export default class Employee extends Vue {
     }
   }
 
-  async deleteEmployeePayroll() {
+  async deletePayroll() {
     try {
       this.isSaving = true;
-      const { status2 } = await payrollPeriodsAPI.GetPayrollPeriods(
-        this.deleteParam
-      );
+      const { status2 } = await payrollAPI.DeletePayroll(this.deleteParam);
       if (status2.status === 0) {
         getToastSuccess(
-          this.$t("messages.payroll.success.deleteEmployeePayroll")
+          this.$t("messages.payroll.success.deletePayroll", {
+            employeeName: this.deleteParam.employee_name,
+          })
         );
         this.$nextTick();
-        this.loadEmployeePayroll();
+        this.loadPayroll();
       }
     } catch (error) {
       getError(error);
@@ -432,7 +424,8 @@ export default class Employee extends Vue {
   }
 
   // HELPER =======================================================
-  getStatusBadgeClass(status: string): string {
+  getStatusBadgeClass(params: string): string {
+    const status = params.toUpperCase();
     switch (status) {
       case "DRAFT":
         return "text-bg-secondary";
@@ -440,16 +433,14 @@ export default class Employee extends Vue {
         return "text-bg-warning";
       case "APPROVED":
         return "text-bg-success";
+      case "REJECTED":
+        return "text-bg-danger";
       case "READY TO PAYMENT":
         return "text-bg-info";
       case "PROCESSING":
         return "text-bg-info";
       case "COMPLETED":
         return "text-bg-primary";
-      case "COMPLETED":
-        return "text-bg-primary";
-      case "PROCESSING":
-        return "text-bg-danger";
       default:
         return "text-bg-secondary";
     }

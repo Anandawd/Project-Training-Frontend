@@ -326,7 +326,7 @@ export default [
     },
   },
   {
-    path: "periods/detail/:id?",
+    path: "periods/detail/:code?",
     name: "PeriodDetail",
     component: () =>
       import(
@@ -337,7 +337,7 @@ export default [
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
         { title: "title.home", url: "/" },
-        { title: "title.payroll", url: "/payroll/periods" },
+        { title: "title.payroll" },
         { title: "title.periods", url: "/payroll/periods" },
         { title: "title.periodsDetail", active: true },
       ],
@@ -345,7 +345,7 @@ export default [
     },
   },
   {
-    path: "periods/employee/:periodId/:employeeId",
+    path: "periods/employee/:periodCode/:employeeId",
     name: "EmployeePayrollDetail",
     component: () =>
       import(
@@ -361,7 +361,7 @@ export default [
         {
           title: "title.periodsDetail",
           url: (route: any) =>
-            `/payroll/periods/detail/${route.params.periodId}`,
+            `/payroll/periods/detail/${route.params.periodCode}`,
         },
         { title: "title.employeePayrollDetail", active: true },
       ],

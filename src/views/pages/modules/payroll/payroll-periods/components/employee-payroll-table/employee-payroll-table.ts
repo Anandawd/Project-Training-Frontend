@@ -43,14 +43,10 @@ export default class DeductionsTable extends Vue {
   detailCellRenderer: any;
 
   // RECYCLE LIFE FUNCTION ===================================================
-  created(): void {
-    console.log("table created");
-  }
   beforeMount(): void {
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
       actionGrid: {
-        insert: true,
         edit: true,
         delete: true,
       },
@@ -75,7 +71,7 @@ export default class DeductionsTable extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.employee.employeeId"),
-        field: "employe_id",
+        field: "employee_id",
         width: 100,
         enableRowGroup: true,
       },

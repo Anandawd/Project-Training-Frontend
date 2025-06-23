@@ -41,7 +41,7 @@ import * as Yup from "yup";
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
-  isSaving: any;
+  isSaving!: any;
   placementOptions!: any[];
   periodTypeOptions!: any[];
 

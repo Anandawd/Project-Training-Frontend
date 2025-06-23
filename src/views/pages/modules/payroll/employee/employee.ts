@@ -18,7 +18,7 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import CInputForm from "./employee-input-form/employee-input-form.vue";
+import CInputForm from "./components/employee-input-form/employee-input-form.vue";
 
 const employeeAPI = new EmployeeAPI();
 const organizationAPI = new OrganizationAPI();

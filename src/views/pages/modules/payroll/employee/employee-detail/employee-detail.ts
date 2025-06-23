@@ -5,7 +5,10 @@ import CInput from "@/components/input/input.vue";
 import CModal from "@/components/modal/modal.vue";
 import CSelect from "@/components/select/select.vue";
 import EmployeeAPI from "@/services/api/payroll/employee/employee";
+import LegalDocumentsAPI from "@/services/api/payroll/legal-documents/legal-document";
 import OrganizationAPI from "@/services/api/payroll/organization/organization";
+import PayrollAPI from "@/services/api/payroll/payroll/payroll";
+import SalaryAdjustmentAPI from "@/services/api/payroll/salary-adjustment/salary-adjustment";
 import { formatDateTimeUTC, formatFullDate } from "@/utils/format";
 import { getError } from "@/utils/general";
 import $global from "@/utils/global";
@@ -15,13 +18,16 @@ import { AgGridVue } from "ag-grid-vue3";
 import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 import * as Yup from "yup";
-import EmployeeInputForm from "../employee-input-form/employee-input-form.vue";
-import BenefitTableComponent from "./benefit-table-component/benefit-table-component.vue";
-import DocumentTableComponent from "./document-table-component/document-table-component.vue";
-import SalaryTableComponent from "./salary-table-component/salary-table-component.vue";
+import BenefitTableComponent from "../components/benefit-table-component/benefit-table-component.vue";
+import DocumentTableComponent from "../components/document-table-component/document-table-component.vue";
+import EmployeeInputForm from "../components/employee-input-form/employee-input-form.vue";
+import SalaryTableComponent from "../components/salary-table-component/salary-table-component.vue";
 
 const employeeAPI = new EmployeeAPI();
 const organizationAPI = new OrganizationAPI();
+const legalDocumentAPI = new LegalDocumentsAPI();
+const salaryAdjustmentAPI = new SalaryAdjustmentAPI();
+const payrollAPI = new PayrollAPI();
 
 @Options({
   components: {
@@ -419,6 +425,40 @@ export default class EmployeeDetail extends Vue {
         this.employeeData = data[0];
       }
       this.loadDropdown();
+    } catch (error) {
+      getError(error);
+    }
+  }
+
+  async loadAllTable() {
+    try {
+      const { data: documentData } =
+        await legalDocumentAPI.GetLegalDocumentListByEmployeeId(
+          this.employeeId
+        );
+      if (documentData) {
+        this.rowDocumentData = documentData[0];
+      } else {
+        this.rowDocumentData = [];
+      }
+
+      const { data: salaryData } =
+        await salaryAdjustmentAPI.GetSalaryAdjustmentListByEmployeeId(
+          this.employeeId
+        );
+      if (salaryData) {
+        this.rowSalaryData = salaryData[0];
+      } else {
+        this.rowSalaryData = [];
+      }
+
+      const { data: benefitData } =
+        await payrollAPI.GetPayrollComponentListByEmployeeId(this.employeeId);
+      if (benefitData) {
+        this.rowBenefitData = benefitData[0];
+      } else {
+        this.rowBenefitData = [];
+      }
     } catch (error) {
       getError(error);
     }

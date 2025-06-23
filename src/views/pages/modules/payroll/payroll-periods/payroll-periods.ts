@@ -17,7 +17,7 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import CInputForm from "./components/payroll-period-input-form/payroll-period-input-form";
+import CInputForm from "./components/payroll-period-input-form/payroll-period-input-form.vue";
 
 const payrollPeriodsAPI = new PayrollPeriodsAPI();
 const organizationAPI = new OrganizationAPI();
@@ -340,10 +340,13 @@ export default class Employee extends Vue {
     this.showForm = false;
     await this.$nextTick();
 
+    console.log("handleShowForm", { params, mode });
     this.modeData = mode;
     this.$nextTick(() => {
       if (mode === $global.modeData.insert) {
         this.inputFormElement.initialize();
+        console.log("inser", this.inputFormElement);
+        this.showForm = true;
       } else {
         this.loadEditData(params);
       }
@@ -411,9 +414,14 @@ export default class Employee extends Vue {
   }
 
   handleToPeriodDetail(params: any) {
+    // if (!params.period_code) {
+    //   getToastSuccess(this.$t("messages.payroll.error.notFoundPeriod"));
+    //   return;
+    // }
+    console.log("handleToPeriodDetail", params.period_code);
     this.$router.push({
       name: "PeriodDetail",
-      params: { id: params.id },
+      params: { code: params.period_code },
     });
   }
 

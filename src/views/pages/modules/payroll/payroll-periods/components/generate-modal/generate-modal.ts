@@ -1,13 +1,17 @@
 import CModal from "@/components/modal/modal.vue";
 import CSelect from "@/components/select/select.vue";
+import { focusOnInvalid } from "@/utils/validation";
 import "ag-grid-enterprise";
-import { reactive } from "vue";
+import { Form as CForm } from "vee-validate";
+import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
+import * as Yup from "yup";
 
 @Options({
   components: {
     CSelect,
     CModal,
+    CForm,
   },
   props: {
     isGenerating: {
@@ -43,7 +47,7 @@ import { Options, Vue } from "vue-class-component";
       default: (): any[] => [],
     },
   },
-  emits: ["close", "generate"],
+  emits: ["close", "save"],
 })
 export default class GenerateModal extends Vue {
   // props
@@ -57,19 +61,21 @@ export default class GenerateModal extends Vue {
   taxMethodOptions: any[] = [];
 
   // selector options
-  public selectEmployeeOptions: any = [
-    { code: "all", name: "All Employees" },
-    { code: "position", name: "By Position" },
-    { code: "department", name: "By Department" },
-    { code: "specific", name: "Select Specific Employees" },
+  public selectionTypeOptions: any = [
+    { code: "ALL", name: "All Employees" },
+    { code: "POSITION", name: "By Position" },
+    { code: "DEPARTMENT", name: "By Department" },
+    { code: "INDIVIDUAL", name: "Select Specific Employees" },
   ];
+
+  inputFormValidation: any = ref();
 
   // Form data
   form: any = reactive({
-    select_employee: "",
+    selection_type: "",
     departments: "",
     positions: "",
-    selectedEmployees: "",
+    employees: "",
     tax_income_type: "",
     tax_method: "",
   });
@@ -90,29 +96,52 @@ export default class GenerateModal extends Vue {
     },
   ];
 
-  // methods
-  async handleGenerate() {
-    this.$emit("generate", {
-      selectionMode: this.form.select_employee,
-      departments: this.form.departments,
-      positions: this.form.positions,
-      selectedEmployees: this.form.selectedEmployees,
-      taxIncomeType: this.form.tax_income_type,
-      taxMethod: this.form.tax_method,
-    });
+  async resetForm() {
+    this.inputFormValidation.resetForm();
+    await this.$nextTick();
+    this.form = {
+      selection_type: "",
+      departments: "",
+      positions: "",
+      employees: "",
+      tax_income_type: "",
+      tax_method: "",
+    };
   }
 
-  handleClose() {
+  onSubmit() {
+    this.inputFormValidation.$el.requestSubmit();
+  }
+
+  onSave() {
+    console.log("onSave", this.form);
+    this.$emit("save", this.form);
+  }
+
+  onClose() {
     this.$emit("close");
   }
 
-  selectEmployeeOption(option: string) {
-    this.form.select_employee = option;
+  onInvalidSubmit() {
+    focusOnInvalid();
+  }
+
+  onSelectionTypeChange(option: string) {
+    this.form.selection_type = option;
 
     // Reset related fields when changing selection mode
-    this.form.departments = [];
-    this.form.positions = [];
-    this.form.selectedEmployees = [];
+    this.form.departments = "";
+    this.form.positions = "";
+    this.form.employees = "";
+  }
+
+  // validation
+  get schema() {
+    return Yup.object().shape({
+      SelectionType: Yup.string().required(),
+      TaxIncome: Yup.string().required(),
+      TaxMethod: Yup.string().required(),
+    });
   }
 
   get isFormValid(): boolean {
@@ -120,13 +149,13 @@ export default class GenerateModal extends Vue {
       return false;
     }
 
-    switch (this.form.select_employee) {
-      case "department":
+    switch (this.form.selection_type) {
+      case "DEPARTMENT":
         return this.form.departments.length > 0;
-      case "position":
+      case "POSITION":
         return this.form.positions.length > 0;
-      case "specific":
-        return this.form.selectedEmployees.length > 0;
+      case "INDIVIDUAL":
+        return this.form.employees.length > 0;
       default:
         return true;
     }

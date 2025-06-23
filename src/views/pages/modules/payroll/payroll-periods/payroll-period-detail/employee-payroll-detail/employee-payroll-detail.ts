@@ -50,9 +50,9 @@ export default class EmployeePayrollDetail extends Vue {
   inputFormValidation: any = ref();
   inputFormElement: any = ref();
 
-  // Props and data from route
+  // data
   modeData: any;
-  periodId: any = "";
+  periodCode: any = "";
   employeeId: any = "";
 
   // UI State
@@ -166,7 +166,7 @@ export default class EmployeePayrollDetail extends Vue {
 
   // LIFECYCLE HOOKS
   created(): void {
-    this.periodId = this.$route.params.periodId;
+    this.periodCode = this.$route.params.periodCode;
     this.employeeId = this.$route.params.employeeId;
     this.loadData();
 
@@ -188,7 +188,7 @@ export default class EmployeePayrollDetail extends Vue {
 
       // In a real implementation, you would make API calls here
       // await Promise.all([
-      //   this.loadPeriodData(this.periodId),
+      //   this.loadPeriodData(this.periodCode),
       //   this.loadEmployeeData(this.employeeId)
       // ]);
 
@@ -564,7 +564,7 @@ export default class EmployeePayrollDetail extends Vue {
 
       const payrollData = {
         employee_id: this.employeeId,
-        period_id: this.periodId,
+        period_id: this.periodCode,
         basic_salary: this.form.base_salary,
         gross_salary: this.form.total_gross_salary,
         total_deductions: this.form.total_deductions_salary,
@@ -638,7 +638,7 @@ export default class EmployeePayrollDetail extends Vue {
 
       const payrollData = {
         employee_id: this.employeeId,
-        period_id: this.periodId,
+        period_id: this.periodCode,
         basic_salary: this.form.base_salary,
         gross_salary: this.form.total_gross_salary,
         total_deductions: this.form.total_deductions_salary,
@@ -793,7 +793,7 @@ export default class EmployeePayrollDetail extends Vue {
       this.savePayroll().then(() => {
         this.$router.push({
           name: "PeriodDetail",
-          params: { id: this.periodId },
+          params: { id: this.periodCode },
         });
       });
     }
@@ -809,7 +809,7 @@ export default class EmployeePayrollDetail extends Vue {
     } else {
       this.$router.push({
         name: "PeriodDetail",
-        params: { id: this.periodId },
+        params: { id: this.periodCode },
       });
     }
   }

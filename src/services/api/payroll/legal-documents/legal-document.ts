@@ -95,6 +95,15 @@ class LegalDocumentsAPI extends ConfigurationResource {
       method: "delete",
     });
   }
+
+  // employee detail
+  GetLegalDocumentListByEmployeeId(params: any) {
+    return request({
+      url: "GetLegalDocumentListByEmployeeId",
+      method: "get",
+      params: params,
+    });
+  }
 }
 
 export { LegalDocumentsAPI as default };
