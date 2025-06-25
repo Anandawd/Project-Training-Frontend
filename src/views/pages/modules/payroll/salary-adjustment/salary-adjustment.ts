@@ -49,6 +49,7 @@ export default class SalaryAdjustment extends Vue {
   public modeData: any;
   public showForm: boolean = false;
   public inputFormElement: any = ref();
+  public isSaving: boolean = false;
 
   // dialog
   public showDialog: boolean = false;
@@ -385,6 +386,7 @@ export default class SalaryAdjustment extends Vue {
   async handleShowForm(params: any, mode: any) {
     this.showForm = false;
     await this.$nextTick();
+    console.log("handleShowForm", { params, mode });
 
     this.modeData = mode;
     this.$nextTick(() => {
@@ -418,10 +420,10 @@ export default class SalaryAdjustment extends Vue {
   }
 
   handleDelete(params: any) {
-    if (!params || params.status !== "PENDING") {
-      getToastError(this.$t("messages.employee.error.cannotApproveNonPending"));
-      return;
-    }
+    // if (!params || params.status !== "PENDING") {
+    //   getToastError(this.$t("messages.employee.error.cannotApproveNonPending"));
+    //   return;
+    // }
 
     this.deleteParam = params.id;
     this.dialogMessage = this.$t(
@@ -467,7 +469,6 @@ export default class SalaryAdjustment extends Vue {
     } else if (this.dialogAction === "reject") {
       this.rejectData();
     }
-    this.showDialog = false;
   }
 
   refreshData(search: any) {
@@ -533,6 +534,8 @@ export default class SalaryAdjustment extends Vue {
 
   async insertData(formData: any) {
     try {
+      this.isSaving = true;
+      console.log("insertData", formData);
       const { status2 } = await salaryAdjustmentAPI.InsertSalaryAdjustment(
         formData
       );
@@ -540,16 +543,19 @@ export default class SalaryAdjustment extends Vue {
         getToastSuccess(
           this.$t("messages.employee.success.saveSalaryAdjustment")
         );
-        this.loadDataGrid(this.searchDefault);
         this.showForm = false;
+        this.loadDataGrid(this.searchDefault);
       }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
   async updateData(formData: any) {
     try {
+      this.isSaving = true;
       const { status2 } = await salaryAdjustmentAPI.UpdateSalaryAdjustment(
         formData
       );
@@ -562,11 +568,14 @@ export default class SalaryAdjustment extends Vue {
       }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
   async deleteData() {
     try {
+      this.isSaving = true;
       const { status2 } = await salaryAdjustmentAPI.DeleteSalaryAdjustment(
         this.deleteParam
       );
@@ -574,15 +583,19 @@ export default class SalaryAdjustment extends Vue {
         getToastSuccess(
           this.$t("messages.employee.success.deleteSalaryAdjustment")
         );
+        this.showDialog = false;
         this.loadDataGrid(this.searchDefault);
       }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
   async approveData() {
     try {
+      this.isSaving = true;
       const { status2 } =
         await salaryAdjustmentAPI.UpdateStatusSalaryAdjustment(
           this.approveParam.id,
@@ -592,16 +605,19 @@ export default class SalaryAdjustment extends Vue {
         getToastSuccess(
           this.$t("messages.employee.success.approveSalaryAdjustment")
         );
-        this.loadDataGrid(this.searchDefault);
         this.showDialog = false;
+        this.loadDataGrid(this.searchDefault);
       }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
   async rejectData() {
     try {
+      this.isSaving = true;
       const { status2 } =
         await salaryAdjustmentAPI.UpdateStatusSalaryAdjustment(
           this.approveParam.id,
@@ -611,11 +627,13 @@ export default class SalaryAdjustment extends Vue {
         getToastSuccess(
           this.$t("messages.employee.success.rejectSalaryAdjustment")
         );
-        this.loadDataGrid(this.searchDefault);
         this.showDialog = false;
+        this.loadDataGrid(this.searchDefault);
       }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 

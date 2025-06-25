@@ -123,9 +123,8 @@ class SalaryAdjustmentAPI extends ConfigurationResource {
   // employee detail
   GetSalaryAdjustmentListByEmployeeId(params: any) {
     return request({
-      url: "GetPayrollComponentListByEmployeeId",
+      url: "GetPayEmployeeSalaryByEmployeeID/" + params,
       method: "get",
-      params: params,
     });
   }
 }

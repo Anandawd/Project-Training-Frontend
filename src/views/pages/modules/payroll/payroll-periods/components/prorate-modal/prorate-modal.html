@@ -1,0 +1,103 @@
+<c-modal
+  :title="$t('buttons.generatePayroll')"
+  size="xl"
+  @close="onClose"
+  @save="onSubmit"
+  :isSaving="isGenerating"
+  class="generate-payroll-modal"
+>
+  <div @click.stop class="generate-modal-content">
+    <c-form
+      @submit="onSave"
+      ref="inputFormValidation"
+      :validation-schema="schema"
+      @invalid-submit="onInvalidSubmit"
+      class="input-form row"
+      v-slot="{resetForm}"
+    >
+      <!-- Employee Selection Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-divide text-warning"></i>
+          </div>
+          <div>
+            <h6 class="section-title">
+              {{$t('labels.payroll.payroll.prorate')}}
+            </h6>
+            <small class="text-muted"
+              >{{$t('labels.payroll.payroll.prorateInstruction')}}</small
+            >
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <c-input
+              required
+              name="WorkDays"
+              id="WorkDays"
+              class="row mb-1"
+              type="number"
+              v-model="form.total_workdays"
+              :label="$t('labels.payroll.payroll.totalWorkDaysInMonth')"
+              @change="onWorkDaysChange"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-input
+              required
+              name="ActualWorkDays"
+              id="ActualWorkDays"
+              class="row mb-1"
+              type="number"
+              v-model="form.actual_workdays"
+              :label="$t('labels.payroll.payroll.totalActualWorkDays')"
+              @change="onWorkDaysChange"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-input
+              disabled
+              name="ProrateFactor"
+              id="ProrateFactor"
+              class="row mb-1"
+              type="number"
+              v-model="form.prorata_factor"
+              :label="$t('labels.payroll.payroll.prorateFactor')"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end mt-4">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          @click="onClose"
+          :disabled="isGenerating"
+        >
+          <i class="fas fa-times me-1"></i>
+          {{$t('buttons.cancel')}}
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          @click="onSubmit"
+          :disabled="isGenerating"
+        >
+          <div
+            v-if="isGenerating"
+            class="spinner-border spinner-border-sm me-2"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <i v-else class="fas fa-play me-1"></i>
+          {{isGenerating ? 'Saving...' : $t('buttons.save')}}
+        </button>
+      </div>
+    </c-form>
+  </div>
+</c-modal>

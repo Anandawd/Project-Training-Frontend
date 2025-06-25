@@ -99,9 +99,8 @@ class LegalDocumentsAPI extends ConfigurationResource {
   // employee detail
   GetLegalDocumentListByEmployeeId(params: any) {
     return request({
-      url: "GetLegalDocumentListByEmployeeId",
+      url: "GetPayEmployeeDocumentByEmployeeID/" + params,
       method: "get",
-      params: params,
     });
   }
 }

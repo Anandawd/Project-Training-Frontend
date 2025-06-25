@@ -46,12 +46,95 @@ class PayrollAPI extends ConfigurationResource {
     });
   }
 
-  // employee detail
+  // employee payroll
   GetPayrollComponentListByEmployeeId(params: any) {
     return request({
-      url: "GetPayrollComponentListByEmployeeId",
+      url: "GetPayEmployeePayrollComponentByEmployeeID/" + params,
       method: "get",
-      params: params,
+    });
+  }
+
+  InsertEmployeePayroll(params: any) {
+    return request({
+      url: "InsertPayEmployeePayrollComponentList",
+      method: "post",
+      data: params,
+    });
+  }
+
+  GetEmployeePayroll(params: any) {
+    return request({
+      url: "GetPayEmployeePayrollComponent/" + params,
+      method: "get",
+    });
+  }
+
+  UpdateEmployeePayroll(params: any) {
+    return request({
+      url: "UpdateEmployeePayrollComponentList",
+      method: "put",
+      data: params,
+    });
+  }
+
+  DeleteEmployeePayroll(params: any) {
+    return request({
+      url: "DeletePayEmployeePayrollComponent/" + params,
+      method: "delete",
+    });
+  }
+
+  // generate
+  GetEmployeeListByPlacementCode(params: any) {
+    return request({
+      url: "GetPayEmployeeByPlacementCode/" + params,
+      method: "get",
+    });
+  }
+  GetPositionListByPlacementCode(params: any) {
+    return request({
+      url: "GetPayCfgInitPositionByPlacementCode/" + params,
+      method: "get",
+    });
+  }
+  GetDepartmentListByPlacementCode(params: any) {
+    return request({
+      url: "GetPayCfgInitDepartmentByPlacementCode/" + params,
+      method: "get",
+    });
+  }
+  GetConstTaxMethod() {
+    return request({
+      url: "GetPayConstTaxMethodList",
+      method: "get",
+    });
+  }
+  GetConstTaxIncomeType() {
+    return request({
+      url: "GetPayConstTaxIncomeTypeList",
+      method: "get",
+    });
+  }
+
+  GeneratePayroll(params: any) {
+    return request({
+      url: "GeneratePayrollBySelection",
+      method: "post",
+      data: params,
+    });
+  }
+
+  // payroll list
+  GetPayrollListByPeriodCode(params: any) {
+    return request({
+      url: "GetPayPayrollByPeriodCode/" + params,
+      method: "get",
+    });
+  }
+  GetPayrollDetailByPeriodCode(params: any) {
+    return request({
+      url: "GetPayPayrollDetailByPeriodCode/" + params,
+      method: "get",
     });
   }
 }

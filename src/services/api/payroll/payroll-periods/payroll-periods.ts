@@ -31,6 +31,13 @@ class PayrollPeriodsAPI extends ConfigurationResource {
     });
   }
 
+  GetPayrollPeriodsByPeriodCode(params: any) {
+    return request({
+      url: "GetPayPayrollPeriodByPeriodCode/" + params,
+      method: "get",
+    });
+  }
+
   UpdatePayrollPeriods(params: any) {
     return request({
       url: "UpdatePayrollPeriodList",
@@ -51,6 +58,22 @@ class PayrollPeriodsAPI extends ConfigurationResource {
     return request({
       url: "GetPayPayrollPeriodCount",
       method: "get",
+    });
+  }
+
+  GetPayrollStatistic(params: any) {
+    return request({
+      url: "GetPayPayrollPeriodCountByPeriodCode/" + params,
+      method: "get",
+    });
+  }
+
+  // update status
+  UpdateStatusPayrollPeriod(params: any, status: any) {
+    return request({
+      url: `UpdatePayPayrollPeriodStatus/${params}/${status}`,
+      method: "put",
+      data: params,
     });
   }
 }

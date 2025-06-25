@@ -1,5 +1,4 @@
 <c-modal
-  v-show="showGenerateModal"
   :title="$t('buttons.generatePayroll')"
   size="xl"
   @close="onClose"
@@ -63,7 +62,7 @@
                 name="Departments"
                 labelName="name"
                 keyName="code"
-                v-model="form.departments"
+                v-model="form.department_codes"
                 :label="$t('labels.payroll.payroll.selectDepartment')"
                 :options="departmentsOptions"
                 :columnOptions="columnOptions"
@@ -82,7 +81,7 @@
                 name="Positions"
                 labelName="name"
                 keyName="code"
-                v-model="form.positions"
+                v-model="form.position_codes"
                 :label="$t('labels.payroll.payroll.selectPosition')"
                 :options="positionsOptions"
                 :columnOptions="columnOptions"
@@ -101,7 +100,7 @@
                 name="Employees"
                 labelName="name"
                 keyName="code"
-                v-model="form.employees"
+                v-model="form.employee_ids"
                 :label="$t('labels.payroll.payroll.selectSpecificEmployees')"
                 :options="employeesOptions"
                 :columnOptions="columnOptions"
@@ -203,7 +202,7 @@
         </div>
         <small class="text-muted mt-1">
           <i class="fas fa-info-circle me-1"></i>
-          Processing {{calculatedEmployeeCount}} employees with
+          Processing {{calculatedEmployeeCount}} employee_ids with
           {{payrollComponents}} components
         </small>
       </div>

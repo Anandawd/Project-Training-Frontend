@@ -2,7 +2,7 @@ import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import Checklist from "@/components/ag_grid-framework/checklist.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
-import { formatDate, formatDateTime, formatNumber2 } from "@/utils/format";
+import { formatDate, formatDateTime2, formatNumber2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -85,9 +85,9 @@ export default class SalaryTableComponent extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.employee.adjustmentReason"),
-        field: "adjustment_reason",
+        field: "AdjustmentReasonName",
         width: 150,
-        enableRowGroup: false,
+        enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.effectiveDate"),
@@ -99,29 +99,91 @@ export default class SalaryTableComponent extends Vue {
         valueFormatter: formatDate,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.endDate"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "end_date",
-        width: 120,
-        enableRowGroup: true,
-        valueFormatter: formatDate,
-      },
-      {
         headerName: this.$t("commons.table.payroll.employee.baseSalary"),
         headerClass: "align-header-right",
         cellClass: "text-right",
         field: "base_salary",
-        width: 150,
+        width: 120,
         enableRowGroup: true,
         valueFormatter: formatNumber2,
       },
       {
-        headerName: this.$t("commons.table.status"),
+        headerName: this.$t("commons.table.payroll.employee.newSalary"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
+        field: "new_salary",
+        width: 120,
+        enableRowGroup: true,
+        valueFormatter: formatNumber2,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.difference"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
+        field: "difference_amount",
+        width: 100,
+        enableRowGroup: true,
+        valueFormatter: formatNumber2,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.percentage"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "percentage_change",
+        width: 100,
+        enableRowGroup: true,
+        valueFormatter: (params: any) => {
+          const value = parseFloat(params.value);
+
+          return !isNaN(value) ? `${value.toFixed(2)}%` : "0%";
+        },
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.status"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "status",
+        width: 120,
+        enableRowGroup: true,
+        cellRenderer: (params: any) => {
+          const status = params.value;
+          let badgeClass = "";
+          let statusText = "";
+
+          switch (status) {
+            case "PENDING":
+              badgeClass = "bg-warning";
+              statusText = "Pending";
+              break;
+            case "APPROVED":
+              badgeClass = "bg-success";
+              statusText = "Approved";
+              break;
+            case "REJECTED":
+              badgeClass = "bg-danger";
+              statusText = "Rejected";
+              break;
+            case "CANCELLED":
+              badgeClass = "bg-danger";
+              statusText = "Cancelled";
+              break;
+            case "APPLIED":
+              badgeClass = "bg-primary";
+              statusText = "Applied";
+              break;
+            default:
+              badgeClass = "bg-secondary";
+              statusText = status;
+          }
+          return `<span class="badge ${badgeClass} py-1 px-3">${statusText}</span>`;
+        },
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.applied"),
         headerClass: "align-header-center",
         cellClass: "text-center",
         field: "is_current",
-        width: 100,
+        width: 80,
         enableRowGroup: true,
         cellRenderer: "checklistRenderer",
       },
@@ -137,8 +199,7 @@ export default class SalaryTableComponent extends Vue {
         cellClass: "text-center",
         field: "updated_at",
         width: 120,
-        enableRowGroup: false,
-        valueFormatter: formatDateTime,
+        valueFormatter: formatDateTime2,
       },
       {
         headerName: this.$t("commons.table.updatedBy"),
@@ -146,7 +207,7 @@ export default class SalaryTableComponent extends Vue {
         cellClass: "text-center",
         field: "updated_by",
         width: 120,
-        enableRowGroup: false,
+        enableRowGroup: true,
       },
       {
         headerName: this.$t("commons.table.createdAt"),
@@ -154,8 +215,7 @@ export default class SalaryTableComponent extends Vue {
         cellClass: "text-center",
         field: "created_at",
         width: 120,
-        enableRowGroup: false,
-        valueFormatter: formatDateTime,
+        valueFormatter: formatDateTime2,
       },
       {
         headerName: this.$t("commons.table.createdBy"),
@@ -163,7 +223,7 @@ export default class SalaryTableComponent extends Vue {
         cellClass: "text-center",
         field: "created_by",
         width: 120,
-        enableRowGroup: false,
+        enableRowGroup: true,
       },
     ];
     this.context = { componentParent: this };
@@ -236,11 +296,11 @@ export default class SalaryTableComponent extends Vue {
   }
 
   handleEdit(params: any) {
-    this.$emit("edit", { type: "SALARY", params });
+    this.$emit("edit", { type: "SALARY", event: "EDIT", params });
   }
 
   handleDelete(params: any) {
-    this.$emit("delete", { type: "SALARY", params });
+    this.$emit("delete", { type: "SALARY", event: "DELETEs", params });
   }
 
   refreshGrid() {

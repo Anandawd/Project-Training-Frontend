@@ -18,19 +18,15 @@ import * as Yup from "yup";
       type: Boolean,
       default: false,
     },
-    showGenerateModal: {
-      type: Boolean,
-      default: false,
-    },
     periodData: {
       type: Object,
       default: (): any => {},
     },
-    positionsOptions: {
+    position_codesOptions: {
       type: Array,
       default: (): any[] => [],
     },
-    departmentsOptions: {
+    department_codesOptions: {
       type: Array,
       default: (): any[] => [],
     },
@@ -52,13 +48,12 @@ import * as Yup from "yup";
 export default class GenerateModal extends Vue {
   // props
   isGenerating: boolean;
-  showGenerateModal!: any;
-  periodData: any = {};
-  positionsOptions: any[] = [];
-  departmentsOptions: any[] = [];
-  employeesOptions: any[] = [];
-  taxIncomeOptions: any[] = [];
-  taxMethodOptions: any[] = [];
+  periodData!: any;
+  position_codesOptions!: any[];
+  department_codesOptions!: any[];
+  employeesOptions!: any[];
+  taxIncomeOptions!: any[];
+  taxMethodOptions!: any[];
 
   // selector options
   public selectionTypeOptions: any = [
@@ -72,10 +67,14 @@ export default class GenerateModal extends Vue {
 
   // Form data
   form: any = reactive({
+    period_id: this.periodData.id ? this.periodData.id : "",
+    placement_code: this.periodData.placement_code
+      ? this.periodData.placement_code
+      : "",
     selection_type: "",
-    departments: "",
-    positions: "",
-    employees: "",
+    department_codes: "",
+    position_codes: "",
+    employee_ids: "",
     tax_income_type: "",
     tax_method: "",
   });
@@ -100,10 +99,14 @@ export default class GenerateModal extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
+      period_id: this.periodData.id ? this.periodData.id : "",
+      placement_code: this.periodData.placement_code
+        ? this.periodData.placement_code
+        : "",
       selection_type: "",
-      departments: "",
-      positions: "",
-      employees: "",
+      department_codes: "",
+      position_codes: "",
+      employee_ids: "",
       tax_income_type: "",
       tax_method: "",
     };
@@ -114,8 +117,13 @@ export default class GenerateModal extends Vue {
   }
 
   onSave() {
-    console.log("onSave", this.form);
-    this.$emit("save", this.form);
+    const formData = {
+      ...this.form,
+      period_id: this.periodData.id,
+      placement_code: this.periodData.placement_code,
+    };
+    console.log("onSave", formData);
+    this.$emit("save", formData);
   }
 
   onClose() {
@@ -126,13 +134,14 @@ export default class GenerateModal extends Vue {
     focusOnInvalid();
   }
 
-  onSelectionTypeChange(option: string) {
-    this.form.selection_type = option;
+  onSelectionTypeChange(event: any) {
+    console.log("onSelectionTypeChange", event);
+    this.form.selection_type = event.target.value;
 
     // Reset related fields when changing selection mode
-    this.form.departments = "";
-    this.form.positions = "";
-    this.form.employees = "";
+    this.form.department_codes = "";
+    this.form.position_codes = "";
+    this.form.employee_ids = "";
   }
 
   // validation
@@ -151,11 +160,11 @@ export default class GenerateModal extends Vue {
 
     switch (this.form.selection_type) {
       case "DEPARTMENT":
-        return this.form.departments.length > 0;
+        return this.form.department_codes.length > 0;
       case "POSITION":
-        return this.form.positions.length > 0;
+        return this.form.position_codes.length > 0;
       case "INDIVIDUAL":
-        return this.form.employees.length > 0;
+        return this.form.employee_ids.length > 0;
       default:
         return true;
     }

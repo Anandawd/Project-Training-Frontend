@@ -1,0 +1,97 @@
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">{{$t('title.earnings')}}</h3>
+    </div>
+    <div class="card-body">
+      <div class="row mb-3">
+        <div
+          v-for="component in earningsComponent"
+          :key="component.id"
+          class="col-md-4"
+        >
+          <div class="d-flex justify-content-end mb-1" style="min-height: 16px">
+            <font-awesome-icon
+              v-show="component.is_taxable"
+              :icon="['fas', 'file-invoice-dollar']"
+              class="me-1 text-info"
+              data-bs-toggle="tooltip"
+              title="Included in Tax Income (PPH 21)"
+            />
+            <font-awesome-icon
+              v-show="component.is_included_in_bpjs_health"
+              :icon="['fas', 'medkit']"
+              class="me-1 text-success"
+              data-bs-toggle="tooltip"
+              title="Included in BPJS Kesehatan"
+            />
+            <font-awesome-icon
+              v-show="component.is_included_in_bpjs_employee"
+              :icon="['fas', 'hard-hat']"
+              class="me-1 text-warning"
+              data-bs-toggle="tooltip"
+              title="Included in BPJS Ketenagakerjaan"
+            />
+            <font-awesome-icon
+              v-show="component.is_prorated"
+              :icon="['fas', 'pizza-slice']"
+              class="me-1 text-info"
+              data-bs-toggle="tooltip"
+              title="Included in Prorate"
+            />
+          </div>
+          <div class="row mb-1">
+            <div class="col-9">
+              <c-input
+                :disabled="component.is_fixed"
+                type="number"
+                :name="component.name"
+                :id="component.name"
+                class=""
+                :max="9999999999"
+                :min="0"
+                :label="component.name"
+                v-model="component.amount"
+                formatted
+                showZeroNumber
+                @change="onComponentAmountChange(component)"
+              />
+            </div>
+            <div class="col-3">
+              <c-input
+                :disabled="component.is_fixed"
+                type="number"
+                :name="component.quantity"
+                :id="component.name"
+                class=""
+                :label="$t('labels.payroll.payroll.qty')"
+                v-model="component.quantity"
+                showZeroNumber
+                @change="onComponentQuantityChange(component)"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="row">
+        <div class="col-6">
+          <strong class="text-muted"
+            >{{$t('labels.payroll.payroll.totalGrossSalary')}}</strong
+          >
+        </div>
+        <div class="col-6 d-flex justify-content-end">
+          Rp{{formatCurrency(form.total_gross_salary)}}
+        </div>
+      </div>
+    </div>
+  </div>
+</c-form>

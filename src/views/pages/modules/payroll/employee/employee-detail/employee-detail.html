@@ -309,317 +309,41 @@
       </div>
     </div>
 
-    <!-- modal document -->
-    <c-modal
-      v-show="showModal"
-      :title="getModalTitle()"
-      size="lg"
-      @close="closeModal"
-      @save="handleSaveModal"
+    <!-- document modal -->
+    <document-modal
+      ref="documentFormElement"
+      v-show="showModal && dataType  === 'DOCUMENT'"
+      :modeData="modalMode"
       :isSaving="isSaving"
-    >
-      <div @click.stop>
-        <!-- document modal -->
-        <c-form
-          v-if="dataType === 'DOCUMENT'"
-          ref="documentFormRef"
-          :validation-schema="documentValidationSchema"
-          @submit="handleSaveModal"
-          class="row"
-        >
-          <div class="col-md-6">
-            <c-select
-              required
-              offset="right"
-              class="row mb-1"
-              name="DocumentType"
-              labelName="name"
-              keyName="code"
-              v-model="currentForm.document_type"
-              :label="$t('labels.payroll.employee.documentType')"
-              :options="documentTypeOptions"
-              validate
-            />
-          </div>
-          <div class="col-md-6">
-            <c-input
-              type="file"
-              name="DocumentFile"
-              id="DocumentFile"
-              class="row mb-1"
-              :label="$t('labels.payroll.employee.documentFile')"
-              @change="handleFileChange"
-              :required="modalMode === $global.modeData.insert"
-              validate
-            />
-            <div
-              v-if="modalMode === $global.modeData.edit && currentForm.file_name"
-              class="mt-1"
-            >
-              <small class="text-muted">
-                {{$t('labels.payroll.employee.currentFile')}}: {{
-                currentForm.file_name }}
-              </small>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <c-datepicker
-              required
-              name="IssueDate"
-              id="IssueDate"
-              customLabelClass="col-3 mb-1"
-              type="date"
-              valueType="YYYY-MM-DD"
-              format="DD/MM/YYYY"
-              :label="$t('labels.payroll.employee.issueDate')"
-              v-model="currentForm.issue_date"
-              validate
-            />
-          </div>
-          <div class="col-md-6">
-            <c-datepicker
-              id="ExpiryDate"
-              customLabelClass="col-3 mb-1"
-              type="date"
-              valueType="YYYY-MM-DD"
-              format="DD/MM/YYYY"
-              name="ExpiryDate"
-              :label="$t('labels.payroll.employee.expiryDate')"
-              v-model="currentForm.expiry_date"
-              validate
-            />
-          </div>
-          <div class="col-md-6">
-            <c-input
-              type="textarea"
-              name="Remark"
-              id="Remark"
-              class="row mb-1"
-              :label="$t('labels.remark')"
-              v-model="currentForm.remark"
-            />
-          </div>
-        </c-form>
+      :documentTypeOptions="documentTypeOptions"
+      @close="showModal=false"
+      @save="handleSaveModal"
+    />
 
-        <!-- salary modal -->
-        <c-form
-          v-if="dataType === 'SALARY'"
-          ref="salaryFormRef"
-          :validation-schema="salaryValidationSchema"
-          @submit="handleSaveModal"
-          class="row"
-        >
-          <div class="col-md-6">
-            <c-input
-              required
-              formatted
-              showZeroNumber
-              type="number"
-              name="BaseSalary"
-              id="BaseSalary"
-              class="row mb-1"
-              :label="$t('labels.payroll.employee.baseSalary')"
-              :disabled="modalMode === $global.modeData.edit"
-              v-model="currentForm.base_salary"
-              validate
-            />
-          </div>
-          <div class="col-md-6">
-            <c-datepicker
-              required
-              name="EffectiveDate"
-              id="EffectiveDate"
-              customLabelClass="col-3  mb-1"
-              type="date"
-              valueType="YYYY-MM-DD"
-              format="DD/MM/YYYY"
-              :label="$t('labels.payroll.employee.effectiveDate')"
-              :disabled="modalMode === $global.modeData.edit"
-              v-model="currentForm.effective_date"
-              validate
-            />
-          </div>
-          <div class="col-md-6">
-            <c-select
-              required
-              offset="right"
-              class="row mb-1"
-              name="AdjustmentReason"
-              labelName="name"
-              keyName="code"
-              v-model="currentForm.adjustment_reason"
-              :disabled="modalMode === $global.modeData.edit"
-              :label="$t('labels.payroll.employee.adjustmentReason')"
-              :options="adjustmentReasonOptions"
-              validate
-            />
-          </div>
-          <div class="col-md-6">
-            <c-input
-              type="textarea"
-              name="Remark"
-              id="Remark"
-              class="row mb-1"
-              :label="$t('labels.remark')"
-              v-model="currentForm.remark"
-              validate
-            />
-          </div>
-        </c-form>
+    <!-- salary modal -->
+    <salary-modal
+      ref="salaryFormElement"
+      v-show="showModal && dataType  === 'SALARY'"
+      :modeData="modalMode"
+      :isSaving="isSaving"
+      :adjustmentReasonOptions="adjustmentReasonOptions"
+      @close="showModal=false"
+      @save="handleSaveModal"
+    />
 
-        <!-- benefit modal -->
-        <c-form
-          v-if="dataType === 'BENEFIT'"
-          ref="benefitFormRef"
-          :validation-schema="benefitValidationSchema"
-          @submit="handleSaveModal"
-          class="row"
-        >
-          <div class="col-md-6">
-            <c-select
-              required
-              offset="right"
-              class="row mb-1"
-              name="ComponentType"
-              labelName="name"
-              keyName="code"
-              v-model="currentForm.component_type"
-              :label="$t('labels.payroll.payroll.type')"
-              :options="componentTypeOptions"
-              @change="onComponentTypeChange"
-              :disabled="modalMode === $global.modeData.edit"
-              validate
-            />
-          </div>
-          <div class="col-md-6">
-            <c-select
-              required
-              offset="right"
-              class="row mb-1"
-              name="ComponentCode"
-              labelName="name"
-              keyName="code"
-              v-model="currentForm.payroll_component_code"
-              :label="$t('labels.payroll.payroll.component')"
-              :options="filteredComponentOptionsWithDetails"
-              :columnOptions="columnOptions"
-              :disabled="!currentForm.component_type || modalMode === $global.modeData.edit"
-              @change="onComponentChange"
-              validate
-            />
-          </div>
-          <div class="col-md-6">
-            <div class="row mb-1">
-              <div class="col-9">
-                <c-input
-                  :required="currentForm.is_override"
-                  formatted
-                  showZeroNumber
-                  type="number"
-                  customLabelClass="col-4"
-                  :label="$t('labels.payroll.payroll.amount')"
-                  v-model="currentForm.amount"
-                  :disabled="!currentForm.payroll_component_code || !currentForm.is_override"
-                  :min="currentForm.is_override ? 1 : undefined"
-                  validate
-                />
-              </div>
-              <div class="col-3 d-flex">
-                <c-checkbox
-                  class="align-items-center"
-                  name="Amount"
-                  id="Amount"
-                  :label="$t('labels.override')"
-                  v-model="currentForm.is_override"
-                  :disabled="!currentForm.payroll_component_code || isFixedComponent"
-                  @change="onOverrideAmountChange"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <c-input
-              required
-              type="number"
-              name="Qty"
-              id="Qty"
-              class="row mb-1"
-              :label="$t('labels.payroll.payroll.quantity')"
-              v-model="currentForm.qty"
-              :min="1"
-              :disabled="!currentForm.payroll_component_code"
-              validate
-            />
-          </div>
-          <div class="col-md-6">
-            <c-datepicker
-              required
-              name="EffectiveDate"
-              id="EffectiveDate"
-              customLabelClass="col-3 mb-1"
-              type="date"
-              valueType="YYYY-MM-DD"
-              format="DD/MM/YYYY"
-              :label="$t('labels.payroll.employee.effectiveDate')"
-              v-model="currentForm.effective_date"
-              validate
-            />
-          </div>
-          <div class="col-md-6">
-            <c-datepicker
-              id="EndDate"
-              name="EndDate"
-              customLabelClass="col-3 mb-1"
-              :label="$t('labels.payroll.employee.endDate')"
-              type="date"
-              valueType="YYYY-MM-DD"
-              format="DD/MM/YYYY"
-              v-model="currentForm.end_date"
-              validate
-            />
-          </div>
-          <div class="col-md-6">
-            <c-input
-              type="textarea"
-              name="Remark"
-              id="Remark"
-              class="row mb-1"
-              :label="$t('labels.remark')"
-              v-model="currentForm.remark"
-            />
-          </div>
-        </c-form>
-
-        <!-- button -->
-        <div class="d-flex justify-content-end mt-2">
-          <button
-            type="button"
-            n
-            class="btn btn-danger mr-1 px-3"
-            @click="closeModal"
-            :disabled="isSaving"
-          >
-            <i class="fa fa-times" aria-hidden="true"></i>
-            {{$t('buttons.cancel')}}
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary px-3"
-            @click="handleSaveModal"
-            :disabled="!isValidForm || isSaving"
-          >
-            <span
-              v-if="isSaving"
-              class="spinner-border spinner-border-sm mr-1"
-              role="status"
-              aria-hidden="true"
-            ></span>
-            <i class="fa fa-save"></i>
-            {{$t('buttons.save')}}
-          </button>
-        </div>
-      </div>
-    </c-modal>
+    <!-- benefit modal -->
+    <benefit-modal
+      ref="benefitFormElement"
+      v-show="showModal && dataType  === 'BENEFIT'"
+      :modeData="modalMode"
+      :isSaving="isSaving"
+      :typeOptions="componentTypeOptions"
+      :earningComponentOptions="earningsComponentOptions"
+      :deductionComponentOptions="deductionsComponentOptions"
+      :statutoryComponentOptions="statutoryComponentOptions"
+      @close="showModal=false"
+      @save="handleSaveModal"
+    />
 
     <!-- dialog -->
     <c-dialog

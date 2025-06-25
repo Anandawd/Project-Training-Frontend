@@ -62,7 +62,7 @@
               <div class="col-4 text-muted">
                 <strong>Placement</strong>
               </div>
-              <div class="col-8">: {{periodData.placement_code}}</div>
+              <div class="col-8">: {{periodData.Placement}}</div>
             </div>
             <div class="row mb-2">
               <div class="col-4 text-muted">
@@ -152,12 +152,12 @@
     </div>
 
     <generate-modal
+      v-show="showGenerateModal"
       :isGenerating="isGenerating"
-      :showGenerateModal="showGenerateModal"
       :period-data="periodData"
       :positions-options="positionsOptions"
       :departments-options="departmentsOptions"
-      :employees-options="employeesOptions"
+      :employees-options="employeeOptions"
       :tax-income-options="taxIncomeOptions"
       :tax-method-options="taxMethodOptions"
       @close="showGenerateModal = false"

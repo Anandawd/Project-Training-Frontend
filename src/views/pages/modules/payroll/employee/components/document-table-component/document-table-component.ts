@@ -84,7 +84,7 @@ export default class DocumentTableComponent extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.employee.documentType"),
-        field: "document_type",
+        field: "DocumentType",
         width: 150,
         enableRowGroup: true,
       },

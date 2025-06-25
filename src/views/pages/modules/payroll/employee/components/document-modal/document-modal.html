@@ -1,0 +1,135 @@
+<c-modal
+  :title="title"
+  size="xl"
+  @close="onClose"
+  @save="onSubmit"
+  :isSaving="isSaving"
+  class="generate-payroll-modal"
+>
+  <div @click.stop class="generate-modal-content">
+    <c-form
+      @submit="onSave"
+      ref="inputFormValidation"
+      :validation-schema="schema"
+      @invalid-submit="onInvalidSubmit"
+      class="input-form row"
+      v-slot="{resetForm}"
+    >
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-users text-primary"></i>
+          </div>
+          <div>
+            <h6 class="section-title">
+              {{$t('labels.payroll.payroll.employeeSelection')}}
+            </h6>
+            <small class="text-muted"
+              >{{$t('labels.payroll.payroll.employeeSelectionInstruction')}}</small
+            >
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <c-select
+              required
+              offset="right"
+              class="row mb-1"
+              name="DocumentType"
+              labelName="name"
+              keyName="code"
+              v-model="form.document_type"
+              :label="$t('labels.payroll.employee.documentType')"
+              :options="documentTypeOptions"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-input
+              type="file"
+              name="DocumentFile"
+              id="DocumentFile"
+              class="row mb-1"
+              :label="$t('labels.payroll.employee.documentFile')"
+              @change="handleFileChange"
+              :required="modalMode === $global.modeData.insert"
+            />
+            <div
+              v-if="modalMode === $global.modeData.edit && form.file_name"
+              class="mt-1"
+            >
+              <small class="text-muted">
+                {{$t('labels.payroll.employee.currentFile')}}: {{ form.file_name
+                }}
+              </small>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <c-datepicker
+              required
+              name="IssueDate"
+              id="IssueDate"
+              customLabelClass="col-3 mb-1"
+              type="date"
+              valueType="YYYY-MM-DD"
+              format="DD/MM/YYYY"
+              :label="$t('labels.payroll.employee.issueDate')"
+              v-model="form.issue_date"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-datepicker
+              id="ExpiryDate"
+              customLabelClass="col-3 mb-1"
+              type="date"
+              valueType="YYYY-MM-DD"
+              format="DD/MM/YYYY"
+              name="ExpiryDate"
+              :label="$t('labels.payroll.employee.expiryDate')"
+              v-model="form.expiry_date"
+            />
+          </div>
+          <div class="col-md-6">
+            <c-input
+              type="textarea"
+              name="Remark"
+              id="Remark"
+              class="row mb-1"
+              :label="$t('labels.remark')"
+              v-model="form.remark"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end mt-4">
+        <button
+          type="button"
+          class="btn btn-danger mr-1"
+          @click="onClose"
+          :disabled="isSaving"
+        >
+          <i class="fas fa-times me-1"></i>
+          {{$t('buttons.cancel')}}
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          @click="onSubmit"
+          :disabled="isSaving"
+        >
+          <div
+            v-if="isSaving"
+            class="spinner-border spinner-border-sm me-2"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <i v-else class="fa fa-save me-1"></i>
+          {{isSaving ? 'Saving...' : $t('buttons.save')}}
+        </button>
+      </div>
+    </c-form>
+  </div>
+</c-modal>

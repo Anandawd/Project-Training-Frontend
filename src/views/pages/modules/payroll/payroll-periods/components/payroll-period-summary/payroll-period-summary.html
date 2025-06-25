@@ -5,7 +5,7 @@
         <span class="info-box-text"
           >{{$t('labels.payroll.payroll.totalEmployees')}}</span
         >
-        <span class="info-box-number">{{statusCounts.total_employee}}</span>
+        <span class="info-box-number">{{statusCounts.employee}}</span>
       </div>
     </div>
   </div>
@@ -16,7 +16,7 @@
           >{{$t('labels.payroll.payroll.totalGrossSalary')}}</span
         >
         <span class="info-box-number"
-          >Rp {{formatCurrency(statusCounts.total_gross)}}</span
+          >Rp {{formatCurrency(statusCounts.gross_salary)}}</span
         >
       </div>
     </div>
@@ -40,7 +40,7 @@
           >{{$t('labels.payroll.payroll.totalTakeHomePay')}}</span
         >
         <span class="info-box-number"
-          >Rp {{formatCurrency(statusCounts.total_net)}}</span
+          >Rp {{formatCurrency(statusCounts.net_salary)}}</span
         >
       </div>
     </div>

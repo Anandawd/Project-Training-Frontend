@@ -214,12 +214,14 @@ class PayrollComponentsAPI extends ConfigurationResource {
       method: "get",
     });
   }
+
   GetComponentTypeList() {
     return request({
       url: "GetPayConstComponentTypeList",
       method: "get",
     });
   }
+
   GetComponentUnitList() {
     return request({
       url: "GetPayConstComponentUnitList",

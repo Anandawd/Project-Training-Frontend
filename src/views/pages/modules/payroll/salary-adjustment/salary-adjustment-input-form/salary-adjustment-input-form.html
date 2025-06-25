@@ -248,11 +248,22 @@
 
       <!-- buttons -->
       <div class="d-flex justify-content-end mt-2">
-        <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">
+        <button
+          type="button"
+          class="btn btn-danger mr-1 px-3"
+          @click="onClose"
+          :disabled="isSaving"
+        >
           <i class="fa fa-times" aria-hidden="true"></i>
           {{$t('buttons.close')}}
         </button>
-        <button type="button" class="btn btn-primary px-3" @click="onSubmit">
+
+        <button
+          type="button"
+          class="btn btn-primary px-3"
+          @click="onSubmit"
+          :disabled="isSaving"
+        >
           <i class="fa fa-save"></i>
           {{$t('buttons.save')}}
         </button>

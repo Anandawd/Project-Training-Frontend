@@ -93,7 +93,7 @@ export default class BenefitTableComponent extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.type"),
-        field: "component_type",
+        field: "Type",
         width: 120,
         enableRowGroup: true,
         // valueGetter: (params: any) => {
@@ -114,7 +114,7 @@ export default class BenefitTableComponent extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.name"),
-        field: "payroll_component_name",
+        field: "Name",
         width: 200,
         enableRowGroup: true,
         // valueGetter: (params: any) => {
@@ -134,7 +134,7 @@ export default class BenefitTableComponent extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.category"),
-        field: "category",
+        field: "Category",
         width: 150,
         enableRowGroup: true,
       },
@@ -151,7 +151,7 @@ export default class BenefitTableComponent extends Vue {
         headerName: this.$t("commons.table.payroll.payroll.qty"),
         headerClass: "align-header-center",
         cellClass: "text-center",
-        field: "qty",
+        field: "quantity",
         width: 100,
         enableRowGroup: true,
       },

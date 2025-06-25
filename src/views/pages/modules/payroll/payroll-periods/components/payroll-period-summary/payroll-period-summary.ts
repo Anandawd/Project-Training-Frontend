@@ -17,10 +17,10 @@ import { Options, Vue } from "vue-class-component";
 })
 export default class DeductionsTable extends Vue {
   statusCounts: any = ref({
-    total_employee: 0,
-    total_gross: 0,
+    employee: 0,
+    gross_salary: 0,
     total_deductions: 0,
-    total_net: 0,
+    net_salary: 0,
   });
 
   // FORMAT FUNCTION

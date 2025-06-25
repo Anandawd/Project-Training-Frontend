@@ -20,31 +20,27 @@ import * as Yup from "yup";
     CRadio,
   },
   props: {
-    modeData: {
-      type: Number,
-      require: true,
-    },
     isSaving: {
       type: Boolean,
       default: (): boolean => false,
     },
-    employeeOptions: {
-      type: Array,
-      default: (): any[] => [],
+    employeeSalary: {
+      type: Object,
+      default: (): any => {},
     },
-    adjustmentReasonOptions: {
+    earningsComponent: {
       type: Array,
       default: (): any[] => [],
     },
   },
-  emits: ["save", "close"],
+  emits: ["save"],
 })
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
   isSaving!: boolean;
-  employeeOptions!: any[];
-  adjustmentReasonOptions: any[] = reactive([]);
+  employeeSalary!: any;
+  earningsComponent: any[] = reactive([]);
 
   public form: any = reactive({});
 
