@@ -54,10 +54,11 @@ const payrollComponentAPI = new PayrollComponentsAPI();
 export default class EmployeeDetail extends Vue {
   // data
   employeeId: any;
-  employeeData: any = ref([]);
+  employeeData: any = ref({});
   rowDocumentData: any = [];
   rowSalaryData: any = [];
   rowBenefitData: any = [];
+  employeeSalaryData: any = ref({});
 
   // options
   public documentTypeOptions: any[] = [];
@@ -489,41 +490,6 @@ export default class EmployeeDetail extends Vue {
           if (benefit.status === 0) {
             getToastSuccess(this.$t("messages.employee.success.saveBenefit"));
           }
-          // const selectedComponent = this.benefitOptions.find(
-          //   (option: any) => option.code === formData.payroll_component_code
-          // );
-          // const finalAmount = formData.is_override
-          //   ? parseFloat(formData.amount)
-          //   : selectedComponent.default_amount;
-          // const newBenefit = {
-          //   id: formData.id,
-          //   employee_id: this.employeeId,
-          //   payroll_component_code: selectedComponent.code,
-          //   payroll_component_name: selectedComponent.name,
-          //   component_type: formData.component_type,
-          //   category: selectedComponent.category,
-          //   amount: finalAmount,
-          //   qty: parseInt(formData.qty),
-          //   effective_date: formData.effective_date,
-          //   end_date: formData.end_date,
-          //   remark: formData.remark,
-          //   is_current:
-          //     !formData.end_date || new Date(formData.end_date) > new Date(),
-          //   is_override: formData.is_override,
-          //   is_taxable: selectedComponent.is_taxable,
-          //   is_fixed: selectedComponent.is_fixed,
-          //   is_prorated: selectedComponent.is_prorated,
-          //   is_included_in_bpjs_health:
-          //     selectedComponent.is_included_in_bpjs_health,
-          //   is_included_in_bpjs_employee:
-          //     selectedComponent.is_included_in_bpjs_employee,
-          //   is_show_in_payslip: selectedComponent.is_show_in_payslip,
-          //   created_at: formatDateTimeUTC(new Date()),
-          //   created_by: "Current User",
-          //   updated_at: formatDateTimeUTC(new Date()),
-          //   updated_by: "Current User",
-          // };
-
           break;
       }
 

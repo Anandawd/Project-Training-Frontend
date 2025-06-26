@@ -106,7 +106,6 @@ export default class InputForm extends Vue {
   }
 
   initialize() {
-    console.log("initialize called");
     this.resetForm();
   }
 

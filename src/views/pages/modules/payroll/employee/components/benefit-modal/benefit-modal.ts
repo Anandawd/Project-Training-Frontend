@@ -4,6 +4,7 @@ import CInput from "@/components/input/input.vue";
 import CModal from "@/components/modal/modal.vue";
 import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
+import { formatCurrency } from "@/utils/format";
 import $global from "@/utils/global";
 import { focusOnInvalid } from "@/utils/validation";
 import "ag-grid-enterprise";
@@ -221,6 +222,10 @@ export default class GenerateModal extends Vue {
         this.form.quantity = selectedComponent.default_quantity || 1;
       }
     }
+  }
+
+  formatCurrency(value: any) {
+    return formatCurrency(value);
   }
 
   // validation

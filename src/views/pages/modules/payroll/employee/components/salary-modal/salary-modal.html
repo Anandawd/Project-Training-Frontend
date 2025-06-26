@@ -4,88 +4,218 @@
   @close="onClose"
   @save="onSubmit"
   :isSaving="isSaving"
-  class="generate-payroll-modal"
 >
-  <div @click.stop class="generate-modal-content">
+  <div @click.stop>
     <c-form
       @submit="onSave"
       ref="inputFormValidation"
       :validation-schema="schema"
       @invalid-submit="onInvalidSubmit"
-      class="input-form row"
+      class="input-form"
       v-slot="{resetForm}"
     >
-      <div class="form-section">
-        <div class="section-header">
+      <div class="card">
+        <div class="card-header section-header">
           <div class="section-icon">
-            <i class="fas fa-users text-primary"></i>
+            <i class="fas fa-user text-primary"></i>
           </div>
           <div>
             <h6 class="section-title">
-              {{$t('labels.payroll.payroll.employeeSelection')}}
+              {{$t('labels.payroll.employee.employeeInformation')}}
             </h6>
-            <small class="text-muted"
-              >{{$t('labels.payroll.payroll.employeeSelectionInstruction')}}</small
+            <small class="section-description text-muted"
+              >{{$t('labels.payroll.employee.employeeInformationInstruction')}}</small
             >
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-md-6">
-            <c-input
-              required
-              formatted
-              showZeroNumber
-              type="number"
-              name="BaseSalary"
-              id="BaseSalary"
-              class="row mb-1"
-              :label="$t('labels.payroll.employee.baseSalary')"
-              :disabled="modalMode === $global.modeData.edit"
-              v-model="form.base_salary"
-              validate
-            />
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <c-input
+                disabled
+                name="Name"
+                id="Name"
+                class="row mb-1"
+                type="text"
+                v-model="form.employee_name"
+                :label="$t('labels.payroll.employee.name')"
+              />
+            </div>
+            <div class="col-md-6">
+              <c-input
+                disabled
+                name="Position"
+                id="Position"
+                class="row mb-1"
+                type="text"
+                v-model="form.Position"
+                :label="$t('labels.payroll.employee.position')"
+              />
+            </div>
+            <div class="col-md-6">
+              <c-input
+                disabled
+                name="Department"
+                id="Department"
+                class="row mb-1"
+                type="text"
+                v-model="form.Department"
+                :label="$t('labels.payroll.employee.department')"
+              />
+            </div>
+            <div class="col-md-6">
+              <c-input
+                disabled
+                name="Placement"
+                id="Placement"
+                class="row mb-1"
+                type="text"
+                v-model="form.Placement"
+                :label="$t('labels.payroll.employee.placement')"
+              />
+            </div>
           </div>
-          <div class="col-md-6">
-            <c-datepicker
-              required
-              name="EffectiveDate"
-              id="EffectiveDate"
-              customLabelClass="col-3  mb-1"
-              type="date"
-              valueType="YYYY-MM-DD"
-              format="DD/MM/YYYY"
-              :label="$t('labels.payroll.employee.effectiveDate')"
-              :disabled="modalMode === $global.modeData.edit"
-              v-model="form.effective_date"
-              validate
-            />
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header section-header">
+          <div class="section-icon">
+            <i class="fas fa-info text-primary"></i>
           </div>
-          <div class="col-md-6">
-            <c-select
-              required
-              offset="right"
-              class="row mb-1"
-              name="AdjustmentReason"
-              labelName="name"
-              keyName="code"
-              v-model="form.adjustment_reason_code"
-              :disabled="modalMode === $global.modeData.edit"
-              :label="$t('labels.payroll.employee.adjustmentReason')"
-              :options="adjustmentReasonOptions"
-              validate
-            />
+          <div>
+            <h6 class="section-title">
+              {{$t('labels.payroll.employee.salaryAdjustmentInformation')}}
+            </h6>
+            <small class="text-muted"
+              >{{$t('labels.payroll.employee.salaryAdjustmentInformationInstruction')}}</small
+            >
           </div>
-          <div class="col-md-6">
-            <c-input
-              type="textarea"
-              name="Remark"
-              id="Remark"
-              class="row mb-1"
-              :label="$t('labels.remark')"
-              v-model="form.remark"
-              validate
-            />
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <c-select
+                required
+                offset="right"
+                class="row mb-1"
+                name="AdjustmentReason"
+                labelName="name"
+                keyName="code"
+                v-model="form.adjustment_reason_code"
+                :label="$t('labels.payroll.employee.adjustmentReason')"
+                :options="filteredAdjustmentReasonOptions"
+                :disabled="disabledAdjustmentReason"
+                @change="onAdjustmentReasonChange"
+              >
+              </c-select>
+            </div>
+            <div class="col-md-6 mb-1">
+              <c-datepicker
+                required
+                id="EffectiveDate"
+                customLabelClass="col-3"
+                :label="$t('labels.payroll.employee.effectiveDate')"
+                type="date"
+                valueType="YYYY-MM-DD"
+                format="DD/MM/YYYY"
+                name="EffectiveDate"
+                v-model="form.effective_date"
+              />
+            </div>
+            <div class="col-md-6">
+              <c-input
+                id="remark"
+                class="row mb-1"
+                type="text"
+                name="remark"
+                v-model="form.remark"
+                :label="$t('labels.remark')"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header section-header">
+          <div class="section-icon">
+            <i class="fas fa-money-bill text-primary"></i>
+          </div>
+          <div>
+            <h6 class="section-title">
+              {{$t('labels.payroll.employee.salaryDetails')}}
+            </h6>
+            <small class="text-muted"
+              >{{$t('labels.payroll.employee.salaryDetailsInstruction')}}</small
+            >
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <c-input
+                required
+                formatted
+                showZeroNumber
+                type="number"
+                name="BaseSalary"
+                id="BaseSalary"
+                class="row mb-1"
+                :max="9999999999"
+                :min="0"
+                :label="$t('labels.payroll.employee.baseSalary')"
+                v-model="form.base_salary"
+                @change="onBaseSalaryChange"
+                :disabled="disabledBaseSalary"
+              />
+            </div>
+            <div class="col-md-6">
+              <c-input
+                required
+                formatted
+                showZeroNumber
+                type="number"
+                name="newSalary"
+                id="newSalary"
+                class="row mb-1"
+                :max="9999999999"
+                :min="0"
+                :label="$t('labels.payroll.employee.newSalary')"
+                v-model="form.new_salary"
+                @change="onNewSalaryChange"
+                :disabled="disabledNewSalary"
+              />
+            </div>
+            <div class="col-md-6">
+              <div class="row mb-1">
+                <div class="col-3">
+                  <label
+                    class="form-label"
+                    style="font-size: 13px; font-weight: 700"
+                  >
+                    {{$t('labels.payroll.employee.difference')}}
+                  </label>
+                </div>
+                <div class="col-9">
+                  <div class="form-control" readonly>
+                    <span
+                      :class="{
+                          'text-success': isIncreaseDecrease === 'increase',
+                          'text-danger': isIncreaseDecrease === 'decrease',
+                          'text-muted': isIncreaseDecrease === 'same'
+                        }"
+                    >
+                      {{ salaryDifference >= 0 ? '+' : '' }}{{
+                      salaryDifference.toLocaleString('id-ID') }} ({{
+                      percentageChange >= 0 ? '+' : '' }}{{
+                      percentageChange.toFixed(2) }}%)
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

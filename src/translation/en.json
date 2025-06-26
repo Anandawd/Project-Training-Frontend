@@ -134,7 +134,11 @@
         "maxFileSize": "Maximum File Size",
         "recommendation": "Recommendation",
         "usePDFForBestCompatibility": "Use PDF for best compatibility",
-        "previewFile": "Preview File"
+        "previewFile": "Preview File",
+        "employeeInformation": "Employee Information",
+        "employeeInformationInstruction": "Employee information for salary adjustment",
+        "salaryAdjustmentInformationInstruction": "Select adjustment reason for salary adjustment",
+        "salaryDetailsInstruction": "Fill amount for salary adjustment"
       },
       "attendance": {
         "attendanceAndLeave": "Attendance & Leave",
@@ -304,8 +308,8 @@
         "quantity": "Quantity",
         "unit": "Unit",
         "taxable": "Taxable",
-        "includedBpjsEmployee": "Included in BPJS Employee",
-        "includedBpjsHealth": "Included in BPJS Health",
+        "includedBpjsEmployee": "Included in BPJS Ketenagakerjaan",
+        "includedBpjsHealth": "Included in BPJS Kesehatan",
         "showInPayslip": "Show in Payslip",
         "active": "Active",
         "allowance": "Allowance",
@@ -313,7 +317,7 @@
         "thr": "THR",
         "jkm": "JKM",
         "jkk": "JKK",
-        "bpjsHealth": "BPJS Health",
+        "bpjsHealth": "BPJS Kesehatan",
         "overtime": "Overtime",
         "reimburse": "Reimburse",
         "loan": "Loan",
@@ -410,8 +414,8 @@
         "employeeSelectionInstruction": "Choose which employees to include in payroll generation",
         "benefitSelection": "Benefit Selection",
         "benefitSelectionInstruction": "Choose which benefit to include in payroll generation",
-        "benefitConfiguration": "Payroll Configuration",
-        "benefitConfigurationInstruction": "Setting configuration benefit for payroll generation",
+        "benefitConfiguration": "Benefit Configuration",
+        "benefitConfigurationInstruction": "Configure the benefit settings and properties",
         "taxConfiguration": "Tax Configuration",
         "taxConfigurationInstruction": "Configure tax calculation methods and income types",
         "generateSummary": "Generation Summary",
@@ -2388,6 +2392,7 @@
         "deleteAdjustmentReason": "Adjustment reason has been successfully removed",
         "deleteBenefit": "Benefit has been successfully removed",
         "deleteLegalDocument": "Document has been successfully removed",
+        "deleteFile": "File has been successfully removed",
         "updateDocument": "Employee document has been successfully updated",
         "updateSalary": "Employee salary information has been successfully updated",
         "updatePosition": "Position has been successfully updated",
@@ -2401,12 +2406,16 @@
         "approveSalaryAdjustment": "Salary Adjustment has been successfully approved",
         "rejectSalaryAdjustment": "Salary Adjustment has been successfully reject",
         "photoSelected": "Profile Photo has been successfully selected",
-        "photoRemoved": "Profile Photo has been successfully removed"
+        "photoRemoved": "Profile Photo has been successfully removed",
+        "fileSelected": "File successfully selected and preview available"
       },
       "error": {
         "save": "An error occurred while saving employee data. Please try again",
         "update": "Failed to update employee information. Please check your data and try again",
         "delete": "Failed to delete employee. The employee may be referenced in other modules",
+        "cannotSelectInitialWithExistingSalary": "Cannot Select Initial With Existing Salary",
+        "processingFile": "An error occurred while processing the file",
+        "filePreview": "Failed to create file preview",
         "documentDelete": "Failed to delete employee document",
         "notFound": "Employee not found in the system",
         "componentNotFound": "Component not found in the system",
@@ -2436,7 +2445,8 @@
         "taxImplication": "This change may have tax implications",
         "performanceReview": "Employee performance review is overdue",
         "trainingRequired": "Employee requires compliance training",
-        "probationPeriod": "Employee is currently in probation period"
+        "probationPeriod": "Employee is currently in probation period",
+        "fileTypeNotAllowed": "File type not allowed. Use PDF, JPEG, JPG, or PNG."
       },
       "info": {
         "dataLoaded": "Employee data loaded successfully",
@@ -3507,8 +3517,8 @@
           "qty": "Qty",
           "unit": "Unit",
           "taxable": "Taxable",
-          "includedBpjsHealth": "Included in BPJS Health",
-          "includedBpjsEmployee": "Included in BPJS Employee",
+          "includedBpjsHealth": "Included in BPJS Kesehatan",
+          "includedBpjsEmployee": "Included in BPJS Ketenagakerjaan",
           "showInPayslip": "Show in Payslip",
           "active": "Active",
           "type": "Type",
@@ -4970,6 +4980,7 @@
       "bookingNumber": "Booking Number",
       "parent": "Parent"
     },
+
     "invite": "Invite",
     "expand": "Expand",
     "collapse": "Collapse",
@@ -5336,10 +5347,10 @@
     "sold": "Sold",
     "unsold": "Unsold",
     "insertDocument": "Insert Document",
-    "insertSalary Adjustment": "Insert Salary Adjustment",
+    "insertSalaryAdjustment": "Insert Salary Adjustment",
     "insertBenefit": "Insert Benefit",
     "updateDocument": "Update Document",
-    "updateSalary Adjustment": "Update Salary Adjustment",
+    "updateSalaryAdjustment": "Update Salary Adjustment",
     "updateBenefit": "Update Benefit"
   },
   "transaction": {

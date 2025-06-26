@@ -68,7 +68,8 @@ export default class InputForm extends Vue {
   });
 
   // File validation constants
-  private readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  private readonly MIN_FILE_SIZE = 1024; // 1KB
+  private readonly MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
   private readonly ALLOWED_TYPES = [
     "application/pdf",
     "image/jpeg",
@@ -99,7 +100,7 @@ export default class InputForm extends Vue {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
     this.form = {
-      id: "",
+      id: null,
       employee_id: "",
       Position: "",
       Department: "",
@@ -203,7 +204,7 @@ export default class InputForm extends Vue {
 
       await this.updateProgress(20);
 
-      const baseUrl = "http://25.7.35.69:9000";
+      const baseUrl = import.meta.env.VITE_APP_URL_API_2;
       this.filePreview.url = `${baseUrl}/GetPayEmployeeDocumentImage/${this.form.file_name}`;
 
       await this.updateProgress(100);
@@ -239,46 +240,36 @@ export default class InputForm extends Vue {
       // Generate preview
       await this.generateFilePreview(file);
 
-      getToastSuccess("File berhasil dipilih dan preview tersedia");
+      getToastSuccess(this.$t("messages.employee.success.fileSelected"));
     } catch (error) {
-      getToastError("Terjadi kesalahan saat memproses file");
+      getToastError(this.$t("messages.employee.error.processingFile"));
       this.clearFileData();
     }
   }
 
   validateFile(file: File): { isValid: boolean; message: string } {
     // Check file size (max 50MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
+    if (file.size > this.MAX_FILE_SIZE) {
       return {
         isValid: false,
-        message: `Ukuran file maksimal ${this.formatFileSize(
-          maxSize
-        )} (saat ini: ${this.formatFileSize(file.size)})`,
+        message: `Maximum file size ${this.formatFileSize(
+          this.MAX_FILE_SIZE
+        )} (current file size: ${this.formatFileSize(file.size)})`,
       };
     }
 
     // Check minimum file size (1KB)
-    const minSize = 1024; // 1KB
-    if (file.size < minSize) {
+    if (file.size < this.MIN_FILE_SIZE) {
       return {
         isValid: false,
-        message: "File terlalu kecil, minimal 1KB",
+        message: "File is too small, minimum 1KB",
       };
     }
 
-    // Check file type
-    const allowedTypes = [
-      "application/pdf",
-      "image/jpeg",
-      "image/jpg",
-      "image/png",
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
+    if (!this.ALLOWED_TYPES.includes(file.type)) {
       return {
         isValid: false,
-        message: "Tipe file tidak diizinkan. Gunakan PDF, JPEG, JPG, atau PNG",
+        message: this.$t("messages.employee.warning.fileTypeNotAllowed"),
       };
     }
 
@@ -336,11 +327,11 @@ export default class InputForm extends Vue {
 
       await this.updateProgress(100);
 
-      this.filePreview.processing = false;
       this.filePreview.show = true;
     } catch (error) {
+      getToastError(this.$t("messages.employee.error.filePreview"));
+    } finally {
       this.filePreview.processing = false;
-      getToastError("Gagal membuat preview file");
     }
   }
 
@@ -418,7 +409,7 @@ export default class InputForm extends Vue {
   // PREVIEW ACTIONS ======================================
   removeFilePreview() {
     this.clearFileData();
-    getToastSuccess("File telah dihapus");
+    getToastSuccess(this.$t("messages.employee.success.deleteFile"));
   }
 
   downloadPreview() {
@@ -485,6 +476,7 @@ export default class InputForm extends Vue {
     // if (diffDays <= 30) return "EXPIRING SOON";
     return "VALID";
   }
+
   // validation
   get schema() {
     return Yup.object().shape({
