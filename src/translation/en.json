@@ -282,6 +282,7 @@
         "splitShift": "Split Shift"
       },
       "payroll": {
+        "baseSalary": "Base Salary",
         "payroll": "Payroll",
         "periods": "Periods",
         "approvals": "Approvals",
@@ -407,6 +408,10 @@
         "totalTakeHomePay": "Total Take Home Pay",
         "employeeSelection": "Employee Selection",
         "employeeSelectionInstruction": "Choose which employees to include in payroll generation",
+        "benefitSelection": "Benefit Selection",
+        "benefitSelectionInstruction": "Choose which benefit to include in payroll generation",
+        "benefitConfiguration": "Payroll Configuration",
+        "benefitConfigurationInstruction": "Setting configuration benefit for payroll generation",
         "taxConfiguration": "Tax Configuration",
         "taxConfigurationInstruction": "Configure tax calculation methods and income types",
         "generateSummary": "Generation Summary",
@@ -2825,6 +2830,7 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "insertComponent": "Insert Component",
     "componentCategory": "Component Category",
     "documentType": "Document Type",
     "adjustmentReason": "Adjustment Reason",

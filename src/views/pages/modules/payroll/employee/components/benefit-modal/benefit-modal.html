@@ -16,6 +16,20 @@
       v-slot="{resetForm}"
     >
       <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-money text-primary"></i>
+          </div>
+          <div>
+            <h6 class="section-title">
+              {{$t('labels.payroll.payroll.benefitSelection')}}
+            </h6>
+            <small class="text-muted"
+              >{{$t('labels.payroll.payroll.benefitSelectionInstruction')}}</small
+            >
+          </div>
+        </div>
+
         <div class="row">
           <div class="col-md-6">
             <c-select
@@ -125,6 +139,174 @@
               :label="$t('labels.remark')"
               v-model="form.remark"
             />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <i class="fas fa-cogs text-primary"></i>
+          </div>
+          <div>
+            <h6 class="section-title">
+              {{$t('labels.payroll.payroll.benefitConfiguration')}}
+            </h6>
+            <small class="text-muted"
+              >{{$t('labels.payroll.payroll.benefitConfigurationInstruction')}}</small
+            >
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-sm-1">
+            <div class="row">
+              <div class="col-sm-3">
+                <label
+                  class="form-label"
+                  style="font-size: 12px; font-weight: 700; color: red"
+                  >{{$t('labels.payroll.payroll.fixedAmount')}}</label
+                >
+              </div>
+              <div class="col-sm-9 d-flex align-items-center p-0">
+                <c-radio
+                  class="me-3"
+                  :label="$t('labels.yes')"
+                  v-model="form.is_fixed"
+                  value="1"
+                ></c-radio>
+                <c-radio
+                  class="me-3"
+                  :label="$t('labels.no')"
+                  v-model="form.is_fixed"
+                  value="0"
+                ></c-radio>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mb-sm-1">
+            <div class="row">
+              <div class="col-sm-3">
+                <label
+                  class="form-label"
+                  style="font-size: 12px; font-weight: 700; color: red"
+                  >{{$t('labels.payroll.payroll.taxable')}}</label
+                >
+              </div>
+              <div class="col-sm-9 d-flex align-items-center p-0">
+                <c-radio
+                  class="me-3"
+                  :label="$t('labels.yes')"
+                  v-model="form.is_taxable"
+                  value="1"
+                ></c-radio>
+                <c-radio
+                  class="me-3"
+                  :label="$t('labels.no')"
+                  v-model="form.is_taxable"
+                  value="0"
+                ></c-radio>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mb-sm-1">
+            <div class="row">
+              <div class="col-sm-3">
+                <label
+                  class="form-label"
+                  style="font-size: 12px; font-weight: 700; color: red"
+                  >{{$t('labels.payroll.payroll.includedBpjsEmployee')}}</label
+                >
+              </div>
+              <div class="col-sm-9 d-flex align-items-center p-0">
+                <c-radio
+                  class="me-3"
+                  :label="$t('labels.yes')"
+                  v-model="form.is_included_in_bpjs_employee"
+                  value="1"
+                ></c-radio>
+                <c-radio
+                  class="me-3"
+                  :label="$t('labels.no')"
+                  v-model="form.is_included_in_bpjs_employee"
+                  value="0"
+                ></c-radio>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mb-sm-1">
+            <div class="row">
+              <div class="col-sm-3">
+                <label
+                  class="form-label"
+                  style="font-size: 12px; font-weight: 700; color: red"
+                  >{{$t('labels.payroll.payroll.includedBpjsHealth')}}</label
+                >
+              </div>
+              <div class="col-sm-9 d-flex align-items-center p-0">
+                <c-radio
+                  class="me-3"
+                  :label="$t('labels.yes')"
+                  v-model="form.is_included_in_bpjs_health"
+                  value="1"
+                ></c-radio>
+                <c-radio
+                  class="me-3"
+                  :label="$t('labels.no')"
+                  v-model="form.is_included_in_bpjs_health"
+                  value="0"
+                ></c-radio>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mb-sm-1">
+            <div class="row">
+              <div class="col-sm-3">
+                <label
+                  class="form-label"
+                  style="font-size: 12px; font-weight: 700; color: red"
+                  >{{$t('labels.payroll.payroll.includedProrate')}}</label
+                >
+              </div>
+              <div class="col-sm-9 d-flex align-items-center p-0">
+                <c-radio
+                  class="me-3"
+                  :label="$t('labels.yes')"
+                  v-model="form.is_prorated"
+                  value="1"
+                ></c-radio>
+                <c-radio
+                  class="me-3"
+                  :label="$t('labels.no')"
+                  v-model="form.is_prorated"
+                  value="0"
+                ></c-radio>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mb-sm-1">
+            <div class="row">
+              <div class="col-sm-3">
+                <label
+                  class="form-label"
+                  style="font-size: 12px; font-weight: 700; color: red"
+                  >{{$t('labels.payroll.payroll.showInPayslip')}}</label
+                >
+              </div>
+              <div class="col-sm-9 d-flex align-items-center p-0">
+                <c-radio
+                  class="me-3"
+                  :label="$t('labels.yes')"
+                  v-model="form.is_show_in_payslip"
+                  value="1"
+                ></c-radio>
+                <c-radio
+                  class="me-3"
+                  :label="$t('labels.no')"
+                  v-model="form.is_show_in_payslip"
+                  value="0"
+                ></c-radio>
+              </div>
+            </div>
           </div>
         </div>
       </div>

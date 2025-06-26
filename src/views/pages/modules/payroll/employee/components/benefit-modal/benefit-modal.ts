@@ -2,6 +2,7 @@ import CCheckbox from "@/components/checkbox/checkbox.vue";
 import CDatepicker from "@/components/datepicker/datepicker.vue";
 import CInput from "@/components/input/input.vue";
 import CModal from "@/components/modal/modal.vue";
+import CRadio from "@/components/radio/radio.vue";
 import CSelect from "@/components/select/select.vue";
 import $global from "@/utils/global";
 import { focusOnInvalid } from "@/utils/validation";
@@ -19,6 +20,7 @@ import * as Yup from "yup";
     CInput,
     CDatepicker,
     CCheckbox,
+    CRadio,
   },
   props: {
     modeData: {

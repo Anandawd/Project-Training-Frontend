@@ -96,12 +96,17 @@ export default class Employee extends Vue {
 
   beforeMount(): void {
     this.periodCode = this.$route.params.code as string;
-    this.loadData();
+  }
+
+  async mounted() {
+    await this.loadData();
+    await this.loadPayrollStatistic();
+    await this.loadDropdown();
+    await this.loadPayroll();
   }
 
   // GENERAL FUNCTION =======================================================
   handleTableAction(params: any) {
-    console.log("handleTableAction", params);
     switch (params.event) {
       case "EDIT":
         this.handleToEmployeePayroll(params.params);
@@ -182,10 +187,6 @@ export default class Employee extends Vue {
       } else {
         this.periodData = {};
       }
-
-      this.loadPayrollStatistic();
-      this.loadDropdown();
-      this.loadPayroll();
     } catch (error) {
       getError(error);
     }

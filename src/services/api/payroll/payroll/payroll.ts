@@ -137,6 +137,56 @@ class PayrollAPI extends ConfigurationResource {
       method: "get",
     });
   }
+
+  // payroll
+  GetPayrollByPeriodCodeAndEmployeeId(periodCode: any, employeeId: any) {
+    return request({
+      url: `GetPayPayrollByPeriodCodeAndEmployeeID/${periodCode}/${employeeId}`,
+      method: "get",
+    });
+  }
+
+  GetEmployeeSalaryByEmployeeId(employeeId: any) {
+    return request({
+      url: `GetPayPayrollByPeriodCodeAndEmployeeID/${employeeId}`,
+      method: "get",
+    });
+  }
+
+  GetEmployeePayrollEarningsComponent(employeeId: any) {
+    return request({
+      url: `GetPayEmployeePayrollComponentByEmployeeIDEarnings/${employeeId}`,
+      method: "get",
+    });
+  }
+
+  GetEmployeePayrollDeductionsComponent(employeeId: any) {
+    return request({
+      url: `GetPayEmployeePayrollComponentByEmployeeIDDeductions/${employeeId}`,
+      method: "get",
+    });
+  }
+
+  GetEmployeeStatutoryEarningsComponent(employeeId: any) {
+    return request({
+      url: `GetPayEmployeeStatutoryComponentByEmployeeIDEarnings/${employeeId}`,
+      method: "get",
+    });
+  }
+
+  GetEmployeeStatutoryDeductionsComponent(employeeId: any) {
+    return request({
+      url: `GetPayEmployeeStatutoryComponentByEmployeeIDDeductions/${employeeId}`,
+      method: "get",
+    });
+  }
+
+  GetTaxDetailByPayrollId(payrollId: any) {
+    return request({
+      url: `GetPayTaxDetailByPayrollID/${payrollId}`,
+      method: "get",
+    });
+  }
 }
 
 export { PayrollAPI as default };

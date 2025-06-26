@@ -345,7 +345,7 @@ export default [
     },
   },
   {
-    path: "periods/employee/:periodCode/:employeeId",
+    path: "periods/detail/:periodCode/:employeeId",
     name: "EmployeePayrollDetail",
     component: () =>
       import(
@@ -356,7 +356,7 @@ export default [
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
         { title: "title.home", url: "/" },
-        { title: "title.payroll", url: "/payroll/periods" },
+        { title: "title.payroll" },
         { title: "title.periods", url: "/payroll/periods" },
         {
           title: "title.periodsDetail",

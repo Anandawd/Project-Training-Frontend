@@ -17,7 +17,7 @@
           type="button"
           class="btn btn-secondary mr-1"
           @click="handleSave('', $global.modePayroll.save)"
-          :disabled="!canSubmit || isSave"
+          :disabled="!canSubmit"
         >
           <i class="fa fa-save mr-1" aria-hidden="true"></i>{{
           $t('buttons.save') }}
@@ -27,7 +27,7 @@
           type="button"
           class="btn btn-success mr-1"
           @click="handleSubmitForApproval"
-          :disabled="!canSubmit || isSave"
+          :disabled="!canSubmit"
         >
           <i class="fa fa-paper-plane mr-1" aria-hidden="true"></i>{{
           $t('buttons.submit') }}
@@ -36,8 +36,8 @@
           title="Apply Prorate"
           type="button"
           class="btn btn-primary mr-1"
-          @click="handleShowModal"
-          :disabled="!canSubmit || isSave"
+          @click="handleShowModal('PRORATE')"
+          :disabled="!canSubmit"
         >
           <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
           $t('buttons.prorate') }}
@@ -46,510 +46,68 @@
           title="Insert Component"
           type="button"
           class="btn btn-primary mr-1"
-          @click="handleShowForm('', $global.modeData.insert)"
+          @click="handleShowModal('BENEFIT')"
         >
           <i class="fa fa-plus mr-1" aria-hidden="true"></i>{{
-          $t('buttons.insert') }}
+          $t('buttons.insertComponent') }}
         </button>
       </div>
     </div>
 
-    <!-- insert form -->
-    <transition>
-      <c-input-form
-        class="px-2"
-        ref="inputFormElement"
-        v-show="showForm"
-        :modeData="modeData"
-        :employeeId="employeeId"
-        :existingComponents="payrollComponents"
-        :schema="schema"
-        @save="handleSave('', $global.modePayroll.component)"
-        @close="showForm=false"
-      />
-    </transition>
+    <!-- modal benefit -->
+    <benefit-modal
+      ref="modalBenefitFormElement"
+      v-show="showModalBenefit"
+      :isGenerating="isSaving"
+      @save="handleSaveBenefit"
+      @close="showModalBenefit = false"
+    />
 
     <!-- modal prorate -->
-    <c-modal
-      v-show="showModal"
-      :title="$t('title.prorate')"
-      size="lg"
-      @close="showModal = false"
-      @save="handleSave('', $global.modePayroll.prorate)"
-      :isSaving="isGenerating"
-    >
-      <div @click.stop>
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <c-input
-              required
-              id="workDaysInMonth"
-              class="row mb-1"
-              type="number"
-              name="workDaysInMonth"
-              v-model="form.workdays_in_month"
-              :label="$t('labels.payroll.payroll.totalWorkDaysInMonth')"
-            />
-          </div>
-          <div class="col-md-6">
-            <c-input
-              required
-              id="actualWorkDays"
-              class="row mb-1"
-              type="number"
-              name="actualWorkDays"
-              v-model="form.actual_workdays"
-              :label="$t('labels.payroll.payroll.totalActualWorkDays')"
-            />
-          </div>
-          <div class="col-md-6">
-            <c-input
-              disabled
-              id="prorateFactor"
-              class="row mb-1"
-              type="number"
-              name="prorateFactor"
-              v-model="form.prorate_factor"
-              :label="$t('labels.payroll.payroll.prorateFactor')"
-            />
-          </div>
-        </div>
-        <!-- button -->
-        <div class="d-flex justify-content-end mt-2">
-          <button
-            type="button"
-            class="btn btn-danger mr-1 px-3"
-            @click="showModal = false"
-          >
-            <i class="fa fa-times" aria-hidden="true"></i>
-            {{$t('buttons.cancel')}}
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary px-3"
-            @click="handleSave('', $global.modePayroll.prorate)"
-          >
-            <i class="fa fa-play"></i>
-            {{$t('buttons.generate')}}
-          </button>
-        </div>
-      </div>
-    </c-modal>
+    <prorate-modal
+      ref="modalProrateFormElement"
+      v-show="showModalProrate"
+      :isGenerating="isSaving"
+      @save="handleSaveProrate"
+      @close="showModalProrate = false"
+    />
 
     <!-- Employee Information -->
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">{{$t('title.employeeInformation')}}</h3>
-      </div>
-      <div class="card-body">
-        <div class="row mb-3">
-          <div class="col-md-4">
-            <c-input
-              disabled
-              id="employeeId"
-              class="row mb-1"
-              type="text"
-              name="employeeId"
-              v-model="employee.employee_id"
-              :label="$t('labels.payroll.employee.employeeId')"
-            />
-          </div>
-          <div class="col-md-4">
-            <c-input
-              disabled
-              id="employeeName"
-              class="row mb-1"
-              type="text"
-              name="employeeName"
-              v-model="employee.employee_name"
-              :label="$t('labels.payroll.employee.employeeName')"
-            />
-          </div>
-          <div class="col-md-4">
-            <c-input
-              disabled
-              id="position"
-              class="row mb-1"
-              type="text"
-              name="position"
-              v-model="employee.position"
-              :label="$t('labels.payroll.employee.position')"
-            />
-          </div>
-          <div class="col-md-4">
-            <c-input
-              disabled
-              id="department"
-              class="row mb-1"
-              type="text"
-              name="department"
-              v-model="employee.department"
-              :label="$t('labels.payroll.employee.department')"
-            />
-          </div>
-          <div class="col-md-4">
-            <c-input
-              disabled
-              id="placement"
-              class="row mb-1"
-              type="text"
-              name="placement"
-              v-model="employee.placement"
-              :label="$t('labels.payroll.employee.placement')"
-            />
-          </div>
-          <div class="col-md-4">
-            <c-input
-              disabled
-              id="taxNumber"
-              class="row mb-1"
-              type="text"
-              name="position"
-              v-model="employee.tax_number"
-              :label="$t('labels.payroll.employee.taxNumber')"
-            />
-          </div>
-          <div class="col-md-4">
-            <c-input
-              disabled
-              id="maritialStatus"
-              class="row mb-1"
-              type="text"
-              name="maritialStatus"
-              v-model="employee.maritial_status"
-              :label="$t('labels.payroll.employee.maritialStatus')"
-            />
-          </div>
-
-          <div class="col-md-4">
-            <c-input
-              disabled
-              id="bankName"
-              class="row mb-1"
-              type="text"
-              name="bankName"
-              v-model="employee.bank_name"
-              :label="$t('labels.payroll.employee.bankName')"
-            />
-          </div>
-          <div class="col-md-4">
-            <c-input
-              disabled
-              id="bankAccountHolder"
-              class="row mb-1"
-              type="text"
-              name="bankAccountHolder"
-              v-model="employee.bank_account_holder"
-              :label="$t('labels.payroll.employee.bankAccountHolder')"
-            />
-          </div>
-          <div class="col-md-4">
-            <c-input
-              disabled
-              id="bankAccountNumber"
-              class="row mb-1"
-              type="text"
-              name="bankAccountNumber"
-              v-model="employee.bank_account_number"
-              :label="$t('labels.payroll.employee.bankAccountNumber')"
-            />
-          </div>
-          <div class="col-md-4">
-            <c-select
-              offset="right"
-              class="row mb-1"
-              name="taxIncomeType"
-              labelName="name"
-              keyName="code"
-              v-model="employee.tax_income_type"
-              :label="$t('labels.payroll.payroll.taxIncome')"
-              :options="taxIncomeOptions"
-            />
-          </div>
-          <div class="col-md-4">
-            <c-select
-              offset="right"
-              class="row mb-1"
-              name="taxMethod"
-              labelName="name"
-              keyName="code"
-              v-model="employee.tax_method"
-              :label="$t('labels.payroll.payroll.taxMethod')"
-              :options="taxMethodOptions"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+    <employee-information :employee="employeeData" />
 
     <!-- Earnings -->
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">{{$t('title.earnings')}}</h3>
-      </div>
-      <div class="card-body">
-        <div class="row mb-3">
-          <div
-            v-for="component in getComponentsByType('earnings')"
-            :key="component.id"
-            class="col-md-4"
-          >
-            <div
-              class="d-flex justify-content-end mb-1"
-              style="min-height: 16px"
-            >
-              <font-awesome-icon
-                v-show="component.is_taxable"
-                :icon="['fas', 'file-invoice-dollar']"
-                class="me-1 text-info"
-                data-bs-toggle="tooltip"
-                title="Included in Tax Income (PPH 21)"
-              />
-              <font-awesome-icon
-                v-show="component.is_included_in_bpjs_health"
-                :icon="['fas', 'medkit']"
-                class="me-1 text-success"
-                data-bs-toggle="tooltip"
-                title="Included in BPJS Kesehatan"
-              />
-              <font-awesome-icon
-                v-show="component.is_included_in_bpjs_employee"
-                :icon="['fas', 'hard-hat']"
-                class="me-1 text-warning"
-                data-bs-toggle="tooltip"
-                title="Included in BPJS Ketenagakerjaan"
-              />
-              <font-awesome-icon
-                v-show="component.is_prorated"
-                :icon="['fas', 'pizza-slice']"
-                class="me-1 text-info"
-                data-bs-toggle="tooltip"
-                title="Included in Prorate"
-              />
-            </div>
-            <div class="row mb-1">
-              <div class="col-9">
-                <c-input
-                  :disabled="component.is_fixed"
-                  type="number"
-                  :name="component.name"
-                  :id="component.name"
-                  class=""
-                  :max="9999999999"
-                  :min="0"
-                  :label="component.name"
-                  v-model="component.amount"
-                  formatted
-                  showZeroNumber
-                  @change="onComponentAmountChange(component)"
-                />
-              </div>
-              <div class="col-3">
-                <c-input
-                  :disabled="component.is_fixed"
-                  type="number"
-                  :name="component.quantity"
-                  :id="component.name"
-                  class=""
-                  :label="$t('labels.payroll.payroll.qty')"
-                  v-model="component.quantity"
-                  showZeroNumber
-                  @change="onComponentQuantityChange(component)"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <div class="row">
-          <div class="col-6">
-            <strong class="text-muted"
-              >{{$t('labels.payroll.payroll.totalGrossSalary')}}</strong
-            >
-          </div>
-          <div class="col-6 d-flex justify-content-end">
-            Rp{{formatCurrency(form.total_gross_salary)}}
-          </div>
-        </div>
-      </div>
-    </div>
+    <payroll-card
+      :title="$t('labels.payroll.payroll.earnings')"
+      :footertitle="$t('labels.payroll.payroll.totalGrossSalary')"
+      :type="$t('labels.payroll.payroll.earnings')"
+      :components="earningsComponents"
+      :payrollData="payrollData"
+      @update=""
+      @delete=""
+    />
 
     <!-- Deductions -->
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">{{$t('title.deductions')}}</h3>
-      </div>
-      <div class="card-body">
-        <div class="row mb-3">
-          <div
-            v-for="component in getComponentsByType('deductions')"
-            :key="component.id"
-            class="col-md-4"
-          >
-            <div
-              class="d-flex justify-content-end mb-1"
-              style="min-height: 16px"
-            >
-              <font-awesome-icon
-                v-show="component.is_taxable"
-                :icon="['fas', 'file-invoice-dollar']"
-                class="me-1 text-info"
-                data-bs-toggle="tooltip"
-                title="Included in Tax Income (PPH 21)"
-              />
-              <font-awesome-icon
-                v-show="component.is_included_in_bpjs_health"
-                :icon="['fas', 'medkit']"
-                class="me-1 text-success"
-                data-bs-toggle="tooltip"
-                title="Included in BPJS Kesehatan"
-              />
-              <font-awesome-icon
-                v-show="component.is_included_in_bpjs_employee"
-                :icon="['fas', 'hard-hat']"
-                class="me-1 text-warning"
-                data-bs-toggle="tooltip"
-                title="Included in BPJS Ketenagakerjaan"
-              />
-            </div>
-            <div class="row mb-1">
-              <div class="col-9">
-                <c-input
-                  :disabled="component.is_fixed"
-                  type="number"
-                  :name="component.name"
-                  :id="component.name"
-                  :max="9999999999"
-                  :min="0"
-                  :label="component.name"
-                  v-model="component.amount"
-                  formatted
-                  showZeroNumber
-                  @change="onComponentAmountChange(component)"
-                />
-              </div>
-              <div class="col-3">
-                <c-input
-                  :disabled="component.is_fixed"
-                  type="number"
-                  :name="component.quantity"
-                  :id="component.name"
-                  class=""
-                  :label="$t('labels.payroll.payroll.qty')"
-                  v-model="component.quantity"
-                  showZeroNumber
-                  @change="onComponentQuantityChange(component)"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <div class="row">
-          <div class="col-6">
-            <strong class="text-muted"
-              >{{$t('labels.payroll.payroll.totalDeductionSalary')}}</strong
-            >
-          </div>
-          <div class="col-6 d-flex justify-content-end">
-            Rp{{formatCurrency(form.total_deductions_salary)}}
-          </div>
-        </div>
-      </div>
-    </div>
+    <payroll-card
+      :title="$t('labels.payroll.payroll.deductions')"
+      :footertitle="$t('labels.payroll.payroll.totalDeductionSalary')"
+      :type="$t('labels.payroll.payroll.deductions')"
+      :components="deductionsComponents"
+      :payrollData="payrollData"
+      @update=""
+      @delete=""
+    />
 
     <!-- Tax -->
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">{{$t('title.pph21')}}</h3>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-6">
-            <p class="text-h6">
-              {{$t('labels.payroll.payroll.totalGrossSalaryTaxable')}}
-            </p>
-          </div>
-          <div class="col-6 d-flex justify-content-end">
-            Rp {{formatCurrency(form.total_gross_salary_taxable)}}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <p class="text-h6">
-              {{$t('labels.payroll.payroll.taxRate')}}
-              ({{$t('labels.payroll.payroll.terCategory')}}
-              {{form.ter_category}})
-            </p>
-          </div>
-          <div class="col-6 d-flex justify-content-end">{{form.tax_rate}}%</div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <div class="row">
-          <div class="col-6">
-            <strong class="text-muted"
-              >{{$t('labels.payroll.payroll.taxAmount')}}
-            </strong>
-          </div>
-          <div class="col-6 d-flex justify-content-end">
-            Rp{{formatCurrency(form.tax_amount)}} ~
-            Rp{{formatCurrency(form.tax_amount_floor_up)}}
-          </div>
-        </div>
-      </div>
-    </div>
+    <tax-card
+      :title="$t('labels.payroll.payroll.taxIncome')"
+      :data="payrollData"
+    />
 
     <!-- Total Payment -->
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">{{$t('title.totalPayment')}}</h3>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-6">
-            <p class="text-h6">
-              {{$t('labels.payroll.payroll.totalGrossSalary')}}
-            </p>
-          </div>
-          <div class="col-6 d-flex justify-content-end">
-            Rp{{formatCurrency(form.total_gross_salary)}}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <p class="text-h6">
-              {{$t('labels.payroll.payroll.totalDeductionSalary')}}
-            </p>
-          </div>
-          <div class="col-6 d-flex justify-content-end">
-            Rp{{formatCurrency(form.total_deductions_salary)}}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <p class="text-h6">{{$t('labels.payroll.payroll.pph21')}}</p>
-          </div>
-          <div class="col-6 d-flex justify-content-end">
-            Rp{{formatCurrency(form.tax_amount_floor_up)}}
-          </div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <div class="row">
-          <div class="col-6">
-            <strong class="text-muted"
-              >{{$t('labels.payroll.payroll.takeHomePay')}}</strong
-            >
-          </div>
-          <div class="col-6 d-flex justify-content-end">
-            Rp{{formatCurrency(form.take_home_pay)}}
-          </div>
-        </div>
-      </div>
-    </div>
+    <total-payment-card
+      :title="$t('labels.payroll.payroll.totalPayment')"
+      :employeePayroll="payrollData"
+    />
 
     <!-- dialog -->
     <c-dialog
@@ -559,7 +117,7 @@
       @confirm="confirmAction"
       @cancel="showDialog=false"
     >
-      <template #body> {{dialogMessage}} </template>
+      <template #body>{{dialogMessage}}</template>
     </c-dialog>
   </div>
 </section>

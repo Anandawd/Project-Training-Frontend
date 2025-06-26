@@ -1,0 +1,165 @@
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">{{$t('title.employeeInformation')}}</h3>
+  </div>
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <c-input
+          disabled
+          id="employeeId"
+          class="row mb-1"
+          type="text"
+          name="employeeId"
+          v-model="employee.employee_id"
+          :label="$t('labels.payroll.employee.employeeId')"
+        />
+      </div>
+      <div class="col-md-4">
+        <c-input
+          disabled
+          id="employeeName"
+          class="row mb-1"
+          type="text"
+          name="employeeName"
+          v-model="employee.FullName"
+          :label="$t('labels.payroll.employee.employeeName')"
+        />
+      </div>
+      <div class="col-md-4">
+        <c-input
+          disabled
+          id="Gender"
+          class="row mb-1"
+          type="text"
+          name="Gender"
+          v-model="employee.gender"
+          :label="$t('labels.payroll.employee.gender')"
+        />
+      </div>
+      <div class="col-md-4">
+        <c-input
+          disabled
+          id="position"
+          class="row mb-1"
+          type="text"
+          name="position"
+          v-model="employee.Position"
+          :label="$t('labels.payroll.employee.position')"
+        />
+      </div>
+      <div class="col-md-4">
+        <c-input
+          disabled
+          id="department"
+          class="row mb-1"
+          type="text"
+          name="department"
+          v-model="employee.Department"
+          :label="$t('labels.payroll.employee.department')"
+        />
+      </div>
+      <div class="col-md-4">
+        <c-input
+          disabled
+          id="placement"
+          class="row mb-1"
+          type="text"
+          name="placement"
+          v-model="employee.Placement"
+          :label="$t('labels.payroll.employee.placement')"
+        />
+      </div>
+      <div class="col-md-4">
+        <c-input
+          disabled
+          id="EmployeeType"
+          class="row mb-1"
+          type="text"
+          name="EmployeeType"
+          v-model="employee.EmployeeType"
+          :label="$t('labels.payroll.employee.employeeType')"
+        />
+      </div>
+      <div class="col-md-4">
+        <c-input
+          disabled
+          id="taxNumber"
+          class="row mb-1"
+          type="text"
+          name="position"
+          v-model="employee.tax_number"
+          :label="$t('labels.payroll.employee.taxNumber')"
+        />
+      </div>
+      <div class="col-md-4">
+        <c-input
+          disabled
+          id="maritialStatus"
+          class="row mb-1"
+          type="text"
+          name="maritialStatus"
+          v-model="employee.maritial_status"
+          :label="$t('labels.payroll.employee.maritialStatus')"
+        />
+      </div>
+      <div class="col-md-4">
+        <c-input
+          disabled
+          id="bankName"
+          class="row mb-1"
+          type="text"
+          name="bankName"
+          v-model="employee.bank_name"
+          :label="$t('labels.payroll.employee.bankName')"
+        />
+      </div>
+      <div class="col-md-4">
+        <c-input
+          disabled
+          id="bankAccountHolder"
+          class="row mb-1"
+          type="text"
+          name="bankAccountHolder"
+          v-model="employee.bank_account_name"
+          :label="$t('labels.payroll.employee.bankAccountHolder')"
+        />
+      </div>
+      <div class="col-md-4">
+        <c-input
+          disabled
+          id="bankAccountNumber"
+          class="row mb-1"
+          type="text"
+          name="bankAccountNumber"
+          v-model="employee.bank_account_number"
+          :label="$t('labels.payroll.employee.bankAccountNumber')"
+        />
+      </div>
+      <!-- <div class="col-md-4">
+        <c-select
+          offset="right"
+          class="row mb-1"
+          name="taxIncomeType"
+          labelName="name"
+          keyName="code"
+          v-model="payroll.tax_income_type"
+          :label="$t('labels.payroll.payroll.taxIncome')"
+          :options="taxIncomeOptions"
+        />
+      </div>
+      <div class="col-md-4">
+        <c-select
+          offset="right"
+          class="row mb-1"
+          name="taxMethod"
+          labelName="name"
+          keyName="code"
+          v-model="payroll.tax_method"
+          :label="$t('labels.payroll.payroll.taxMethod')"
+          :options="taxMethodOptions"
+        />
+      </div> -->
+    </div>
+  </div>
+</div>
