@@ -512,11 +512,35 @@ export default class EmployeeDetail extends Vue {
       this.isSaving = true;
       switch (this.dataType) {
         case "DOCUMENT":
-          const { status2: document } =
-            await legalDocumentAPI.InsertLegalDocument(formData);
-          if (document.status === 0) {
-            getToastSuccess(this.$t("messages.employee.success.saveDocument"));
+          const uploadData = new FormData();
+
+          uploadData.append("employee_id", formData.employee_id);
+          uploadData.append("document_type_code", formData.document_type_code);
+          uploadData.append("issue_date", formData.issue_date);
+          uploadData.append("expiry_date", formData.expiry_date);
+          uploadData.append("status", formData.status);
+          uploadData.append("remark", formData.remark);
+
+          if (this.inputFormElement.selectedFile) {
+            uploadData.append(
+              "file_content",
+              this.inputFormElement.selectedFile
+            );
+            console.log(
+              "insertData selected file",
+              this.inputFormElement.selectedFile
+            );
           }
+
+          // Debug FormData content
+          console.log("FormData prepared:", uploadData);
+          for (let pair of uploadData.entries()) {
+            console.log(pair[0] + ": " + pair[1]);
+          }
+
+          const { status2 } = await legalDocumentAPI.InsertLegalDocument(
+            uploadData
+          );
           break;
         case "SALARY":
           const { status2: salary } =

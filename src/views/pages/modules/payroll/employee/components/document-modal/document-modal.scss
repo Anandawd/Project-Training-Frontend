@@ -52,53 +52,88 @@
   padding: 0.5rem;
   color: #495057;
 }
+.file-preview-card {
+  // border: 2px solid #007bff;
+  // border-radius: 8px;
+  // box-shadow: 0 4px 6px rgba(0, 123, 255, 0.1);
+  // transition: all 0.3s ease;
 
-// /* Progress Section */
-// .progress-section {
-//   background: #f8f9ff;
-//   border-radius: 8px;
-//   padding: 1rem;
-//   margin: 1rem 0;
-// }
+  // &:hover {
+  //   box-shadow: 0 6px 12px rgba(0, 123, 255, 0.15);
+  // }
 
-// .progress {
-//   height: 8px;
-//   border-radius: 4px;
-// }
+  .card-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between !important;
+    margin: 0px;
+    // background: linear-gradient(135deg, #007bff, #0056b3);
 
-// /* Responsive Design */
-// @media (max-width: 768px) {
-//   .stats-grid,
-//   .guide-grid,
-//   .summary-grid {
-//     grid-template-columns: repeat(2, 1fr);
-//   }
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+    }
 
-//   .validation-status {
-//     flex-direction: column;
-//     gap: 0.5rem;
-//     align-items: flex-start;
-//   }
+    .preview-title {
+      width: 50%;
+    }
 
-//   .progress-steps {
-//     gap: 0.5rem;
-//   }
+    .preview-actions {
+      gap: 4px;
+      width: 50%;
+      margin: 0px;
+      display: flex;
+      justify-content: end;
+    }
 
-//   .step-circle {
-//     width: 35px;
-//     height: 35px;
-//     font-size: 0.9rem;
-//   }
+    // .btn-outline-light {
+    //   border: 1px solid rgba(255, 255, 255, 0.5);
 
-//   .step-line {
-//     width: 40px;
-//   }
-// }
+    //   &:hover {
+    //     background-color: rgba(255, 255, 255, 0.1);
+    //     border-color: rgba(255, 255, 255, 0.8);
+    //   }
+    // }
+  }
+}
 
-// @media (max-width: 576px) {
-//   .stats-grid,
-//   .guide-grid,
-//   .summary-grid {
-//     grid-template-columns: 1fr;
-//   }
-// }
+/* Image Preview Styles */
+.image-preview {
+  img {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    max-height: 400px;
+    width: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.02);
+      cursor: zoom-in;
+    }
+  }
+
+  .dimensions-info {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #6c757d;
+  }
+}
+
+// /* Progress Bar Styles */
+.preview-progress {
+  margin-top: 1rem;
+
+  .progress {
+    height: 8px;
+    border-radius: 4px;
+    background-color: rgba(0, 123, 255, 0.1);
+
+    .progress-bar {
+      background: linear-gradient(90deg, #007bff, #0056b3);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+  }
+}

@@ -211,7 +211,7 @@ export default class DocumentModal extends Vue {
       await this.updateProgress(100);
 
       this.filePreview.processing = false;
-      // this.filePreview.show = true;
+      this.filePreview.show = true;
       this.showExistingFile = true;
       console.log("loadExistingFile url", this.filePreview.url);
     } catch (error) {
@@ -327,6 +327,7 @@ export default class DocumentModal extends Vue {
       }
 
       await this.updateProgress(100);
+      this.filePreview.show = true;
     } catch (error) {
       getToastError(this.$t("messages.employee.error.filePreview"));
     } finally {
