@@ -35,6 +35,16 @@ import { Options, Vue } from "vue-class-component";
       required: true,
       default: (): any[] => [],
     },
+    earningsStatutory: {
+      type: Array,
+      required: true,
+      default: (): any[] => [],
+    },
+    deductionsStatutory: {
+      type: Array,
+      required: true,
+      default: (): any[] => [],
+    },
     payrollData: {
       type: Object,
       required: true,
@@ -48,6 +58,8 @@ export default class PayrollCard extends Vue {
   footertitle!: string;
   type!: string;
   components: any = reactive([]);
+  earningsStatutory: any = reactive([]);
+  deductionsStatutory: any = reactive([]);
   payrollData: any = reactive({});
 
   public editingIndex: number = null;
@@ -77,5 +89,15 @@ export default class PayrollCard extends Vue {
 
   get showBaseSalary() {
     return this.type === "Earnings";
+  }
+
+  get statutoryComponets() {
+    if (this.type === "Earnings") {
+      return this.earningsStatutory;
+    } else if (this.type === "Deductions") {
+      return this.deductionsStatutory;
+    } else {
+      return [];
+    }
   }
 }

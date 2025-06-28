@@ -31,7 +31,7 @@
 
         <div class="card-body">
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-lg-6">
               <c-input
                 disabled
                 name="Name"
@@ -42,7 +42,7 @@
                 :label="$t('labels.payroll.employee.name')"
               />
             </div>
-            <div class="col-md-6">
+            <div class="col-lg-6">
               <c-input
                 disabled
                 name="Position"
@@ -53,7 +53,7 @@
                 :label="$t('labels.payroll.employee.position')"
               />
             </div>
-            <div class="col-md-6">
+            <div class="col-lg-6">
               <c-input
                 disabled
                 name="Department"
@@ -64,7 +64,7 @@
                 :label="$t('labels.payroll.employee.department')"
               />
             </div>
-            <div class="col-md-6">
+            <div class="col-lg-6">
               <c-input
                 disabled
                 name="Placement"
@@ -95,7 +95,7 @@
         </div>
         <div class="card-body">
           <div class="row mb-3">
-            <div class="col-md-6 mb-1">
+            <div class="col-lg-6 mb-1">
               <c-select
                 required
                 offset="right"
@@ -109,7 +109,7 @@
                 @change="onDocumentTypeChange"
               />
             </div>
-            <div class="col-md-6 mb-1">
+            <div class="col-lg-6 mb-1">
               <c-datepicker
                 required
                 name="IssueDate"
@@ -122,7 +122,7 @@
                 v-model="form.issue_date"
               />
             </div>
-            <div class="col-md-6 mb-1" v-show="showExpiryDate">
+            <div class="col-lg-6 mb-1" v-show="showExpiryDate">
               <c-datepicker
                 name="ExpiryDate"
                 id="ExpiryDate"
@@ -135,7 +135,7 @@
                 validate
               />
             </div>
-            <div class="col-md-6 mb-1">
+            <div class="col-lg-6 mb-1">
               <c-input
                 type="text"
                 name="Remark"
@@ -145,7 +145,7 @@
                 v-model="form.remark"
               />
             </div>
-            <div class="col-md-6 mb-1">
+            <div class="col-lg-6 mb-1">
               <c-input-file
                 ref="fileInputRef"
                 name="DocumentFile"

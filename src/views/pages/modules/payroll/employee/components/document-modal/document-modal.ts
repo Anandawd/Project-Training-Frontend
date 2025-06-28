@@ -478,7 +478,7 @@ export default class DocumentModal extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      SelectEmployee: Yup.string().required(),
+      // SelectEmployee: Yup.string().required(),
       DocumentType: Yup.string().required(),
       // DocumentFile: Yup.string().required(),
       IssueDate: Yup.date().required(),

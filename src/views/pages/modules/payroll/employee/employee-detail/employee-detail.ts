@@ -723,7 +723,6 @@ export default class EmployeeDetail extends Vue {
           expiryDate = params.expiry_date.split("T")[0];
         }
         return {
-          id: params.id ? params.id : null,
           employee_id: this.employeeId,
 
           document_type_code: params.document_type_code,

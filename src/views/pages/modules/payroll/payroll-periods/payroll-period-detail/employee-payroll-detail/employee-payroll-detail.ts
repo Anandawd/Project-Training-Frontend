@@ -75,6 +75,8 @@ export default class EmployeePayrollDetail extends Vue {
   public earningsComponents: any = reactive([]);
   public deductionsComponents: any = reactive([]);
   public statutoryComponents: any = reactive([]);
+  public earningsStatutory: any = reactive([]);
+  public deductionsStatutory: any = reactive([]);
 
   // Period data
   public periodData: any = reactive({
@@ -223,6 +225,24 @@ export default class EmployeePayrollDetail extends Vue {
         this.deductionsComponents = deductions;
       } else {
         this.deductionsComponents = [];
+      }
+
+      // load employee statutory
+      const { data: earningsStatutoryData } =
+        await payrollAPI.GetEmployeeStatutoryEarningsComponent(this.employeeId);
+      if (employee) {
+        this.earningsStatutory = earningsStatutoryData;
+      } else {
+        this.earningsStatutory = [];
+      }
+      const { data: deductionsStatutoryData } =
+        await payrollAPI.GetEmployeeStatutoryDeductionsComponent(
+          this.employeeId
+        );
+      if (employee) {
+        this.deductionsStatutory = deductionsStatutoryData;
+      } else {
+        this.deductionsStatutory = [];
       }
 
       // const { data: tax } = await payrollAPI.GetTaxDetailByPayrollId(
