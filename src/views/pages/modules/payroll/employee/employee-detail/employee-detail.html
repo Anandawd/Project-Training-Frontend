@@ -228,16 +228,30 @@
               </li>
               <li class="nav-item" role="presentation">
                 <button
-                  id="benefits-tab"
+                  id="payroll-component-tab"
                   class="nav-link"
                   role="tab"
                   data-bs-toggle="tab"
-                  data-bs-target="#table-benefits"
-                  aria-controls="table-benefits"
+                  data-bs-target="#table-payroll-component"
+                  aria-controls="table-payroll-component"
                   aria-selected="false"
                   tabindex="-1"
                 >
-                  {{$t('labels.payroll.employee.benefits')}}
+                  {{$t('labels.payroll.payroll.payrollComponent')}}
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  id="statutory-component-tab"
+                  class="nav-link"
+                  role="tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#table-statutory-component"
+                  aria-controls="table-statutory-component"
+                  aria-selected="false"
+                  tabindex="-1"
+                >
+                  {{$t('labels.payroll.payroll.statutoryComponent')}}
                 </button>
               </li>
             </ul>
@@ -283,12 +297,12 @@
               </salary-table-component>
             </div>
 
-            <!-- table benefit -->
+            <!-- table payroll component -->
             <div
-              id="table-benefits"
+              id="table-payroll-component"
               class="tab-pane fade"
               role="tabpanel"
-              aria-labelledby="benefits-tab"
+              aria-labelledby="payroll-component-tab"
               n
             >
               <benefit-table-component
@@ -303,6 +317,28 @@
                 @delete="handleTableAction"
               >
               </benefit-table-component>
+            </div>
+
+            <!-- table statutory component -->
+            <div
+              id="table-statutory-component"
+              class="tab-pane fade"
+              role="tabpanel"
+              aria-labelledby="statutory-component-tab"
+              n
+            >
+              <statutory-table-component
+                ref="statutoryTableRef"
+                :employeeId="employeeId"
+                :rowData="rowStatutoryData"
+                :componentTypeOptions="componentTypeOptions"
+                :earningsComponentOptions="earningsComponentOptions"
+                :deductionsComponentOptions="deductionsComponentOptions"
+                @insert="handleTableAction"
+                @edit="handleTableAction"
+                @delete="handleTableAction"
+              >
+              </statutory-table-component>
             </div>
           </div>
         </div>
@@ -333,8 +369,8 @@
       @save="handleSaveModal"
     />
 
-    <!-- benefit modal -->
-    <benefit-modal
+    <!-- payroll component modal -->
+    <payroll-component-modal
       ref="benefitFormElement"
       v-show="showModal && dataType  === 'BENEFIT'"
       :modeData="modalMode"
@@ -342,6 +378,17 @@
       :typeOptions="componentTypeOptions"
       :earningComponentOptions="earningsComponentOptions"
       :deductionComponentOptions="deductionsComponentOptions"
+      :allComponentOptions="rowBenefitData"
+      @close="showModal=false"
+      @save="handleSaveModal"
+    />
+
+    <!-- statutory modal -->
+    <statutory-component-modal
+      ref="statutoryFormElement"
+      v-show="showModal && dataType  === 'STATUTORY'"
+      :modeData="modalMode"
+      :isSaving="isSaving"
       :statutoryComponentOptions="statutoryComponentOptions"
       @close="showModal=false"
       @save="handleSaveModal"

@@ -36,7 +36,7 @@ const payrollAPI = new PayrollAPI();
 export default class Employee extends Vue {
   // data
   public modeData: any;
-  public periodCode: string = "";
+  public periodCode: any = ref("");
   public periodData: any = ref({});
   public rowEmployeeData: any = [];
   public employees: any = [];

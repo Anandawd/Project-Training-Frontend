@@ -1,0 +1,325 @@
+<c-modal
+  :title="title"
+  size="xl"
+  @close="onClose"
+  @save="onSubmit"
+  :isSaving="isSaving"
+>
+  <div @click.stop>
+    <c-form
+      @submit="onSave"
+      ref="inputFormValidation"
+      :validation-schema="schema"
+      @invalid-submit="onInvalidSubmit"
+      class="input-form"
+      v-slot="{resetForm}"
+    >
+      <div class="card">
+        <div class="card-header section-header">
+          <div class="section-icon">
+            <i class="fas fa-calculator text-primary"></i>
+          </div>
+          <div>
+            <h6 class="section-title">
+              {{$t('labels.payroll.payroll.benefitSelection')}}
+            </h6>
+            <small class="section-description text-muted"
+              >{{$t('labels.payroll.payroll.benefitSelectionInstruction')}}</small
+            >
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <c-select
+                required
+                offset="right"
+                class="row mb-1"
+                selectType="column"
+                name="ComponentCode"
+                labelName="name"
+                keyName="code"
+                v-model="form.statutory_component_code"
+                :label="$t('labels.payroll.payroll.component')"
+                :options="statutoryComponentOptions"
+                :columnOptions="columnOptions"
+                :disabled="modalMode === $global.modeData.edit"
+                @change="onComponentChange"
+              />
+            </div>
+            <div class="col-md-6" v-show="isShowUnit">
+              <c-input
+                type="text"
+                name="Unit"
+                id="Unit"
+                class="row mb-1"
+                :label="$t('labels.payroll.payroll.unit')"
+                v-model="form.unit"
+                disabled
+              />
+            </div>
+            <div class="col-md-6" v-show="!isUnitPercentage">
+              <div class="row mb-1">
+                <div class="col-9">
+                  <c-input
+                    formatted
+                    showZeroNumber
+                    :required="form.is_override"
+                    name="AmountPercentage"
+                    id="AmountPercentage"
+                    type="number"
+                    customLabelClass="col-4"
+                    :label="$t('labels.payroll.payroll.amount')"
+                    v-model="form.amount"
+                    :disabled="!form.statutory_component_code || !form.is_override"
+                  />
+                </div>
+                <div class="col-3 d-flex">
+                  <c-checkbox
+                    class="align-items-center"
+                    name="Override"
+                    id="Override"
+                    :label="$t('labels.override')"
+                    v-model="form.is_override"
+                    :disabled="!form.statutory_component_code || isFixedComponent"
+                    @change="onOverrideAmountChange"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6" v-show="isUnitPercentage">
+              <div class="row mb-1">
+                <div class="col-9">
+                  <c-input
+                    formatted
+                    showZeroNumber
+                    :required="form.is_override"
+                    name="Amount"
+                    id="Amount"
+                    type="number"
+                    customLabelClass="col-4"
+                    :label="$t('labels.payroll.payroll.amountPercentage')"
+                    v-model="form.percentage"
+                    :disabled="!form.statutory_component_code || !form.is_override"
+                  />
+                </div>
+                <div class="col-3 d-flex">
+                  <c-checkbox
+                    class="align-items-center"
+                    name="Override"
+                    id="Override"
+                    :label="$t('labels.override')"
+                    v-model="form.is_override"
+                    :disabled="!form.statutory_component_code || isFixedComponent"
+                    @change="onOverrideAmountChange"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6" v-show="isUnitPercentage">
+              <c-input
+                :required="form.is_override"
+                type="number"
+                name="MinAmount"
+                id="MinAmount"
+                class="row mb-1"
+                :label="$t('labels.payroll.payroll.minAmount')"
+                v-model="form.min_amount"
+                :min="0"
+                :disabled="!form.statutory_component_code || !form.is_override"
+              />
+            </div>
+            <div class="col-md-6" v-show="isUnitPercentage">
+              <c-input
+                :required="form.is_override"
+                type="number"
+                name="MaxAmount"
+                id="MaxAmount"
+                class="row mb-1"
+                :label="$t('labels.payroll.payroll.maxAmount')"
+                v-model="form.max_amount"
+                :min="0"
+                :disabled="!form.statutory_component_code || !form.is_override"
+              />
+            </div>
+            <div class="col-md-6">
+              <c-input
+                required
+                type="number"
+                name="Qty"
+                id="Qty"
+                class="row mb-1"
+                :label="$t('labels.payroll.payroll.quantity')"
+                v-model="form.quantity"
+                :min="1"
+                :disabled="!form.statutory_component_code || !form.is_override"
+              />
+            </div>
+            <div class="col-md-6">
+              <c-datepicker
+                required
+                name="EffectiveDate"
+                id="EffectiveDate"
+                customLabelClass="col-3 mb-1"
+                type="date"
+                valueType="YYYY-MM-DD"
+                format="DD/MM/YYYY"
+                :label="$t('labels.payroll.employee.effectiveDate')"
+                v-model="form.effective_date"
+              />
+            </div>
+            <div class="col-md-6">
+              <c-datepicker
+                id="EndDate"
+                name="EndDate"
+                customLabelClass="col-3 mb-1"
+                :label="$t('labels.payroll.employee.endDate')"
+                type="date"
+                valueType="YYYY-MM-DD"
+                format="DD/MM/YYYY"
+                v-model="form.end_date"
+              />
+            </div>
+            <div class="col-md-6">
+              <c-input
+                type="textarea"
+                name="Remark"
+                id="Remark"
+                class="row mb-1"
+                :label="$t('labels.remark')"
+                v-model="form.remark"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header section-header">
+          <div class="section-icon">
+            <i class="fas fa-cog text-primary"></i>
+          </div>
+          <div>
+            <h6 class="section-title">
+              {{$t('labels.payroll.payroll.benefitConfiguration')}}
+            </h6>
+            <small class="text-muted"
+              >{{$t('labels.payroll.payroll.benefitConfigurationInstruction')}}</small
+            >
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-sm-1">
+              <div class="row">
+                <div class="col-sm-3">
+                  <label
+                    class="form-label"
+                    style="font-size: 12px; font-weight: 700"
+                    >{{$t('labels.payroll.payroll.fixedAmount')}}</label
+                  >
+                </div>
+                <div class="col-sm-9 d-flex align-items-center p-0">
+                  <c-radio
+                    disabled
+                    class="me-3"
+                    :label="$t('labels.yes')"
+                    v-model="form.is_fixed"
+                    value="1"
+                  ></c-radio>
+                  <c-radio
+                    disabled
+                    class="me-3"
+                    :label="$t('labels.no')"
+                    v-model="form.is_fixed"
+                    value="0"
+                  ></c-radio>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-sm-1">
+              <div class="row">
+                <div class="col-sm-3">
+                  <label
+                    class="form-label"
+                    style="font-size: 12px; font-weight: 700; color: red"
+                    >{{$t('labels.payroll.payroll.taxable')}}</label
+                  >
+                </div>
+                <div class="col-sm-9 d-flex align-items-center p-0">
+                  <c-radio
+                    class="me-3"
+                    :label="$t('labels.yes')"
+                    v-model="form.is_taxable"
+                    value="1"
+                  ></c-radio>
+                  <c-radio
+                    class="me-3"
+                    :label="$t('labels.no')"
+                    v-model="form.is_taxable"
+                    value="0"
+                  ></c-radio>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-sm-1">
+              <div class="row">
+                <div class="col-sm-3">
+                  <label
+                    class="form-label"
+                    style="font-size: 12px; font-weight: 700; color: red"
+                    >{{$t('labels.payroll.payroll.showInPayslip')}}</label
+                  >
+                </div>
+                <div class="col-sm-9 d-flex align-items-center p-0">
+                  <c-radio
+                    class="me-3"
+                    :label="$t('labels.yes')"
+                    v-model="form.is_show_in_payslip"
+                    value="1"
+                  ></c-radio>
+                  <c-radio
+                    class="me-3"
+                    :label="$t('labels.no')"
+                    v-model="form.is_show_in_payslip"
+                    value="0"
+                  ></c-radio>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end mt-4">
+        <button
+          type="button"
+          class="btn btn-danger mr-1"
+          @click="onClose"
+          :disabled="isSaving"
+        >
+          <i class="fas fa-times me-1"></i>
+          {{$t('buttons.cancel')}}
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          @click="onSubmit"
+          :disabled="isSaving"
+        >
+          <div
+            v-if="isSaving"
+            class="spinner-border spinner-border-sm me-2"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <i v-else class="fa fa-save me-1"></i>
+          {{isSaving ? 'Saving...' : $t('buttons.save')}}
+        </button>
+      </div>
+    </c-form>
+  </div>
+</c-modal>

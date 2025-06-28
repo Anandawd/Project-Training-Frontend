@@ -2,6 +2,8 @@ import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
+import PayrollPeriodsAPI from "@/services/api/payroll/payroll-periods/payroll-periods";
+import { formatDateTime2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -14,6 +16,8 @@ import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 
+const payrollPeriodsAPI = new PayrollPeriodsAPI();
+
 @Options({
   components: {
     AgGridVue,
@@ -23,8 +27,24 @@ import { Options, Vue } from "vue-class-component";
   },
 })
 export default class PayrollApprovals extends Vue {
-  public selectedRowData: any;
+  // data
   public rowData: any = [];
+  public deleteParam: any;
+  public approveParam: any;
+
+  // form
+  public form: any = {};
+  public modeData: any;
+  public showForm: boolean = false;
+  public inputFormElement: any = ref();
+  public isSaving: boolean = false;
+  public isLoading: boolean = false;
+
+  // dialog
+  public showDialog: boolean = false;
+  public dialogMessage: string = "";
+  public dialogAction: string = "";
+
   // filter
   public searchOptions: any;
   searchDefault: any = {
@@ -33,16 +53,16 @@ export default class PayrollApprovals extends Vue {
     filter: [0],
   };
 
-  // form
-  public showForm: boolean = false;
-  public modeData: any;
-  public form: any = {};
-  public inputFormElement: any = ref();
-  public formType: any;
-
-  // dialog
-  public showDialog: boolean = false;
-  public deleteParam: any;
+  // stats
+  public statusCounts: any = ref({
+    all: 0,
+    draft: 0,
+    pending: 0,
+    approved: 0,
+    rejected: 0,
+    processing: 0,
+    completed: 0,
+  });
 
   // AG GRID VARIABLE
   gridOptions: any = {};
@@ -60,17 +80,16 @@ export default class PayrollApprovals extends Vue {
   ColumnApi: any;
   agGridSetting: any;
 
-  // LIFECYCLE HOOKs
-  created(): void {
+  // RECYCLE LIFE FUNCTION =======================================================
+  mounted(): void {
     this.loadMockData();
   }
 
   beforeMount(): void {
     this.searchOptions = [
-      { text: this.$t("commons.filter.all"), value: 0 },
-      { text: this.$t("commons.filter.payroll.employee.department"), value: 0 },
-      { text: this.$t("commons.filter.payroll.employee.position"), value: 1 },
-      { text: this.$t("commons.filter.payroll.employee.placement"), value: 2 },
+      { text: this.$t("commons.filter.payroll.payroll.periodName"), value: 0 },
+      { text: this.$t("commons.filter.payroll.employee.placement"), value: 1 },
+      { text: this.$t("commons.filter.remark"), value: 2 },
     ];
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
@@ -84,7 +103,7 @@ export default class PayrollApprovals extends Vue {
       {
         headerName: this.$t("commons.table.action"),
         headerClass: "align-header-center",
-        field: "Code",
+        field: "id",
         enableRowGroup: false,
         resizable: false,
         filter: false,
@@ -97,8 +116,20 @@ export default class PayrollApprovals extends Vue {
         width: 80,
       },
       {
+        headerName: this.$t("commons.table.payroll.employee.code"),
+        field: "period_code",
+        width: 100,
+        enableRowGroup: true,
+      },
+      {
         headerName: this.$t("commons.table.payroll.payroll.periodName"),
         field: "period_name",
+        width: 150,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.employee.placement"),
+        field: "Placement",
         width: 150,
         enableRowGroup: true,
       },
@@ -113,6 +144,51 @@ export default class PayrollApprovals extends Vue {
         field: "payment_date",
         width: 120,
         enableRowGroup: true,
+        valueFormatter: formatDateTime2,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.status"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "status",
+        width: 150,
+        enableRowGroup: true,
+        cellRenderer: (params: any) => {
+          const status = params.value.toUpperCase();
+          let badgeClass = "";
+          let statusText = "";
+
+          switch (status) {
+            case "PENDING":
+              badgeClass = "bg-warning";
+              statusText = "PENDING";
+              break;
+            case "APPROVED":
+              badgeClass = "bg-success";
+              statusText = "APPROVED";
+              break;
+            case "REJECTED":
+              badgeClass = "bg-danger";
+              statusText = "REJECTED";
+              break;
+            case "READY TO PAYMENT":
+              badgeClass = "bg-success";
+              statusText = "READY TO PAYMENT";
+              break;
+            case "PROCESSING":
+              badgeClass = "bg-primary";
+              statusText = "PROCESSING";
+              break;
+            case "COMPLETED":
+              badgeClass = "bg-primary";
+              statusText = "COMPLETED";
+              break;
+            default:
+              badgeClass = "bg-secondary";
+              statusText = status;
+          }
+          return `<span class="badge ${badgeClass} py-1 px-3">${statusText}</span>`;
+        },
       },
       {
         headerName: this.$t("commons.table.remark"),
@@ -121,40 +197,36 @@ export default class PayrollApprovals extends Vue {
         enableRowGroup: false,
       },
       {
-        headerName: this.$t("commons.table.createdAt"),
-        field: "created_at",
+        headerName: this.$t("commons.table.updatedAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "updated_at",
+        width: 120,
+        valueFormatter: formatDateTime2,
+      },
+      {
+        headerName: this.$t("commons.table.updatedBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "updated_by",
         width: 120,
         enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.createdAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "created_at",
+        width: 120,
+        valueFormatter: formatDateTime2,
       },
       {
         headerName: this.$t("commons.table.createdBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "created_by",
         width: 120,
         enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.status"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
-        field: "status",
-        width: 140,
-        enableRowGroup: true,
-        cellRenderer: (params: any) => {
-          const status = params.value;
-          let badgeClass = "text-bg-secondary";
-          if (status === "Pending") {
-            badgeClass = "text-bg-warning";
-          } else if (status === "Approved") {
-            badgeClass = "text-bg-success";
-          } else if (status === "Ready To Payment") {
-            badgeClass = "text-bg-info";
-          } else if (status === "Completed") {
-            badgeClass = "text-bg-success";
-          } else if (status === "Rejected") {
-            badgeClass = "text-bg-danger";
-          }
-          return `<span class="badge text-bg-secondary px-3 py-1 ${badgeClass}">${status}</span>`;
-        },
       },
     ];
     this.context = { componentParent: this };
@@ -185,69 +257,7 @@ export default class PayrollApprovals extends Vue {
     // params.api.sizeColumnsToFit();
   }
 
-  // GENERAL FUNCTION
-  handleSave(formData: any) {
-    if (this.modeData === $global.modeData.insert) {
-      this.insertData(formData);
-    } else if (this.modeData === $global.modePayroll.process) {
-      this.handleShowDetail(formData, $global.modePayroll.process);
-    } else {
-      this.updateData(formData);
-    }
-  }
-
-  async handleEdit(params: any) {
-    this.showForm = true;
-    this.modeData = $global.modeData.edit;
-    await this.loadEditData(params.id);
-  }
-
-  handleMenu() {}
-
-  handleApprove(params: any, mode: any) {}
-
-  refreshData(search: any) {
-    this.loadDataGrid(search);
-  }
-
-  async loadMockData() {
-    this.rowData = [
-      {
-        id: 4,
-        period_name: "April 2025",
-        period_date: "01/04/2025 - 30/04/2025",
-        payment_date: "01/05/2025",
-        remark: "-",
-        status: "Completed",
-      },
-      {
-        id: 1,
-        period_name: "May 2025",
-        period_date: "01/05/2025 - 31/05/2025",
-        payment_date: "01/06/2025",
-        remark: "-",
-        status: "Ready To Payment",
-      },
-      {
-        id: 2,
-        period_name: "June 2025",
-        period_date: "01/06/2025 - 30/06/2025",
-        payment_date: "01/07/2025",
-        remark: "-",
-        status: "Ready To Payment",
-      },
-      {
-        id: 3,
-        period_name: "July 2025",
-        period_date: "01/07/2025 - 30/07/2025",
-        payment_date: "01/08/2025",
-        remark: "-",
-        status: "Ready To Payment",
-      },
-    ];
-  }
-
-  // UI FUNCTION
+  // GENERAL FUNCTION =======================================================
   getContextMenu(params: any) {
     const { node } = params;
     if (node) {
@@ -262,7 +272,11 @@ export default class PayrollApprovals extends Vue {
         disabled:
           !this.paramsData || this.paramsData.status === "Ready To Payment",
         icon: generateIconContextMenuAgGrid("detail_icon24"),
-        action: () => this.handleShowDetail("", $global.modePayroll.detail),
+        action: () =>
+          this.handleToDisbursementDetail(
+            this.paramsData,
+            $global.modePayroll.detail
+          ),
       },
       {
         name: this.$t("commons.contextMenu.process"),
@@ -271,7 +285,24 @@ export default class PayrollApprovals extends Vue {
           this.paramsData.status === "Completed" ||
           this.paramsData.status === "Processing",
         icon: generateIconContextMenuAgGrid("process_icon24"),
-        action: () => this.handleShowDetail("", $global.modePayroll.process),
+        action: () =>
+          this.handleToDisbursementDetail(
+            this.paramsData,
+            $global.modePayroll.process
+          ),
+      },
+      "separator",
+      {
+        name: this.$t("commons.contextMenu.downloadBulkPayslip"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("download_icon24"),
+        //  action: () => this.handleApprove(this.paramsData),
+      },
+      {
+        name: this.$t("commons.contextMenu.downloadBulkFormA1"),
+        disabled: !this.paramsData,
+        icon: generateIconContextMenuAgGrid("download_icon24"),
+        // action: () => this.handleShowDetail(this.paramsData),
       },
     ];
     return result;
@@ -290,43 +321,92 @@ export default class PayrollApprovals extends Vue {
     }
   }
 
-  handleShowForm(params: any, mode: any) {
-    this.inputFormElement.initialize();
-    this.modeData = mode;
-    this.showForm = true;
-  }
-
-  handleShowDetail(params: any, mode: any) {
-    if (!params) {
-      return;
-    }
-
+  handleToDisbursementDetail(params: any, mode: any) {
+    console.log("handleToDisbursementDetail", { params, mode });
     if (mode === $global.modePayroll.process) {
       this.$router.push({
         name: "DisbursementProcess",
-        params: { id: params.id },
+        params: { periodCode: params.period_code },
       });
     } else {
       this.$router.push({
-        name: "DisbursementProcess",
-        params: { id: params.id },
+        name: "DisbursementDetail",
+        params: { periodCode: params.period_code },
       });
     }
   }
 
-  // API FUNCTION
+  handleMenu() {}
+
+  refreshData(search: any) {
+    this.loadDataGrid(search);
+  }
+
+  // API REQUEST =======================================================
   async loadDataGrid(search: any = this.searchDefault) {
     try {
+      this.isLoading = true;
       let params = {
         Index: search.index,
         Text: search.text,
         IndexCheckBox: search.filter[0],
       };
-      // const {data} = await payrollAPI.getPayrollPeriod(params)
-      // this.rowData = data
+      const { data } = await payrollPeriodsAPI.GetPayrollPeriodsList(params);
+      if (data) {
+        this.rowData = data;
+      } else {
+        this.rowData = [];
+      }
+
+      const { data: statusData } =
+        await payrollPeriodsAPI.GetPayrollPeriodsStatusStatistic();
+      this.statusCounts = statusData;
     } catch (error) {
       getError(error);
+    } finally {
+      this.isLoading = true;
     }
+  }
+
+  async loadMockData() {
+    this.rowData = [
+      {
+        id: 4,
+        period_code: "payroll-cakra-april-2025",
+        period_name: "April 2025",
+        period_date: "01/04/2025 - 30/04/2025",
+        payment_date: "01/05/2025",
+        remark: "-",
+        status: "Completed",
+      },
+      {
+        id: 1,
+        period_code: "payroll-cakra-mei-2025",
+        period_name: "May 2025",
+        period_date: "01/05/2025 - 31/05/2025",
+        payment_date: "01/06/2025",
+        remark: "-",
+        status: "Ready To Payment",
+      },
+      {
+        id: 2,
+        period_code: "payroll-cakra-juni-2025",
+        period_name: "June 2025",
+        period_date: "01/06/2025 - 30/06/2025",
+        payment_date: "01/07/2025",
+        remark: "-",
+        status: "Ready To Payment",
+      },
+      {
+        period_code: "payroll-cakra-juli-2025",
+        id: 3,
+        period_name: "July 2025",
+        period_date: "01/07/2025 - 30/07/2025",
+        payment_date: "01/08/2025",
+        remark: "-",
+        status: "Ready To Payment",
+      },
+    ];
   }
 
   async insertData(formData: any) {
@@ -342,48 +422,24 @@ export default class PayrollApprovals extends Vue {
     }
   }
 
-  async loadEditData(params: any) {
-    try {
-      // const {data} = await payrollAPI.GetPayrollPeriod(params)
-      // this.inputFormElement.form = data
-      // this.showForm = true
-    } catch (error) {
-      getError(error);
-    }
-  }
+  // HELPER =======================================================
 
-  async updateData(formData: any) {
-    try {
-      // const { status2 } = await trainingAPI.UpdateLostAndFound(formData);
-      // if (status2.status == 0) {
-      //   this.loadDataGrid("");
-      //   this.showForm = false;
-      //   getToastSuccess(this.$t("messages.saveSuccess"));
-      // }
-    } catch (error) {
-      getError(error);
-    }
-  }
-
-  onSelectionChanged() {
-    const selectedRows = this.gridApi.getSelectedRows();
-    this.selectedRowData = selectedRows.length > 0 ? selectedRows[0] : null;
-  }
-
-  // GETTER AND SETTER
+  // GETTER AND SETTER =======================================================
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
   }
 
-  get isRunPayrollDisabled(): boolean {
-    return !this.rowData.some((item: any) => item.status === "Draft");
+  get isProcessButton() {
+    if (this.paramsData) {
+      return this.paramsData.status === "Ready To Payment";
+    }
+    return false;
   }
 
-  get isProcessButtonDisabled(): boolean {
-    if (!this.selectedRowData) {
-      return true;
+  get isDetailButton() {
+    if (this.paramsData) {
+      return this.paramsData.status === "Completed";
     }
-
-    return this.selectedRowData.status !== "Ready To Payment";
+    return false;
   }
 }

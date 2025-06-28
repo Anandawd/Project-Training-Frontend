@@ -1,0 +1,22 @@
+<section class="content">
+  <ag-grid-vue
+    :style="agGridSetting.styleAgGridFrame2"
+    :class="agGridSetting.themeAgGrid"
+    :columnDefs="columnDefs"
+    :rowData="rowData"
+    :paginationPageSize="paginationPageSize"
+    :gridOptions="gridOptions"
+    :context="context"
+    :frameworkComponents="frameworkComponents"
+    :enableCellChangeFlash="true"
+    :rowSelection="rowSelection"
+    :getContextMenuItems="getContextMenu"
+    :defaultColDef="agGridSetting.defColDef"
+    :rowGroupPanelShow="rowGroupPanelShow"
+    :suppressDragLeaveHidesColumns="true"
+    :suppressMakeColumnVisibleAfterUnGroup=" true"
+    :statusBar="statusBar"
+    @grid-ready="onGridReady"
+    @cellContextMenu="handleRowRightClicked"
+  ></ag-grid-vue>
+</section>

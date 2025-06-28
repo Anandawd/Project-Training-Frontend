@@ -32,16 +32,16 @@ export default class TaxCard extends Vue {
   title!: string;
   data: any = reactive({
     payroll_id: "",
-    gross_income: "",
-    net_income: "",
-    tax_amount: "",
-    tax_amount_floor_up: "",
+    gross_income: 0,
+    net_income: 0,
+    tax_amount: 0,
+    tax_amount_floor_up: 0,
     tax_category: "",
     tax_component_code: "",
     tax_income_type: "",
     tax_method: "",
-    tax_rate: "",
-    taxable_amount: "",
+    tax_rate: 0,
+    taxable_amount: 0,
   });
 
   formatCurrency(value: any) {

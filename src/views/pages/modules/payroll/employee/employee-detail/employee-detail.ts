@@ -18,13 +18,15 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import BenefitModal from "../components/benefit-modal/benefit-modal.vue";
 import BenefitTableComponent from "../components/benefit-table-component/benefit-table-component.vue";
 import DocumentModal from "../components/document-modal/document-modal.vue";
 import DocumentTableComponent from "../components/document-table-component/document-table-component.vue";
 import EmployeeInputForm from "../components/employee-input-form/employee-input-form.vue";
+import PayrollComponentModal from "../components/payroll-component-modal/payroll-component-modal.vue";
 import SalaryModal from "../components/salary-modal/salary-modal.vue";
 import SalaryTableComponent from "../components/salary-table-component/salary-table-component.vue";
+import StatutoryComponentModal from "../components/statutory-component-modal/statutory-component-modal.vue";
+import StatutoryTableComponent from "../components/statutory-table-component/statutory-table-component.vue";
 
 const employeeAPI = new EmployeeAPI();
 const organizationAPI = new OrganizationAPI();
@@ -46,18 +48,21 @@ const payrollComponentAPI = new PayrollComponentsAPI();
     BenefitTableComponent,
     SalaryTableComponent,
     CCheckbox,
-    BenefitModal,
+    PayrollComponentModal,
     DocumentModal,
     SalaryModal,
+    StatutoryTableComponent,
+    StatutoryComponentModal,
   },
 })
 export default class EmployeeDetail extends Vue {
   // data
-  employeeId: any;
+  employeeId: any = ref("");
   employeeData: any = ref({});
   rowDocumentData: any = [];
   rowSalaryData: any = [];
   rowBenefitData: any = [];
+  rowStatutoryData: any = [];
   employeeSalaryData: any = ref({});
 
   // options
@@ -83,6 +88,7 @@ export default class EmployeeDetail extends Vue {
   documentTableRef: any = ref();
   salaryTableRef: any = ref();
   benefitTableRef: any = ref();
+  statutoryTableRef: any = ref();
 
   /// modal state
   public dataType: any;
@@ -92,6 +98,7 @@ export default class EmployeeDetail extends Vue {
   public documentFormElement: any = ref();
   public salaryFormElement: any = ref();
   public benefitFormElement: any = ref();
+  public statutoryFormElement: any = ref();
 
   // dialog
   public showDialog: boolean = false;
@@ -151,6 +158,9 @@ export default class EmployeeDetail extends Vue {
           case "BENEFIT":
             this.benefitFormElement.initialize();
             break;
+          case "STATUTORY":
+            this.statutoryFormElement.initialize();
+            break;
         }
       } else if (mode === $global.modeData.edit && params) {
         console.log("edit", params);
@@ -191,6 +201,11 @@ export default class EmployeeDetail extends Vue {
         break;
       case "BENEFIT":
         this.dialogMessage = this.$t("messages.employee.confirm.deleteBenefit");
+        break;
+      case "STATUTORY":
+        this.dialogMessage = this.$t(
+          "messages.employee.confirm.deleteStatutory"
+        );
         break;
     }
     this.showDialog = true;
@@ -293,6 +308,14 @@ export default class EmployeeDetail extends Vue {
       } else {
         this.rowBenefitData = [];
       }
+
+      const { data: statutoryData } =
+        await payrollAPI.GetEmployeeStatutoryListByEmployeeId(this.employeeId);
+      if (statutoryData) {
+        this.rowStatutoryData = statutoryData;
+      } else {
+        this.rowStatutoryData = [];
+      }
     } catch (error) {
       getError(error);
     }
@@ -333,6 +356,17 @@ export default class EmployeeDetail extends Vue {
             this.rowBenefitData = benefitData;
           } else {
             this.rowBenefitData = [];
+          }
+          break;
+        case "STATUTORY":
+          const { data: statutoryData } =
+            await payrollAPI.GetEmployeeStatutoryListByEmployeeId(
+              this.employeeId
+            );
+          if (statutoryData) {
+            this.rowStatutoryData = statutoryData;
+          } else {
+            this.rowStatutoryData = [];
           }
           break;
       }
@@ -381,6 +415,14 @@ export default class EmployeeDetail extends Vue {
           );
           this.$nextTick(() => {
             this.benefitFormElement.form = this.populateFormModal(benefit);
+            console.log("edit form", this.benefitFormElement.form);
+          });
+          break;
+        case "STATUTORY":
+          const { data: statutory } =
+            await payrollAPI.GetEmployeeStatutoryListById(params.id);
+          this.$nextTick(() => {
+            this.statutoryFormElement.form = this.populateFormModal(statutory);
           });
           break;
       }
@@ -491,6 +533,13 @@ export default class EmployeeDetail extends Vue {
             getToastSuccess(this.$t("messages.employee.success.saveBenefit"));
           }
           break;
+        case "STATUTORY":
+          const { status2: statutory } =
+            await payrollAPI.InsertEmployeeStatutory(formData);
+          if (statutory.status === 0) {
+            getToastSuccess(this.$t("messages.employee.success.saveStatutory"));
+          }
+          break;
       }
 
       this.$nextTick();
@@ -526,11 +575,18 @@ export default class EmployeeDetail extends Vue {
           }
           break;
         case "BENEFIT":
-          const { status2: benefit } = await payrollAPI.UpdateEmployeePayroll(
+          const { status2: benefit } = await payrollAPI.InsertEmployeePayroll(
             formData
           );
           if (benefit.status === 0) {
-            getToastSuccess(this.$t("messages.employee.success.updateBenefit"));
+            getToastSuccess(this.$t("messages.employee.success.saveBenefit"));
+          }
+          break;
+        case "STATUTORY":
+          const { status2: statutory } =
+            await payrollAPI.InsertEmployeeStatutory(formData);
+          if (statutory.status === 0) {
+            getToastSuccess(this.$t("messages.employee.success.saveStatutory"));
           }
           break;
       }
@@ -574,6 +630,15 @@ export default class EmployeeDetail extends Vue {
           );
           if (benefit.status === 0) {
             getToastSuccess(this.$t("messages.employee.success.deleteBenefit"));
+          }
+          break;
+        case "STATUTORY":
+          const { status2: statutory } =
+            await payrollAPI.DeleteEmployeeStatutory(this.deleteParam.id);
+          if (statutory.status === 0) {
+            getToastSuccess(
+              this.$t("messages.employee.success.deleteStatutory")
+            );
           }
           break;
       }
@@ -732,6 +797,29 @@ export default class EmployeeDetail extends Vue {
           created_at: formatDateTimeUTC(params.created_at),
           created_by: params.created_by,
         };
+      case "STATUTORY":
+        return {
+          employee_id: this.employeeId,
+          id: params.id ? params.id : null,
+          statutory_component_code: params.payroll_component_code,
+          amount: params.amount ? parseFloat(params.amount) : 0,
+          percentage: params.percentage ? parseFloat(params.percentage) : 0,
+          min_amount: params.min_amount ? parseFloat(params.min_amount) : 0,
+          max_amount: params.max_amount ? parseFloat(params.max_amount) : 0,
+          quantity: parseInt(params.quantity),
+          effective_date: formatDateTimeUTC(params.effective_date),
+          end_date: formatDateTimeUTC(params.end_date),
+          remark: params.remark,
+          is_current: parseInt(params.is_current),
+          // is_override: params.is_override ? 1 : 0,
+          is_taxable: parseInt(params.is_taxable),
+          is_fixed: parseInt(params.is_fixed),
+          is_show_in_payslip: parseInt(params.is_show_in_payslip),
+          updated_at: formatDateTimeUTC(params.updated_at),
+          updated_by: params.updated_by,
+          created_at: formatDateTimeUTC(params.created_at),
+          created_by: params.created_by,
+        };
     }
   }
 
@@ -845,9 +933,34 @@ export default class EmployeeDetail extends Vue {
           id: params.id,
           employee_id: this.employeeId,
           payroll_component_code: params.payroll_component_code,
-          component_type: params.component_type,
-          category_code: params.category_code,
           amount: params.amount,
+          quantity: params.quantity,
+          effective_date: params.effective_date,
+          end_date: params.end_date,
+          remark: params.remark,
+          is_current: params.is_current,
+          is_override: params.is_override,
+          is_taxable: params.is_taxable,
+          is_fixed: params.is_fixed,
+          is_prorated: params.is_prorated,
+          is_included_in_bpjs_health: params.is_included_in_bpjs_health,
+          is_included_in_bpjs_employee: params.is_included_in_bpjs_employee,
+          is_show_in_payslip: params.is_show_in_payslip,
+          updated_at: params.updated_at,
+          updated_by: params.updated_by,
+          created_at: params.created_at,
+          created_by: params.created_by,
+        };
+      case "STATUTORY":
+        return {
+          id: params.id,
+          employee_id: this.employeeId,
+          statutory_component_code: params.statutory_component_code,
+          component_type: "Statutory",
+          amount: params.amount,
+          percentage: params.percentage,
+          max_amount: params.max_amount,
+          min_amount: params.min_amount,
           quantity: params.quantity,
           effective_date: params.effective_date,
           end_date: params.end_date,

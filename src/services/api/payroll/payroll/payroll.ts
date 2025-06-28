@@ -84,6 +84,52 @@ class PayrollAPI extends ConfigurationResource {
     });
   }
 
+  // employee statutory
+  GetEmployeeStatutoryList(params: any) {
+    return request({
+      url: "GetPayEmployeeStatutoryComponentList",
+      method: "get",
+      params: params,
+    });
+  }
+
+  GetEmployeeStatutoryListById(params: any) {
+    return request({
+      url: "GetPayEmployeeStatutoryComponent/" + params,
+      method: "get",
+    });
+  }
+
+  GetEmployeeStatutoryListByEmployeeId(params: any) {
+    return request({
+      url: "GetPayEmployeeStatutoryComponentByEmployeeID/" + params,
+      method: "get",
+    });
+  }
+
+  InsertEmployeeStatutory(params: any) {
+    return request({
+      url: "InsertPayEmployeeStatutoryComponentList",
+      method: "post",
+      data: params,
+    });
+  }
+
+  UpdateEmployeeStatutory(params: any) {
+    return request({
+      url: "UpdateEmployeeStatutoryComponentList",
+      method: "put",
+      data: params,
+    });
+  }
+
+  DeleteEmployeeStatutory(params: any) {
+    return request({
+      url: "DeletePayEmployeeStatutoryComponent/" + params,
+      method: "delete",
+    });
+  }
+
   // generate
   GetEmployeeListByPlacementCode(params: any) {
     return request({

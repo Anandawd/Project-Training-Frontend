@@ -31,7 +31,7 @@
 
         <div class="card-body">
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-6" v-show="isShowComponentType">
               <c-select
                 required
                 offset="right"
@@ -41,7 +41,7 @@
                 keyName="code"
                 v-model="form.component_type"
                 :label="$t('labels.payroll.payroll.type')"
-                :options="typeOptions"
+                :options="filteredTypeOptions"
                 @change="onComponentTypeChange"
                 :disabled="modalMode === $global.modeData.edit"
               />
@@ -63,15 +63,27 @@
                 @change="onComponentChange"
               />
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6" v-show="isShowUnit">
+              <c-input
+                type="text"
+                name="Unit"
+                id="Unit"
+                class="row mb-1"
+                :label="$t('labels.payroll.payroll.unit')"
+                v-model="form.unit"
+                disabled
+              />
+            </div>
+
+            <div class="col-md-6" v-show="!isUnitPercentage">
               <div class="row mb-1">
                 <div class="col-9">
                   <c-input
                     formatted
                     showZeroNumber
                     :required="form.is_override"
-                    name="Amount"
-                    id="Amount"
+                    name="AmountPercentage"
+                    id="AmountPercentage"
                     type="number"
                     customLabelClass="col-4"
                     :label="$t('labels.payroll.payroll.amount')"
@@ -91,6 +103,61 @@
                   />
                 </div>
               </div>
+            </div>
+            <div class="col-md-6" v-show="isUnitPercentage">
+              <div class="row mb-1">
+                <div class="col-9">
+                  <c-input
+                    formatted
+                    showZeroNumber
+                    :required="form.is_override"
+                    name="Amount"
+                    id="Amount"
+                    type="number"
+                    customLabelClass="col-4"
+                    :label="$t('labels.payroll.payroll.amountPercentage')"
+                    v-model="form.percentage"
+                    :disabled="!form.payroll_component_code || !form.is_override"
+                  />
+                </div>
+                <div class="col-3 d-flex">
+                  <c-checkbox
+                    class="align-items-center"
+                    name="Override"
+                    id="Override"
+                    :label="$t('labels.override')"
+                    v-model="form.is_override"
+                    :disabled="!form.payroll_component_code || isFixedComponent"
+                    @change="onOverrideAmountChange"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6" v-show="isUnitPercentage">
+              <c-input
+                :required="form.is_override"
+                type="number"
+                name="MinAmount"
+                id="MinAmount"
+                class="row mb-1"
+                :label="$t('labels.payroll.payroll.minAmount')"
+                v-model="form.min_amount"
+                :min="0"
+                :disabled="!form.payroll_component_code || !form.is_override"
+              />
+            </div>
+            <div class="col-md-6" v-show="isUnitPercentage">
+              <c-input
+                :required="form.is_override"
+                type="number"
+                name="MaxAmount"
+                id="MaxAmount"
+                class="row mb-1"
+                :label="$t('labels.payroll.payroll.maxAmount')"
+                v-model="form.max_amount"
+                :min="0"
+                :disabled="!form.payroll_component_code || !form.is_override"
+              />
             </div>
             <div class="col-md-6">
               <c-input
@@ -165,18 +232,20 @@
                 <div class="col-sm-3">
                   <label
                     class="form-label"
-                    style="font-size: 12px; font-weight: 700; color: red"
+                    style="font-size: 12px; font-weight: 700"
                     >{{$t('labels.payroll.payroll.fixedAmount')}}</label
                   >
                 </div>
                 <div class="col-sm-9 d-flex align-items-center p-0">
                   <c-radio
+                    disabled
                     class="me-3"
                     :label="$t('labels.yes')"
                     v-model="form.is_fixed"
                     value="1"
                   ></c-radio>
                   <c-radio
+                    disabled
                     class="me-3"
                     :label="$t('labels.no')"
                     v-model="form.is_fixed"
@@ -210,7 +279,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-6 mb-sm-1">
+            <div class="col-md-6 mb-sm-1" v-show="!isComponentStatutory">
               <div class="row">
                 <div class="col-sm-3">
                   <label
@@ -235,7 +304,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-6 mb-sm-1">
+            <div class="col-md-6 mb-sm-1" v-show="!isComponentStatutory">
               <div class="row">
                 <div class="col-sm-3">
                   <label
@@ -260,7 +329,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-6 mb-sm-1">
+            <div class="col-md-6 mb-sm-1" v-show="!isComponentStatutory">
               <div class="row">
                 <div class="col-sm-3">
                   <label

@@ -32,7 +32,7 @@ const employeeAPI = new EmployeeAPI();
     CInputForm,
   },
 })
-export default class Employee extends Vue {
+export default class PayrollPeriods extends Vue {
   // data
   public rowData: any = [];
   public deleteParam: any;
@@ -47,13 +47,12 @@ export default class Employee extends Vue {
   public modeData: any;
   public showForm: boolean = false;
   public inputFormElement: any = ref();
+  public isSaving: boolean = false;
 
   // dialog
   public showDialog: boolean = false;
   public dialogMessage: string = "";
   public dialogAction: string = "";
-
-  public isSaving: boolean = false;
 
   // filter
   public searchOptions: any;
@@ -163,7 +162,7 @@ export default class Employee extends Vue {
         headerClass: "align-header-center",
         cellClass: "text-center",
         field: "status",
-        width: 120,
+        width: 150,
         enableRowGroup: true,
         cellRenderer: (params: any) => {
           const status = params.value.toUpperCase();
@@ -340,13 +339,10 @@ export default class Employee extends Vue {
     this.showForm = false;
     await this.$nextTick();
 
-    console.log("handleShowForm", { params, mode });
     this.modeData = mode;
     this.$nextTick(() => {
       if (mode === $global.modeData.insert) {
         this.inputFormElement.initialize();
-        console.log("inser", this.inputFormElement);
-        this.showForm = true;
       } else {
         this.loadEditData(params);
       }
@@ -637,7 +633,7 @@ export default class Employee extends Vue {
     };
   }
 
-  // GETTER AND SETTER
+  // GETTER AND SETTER =======================================================
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
   }

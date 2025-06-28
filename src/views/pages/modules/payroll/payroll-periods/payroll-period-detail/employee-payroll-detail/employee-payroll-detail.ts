@@ -11,13 +11,12 @@ import { getToastSuccess } from "@/utils/toast";
 import { Form as CForm } from "vee-validate";
 import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import BenefitModal from "../../../employee/components/benefit-modal/benefit-modal.vue";
+import PayrollComponentModal from "../../../employee/components/payroll-component-modal/payroll-component-modal.vue";
 import EmployeeInformation from "../../components/employee-information/employee-information.vue";
 import PayrollCard from "../../components/payroll-card/payroll-card.vue";
 import ProrateModal from "../../components/prorate-modal/prorate-modal.vue";
 import TaxCard from "../../components/tax-card/tax-card.vue";
 import TotalPaymentCard from "../../components/total-payment-card/total-payment-card.vue";
-import CInputForm from "./component-input-form/component-input-form.vue";
 
 const payrollPeriodsAPI = new PayrollPeriodsAPI();
 const payrollAPI = new PayrollAPI();
@@ -31,10 +30,9 @@ const employeeAPI = new EmployeeAPI();
     CSelect,
     CDatepicker,
     CRadio,
-    CInputForm,
     CModal,
     ProrateModal,
-    BenefitModal,
+    PayrollComponentModal,
     EmployeeInformation,
     PayrollCard,
     TotalPaymentCard,
@@ -43,8 +41,8 @@ const employeeAPI = new EmployeeAPI();
 })
 export default class EmployeePayrollDetail extends Vue {
   // data
-  periodCode: any = "";
-  employeeId: any = "";
+  periodCode: any = ref("");
+  employeeId: any = ref("");
 
   // form
   public isSaving: boolean = false;
@@ -98,14 +96,19 @@ export default class EmployeePayrollDetail extends Vue {
   public payrollComponents: any = reactive([]);
 
   // RECYCLE LIFE FUNCTION =======================================================
-  beforeMount(): void {
+  created(): void {
     this.periodCode = this.$route.params.periodCode;
     this.employeeId = this.$route.params.employeeId;
+
+    console.log("beforeMount", this.periodCode);
+    console.log("beforeMount", this.employeeId);
   }
 
-  async mounted() {
-    await this.loadData();
+  async beforeMount() {
+    this.loadData();
   }
+
+  async mounted() {}
 
   // GENERAL FUNCTION =======================================================
   async handleShowModal(params: any) {
@@ -197,11 +200,14 @@ export default class EmployeePayrollDetail extends Vue {
           this.periodCode,
           this.employeeId
         );
+
       if (payrollData) {
         this.payrollData = payrollData[0];
       } else {
         this.payrollData = {};
       }
+
+      console.log("loadData", payrollData);
 
       const { data: earnings } =
         await payrollAPI.GetEmployeePayrollEarningsComponent(this.employeeId);
@@ -219,14 +225,14 @@ export default class EmployeePayrollDetail extends Vue {
         this.deductionsComponents = [];
       }
 
-      const { data: tax } = await payrollAPI.GetTaxDetailByPayrollId(
-        this.payrollData.id
-      );
-      if (employee) {
-        this.taxData = tax;
-      } else {
-        this.taxData = {};
-      }
+      // const { data: tax } = await payrollAPI.GetTaxDetailByPayrollId(
+      //   this.payrollData.id
+      // );
+      // if (employee) {
+      //   this.taxData = tax;
+      // } else {
+      //   this.taxData = {};
+      // }
 
       // this.calculateTotals();
     } catch (error) {
@@ -288,7 +294,7 @@ export default class EmployeePayrollDetail extends Vue {
     }
   }
 
-  // HELPER =======================================================
+  // HELPER ==================================================================
   // GETTER AND SETTER =======================================================
 
   // onComponentAmountChange(component: any) {

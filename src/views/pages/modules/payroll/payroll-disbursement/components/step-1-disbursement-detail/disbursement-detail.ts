@@ -1,13 +1,14 @@
 import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
-import { formatCurrency, formatNumber2 } from "@/utils/format";
+import { formatNumber2 } from "@/utils/format";
 import { generateTotalFooterAgGrid, getError } from "@/utils/general";
 import $global from "@/utils/global";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { Options, Vue } from "vue-class-component";
 // import DetailCellRender from "./detail-bank/detail-bank.vue";
-import DetailBank from "./detail-bank/detail-bank.vue";
+import { reactive } from "vue";
+import DetailBank from "../detail-bank/detail-bank.vue";
 
 @Options({
   components: {
@@ -17,13 +18,14 @@ import DetailBank from "./detail-bank/detail-bank.vue";
   emits: ["continue"],
 })
 export default class DisbursementDetail extends Vue {
-  public modeData: any;
-  public periodId: string = "";
-  public periodData: any = {};
+  // data
   public rowData: any = [];
+  public periodCode: string = "";
+  public disbursementData: any = reactive({});
   public isLoading: boolean = false;
+  public isSaving: boolean = false;
 
-  // Dialog
+  // dialog
   public showDialog: boolean = false;
   public dialogMessage: string = "";
   public dialogAction: string = "";
@@ -45,12 +47,8 @@ export default class DisbursementDetail extends Vue {
   ColumnApi: any;
   agGridSetting: any;
 
-  // FORMAT FUNCTION
-  formatCurrency = formatCurrency;
-  formatNumber2 = formatNumber2;
-
   // LIFECYCLE HOOKS
-  created() {
+  mounted() {
     const periodId = this.$route.params.id as string;
     this.loadInitialData();
   }

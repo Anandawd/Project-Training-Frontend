@@ -98,22 +98,9 @@ export default class BenefitTableComponent extends Vue {
         enableRowGroup: true,
       },
       {
-        headerName: this.$t("commons.table.payroll.payroll.code"),
-        field: "payroll_component_code",
-        width: 100,
-        enableRowGroup: true,
-        hide: true,
-      },
-      {
         headerName: this.$t("commons.table.payroll.payroll.name"),
         field: "Name",
         width: 200,
-        enableRowGroup: true,
-      },
-      {
-        headerName: this.$t("commons.table.payroll.payroll.category"),
-        field: "Category",
-        width: 150,
         enableRowGroup: true,
       },
       {
@@ -121,6 +108,33 @@ export default class BenefitTableComponent extends Vue {
         headerClass: "align-header-right",
         cellClass: "text-right",
         field: "amount",
+        width: 150,
+        enableRowGroup: true,
+        valueFormatter: formatNumber2,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.percentage"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
+        field: "percentage",
+        width: 150,
+        enableRowGroup: true,
+        // valueFormatter: formatNumber2,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.minAmount"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
+        field: "min_amount",
+        width: 150,
+        enableRowGroup: true,
+        valueFormatter: formatNumber2,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.maxAmount"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
+        field: "max_amount",
         width: 150,
         enableRowGroup: true,
         valueFormatter: formatNumber2,
@@ -277,15 +291,15 @@ export default class BenefitTableComponent extends Vue {
   }
 
   handleInsert() {
-    this.$emit("insert", { type: "BENEFIT" });
+    this.$emit("insert", { type: "STATUTORY" });
   }
 
   handleEdit(params: any) {
-    this.$emit("edit", { type: "BENEFIT", event: "EDIT", params });
+    this.$emit("edit", { type: "STATUTORY", event: "EDIT", params });
   }
 
   handleDelete(params: any) {
-    this.$emit("delete", { type: "BENEFIT", event: "DELETE", params });
+    this.$emit("delete", { type: "STATUTORY", event: "DELETE", params });
   }
 
   refreshGrid() {

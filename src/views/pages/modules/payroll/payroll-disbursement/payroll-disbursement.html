@@ -3,11 +3,11 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
-        :disabled="isProcessButtonDisabled"
+        :disabled="!isProcessButton"
         title="Process Disbursement"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleSave(selectedRowData, $global.modePayroll.process)"
+        @click="handleSave(paramData, $global.modePayroll.process)"
       >
         {{ $t('buttons.process') }}
         <i class="fa fa-arrow-right mr-1" aria-hidden="true"></i>
@@ -16,14 +16,132 @@
 
     <!-- filter -->
     <c-search-filter
-      date-range
       :options="searchOptions"
       :searchDefault="searchDefault"
       @search="refreshData"
     >
+      <template v-slot="{search, onRefresh}">
+        <div class="d-inline-flex mb-md-4 mt-2">
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="all"
+              id="all"
+              v-model="search.filter[0]"
+              value="0"
+              @change="onRefresh"
+            />
+            <label for="all"
+              >{{ $t('commons.filter.checkList.all') }}
+              <span class="text-muted">({{ statusCounts.all }})</span>
+            </label>
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showDraft"
+              id="showDraft"
+              v-model="search.filter[0]"
+              value="1"
+              @change="onRefresh"
+            />
+            <label for="showDraft"
+              >{{ $t('commons.filter.checkList.draft') }}
+              <span class="text-muted">({{ statusCounts.draft }})</span></label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showPending"
+              id="showPending"
+              v-model="search.filter[0]"
+              value="2"
+              @change="onRefresh"
+            />
+            <label for="showPending"
+              >{{ $t('commons.filter.checkList.pending') }}
+              <span class="text-muted"
+                >({{ statusCounts.pending }})</span
+              ></label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showApproved"
+              id="showApproved"
+              v-model="search.filter[0]"
+              value="3"
+              @change="onRefresh"
+            />
+            <label for="showApproved"
+              >{{ $t('commons.filter.checkList.approved') }}
+              <span class="text-muted"
+                >({{ statusCounts.approved }})</span
+              ></label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showRejected"
+              id="showRejected"
+              v-model="search.filter[0]"
+              value="4"
+              @change="onRefresh"
+            />
+            <label for="showRejected"
+              >{{ $t('commons.filter.checkList.rejected') }}
+              <span class="text-muted"
+                >({{ statusCounts.rejected }})</span
+              ></label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showProcessing"
+              id="showProcessing"
+              v-model="search.filter[0]"
+              value="5"
+              @change="onRefresh"
+            />
+            <label for="showProcessing"
+              >{{ $t('commons.filter.checkList.processing') }}
+              <span class="text-muted"
+                >({{ statusCounts.processing }})</span
+              ></label
+            >
+          </div>
+          <div class="checklist">
+            <input
+              class="mr-1"
+              type="radio"
+              name="showCompleted"
+              id="showCompleted"
+              v-model="search.filter[0]"
+              value="6"
+              @change="onRefresh"
+            />
+            <label for="showCompleted"
+              >{{ $t('commons.filter.checkList.completed') }}
+              <span class="text-muted"
+                >({{ statusCounts.completed }})</span
+              ></label
+            >
+          </div>
+        </div>
+      </template>
     </c-search-filter>
 
-    <!-- table -->
+    <!-- content -->
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">{{$t('title.payrollDisbursement')}}</h3>
@@ -56,7 +174,7 @@
     <!-- dialog -->
     <c-dialog
       v-show="showDialog"
-      dialogTitle="dialogTitle"
+      dialogTitle="Confirm"
       size="sm"
       @confirm="confirmAction"
       @cancel="showDialog=false"

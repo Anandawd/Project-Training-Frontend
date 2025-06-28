@@ -1,54 +1,64 @@
 import CDialog from "@/components/dialog/dialog.vue";
+import PayrollPeriodsAPI from "@/services/api/payroll/payroll-periods/payroll-periods";
 import { getError } from "@/utils/general";
 import $global from "@/utils/global";
 import { getToastSuccess } from "@/utils/toast";
 import "ag-grid-enterprise";
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
-import CompletionStatus from "../completion-status/completion-status.vue";
-import Confirmation from "../confirmation/confirmation.vue";
-import DisbursementDetail from "../disbursement-detail/disbursement-detail.vue";
-import FileDownloadOptions from "../file-download-options/file-download-options.vue";
-import PaymentMethodSelection from "../payment-method-selection/payment-method-selection.vue";
+import Step1DisbursementDetail from "../components/step-1-disbursement-detail/disbursement-detail.vue";
+import Step2PaymentMethodSelection from "../components/step-2-payment-method-selection/payment-method-selection.vue";
+import Step3FileDownloadOptions from "../components/step-3-file-download-options/file-download-options.vue";
+import Step4Confirmation from "../components/step-4-confirmation/confirmation.vue";
+import Step5CompletionStatus from "../components/step-5-completion-status/completion-status.vue";
+
+const payrollPeriodsAPI = new PayrollPeriodsAPI();
 
 @Options({
   components: {
-    DisbursementDetail,
-    PaymentMethodSelection,
-    FileDownloadOptions,
-    Confirmation,
-    CompletionStatus,
+    Step1DisbursementDetail,
+    Step2PaymentMethodSelection,
+    Step3FileDownloadOptions,
+    Step4Confirmation,
+    Step5CompletionStatus,
     CDialog,
   },
 })
 export default class PayrollDisbursementProcess extends Vue {
+  // data
+  public rowData: any = [];
   public modeData: any;
-  public currentStep: number = 5;
-  public periodData: any = reactive({});
-  public selectedPaymentMethod: string = "";
-  public downloadOptions: any = reactive({});
-  public periodId: string = "";
-  public showStepper: boolean = true;
+  public periodCode: any = ref("");
+  public disbursementData: any = reactive({});
+  public currentStep: number = 1;
+  public isSaving: boolean = false;
+  public isLoading: boolean = false;
 
-  // Dialog
+  // options data
+  public downloadOptions: any = [];
+  public selectedPaymentMethod: string = "";
+
+  // dialog
   public showDialog: boolean = false;
-  public dialogAction: string = "";
   public dialogTitle: string = "";
   public dialogMessage: string = "";
-  public dialogParams: any;
+  public dialogAction: string = "";
+  public dialogParams: any = reactive({});
 
-  // LIFECYCLE HOOKS
-  async created() {
-    const periodId = this.$route.params.id as string;
-
-    await this.loadPeriodData();
+  // RECYCLE LIFE FUNCTION =======================================================
+  beforeMount() {
+    this.periodCode = this.$route.params.periodCode as string;
   }
 
-  // GENERAL FUNCTION
-  handleAction(params: any, mode: any = null, ...additonalParams: any[]) {
-    const actionMode = mode || this.modeData;
+  async mounted() {
+    this.loadMockdisbursementData();
+    // await this.loadData();
+  }
 
-    switch (actionMode) {
+  // GENERAL FUNCTION =======================================================
+  handleAction(params: any, mode: any = null, ...additonalParams: any[]) {
+    this.modeData = mode;
+    switch (this.modeData) {
       case $global.modePayroll.back:
         this.handleBack();
         break;
@@ -72,9 +82,6 @@ export default class PayrollDisbursementProcess extends Vue {
         break;
       case $global.modePayroll.return:
         this.handleReturn();
-        break;
-      default:
-        console.warn("Unsupported action mode:", actionMode);
         break;
     }
   }
@@ -130,13 +137,13 @@ export default class PayrollDisbursementProcess extends Vue {
   }
 
   handleReturn() {
-    this.$router.push({ name: "PayrollDisbursement" });
+    this.$router.push({ name: "Disbursement" });
   }
 
   handleComplete() {}
 
   handleDownload(options: any) {
-    getToastSuccess(this.$t("messages.disbursement.downloadSuccess"));
+    getToastSuccess(this.$t("messages.payroll.success.downloadSuccess"));
   }
 
   handleMethodSelection(method: string) {
@@ -147,21 +154,28 @@ export default class PayrollDisbursementProcess extends Vue {
     Object.assign(this.downloadOptions, options);
   }
 
-  // API METHOD
-  async loadPeriodData() {
+  // API REQUEST =======================================================
+  async loadData() {
     try {
-      // In a real implementation, this would be an API call
-      // const { data } = await payrollAPI.GetPayrollDisbursementDetail(periodId);
-      // this.periodData = data;
-      await this.loadMockDisbursementData();
+      this.isLoading = true;
+      const { data } = await payrollPeriodsAPI.GetPayrollPeriods(
+        this.periodCode
+      );
+      if (data) {
+        this.disbursementData = data[0];
+      } else {
+        this.disbursementData = [];
+      }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isLoading = false;
     }
   }
 
-  async loadMockDisbursementData() {
-    this.periodData = {
-      id: this.periodId || 1,
+  async loadMockdisbursementData() {
+    this.disbursementData = {
+      period_code: this.periodCode,
       period_name: "April 2025",
       placement: "Amora Ubud",
       period_type: "Monthly",
@@ -179,6 +193,25 @@ export default class PayrollDisbursementProcess extends Vue {
       created_at: "25/04/2025",
       updated_at: "25/04/2025",
     };
+  }
+
+  async updateData(formData: any, step: any) {
+    try {
+      this.isSaving = true;
+      const newData = {
+        ...formData,
+        current_step: step,
+      };
+      // const { status2 } =
+      //   await payrollPeriodsAPI.UpdatePayrollProcessing(newData);
+      // if (status2.status == 0) {
+      //   getToastSuccess(this.$t("messages.payroll.success.updateStepper"));
+      // }
+    } catch (error) {
+      getError(error);
+    } finally {
+      this.isSaving = false;
+    }
   }
 
   async completeDisbursement() {
@@ -203,7 +236,6 @@ export default class PayrollDisbursementProcess extends Vue {
   }
 
   // SETTER GETTER
-
   get isShowStepper() {
     if (this.currentStep >= 1 && this.currentStep < 5) {
       return true;

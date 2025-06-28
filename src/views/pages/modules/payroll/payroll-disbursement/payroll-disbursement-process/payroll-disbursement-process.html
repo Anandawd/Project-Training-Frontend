@@ -58,19 +58,19 @@
     </transition>
 
     <!-- sliding panel -->
-    <div class="sliding-panels" ref="slidingPanels">
+    <div class="sliding-panels">
       <!-- step 1: disbursement detail -->
       <transition name="slide-fade">
-        <disbursement-detail
+        <step-1-disbursement-detail
           v-if="currentStep === 1"
-          :period-data="periodData"
+          :period-data="disbursementData"
           @continue="handleAction('',$global.modePayroll.next)"
         />
       </transition>
 
       <!-- step 2: payment method -->
       <transition name="slide-fade">
-        <payment-method-selection
+        <step-2-payment-method-selection
           v-if="currentStep === 2"
           :selectedMethod="selectedPaymentMethod"
           @method-selected="(method) => handleAction('',$global.modePayroll.methodSelection, method)"
@@ -81,7 +81,7 @@
 
       <!-- step 3: file download options -->
       <transition name="slide-fade">
-        <file-download-options
+        <step-3-file-download-options
           v-if="currentStep === 3 && selectedPaymentMethod === 'manual'"
           :downloadOptions="downloadOptions"
           @download="(options) => handleAction('',$global.modePayroll.download, options)"
@@ -92,7 +92,7 @@
 
       <!-- Step 4: Confirmation -->
       <transition name="slide-fade">
-        <confirmation
+        <step-4-confirmation
           v-if="currentStep === 4 || (currentStep === 3 && selectedPaymentMethod !== 'manual')"
           :periodData="periodData"
           :selectedMethod="selectedPaymentMethod"
@@ -104,7 +104,7 @@
 
       <!-- Completion Status -->
       <transition name="slide-fade">
-        <completion-status
+        <step-5-completion-status
           v-if="currentStep === 5"
           :periodData="periodData"
           @return="handleAction('',$global.modePayroll.back)"

@@ -55,7 +55,7 @@
     </div>
 
     <!-- modal benefit -->
-    <benefit-modal
+    <payroll-component-modal
       ref="modalBenefitFormElement"
       v-show="showModalBenefit"
       :isGenerating="isSaving"
@@ -98,10 +98,10 @@
     />
 
     <!-- Tax -->
-    <tax-card
+    <!-- <tax-card
       :title="$t('labels.payroll.payroll.taxIncome')"
       :data="payrollData"
-    />
+    /> -->
 
     <!-- Total Payment -->
     <total-payment-card

@@ -44,21 +44,21 @@ import * as Yup from "yup";
       type: Array,
       default: (): any[] => [],
     },
-    statutoryComponentOptions: {
+    allComponentOptions: {
       type: Array,
       default: (): any[] => [],
     },
   },
   emits: ["close", "save"],
 })
-export default class GenerateModal extends Vue {
+export default class PayrollComponentModal extends Vue {
   // props
   modeData!: number;
   isSaving!: boolean;
   typeOptions!: any[];
   earningComponentOptions!: any[];
   deductionComponentOptions!: any[];
-  statutoryComponentOptions!: any[];
+  allComponentOptions!: any[];
 
   inputFormValidation: any = ref();
 
@@ -88,7 +88,6 @@ export default class GenerateModal extends Vue {
       id: null,
       payroll_component_code: "",
       component_type: "",
-      category_code: "",
       amount: 0,
       quantity: 1,
       effective_date: "",
@@ -147,50 +146,89 @@ export default class GenerateModal extends Vue {
     this.form.amount = 0;
     this.form.quantity = 1;
     this.form.is_override = false;
-    this.form.category_code = false;
   }
 
   onComponentChange(event: any) {
     let selectedComponent: any;
+    console.log("onComponentChange calledn", event.target.value);
     switch (this.form.component_type) {
       case "Earnings":
         selectedComponent = this.earningComponentOptions.find(
           (c: any) => c.code === event.target.value
         );
+        if (selectedComponent) {
+          this.form.payroll_component_code = selectedComponent.code;
+          this.form.category_code = selectedComponent.category_code;
+          this.form.unit = selectedComponent.unit;
+          this.form.amount = selectedComponent.default_amount
+            ? selectedComponent.default_amount
+            : 0;
+          this.form.quantity = selectedComponent.default_quantity
+            ? selectedComponent.default_quantity
+            : 1;
+          this.form.is_override = false;
+          this.form.is_taxable = selectedComponent.is_taxable;
+          this.form.is_fixed = selectedComponent.is_fixed;
+          this.form.is_prorated = selectedComponent.is_prorated;
+          this.form.is_included_in_bpjs_health =
+            selectedComponent.is_included_in_bpjs_health;
+          this.form.is_included_in_bpjs_employee =
+            selectedComponent.is_included_in_bpjs_employee;
+          this.form.is_show_in_payslip = selectedComponent.is_show_in_payslip;
+        }
         break;
       case "Deductions":
         selectedComponent = this.deductionComponentOptions.find(
           (c: any) => c.code === event.target.value
         );
+        if (selectedComponent) {
+          this.form.payroll_component_code = selectedComponent.code;
+          this.form.category_code = selectedComponent.category_code;
+          this.form.unit = selectedComponent.unit;
+          this.form.amount = selectedComponent.default_amount
+            ? selectedComponent.default_amount
+            : 0;
+          this.form.quantity = selectedComponent.default_quantity
+            ? selectedComponent.default_quantity
+            : 1;
+          this.form.is_override = false;
+          this.form.is_taxable = selectedComponent.is_taxable;
+          this.form.is_fixed = selectedComponent.is_fixed;
+          this.form.is_prorated = selectedComponent.is_prorated;
+          this.form.is_included_in_bpjs_health =
+            selectedComponent.is_included_in_bpjs_health;
+          this.form.is_included_in_bpjs_employee =
+            selectedComponent.is_included_in_bpjs_employee;
+          this.form.is_show_in_payslip = selectedComponent.is_show_in_payslip;
+        }
         break;
-      case "Statutory":
-        selectedComponent = this.statutoryComponentOptions.find(
-          (c: any) => c.code === event.target.value
+      default:
+        selectedComponent = this.allComponentOptions.find(
+          (c: any) => c.payroll_component_code === event.target.value
         );
+        if (selectedComponent) {
+          this.form.payroll_component_code =
+            selectedComponent.payroll_component_code;
+          this.form.unit = selectedComponent.unit;
+          this.form.amount = selectedComponent.default_amount
+            ? selectedComponent.default_amount
+            : 0;
+          this.form.quantity = selectedComponent.default_quantity
+            ? selectedComponent.default_quantity
+            : 1;
+          this.form.is_override = false;
+          this.form.is_taxable = selectedComponent.is_taxable;
+          this.form.is_fixed = selectedComponent.is_fixed;
+          this.form.is_prorated = selectedComponent.is_prorated;
+          this.form.is_included_in_bpjs_health =
+            selectedComponent.is_included_in_bpjs_health;
+          this.form.is_included_in_bpjs_employee =
+            selectedComponent.is_included_in_bpjs_employee;
+          this.form.is_show_in_payslip = selectedComponent.is_show_in_payslip;
+        }
         break;
     }
     console.log("selectedComponent", selectedComponent);
-    if (selectedComponent) {
-      this.form.payroll_component_code = selectedComponent.code;
-      this.form.category_code = selectedComponent.category_code;
-      this.form.amount = selectedComponent.default_amount || 0;
-      this.form.quantity = selectedComponent.default_quantity || 1;
-      this.form.is_override = false;
-      this.form.is_taxable = selectedComponent.is_taxable;
-      this.form.is_fixed = selectedComponent.is_fixed;
-      this.form.is_prorated = selectedComponent.is_prorated;
-      this.form.is_included_in_bpjs_health =
-        selectedComponent.is_included_in_bpjs_health;
-      this.form.is_included_in_bpjs_employee =
-        selectedComponent.is_included_in_bpjs_employee;
-      this.form.is_show_in_payslip = selectedComponent.is_show_in_payslip;
-    } else {
-      this.form.payroll_component_code = "";
-      this.form.category_code = "";
-      this.form.amount = 0;
-      this.form.quantity = 1;
-      this.form.is_override = false;
-    }
   }
 
   onOverrideAmountChange() {
@@ -201,25 +239,29 @@ export default class GenerateModal extends Vue {
           selectedComponent = this.earningComponentOptions.find(
             (c: any) => c.code === this.form.payroll_component_code
           );
+          if (selectedComponent) {
+            this.form.amount = selectedComponent.default_amount
+              ? selectedComponent.default_amount
+              : 0;
+            this.form.quantity = selectedComponent.default_quantity
+              ? selectedComponent.default_quantity
+              : 1;
+          }
           break;
         case "Deductions":
           selectedComponent = this.deductionComponentOptions.find(
             (c: any) => c.code === this.form.payroll_component_code
           );
+          if (selectedComponent) {
+            this.form.amount = selectedComponent.default_amount
+              ? selectedComponent.default_amount
+              : 0;
+            this.form.quantity = selectedComponent.default_quantity
+              ? selectedComponent.default_quantity
+              : 1;
+          }
+
           break;
-        case "Statutory":
-          selectedComponent = this.statutoryComponentOptions.find(
-            (c: any) => c.code === this.form.payroll_component_code
-          );
-          break;
-      }
-      console.log(
-        "onOverrideAmountChange selectedComponent",
-        selectedComponent
-      );
-      if (selectedComponent) {
-        this.form.amount = selectedComponent.default_amount || 0;
-        this.form.quantity = selectedComponent.default_quantity || 1;
       }
     }
   }
@@ -231,11 +273,11 @@ export default class GenerateModal extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      //  ComponentType: Yup.string().required(),
-      //   ComponentCode: Yup.string().required(),
+      ComponentType: Yup.string().required(),
+      ComponentCode: Yup.string().required(),
       //   Amount: Yup.number().min(1).max(999999999),
       //   Qty: Yup.number().required().min(1).max(1000),
-      //   EffectiveDate: Yup.date().required(),
+      EffectiveDate: Yup.date().required(),
       //   EndDate: Yup.date().nullable(),
     });
   }
@@ -248,19 +290,38 @@ export default class GenerateModal extends Vue {
     }
   }
 
+  get filteredTypeOptions() {
+    return this.typeOptions.filter((options) => options.code !== "Statutory");
+  }
+
   get componentOptions() {
     switch (this.form.component_type) {
       case "Earnings":
         return this.earningComponentOptions;
       case "Deductions":
         return this.deductionComponentOptions;
-      case "Statutory":
-        return this.statutoryComponentOptions;
+      default:
+        return this.allComponentOptions;
     }
-    return [];
   }
 
   get isFixedComponent() {
     return this.form.is_fixed === 1;
+  }
+
+  get isComponentStatutory() {
+    return this.form.component_type === "Statutory";
+  }
+
+  get isUnitPercentage() {
+    return this.form.unit === "Percentage";
+  }
+
+  get isShowMinMax() {
+    return;
+  }
+
+  get isShowComponentType() {
+    return this.modeData === $global.modeData.insert;
   }
 }

@@ -426,7 +426,7 @@ export default [
   },
   {
     path: "disbursement",
-    name: "PayrollDisbursement",
+    name: "Disbursement",
     component: () =>
       import(
         /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-disbursement/payroll-disbursement.vue"
@@ -443,7 +443,7 @@ export default [
     },
   },
   {
-    path: "disbursement/detail/:id?",
+    path: "disbursement/detail/:periodCode?",
     name: "DisbursementDetail",
     component: () =>
       import(
@@ -454,7 +454,7 @@ export default [
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
         { title: "title.home", url: "/" },
-        { title: "title.payroll", url: "/payroll/disbursement" },
+        { title: "title.payroll" },
         {
           title: "title.disbursement",
           url: "/payroll/disbursement",
@@ -465,7 +465,7 @@ export default [
     },
   },
   {
-    path: "disbursement/process/:id?",
+    path: "disbursement/process/:periodCode?",
     name: "DisbursementProcess",
     component: () =>
       import(
@@ -476,7 +476,7 @@ export default [
       icon: getIconFromMenu(menu, 1),
       breadcrumb: [
         { title: "title.home", url: "/" },
-        { title: "title.payroll", url: "/payroll/disbursement" },
+        { title: "title.payroll" },
         {
           title: "title.disbursement",
           url: "/payroll/disbursement",
