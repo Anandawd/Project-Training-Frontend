@@ -1,10 +1,9 @@
-import UtilsAPI from "../services/api/utils/utils";
+import { i18n } from "@/main";
 import utilsStore from "@/stores/utils";
-import global from "./global";
 import { getToastError } from "@/utils/toast";
 import { RowNode } from "ag-grid-community";
-import { i18n } from "@/main";
-import authModule from "@/stores/auth";
+import UtilsAPI from "../services/api/utils/utils";
+import global from "./global";
 
 async function getError(error: any) {
   new Error(error);
@@ -37,6 +36,10 @@ async function getError(error: any) {
         message2 += `\n${i}`;
       }
     }
+  } else if (statusCode == 7) {
+    // Custom handling untuk duplicate code (Status Code 7)
+    message2 = i18n.global.t("messages.payroll.error.duplicateCode");
+    serverValidation.code = false;
   } else if (message && statusCode == 11) {
     serverValidation.Code = false;
   } else if (!message && statusCode) {
@@ -518,40 +521,35 @@ function calculateDataForDisplay(data: any[], columnSize: number) {
 }
 
 export {
-  validHexColor,
-  getUserAccessUtility,
-  getRouterMenu,
-  getIconFromMenu,
-  calculateDataForDisplay,
-  generateTotalFooterAgGrid,
-  generateIconContextMenuAgGrid,
-  generateIconMenuAgGrid,
-  getValueByName,
-  getVariant,
-  getDaysInMonth,
-  getDates,
-  getDaysBetweenDate,
-  getServerDateTime,
-  getServerDate,
-  getError,
-  sleep,
-  printPreview,
-  copyValueDoubleClick,
-  getCookie,
   anyToFloat,
-  handleRowRightClickedAgGrid,
-  //ag-grid
-  generatePinnedBottomDataTotal,
-  getYearPeriods,
+  calculateDataForDisplay,
   // dateDiff,
   // getTime,
   cloneObject,
+  copyValueDoubleClick,
+  generateIconContextMenuAgGrid,
+  generateIconMenuAgGrid,
+  //ag-grid
+  generatePinnedBottomDataTotal,
+  generateTotalFooterAgGrid,
+  getCookie,
+  getDates,
+  getDaysBetweenDate,
+  getDaysInMonth,
+  getError,
+  getIconFromMenu,
+  getRouterMenu,
+  getServerDate,
+  getServerDateTime,
+  getUserAccessUtility,
+  getValueByName,
+  getVariant,
+  getYearPeriods,
+  handleRowRightClickedAgGrid,
+  printPreview,
   // removeArrayByKey,
   // asyncForEach,
   rowSelectedAfterRefresh,
-  // getRowIndexBefore,
-  // addDialogCloseButton,
-  // addPopupCloseButton,
-  // loadingLayoutIndicator,
-  // closeLoadingLayoutIndicator,
+  sleep,
+  validHexColor,
 };

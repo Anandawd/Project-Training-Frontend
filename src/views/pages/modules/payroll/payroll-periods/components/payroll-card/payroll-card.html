@@ -5,7 +5,7 @@
   <div class="card-body">
     <div class="row mb-3">
       <!-- Base Salary -->
-      <div v-show="showBaseSalary" class="col-md-4">
+      <div v-if="showBaseSalary" class="col-md-12">
         <div class="d-flex justify-content-end mb-1" style="min-height: 16px">
           <font-awesome-icon
             v-show="showBaseSalary"
@@ -37,7 +37,7 @@
           />
         </div>
         <div class="row mb-1">
-          <div class="col-9">
+          <div class="col-6">
             <c-input
               disabled
               type="number"
@@ -51,7 +51,7 @@
               showZeroNumber
             />
           </div>
-          <div class="col-3">
+          <div class="col-2">
             <c-input
               disabled
               type="number"
@@ -63,79 +63,29 @@
               showZeroNumber
             />
           </div>
+          <div class="col-4">
+            <c-input
+              disabled
+              type="number"
+              name="BaseSalary"
+              id="BaseSalary"
+              :max="9999999999"
+              :min="0"
+              :label="$t('labels.payroll.payroll.totalAmount')"
+              v-model="payrollData.basic_salary"
+              formatted
+              showZeroNumber
+            />
+          </div>
         </div>
       </div>
 
       <!-- Component -->
-      <div v-for="component in components" :key="component.id" class="col-md-4">
-        <div class="d-flex justify-content-end mb-1" style="min-height: 16px">
-          <font-awesome-icon
-            v-show="component.is_taxable"
-            :icon="['fas', 'file-invoice-dollar']"
-            class="me-1 text-info"
-            data-bs-toggle="tooltip"
-            title="Included in Tax Income (PPH 21)"
-          />
-          <font-awesome-icon
-            v-show="component.is_included_in_bpjs_health"
-            :icon="['fas', 'medkit']"
-            class="me-1 text-success"
-            data-bs-toggle="tooltip"
-            title="Included in BPJS Kesehatan"
-          />
-          <font-awesome-icon
-            v-show="component.is_included_in_bpjs_employee"
-            :icon="['fas', 'hard-hat']"
-            class="me-1 text-warning"
-            data-bs-toggle="tooltip"
-            title="Included in BPJS Ketenagakerjaan"
-          />
-          <font-awesome-icon
-            v-show="component.is_prorated"
-            :icon="['fas', 'pizza-slice']"
-            class="me-1 text-info"
-            data-bs-toggle="tooltip"
-            title="Included in Prorate"
-          />
-        </div>
-        <div class="row mb-1">
-          <div class="col-9">
-            <c-input
-              :disabled="component.is_fixed"
-              type="number"
-              :name="component.Name"
-              :id="component.Name"
-              class=""
-              :max="9999999999"
-              :min="0"
-              :label="component.Name"
-              v-model="component.amount"
-              formatted
-              showZeroNumber
-              @change="onComponentAmountChange(component)"
-            />
-          </div>
-          <div class="col-3">
-            <c-input
-              :disabled="component.is_fixed"
-              type="number"
-              :name="component.Type"
-              :id="component.Type"
-              class=""
-              :label="$t('labels.payroll.payroll.qty')"
-              v-model="component.quantity"
-              showZeroNumber
-              @change="onComponentQuantityChange(component)"
-            />
-          </div>
-        </div>
-      </div>
-
-      <!-- Statutory Component -->
       <div
-        v-for="component in statutoryComponets"
+        v-if="showComponents"
+        v-for="component in components"
         :key="component.id"
-        class="col-md-4"
+        class="col-md-12"
       >
         <div class="d-flex justify-content-end mb-1" style="min-height: 16px">
           <font-awesome-icon
@@ -168,7 +118,7 @@
           />
         </div>
         <div class="row mb-1">
-          <div class="col-9">
+          <div class="col-6">
             <c-input
               :disabled="component.is_fixed"
               type="number"
@@ -184,7 +134,7 @@
               @change="onComponentAmountChange(component)"
             />
           </div>
-          <div class="col-3">
+          <div class="col-2">
             <c-input
               :disabled="component.is_fixed"
               type="number"
@@ -195,6 +145,106 @@
               v-model="component.quantity"
               showZeroNumber
               @change="onComponentQuantityChange(component)"
+            />
+          </div>
+          <div class="col-4">
+            <c-input
+              disabled
+              type="number"
+              :name="component.Name"
+              :id="component.Name"
+              class=""
+              :max="9999999999"
+              :min="0"
+              :label="$t('labels.payroll.payroll.totalAmount')"
+              v-model="component.total_amount"
+              formatted
+              showZeroNumber
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Statutory Component -->
+      <div
+        v-if="showStatutory"
+        v-for="component in statutoryData"
+        :key="component.id"
+        class="col-md-12"
+      >
+        <div class="d-flex justify-content-end mb-1" style="min-height: 16px">
+          <font-awesome-icon
+            v-show="component.is_taxable"
+            :icon="['fas', 'file-invoice-dollar']"
+            class="me-1 text-info"
+            data-bs-toggle="tooltip"
+            title="Included in Tax Income (PPH 21)"
+          />
+          <font-awesome-icon
+            v-show="component.is_included_in_bpjs_health"
+            :icon="['fas', 'medkit']"
+            class="me-1 text-success"
+            data-bs-toggle="tooltip"
+            title="Included in BPJS Kesehatan"
+          />
+          <font-awesome-icon
+            v-show="component.is_included_in_bpjs_employee"
+            :icon="['fas', 'hard-hat']"
+            class="me-1 text-warning"
+            data-bs-toggle="tooltip"
+            title="Included in BPJS Ketenagakerjaan"
+          />
+          <font-awesome-icon
+            v-show="component.is_prorated"
+            :icon="['fas', 'pizza-slice']"
+            class="me-1 text-info"
+            data-bs-toggle="tooltip"
+            title="Included in Prorate"
+          />
+        </div>
+        <div class="row mb-1">
+          <div class="col-6">
+            <c-input
+              disabled
+              type="number"
+              :name="component.StatutoryComponentName"
+              :id="component.StatutoryComponentName"
+              class=""
+              :max="9999999999"
+              :min="0"
+              :label="component.StatutoryComponentName"
+              v-model="component.amount"
+              formatted
+              showZeroNumber
+              @change="onComponentAmountChange(component)"
+            />
+          </div>
+          <div class="col-2">
+            <c-input
+              disabled
+              type="number"
+              :name="component.Type"
+              :id="component.Type"
+              class=""
+              :label="$t('labels.payroll.payroll.qty')"
+              v-model="component.quantity"
+              showZeroNumber
+              @change="onComponentQuantityChange(component)"
+            />
+          </div>
+          <div class="col-4">
+            <c-input
+              disabled
+              type="number"
+              :name="component.StatutoryComponentName"
+              :id="component.StatutoryComponentName"
+              class=""
+              :max="9999999999"
+              :min="0"
+              :label="$t('labels.payroll.payroll.totalAmount')"
+              v-model="component.amount"
+              formatted
+              showZeroNumber
             />
           </div>
         </div>

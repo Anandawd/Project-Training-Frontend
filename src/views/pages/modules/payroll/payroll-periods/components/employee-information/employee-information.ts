@@ -21,6 +21,11 @@ import { Options, Vue } from "vue-class-component";
       required: true,
       default: (): any => ({}),
     },
+    payroll: {
+      type: Object,
+      required: true,
+      default: (): any => ({}),
+    },
   },
   emits: ["save"],
 })
@@ -70,4 +75,36 @@ export default class InputForm extends Vue {
     updated_at: "",
     updated_by: "",
   });
+  payroll: any = reactive({
+    tax_method: "",
+    tax_income_type: "",
+  });
+
+  get taxMethod() {
+    if (this.payroll.tax_method) {
+      switch (this.payroll.tax_method) {
+        case "Gross":
+          return "Gross";
+        case "GrossUp":
+          return "Gross Up";
+        case "Netto":
+          return "Netto";
+        default:
+          return "";
+      }
+    }
+  }
+
+  get taxIncomeType() {
+    if (this.payroll.tax_income_type) {
+      switch (this.payroll.tax_income_type) {
+        case "PPh21":
+          return "PPh 21";
+        case "PPh26":
+          return "PPh 26";
+        default:
+          return "";
+      }
+    }
+  }
 }

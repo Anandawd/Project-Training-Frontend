@@ -1,5 +1,7 @@
+import CInput from "@/components/input/input.vue";
 import CModal from "@/components/modal/modal.vue";
 import CSelect from "@/components/select/select.vue";
+import { getToastInfo } from "@/utils/toast";
 import { focusOnInvalid } from "@/utils/validation";
 import "ag-grid-enterprise";
 import { Form as CForm } from "vee-validate";
@@ -12,18 +14,25 @@ import * as Yup from "yup";
     CSelect,
     CModal,
     CForm,
+    CInput,
   },
   props: {
-    isGenerating: {
+    isSaving: {
       type: Boolean,
       default: false,
+    },
+    payroll: {
+      type: Array,
+      required: true,
+      default: (): any => ({}),
     },
   },
   emits: ["close", "save"],
 })
 export default class ProrateModal extends Vue {
   // props
-  isGenerating: boolean;
+  isSaving: boolean;
+  payroll: any = reactive({});
 
   inputFormValidation: any = ref();
 
@@ -33,11 +42,17 @@ export default class ProrateModal extends Vue {
   async resetForm() {
     this.inputFormValidation.resetForm();
     await this.$nextTick();
-    this.form = {
-      total_workdays: 26,
-      actual_workdays: 26,
-      prorate_factor: 1,
-    };
+    if (this.payroll) {
+      this.form = {
+        ...this.payroll,
+      };
+    } else {
+      this.form = {
+        total_workdays: 1,
+        actual_workdays: 1,
+        prorata_factor: 1,
+      };
+    }
   }
 
   onSubmit() {
@@ -62,14 +77,45 @@ export default class ProrateModal extends Vue {
   }
 
   onWorkDaysChange() {
-    this.form.prorate_factor = this.calculateProrate;
+    console.log("totalWorkdays", this.form.total_workdays);
+    console.log("actualWorkDays", this.form.actual_workdays);
+    console.log("prorateFactor", this.form.prorata_factor);
+    console.log("form", this.form);
+  }
+
+  onActualWorkDaysChange() {
+    if (this.form.actual_workdays > this.form.total_workdays) {
+      this.form.actual_workdays = this.form.total_workdays;
+      getToastInfo(
+        this.$t(
+          "messages.payroll.info.actualWorkDaysCannotMoreThanTotalWorkDays"
+        )
+      );
+    }
+    if (this.form.actual_workdays < 1) {
+      this.form.actual_workdays = 1;
+      getToastInfo(this.$t("messages.payroll.info.actualWorkDaysCannotZero"));
+    }
+    this.form.prorata_factor = this.calculateProrate;
+  }
+
+  onTotalWorkDaysChange() {
+    if (this.form.actual_workdays > this.form.total_workdays) {
+      this.form.actual_workdays = this.form.total_workdays;
+    }
+    if (this.form.total_workdays < 1) {
+      this.form.total_workdays = 1;
+      this.form.actual_workdays = this.form.total_workdays;
+      getToastInfo(this.$t("messages.payroll.info.totalWorkDaysCannotZero"));
+    }
+    this.form.prorata_factor = this.calculateProrate;
   }
 
   // validation
   get schema() {
     return Yup.object().shape({
       WorkDays: Yup.number().min(1).required(),
-      ActualWorkDays: Yup.string().min(1).required(),
+      ActualWorkDays: Yup.number().min(1).required(),
     });
   }
 

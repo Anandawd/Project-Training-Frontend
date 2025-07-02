@@ -35,12 +35,7 @@ import { Options, Vue } from "vue-class-component";
       required: true,
       default: (): any[] => [],
     },
-    earningsStatutory: {
-      type: Array,
-      required: true,
-      default: (): any[] => [],
-    },
-    deductionsStatutory: {
+    statutoryData: {
       type: Array,
       required: true,
       default: (): any[] => [],
@@ -58,20 +53,13 @@ export default class PayrollCard extends Vue {
   footertitle!: string;
   type!: string;
   components: any = reactive([]);
-  earningsStatutory: any = reactive([]);
-  deductionsStatutory: any = reactive([]);
+  statutoryData: any = reactive([]);
   payrollData: any = reactive({});
 
   public editingIndex: number = null;
   public originalData: any = null;
 
   qty: number = 1;
-
-  mounted(): void {
-    console.log("Type:", this.type);
-    console.log("Component:", this.components);
-    console.log("Total Amount:", this.payrollData);
-  }
 
   formatCurrency(value: any) {
     return formatCurrency(value);
@@ -87,17 +75,27 @@ export default class PayrollCard extends Vue {
     return 0;
   }
 
+  get showFooter() {
+    return this.payrollData;
+  }
+
   get showBaseSalary() {
     return this.type === "Earnings";
   }
 
-  get statutoryComponets() {
-    if (this.type === "Earnings") {
-      return this.earningsStatutory;
-    } else if (this.type === "Deductions") {
-      return this.deductionsStatutory;
-    } else {
-      return [];
-    }
+  get showComponents() {
+    return this.components && this.components.length > 0;
+  }
+
+  get showStatutory() {
+    return this.statutoryData && this.statutoryData.length > 0;
+  }
+
+  get isEmpty() {
+    return !this.showComponents && !this.showComponents;
+  }
+
+  get showContent() {
+    return this.showComponents || this.showStatutory;
   }
 }

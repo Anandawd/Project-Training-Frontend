@@ -10,7 +10,7 @@ class FingerprintEnrollmentAPI extends ConfigurationResource {
 
   GetEmployeeEnrollmentList(params: any) {
     return request({
-      url: "GetEmployeeEnrollmentList",
+      url: "GetPayEmployeeFingerprintEnrollmentList",
       method: "get",
       params: params,
     });
@@ -18,7 +18,7 @@ class FingerprintEnrollmentAPI extends ConfigurationResource {
 
   InsertEmployeeEnrollment(params: any) {
     return request({
-      url: "InsertEmployeeEnrollment",
+      url: "InsertPayEmployeeFingerprintEnrollmentList",
       method: "post",
       data: params,
     });
@@ -26,14 +26,14 @@ class FingerprintEnrollmentAPI extends ConfigurationResource {
 
   GetEmployeeEnrollment(params: any) {
     return request({
-      url: "GetEmployeeEnrollment/" + params,
+      url: "GetPayEmployeeFingerprintEnrollment/" + params,
       method: "get",
     });
   }
 
   UpdateEmployeeEnrollment(params: any) {
     return request({
-      url: "UpdateEmployeeEnrollment",
+      url: "UpdateEmployeeFingerprintEnrollmentList",
       method: "put",
       data: params,
     });
@@ -41,24 +41,47 @@ class FingerprintEnrollmentAPI extends ConfigurationResource {
 
   DeleteEmployeeEnrollment(params: any) {
     return request({
-      url: "DeleteEmployeeEnrollment/" + params,
+      url: "DeletePayEmployeeFingerprintEnrollment/" + params,
       method: "delete",
     });
   }
 
-  // Fingerprint Device Management
-  GetDeviceList(params: any) {
+  // Fingerprint Device
+  GetFingerprintDeviceList(params: any) {
     return request({
-      url: "GetFingerprintDeviceList",
+      url: "GetPayFingerprintDevicesList",
       method: "get",
       params: params,
     });
   }
 
-  GetDeviceInfo(deviceId: string) {
+  InsertFingerprintDevice(params: any) {
     return request({
-      url: `GetFingerprintDeviceInfo/${deviceId}`,
+      url: "InsertPayFingerprintDevicesList",
+      method: "post",
+      data: params,
+    });
+  }
+
+  GetFingerprintDeviceById(params: any) {
+    return request({
+      url: "GetPayFingerprintDevices/" + params,
       method: "get",
+    });
+  }
+
+  UpdateFingerprintDevice(params: any) {
+    return request({
+      url: "UpdateFingerprintDevicesList",
+      method: "put",
+      data: params,
+    });
+  }
+
+  DeleteFingerprintDevice(params: any) {
+    return request({
+      url: "DeletePayFingerprintDevices/" + params,
+      method: "delete",
     });
   }
 

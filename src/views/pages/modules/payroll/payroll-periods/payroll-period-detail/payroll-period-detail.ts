@@ -137,7 +137,6 @@ export default class Employee extends Vue {
   }
 
   handleGenerate(params: any) {
-    console.log("handleGenerate params", params);
     this.generatePayroll(params);
   }
 
@@ -252,8 +251,6 @@ export default class Employee extends Vue {
     } else {
       this.rowEmployeeData = [];
     }
-    console.log("loadPayroll", data);
-    console.log("rowEmployeeData", this.rowEmployeeData);
   }
 
   async generatePayroll(formData: any) {
@@ -261,7 +258,6 @@ export default class Employee extends Vue {
       this.isGenerating = true;
 
       const { status2 } = await payrollAPI.GeneratePayroll(formData);
-      console.log("generatePayroll", status2);
       if (status2.status == 0) {
         getToastSuccess(this.$t("messages.payroll.success.saveGenerate"));
         this.$nextTick();
@@ -297,9 +293,10 @@ export default class Employee extends Vue {
 
   async deletePayroll() {
     try {
-      console.log("deletePayroll", this.deleteParam);
       this.isSaving = true;
-      const { status2 } = await payrollAPI.DeletePayroll(this.deleteParam.id);
+      const { status2 } = await payrollAPI.DeletePayroll(
+        this.deleteParam.payroll_id
+      );
       if (status2.status === 0) {
         getToastSuccess(
           this.$t("messages.payroll.success.deletePayroll", {

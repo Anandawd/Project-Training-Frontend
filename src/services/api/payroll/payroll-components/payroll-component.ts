@@ -246,6 +246,59 @@ class PayrollComponentsAPI extends ConfigurationResource {
       method: "get",
     });
   }
+
+  // tax component
+  GetTaxComponentList(params: any) {
+    return request({
+      url: "GetPayTaxComponentList",
+      method: "get",
+      params: params,
+    });
+  }
+
+  InsertTaxComponent(params: any) {
+    return request({
+      url: "InsertPayTaxComponentList",
+      method: "post",
+      data: params,
+    });
+  }
+
+  GetTaxComponent(params: any) {
+    return request({
+      url: "GetPayTaxComponent/" + params,
+      method: "get",
+    });
+  }
+
+  UpdateTaxComponent(params: any) {
+    return request({
+      url: "UpdateTaxComponentList",
+      method: "put",
+      data: params,
+    });
+  }
+
+  DeleteTaxComponent(params: any) {
+    return request({
+      url: "DeletePayTaxComponent/" + params,
+      method: "delete",
+    });
+  }
+
+  GetTaxTypeList() {
+    return request({
+      url: "GetPayConstTaxTypeList",
+      method: "get",
+    });
+  }
+
+  GetTaxCategoryList() {
+    return request({
+      url: "GetPayConstTaxCategoryList",
+      method: "get",
+    });
+  }
 }
 
 export { PayrollComponentsAPI as default };

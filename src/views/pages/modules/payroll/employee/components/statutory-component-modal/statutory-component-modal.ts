@@ -171,7 +171,6 @@ export default class PayrollComponentModal extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      ComponentType: Yup.string().required(),
       ComponentCode: Yup.string().required(),
       //   Amount: Yup.number().min(1).max(999999999),
       //   Qty: Yup.number().required().min(1).max(1000),
@@ -182,9 +181,9 @@ export default class PayrollComponentModal extends Vue {
 
   get title() {
     if (this.modeData === $global.modeData.insert) {
-      return `${this.$t("commons.insertBenefit")}`;
+      return `${this.$t("commons.insertStatutory")}`;
     } else if (this.modeData === $global.modeData.edit) {
-      return `${this.$t("commons.updateBenefit")}`;
+      return `${this.$t("commons.updateStatutory")}`;
     }
   }
 

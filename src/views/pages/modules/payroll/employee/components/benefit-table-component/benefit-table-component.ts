@@ -127,11 +127,20 @@ export default class BenefitTableComponent extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.qty"),
-        headerClass: "align-header-center",
-        cellClass: "text-center",
+        headerClass: "align-header-right",
+        cellClass: "text-right",
         field: "quantity",
         width: 100,
         enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.payroll.payroll.totalAmount"),
+        headerClass: "align-header-right",
+        cellClass: "text-right",
+        field: "total_amount",
+        width: 150,
+        enableRowGroup: true,
+        valueFormatter: formatNumber2,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.effectiveDate"),

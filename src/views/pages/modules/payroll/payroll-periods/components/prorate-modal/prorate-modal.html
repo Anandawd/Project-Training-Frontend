@@ -1,5 +1,5 @@
 <c-modal
-  :title="$t('buttons.generatePayroll')"
+  :title="$t('labels.payroll.payroll.applyProrate')"
   size="xl"
   @close="onClose"
   @save="onSubmit"
@@ -41,7 +41,7 @@
               type="number"
               v-model="form.total_workdays"
               :label="$t('labels.payroll.payroll.totalWorkDaysInMonth')"
-              @change="onWorkDaysChange"
+              @change="onTotalWorkDaysChange"
             />
           </div>
           <div class="col-md-6">
@@ -52,8 +52,8 @@
               class="row mb-1"
               type="number"
               v-model="form.actual_workdays"
-              :label="$t('labels.payroll.payroll.totalActualWorkDays')"
-              @change="onWorkDaysChange"
+              :label="$t('labels.payroll.payroll.actualWorkDaysInMonth')"
+              @change="onActualWorkDaysChange"
             />
           </div>
           <div class="col-md-6">
@@ -74,9 +74,9 @@
       <div class="d-flex justify-content-end mt-4">
         <button
           type="button"
-          class="btn btn-outline-secondary"
+          class="btn btn-danger mr-1"
           @click="onClose"
-          :disabled="isGenerating"
+          :disabled="isSaving"
         >
           <i class="fas fa-times me-1"></i>
           {{$t('buttons.cancel')}}
@@ -85,17 +85,17 @@
           type="button"
           class="btn btn-primary"
           @click="onSubmit"
-          :disabled="isGenerating"
+          :disabled="isSaving"
         >
           <div
-            v-if="isGenerating"
+            v-if="isSaving"
             class="spinner-border spinner-border-sm me-2"
             role="status"
           >
             <span class="visually-hidden">Loading...</span>
           </div>
-          <i v-else class="fas fa-play me-1"></i>
-          {{isGenerating ? 'Saving...' : $t('buttons.save')}}
+          <i v-else class="fa fa-save me-1"></i>
+          {{isSaving ? 'Saving...' : $t('buttons.save')}}
         </button>
       </div>
     </c-form>

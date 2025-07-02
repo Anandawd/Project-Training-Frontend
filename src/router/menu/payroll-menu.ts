@@ -2,20 +2,20 @@ import $global from "@/utils/global";
 const accessMenuOrder = $global.crmAccessOrder.accessForm;
 const mainPath = "/payroll";
 export default [
-  {
-    name: "labels.training",
-    isParent: true,
-    children: [
-      {
-        name: "labels.training",
-        path: mainPath + "/training",
-        componentName: "training",
-        cIcon: "training",
-        routeOrder: 1,
-        requiresAuth: true,
-      },
-    ],
-  },
+  // {
+  //   name: "labels.training",
+  //   isParent: true,
+  //   children: [
+  //     {
+  //       name: "labels.training",
+  //       path: mainPath + "/training",
+  //       componentName: "training",
+  //       cIcon: "training",
+  //       routeOrder: 1,
+  //       requiresAuth: true,
+  //     },
+  //   ],
+  // },
   {
     name: "labels.payroll.employee.management",
     isParent: true,

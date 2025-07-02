@@ -521,14 +521,14 @@ export default class EmployeeDetail extends Vue {
           uploadData.append("status", formData.status);
           uploadData.append("remark", formData.remark);
 
-          if (this.inputFormElement.selectedFile) {
+          if (this.documentFormElement.selectedFile) {
             uploadData.append(
               "file_content",
-              this.inputFormElement.selectedFile
+              this.documentFormElement.selectedFile
             );
             console.log(
               "insertData selected file",
-              this.inputFormElement.selectedFile
+              this.documentFormElement.selectedFile
             );
           }
 
@@ -541,6 +541,9 @@ export default class EmployeeDetail extends Vue {
           const { status2 } = await legalDocumentAPI.InsertLegalDocument(
             uploadData
           );
+          if (status2.status == 0) {
+            getToastSuccess(this.$t("messages.employee.success.saveDocument"));
+          }
           break;
         case "SALARY":
           const { status2: salary } =
@@ -824,7 +827,7 @@ export default class EmployeeDetail extends Vue {
         return {
           employee_id: this.employeeId,
           id: params.id ? params.id : null,
-          statutory_component_code: params.payroll_component_code,
+          statutory_component_code: params.statutory_component_code,
           amount: params.amount ? parseFloat(params.amount) : 0,
           percentage: params.percentage ? parseFloat(params.percentage) : 0,
           min_amount: params.min_amount ? parseFloat(params.min_amount) : 0,

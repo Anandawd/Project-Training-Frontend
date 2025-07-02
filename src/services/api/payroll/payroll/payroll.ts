@@ -227,6 +227,13 @@ class PayrollAPI extends ConfigurationResource {
     });
   }
 
+  GetStatutoryDetailByPayrollId(payrollId: any) {
+    return request({
+      url: `GetPayStatutoryDetailByPayrollId/${payrollId}`,
+      method: "get",
+    });
+  }
+
   GetTaxDetailByPayrollId(payrollId: any) {
     return request({
       url: `GetPayTaxDetailByPayrollID/${payrollId}`,

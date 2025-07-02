@@ -1,0 +1,229 @@
+<c-form
+  @submit="onSave"
+  ref="inputFormValidation"
+  :validation-schema="schema"
+  @invalid-submit="onInvalidSubmit"
+  class="input-form row"
+  v-slot="{resetForm}"
+>
+  <div class="card">
+    <div class="card-header">{{title}}</div>
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <c-input
+            required
+            type="text"
+            name="Code"
+            id="Code"
+            class="row mb-1"
+            :label="$t('labels.payroll.employee.code')"
+            v-model="form.code"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            type="text"
+            name="Name"
+            id="Name"
+            class="row mb-1"
+            :label="$t('labels.payroll.employee.name')"
+            v-model="form.name"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            type="text"
+            name="Description"
+            id="Description"
+            class="row mb-1"
+            :label="$t('labels.description')"
+            v-model="form.description"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            name="Type"
+            selectType="column"
+            labelName="name"
+            keyName="code"
+            v-model="form.type"
+            :label="$t('labels.payroll.payroll.type')"
+            :columnOptions="columnTypeOptions"
+            :options="typeOptions"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-select
+            required
+            offset="right"
+            class="row mb-1"
+            name="Category"
+            selectType="column"
+            labelName="name"
+            keyName="code"
+            v-model="form.tax_category"
+            :label="$t('labels.payroll.payroll.category')"
+            :columnOptions="columnTypeOptions"
+            :options="categoryOptions"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            showZeroNumber
+            formatted
+            type="number"
+            name="Rate"
+            id="Rate"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.rate')"
+            :max="9999999999"
+            :min="-1"
+            v-model="form.rate"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            showZeroNumber
+            formatted
+            type="number"
+            name="MinRange"
+            id="MinRange"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.minRange')"
+            :max="9999999999"
+            :min="0"
+            v-model="form.min_amount"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            required
+            showZeroNumber
+            formatted
+            type="number"
+            name="MaxRange"
+            id="MaxRange"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.maxRange')"
+            :max="9999999999"
+            :min="0"
+            v-model="form.max_amount"
+          />
+        </div>
+        <div class="col-md-4">
+          <c-input
+            type="text"
+            name="Formula"
+            id="Formula"
+            class="row mb-1"
+            :label="$t('labels.payroll.payroll.customFormula')"
+            v-model="form.formula"
+          />
+        </div>
+        <div class="col-md-4 mb-1">
+          <c-datepicker
+            name="EffetiveDate"
+            id="EffetiveDate"
+            customLabelClass="col-3"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            :label="$t('labels.payroll.employee.effectiveDate')"
+            v-model="form.effective_date"
+          />
+        </div>
+        <div class="col-md-4 mb-1">
+          <c-datepicker
+            name="EndDate"
+            id="EndDate"
+            customLabelClass="col-3"
+            type="date"
+            valueType="YYYY-MM-DD"
+            format="DD/MM/YYYY"
+            :label="$t('labels.payroll.employee.endDate')"
+            v-model="form.end_date"
+          />
+        </div>
+
+        <div class="col-md-4 mb-sm-1">
+          <div class="row">
+            <div class="col-sm-3">
+              <label
+                class="form-label"
+                style="font-size: 12px; font-weight: 700; color: red"
+                >{{$t('labels.payroll.payroll.showInPayslip')}}</label
+              >
+            </div>
+            <div class="col-sm-9 d-flex align-items-center p-0">
+              <c-radio
+                class="me-3"
+                :label="$t('labels.yes')"
+                v-model="form.show_in_payslip"
+                value="1"
+              ></c-radio>
+              <c-radio
+                class="me-3"
+                :label="$t('labels.no')"
+                v-model="form.show_in_payslip"
+                value="0"
+              ></c-radio>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-sm-1">
+          <div class="row">
+            <div class="col-sm-3">
+              <label
+                class="form-label"
+                style="font-size: 12px; font-weight: 700; color: red"
+                >{{$t('labels.status')}}</label
+              >
+            </div>
+            <div class="col-sm-9 d-flex align-items-center p-0">
+              <c-radio
+                class="me-3"
+                :label="$t('labels.active')"
+                v-model="form.active"
+                value="1"
+              ></c-radio>
+              <c-radio
+                class="me-3"
+                :label="$t('labels.inactive')"
+                v-model="form.active"
+                value="0"
+              ></c-radio>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- buttons -->
+      <div class="d-flex justify-content-end mt-2">
+        <button
+          type="button"
+          class="btn btn-danger mr-1 px-3"
+          @click="onClose"
+          :disabled="isSaving"
+        >
+          <i class="fa fa-times" aria-hidden="true"></i>
+          {{$t('buttons.close')}}
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary px-3"
+          @click="onSubmit"
+          :disabled="isSaving"
+        >
+          <i class="fa fa-save"></i>
+          {{$t('buttons.save')}}
+        </button>
+      </div>
+    </div>
+  </div>
+</c-form>

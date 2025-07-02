@@ -3,6 +3,15 @@
     <!-- button insert -->
     <div class="d-flex justify-content-end mb-2">
       <button
+        title="Holiday Type"
+        type="button"
+        class="btn btn-warning mr-1"
+        @click="handleToHolidayType"
+      >
+        <i class="fa fa-cogs mr-1" aria-hidden="true"></i>{{
+        $t('buttons.holidayType') }}
+      </button>
+      <button
         title="Insert Holiday"
         type="button"
         class="btn btn-primary mr-1"
@@ -34,7 +43,7 @@
       :searchDefault="searchDefault"
       @search="refreshData"
     >
-      <template v-slot="{search}">
+      <template v-slot="{search, onRefresh}">
         <div class="col-md-6 d-flex mb-md-4">
           <div class="checklist">
             <input

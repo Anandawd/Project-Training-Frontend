@@ -175,6 +175,12 @@ export default class PayrollComponents extends Vue {
     });
   }
 
+  handleToTaxComponent() {
+    this.$router.push({
+      name: "TaxComponent",
+    });
+  }
+
   refreshData(search: any) {
     this.loadDataGrid(search);
   }

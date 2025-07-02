@@ -1,0 +1,64 @@
+<!-- summary -->
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">{{$t('title.summary')}}</h3>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="info-box bg-success">
+          <div class="info-box-content">
+            <span class="info-box-text"
+              >{{$t('labels.payroll.attendance.totalEmployees')}}</span
+            >
+            <span class="info-box-number"
+              >{{statusCounts.total_employees}}</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="info-box bg-warning">
+          <div class="info-box-content">
+            <span class="info-box-text"
+              >{{$t('labels.payroll.attendance.enrolled')}}</span
+            >
+            <span class="info-box-number">{{statusCounts.total_enrolled}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="info-box bg-danger">
+          <div class="info-box-content">
+            <span class="info-box-text"
+              >{{$t('labels.payroll.attendance.notEnrolled')}}</span
+            >
+            <span class="info-box-number"
+              >{{statusCounts.total_not_enrolled}}</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="info-box bg-info">
+          <div class="info-box-content">
+            <span class="info-box-text"
+              >{{$t('labels.payroll.attendance.pending')}}</span
+            >
+            <span class="info-box-number">{{statusCounts.total_pending}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="info-box bg-info">
+          <div class="info-box-content">
+            <span class="info-box-text"
+              >{{$t('labels.payroll.attendance.failed')}}</span
+            >
+            <span class="info-box-number">{{statusCounts.total_failed}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

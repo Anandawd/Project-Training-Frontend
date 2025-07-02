@@ -199,6 +199,26 @@ export default [
     },
   },
   {
+    path: "fingerprint-devices",
+    name: "FingerprintDevices",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/fingerprint-enrollment/configurations/fingerprint-devices/fingerprint-devices.vue"
+      ),
+    meta: {
+      pageTitle: "title.fingerprintDevices",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        {
+          title: "title.fingerprintEnrollment",
+          url: "/payroll/fingerprint-enrollment",
+        },
+        { title: "title.fingerprintDevices", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
     path: "leave",
     name: "Leave",
     component: () =>
@@ -252,6 +272,24 @@ export default [
       menu: getRouterMenu(menu, 1),
     },
   },
+  {
+    path: "holiday-type",
+    name: "HolidayType",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/holiday-calender/configurations/holiday-type/holiday-type.vue"
+      ),
+    meta: {
+      pageTitle: "title.holidayType",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        { title: "title.holidayCalender", url: "/payroll/holiday-calender" },
+        { title: "title.holidayType", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+
   // configurations
   {
     path: "schedule",
@@ -402,6 +440,26 @@ export default [
           url: "/payroll/payroll-components",
         },
         { title: "title.componentCategory", active: true },
+      ],
+      menu: getRouterMenu(menu, 1),
+    },
+  },
+  {
+    path: "tax-component",
+    name: "TaxComponent",
+    component: () =>
+      import(
+        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-component/configurations/tax-component/tax-component.vue"
+      ),
+    meta: {
+      pageTitle: "title.taxComponent",
+      icon: getIconFromMenu(menu, 1),
+      breadcrumb: [
+        {
+          title: "title.payrollComponents",
+          url: "/payroll/payroll-components",
+        },
+        { title: "title.taxComponent", active: true },
       ],
       menu: getRouterMenu(menu, 1),
     },

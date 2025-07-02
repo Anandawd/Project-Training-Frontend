@@ -286,7 +286,17 @@
         "color": "Color",
         "splitShift": "Split Shift"
       },
+
       "payroll": {
+        "changeTaxConfiguration": "Change Tax Configuration",
+        "applyProrate": "Apply Prorate",
+        "total": "Total",
+        "pleaseWait": "Please Wait",
+        "loadingPayrollData": "Loading Payroll Data",
+        "minRange": "Min. Range",
+        "maxRange": "Max. Range",
+        "rate": "Rate",
+        "customFormula": "Custom Formula",
         "payrollComponent": "Payroll Component",
         "statutoryComponent": "Statutory Component",
         "amountPercentage": "Amount Percentage",
@@ -361,7 +371,7 @@
         "taxIncome": "Tax Income",
         "taxMethod": "Tax Method",
         "totalWorkDaysInMonth": "Total Work Days In Month",
-        "totalActualWorkDays": "Total Actual Work Days",
+        "actualWorkDaysInMonth": "Actual Work Days In Month",
         "prorateFactor": "Prorate Factor",
         "selectSpecificEmployees": "Select Specific Employees",
         "totalEmployees": "Total Employees",
@@ -420,11 +430,17 @@
         "benefitSelectionInstruction": "Choose which component to include in payroll generation",
         "benefitConfiguration": "Component Configuration",
         "benefitConfigurationInstruction": "Configure the component settings and properties",
+        "statutorySelection": "Statutory Selection",
+        "statutorySelectionInstruction": "Choose which statutory to include in payroll generation",
+        "statutoryConfiguration": "Statutory Configuration",
+        "statutoryConfigurationInstruction": "Configure the statutory settings and properties",
         "taxConfiguration": "Tax Configuration",
         "taxConfigurationInstruction": "Configure tax calculation methods and income types",
         "generateSummary": "Generation Summary",
         "generateSummaryInstruction": "Review settings before generating payroll",
-        "generateActionsIntruction": "All calculations will be saved as draft and can be reviewed before submission"
+        "generateActionsIntruction": "All calculations will be saved as draft and can be reviewed before submission",
+        "prorate": "Prorate",
+        "prorateInstruction": "Enter total work days and actual work days to get the prorate factor"
       },
       "reimbursement": {
         "reimbursement": "Reimbursement",
@@ -1850,6 +1866,8 @@
   },
   "title": {
     "t11": "t11",
+    "taxComponent": "Tax Component",
+    "holidayType": "Holiday Type",
     "componentCategory": "Component Category",
     "documentType": "Document Type",
     "adjustmentReason": "Adjustment Reason",
@@ -2577,6 +2595,7 @@
     "payroll": {
       "success": {
         "saveComponentCategory": "Component category has been successfully saved",
+        "saveTaxComponent": "Tax component has been successfully saved",
         "saveEarnings": "Component earnings has been successfully saved",
         "saveDeductions": "Component deductions has been successfully saved",
         "saveStatutory": "Component statutory has been successfully saved",
@@ -2584,12 +2603,14 @@
         "savePayroll": "Payroll of {employeeName} has been successfully saved",
         "saveGenerate": "Payroll has been successfully generated",
         "deleteComponentCategory": "Component category has been successfully removed",
+        "deleteTaxComponent": "Tax component has been successfully removed",
         "deleteEarnings": "Component earnings has been successfully removed",
         "deleteDeductions": "Component deductions has been successfully removed",
         "deleteStatutory": "Component statutory has been successfully removed",
         "deletePayrollPeriods": "Payroll periods has been successfully removed",
         "deletePayroll": "Payroll of {employeeName} has been successfully removed",
         "updateComponentCategory": "Component category has been successfully updated",
+        "updateTaxComponent": "Tax component has been successfully updated",
         "updateEarnings": "Component earnings has been successfully updated",
         "updateDeductions": "Component deductions has been successfully updated",
         "updateStatutory": "Component statutory has been successfully updated",
@@ -2601,18 +2622,25 @@
         "update": "Failed to update employee information. Please check your data and try again",
         "delete": "Failed to delete employee. The employee may be referenced in other modules",
         "cannotEditNonDraft": "Can only edit draft payroll periods",
-        "notFoundPeriod": "Payroll period not found in the system"
+        "notFoundPeriod": "Payroll period not found in the system",
+        "duplicateCode": "Data with this code already exists. Please use a different code."
       },
       "confirm": {
         "submitForApproval": "Are you sure you want to submit this payroll for approval?",
         "submitEmployeePayrollForApproval": "Are you sure you want to submit this employee payroll for approval?",
         "saveAndBack": "You have unsaved changes. Do you want to save before going back?",
         "deleteComponentCategory": "Are you sure you want to delete this component category?",
+        "deleteTaxComponent": "Are you sure you want to delete this tax component?",
         "deleteEarnings": "Are you sure you want to delete this component earnings?",
         "deleteDeductions": "Are you sure you want to delete this component deductions?",
         "deleteStatutory": "Are you sure you want to delete this component statutory?",
         "deletePayrollPeriods": "Are you sure you want to delete this payroll periods?",
         "deletePayroll": "Are you sure you want to delete this {employeeName} payroll?"
+      },
+      "info": {
+        "totalWorkDaysCannotZero": "Total work days cannot be less than 1",
+        "actualWorkDaysCannotZero": "Actual work days cannot be less than 1",
+        "actualWorkDaysCannotMoreThanTotalWorkDays": "Actual work days cannot be more than total work days"
       },
       "confirmBulkApprove": "Are you sure you want to approve all selected payroll records?",
       "confirmBulkReject": "Are you sure you want to reject all selected payroll records?",
@@ -2848,6 +2876,11 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "component": "Component",
+    "statutory": "Statutory",
+    "taxConfiguration": "Tax Configuration",
+    "taxComponent": "Tax Component",
+    "holidayType": "Holiday Type",
     "insertComponent": "Insert Component",
     "componentCategory": "Component Category",
     "documentType": "Document Type",
@@ -3505,6 +3538,8 @@
           "allowExpiry": "Allow Expiry"
         },
         "payroll": {
+          "rate": "Rate",
+          "formula": "Formula",
           "percentage": "Percentage",
           "defaultPercentage": "Default Percentage",
           "minAmount": "Min. Amount",
@@ -4602,6 +4637,7 @@
           "status": "Status"
         }
       },
+
       "portalCode": "Portal Code",
       "cancelledBy": "Cancelled By",
       "competitor": "Competitor",
@@ -4992,7 +5028,8 @@
       "bookingNumber": "Booking Number",
       "parent": "Parent"
     },
-
+    "insertStatutory": "Insert Statutory",
+    "updateStatutory": "Update Statutory",
     "invite": "Invite",
     "expand": "Expand",
     "collapse": "Collapse",

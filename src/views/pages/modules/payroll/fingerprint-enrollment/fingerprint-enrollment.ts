@@ -2,7 +2,12 @@ import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
-import { formatDateTime, formatDateTimeUTC } from "@/utils/format";
+import FingerprintEnrollmentAPI from "@/services/api/payroll/fingerprint-enrollment/fingerprint-enrollment";
+import {
+  formatDateTime,
+  formatDateTime2,
+  formatDateTimeUTC,
+} from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -15,6 +20,7 @@ import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
+import FingerprintEnrollmentSummary from "./components/fingerprint-enrollment-summary/fingerprint-enrollment-summary.vue";
 import CInputForm from "./fingerprint-enrollment-input-form/fingerprint-enrollment-input-form.vue";
 
 interface FingerprintDevice {
@@ -59,6 +65,8 @@ interface EnrollmentProgress {
   success: boolean;
 }
 
+const fingerprintEnrollmentAPI = new FingerprintEnrollmentAPI();
+
 @Options({
   components: {
     AgGridVue,
@@ -66,17 +74,20 @@ interface EnrollmentProgress {
     CModal,
     CDialog,
     CInputForm,
+    FingerprintEnrollmentSummary,
   },
 })
 export default class FingerprintEnrollment extends Vue {
   // data
   public rowData: any = [];
-  public filteredData: any = [];
-  public devices: FingerprintDevice[] = [];
   public deleteParam: any;
+  public devices: FingerprintDevice[] = [];
+
+  public filteredData: any = [];
 
   // options data
   public employeeOptions: any[] = [];
+  public devicesOptions: any[] = [];
   public enrollmentStatusOptions: any[] = [];
 
   // form
@@ -84,6 +95,7 @@ export default class FingerprintEnrollment extends Vue {
   public modeData: any;
   public showForm: boolean = false;
   public inputFormElement: any = ref();
+  public isSaving: boolean = false;
 
   // dialog & Modals
   public showDialog: boolean = false;
@@ -98,6 +110,15 @@ export default class FingerprintEnrollment extends Vue {
     text: "",
     filter: [0],
   };
+
+  // stats
+  public statusCounts: any = ref({
+    total_employees: 0,
+    total_enrolled: 0,
+    total_not_enrolled: 0,
+    total_pending: 0,
+    total_failed: 0,
+  });
 
   // AG GRID VARIABLE
   gridOptions: any = {};
@@ -116,8 +137,7 @@ export default class FingerprintEnrollment extends Vue {
   agGridSetting: any;
 
   // RECYCLE LIFE FUNCTION =======================================================
-
-  created(): void {
+  mounted(): void {
     this.loadData();
   }
 
@@ -267,6 +287,38 @@ export default class FingerprintEnrollment extends Vue {
         width: 200,
         enableRowGroup: false,
       },
+      {
+        headerName: this.$t("commons.table.updatedAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "updated_at",
+        width: 120,
+        valueFormatter: formatDateTime2,
+      },
+      {
+        headerName: this.$t("commons.table.updatedBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "updated_by",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.createdAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "created_at",
+        width: 120,
+        valueFormatter: formatDateTime2,
+      },
+      {
+        headerName: this.$t("commons.table.createdBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "created_by",
+        width: 120,
+        enableRowGroup: true,
+      },
     ];
     this.context = { componentParent: this };
     this.frameworkComponents = {
@@ -307,9 +359,7 @@ export default class FingerprintEnrollment extends Vue {
       {
         name: this.$t("commons.contextMenu.enroll"),
         disabled:
-          !this.paramsData ||
-          this.paramsData.enrollment_status === "ENROLLED" ||
-          !this.deviceConnected,
+          !this.paramsData || this.paramsData.enrollment_status === "ENROLLED",
         icon: generateIconContextMenuAgGrid("add_icon24"),
         action: () =>
           this.handleShowForm(this.paramsData, $global.modeData.insert),
@@ -317,9 +367,7 @@ export default class FingerprintEnrollment extends Vue {
       {
         name: this.$t("commons.contextMenu.reEnroll"),
         disabled:
-          !this.paramsData ||
-          this.paramsData.enrollment_status !== "ENROLLED" ||
-          !this.deviceConnected,
+          !this.paramsData || this.paramsData.enrollment_status !== "ENROLLED",
         icon: generateIconContextMenuAgGrid("edit_icon24"),
         action: () => this.handleReEnroll(this.paramsData),
       },
@@ -333,18 +381,14 @@ export default class FingerprintEnrollment extends Vue {
       {
         name: this.$t("commons.contextMenu.quickVerify"),
         disabled:
-          !this.paramsData ||
-          this.paramsData.enrollment_status !== "ENROLLED" ||
-          !this.deviceConnected,
+          !this.paramsData || this.paramsData.enrollment_status !== "ENROLLED",
         icon: generateIconContextMenuAgGrid("detail_icon24"),
         action: () => this.handleQuickVerify(this.paramsData),
       },
       {
         name: this.$t("commons.contextMenu.fullVerify"),
         disabled:
-          !this.paramsData ||
-          this.paramsData.enrollment_status !== "ENROLLED" ||
-          !this.deviceConnected,
+          !this.paramsData || this.paramsData.enrollment_status !== "ENROLLED",
         icon: generateIconContextMenuAgGrid("detail_icon24"),
         action: () => this.handleFullVerify(this.paramsData),
       },
@@ -365,37 +409,31 @@ export default class FingerprintEnrollment extends Vue {
     }
   }
 
-  handleShowForm(params: any, mode: any) {
+  async handleShowForm(params: any, mode: any) {
     this.showForm = false;
-
-    if (!this.deviceConnected) {
-      getToastError(this.$t("messages.attendace.error.noDeviceConnected"));
-      return;
-    }
+    await this.$nextTick();
 
     this.modeData = mode;
     this.$nextTick(() => {
       if (mode === $global.modeData.insert) {
         this.inputFormElement.initialize();
       } else {
-        this.loadEditData(params.id);
+        this.loadEditData(params);
       }
     });
 
     this.showForm = true;
   }
 
+  handleMenu() {}
+
   handleSave(formData: any) {
     const formattedData = this.formatData(formData);
     console.log("handleSave", formattedData);
     if (this.modeData == $global.modeData.insert) {
-      this.insertData(formattedData).then(() => {
-        this.showForm = false;
-      });
+      this.insertData(formattedData);
     } else {
-      this.updateData(formattedData).then(() => {
-        this.showForm = false;
-      });
+      this.updateData(formattedData);
     }
   }
 
@@ -410,8 +448,6 @@ export default class FingerprintEnrollment extends Vue {
     this.dialogAction = "delete";
     this.showDialog = true;
   }
-
-  handleMenu() {}
 
   handleReEnroll(params: any) {
     this.dialogTitle = this.$t("messages.attendance.confirm.reEnrollTitle");
@@ -437,22 +473,22 @@ export default class FingerprintEnrollment extends Vue {
     this.syncDevice();
   }
 
+  handleToFingerprintDevices() {
+    this.$router.push({
+      name: "FingerprintDevices",
+    });
+  }
+
   confirmAction() {
     if (this.dialogAction === "delete") {
       this.deleteData();
     } else if (this.dialogAction === "re-enroll") {
       this.handleShowForm(this.paramsData, $global.modeData.edit);
     }
-    this.showDialog = false;
   }
 
   refreshData(search: any) {
-    this.searchOptions = { ...search };
     this.loadDataGrid(search);
-  }
-
-  onRefresh() {
-    this.loadDataGrid(this.searchDefault);
   }
 
   // API REQUEST =======================================================
@@ -467,100 +503,34 @@ export default class FingerprintEnrollment extends Vue {
 
   async loadDataGrid(search: any = this.searchDefault) {
     try {
-      /*
       let params = {
         Index: search.index,
         Text: search.text,
         IndexCheckBox: search.filter[0],
       };
-      const { data } = await salaryAdjustmentAPI.GetSalaryAdjustmentList(params);
-      this.rowData = data;
-      */
-
-      let filteredData = [...this.rowData];
-
-      if (search.text && search.text.trim()) {
-        let searchText = search.text.toLowerCase().trim();
-        let searchIndex = search.index;
-
-        filteredData = filteredData.filter((item: any) => {
-          switch (searchIndex) {
-            case 0:
-              return item.employee_id.toLowerCase().includes(searchText);
-            case 1:
-              return item.employee_name.toLowerCase().includes(searchText);
-            case 2:
-              return item.department_name.toLowerCase().includes(searchText);
-            case 3:
-              return item.position_name.toLowerCase().includes(searchText);
-            case 4:
-              return item.placement_name.toLowerCase().includes(searchText);
-            default:
-              return true;
-          }
-        });
+      const { data } = await fingerprintEnrollmentAPI.GetEmployeeEnrollmentList(
+        params
+      );
+      if (data) {
+        this.rowData = data;
+      } else {
+        this.rowData = [];
       }
 
-      if (search.filter && search.filter.length > 0) {
-        const statusFilter = parseInt(search.filter[0]);
-        if (statusFilter !== 0) {
-          filteredData = filteredData.filter((item: any) => {
-            switch (statusFilter) {
-              case 1:
-                return item.enrollment_status === "ENROLLED";
-              case 2:
-                return item.enrollment_status === "NOT_ENROLLED";
-              case 3:
-                return item.enrollment_status === "PENDING";
-              case 4:
-                return item.enrollment_status === "FAILED";
-              default:
-                return true;
-            }
-          });
-        }
-      }
-
-      if (this.gridApi) {
-        this.gridApi.setRowData(filteredData);
-      }
+      this.loadDropdown();
     } catch (error) {
       getError(error);
     }
   }
 
-  async loadEditData(id: any) {
+  async loadEditData(params: any) {
     try {
-      /*
-      const { data } = await salaryAdjustmentAPI.GetSalaryAdjustment(id);
-      this.populateForm(data);
-      */
-
-      const enrollment = this.rowData.find((item: any) => item.id === id);
-
-      if (enrollment) {
-        this.$nextTick(() => {
-          // Populate form dengan data yang ada
-          const formData = this.populateForm(enrollment);
-
-          if (enrollment.device_id) {
-            const device = this.devices.find(
-              (d) => d.id === enrollment.device_id
-            );
-            if (device) {
-              formData.device_name = device.name;
-              formData.device_model = device.model;
-              formData.device_ip = device.ipAddress;
-            }
-          }
-
-          this.inputFormElement.form = formData;
-        });
-      } else {
-        getToastError(
-          this.$t("messages.attendance.error.notFingerprintEnrollment")
-        );
-      }
+      const { data } = await fingerprintEnrollmentAPI.GetEmployeeEnrollment(
+        params.id
+      );
+      this.$nextTick(() => {
+        this.inputFormElement.form = this.populateForm(data[0]);
+      });
     } catch (error) {
       getError(error);
     }
@@ -729,112 +699,27 @@ export default class FingerprintEnrollment extends Vue {
 
   async loadDropdown() {
     try {
-      /*
       const promises = [
-        salaryAdjustmentAPI.GetEmployeeOptions().then(response => {
-          this.employeeOptions = response.data;
-        }),
-        salaryAdjustmentAPI.GetAdjustmentReasonOptions().then(response => {
-          this.adjustmentReasonOptions = response.data;
-        }),
+        fingerprintEnrollmentAPI
+          .GetEmployeeEnrollmentList({})
+          .then((response) => {
+            this.employeeOptions = response.data;
+          }),
+
+        fingerprintEnrollmentAPI
+          .GetFingerprintDeviceList({})
+          .then((response) => {
+            this.devicesOptions = response.data;
+          }),
+
+        fingerprintEnrollmentAPI
+          .GetEmployeeEnrollmentList({})
+          .then((response) => {
+            this.enrollmentStatusOptions = response.data;
+          }),
       ];
 
       await Promise.all(promises);
-      */
-
-      // Employee yang belum di-enroll
-      const enrolledEmployeeIds = this.rowData
-        .filter((item: any) => item.enrollment_status === "ENROLLED")
-        .map((item: any) => item.employee_id);
-
-      // Mock data employee (bisa diganti dengan API call)
-      const allEmployees = [
-        {
-          employee_id: "EMP001",
-          name: "John Doe",
-          department_code: "IT",
-          department_name: "Information Technology",
-          position_code: "STAFF",
-          position_name: "Staff",
-          placement_code: "AMORA_UBUD",
-          placement_name: "Amora Ubud",
-        },
-        {
-          employee_id: "EMP002",
-          name: "Jane Smith",
-          department_code: "HR",
-          department_name: "Human Resources",
-          position_code: "MANAGER",
-          position_name: "Manager",
-          placement_code: "AMORA_UBUD",
-          placement_name: "Amora Ubud",
-        },
-        {
-          employee_id: "EMP003",
-          name: "Mike Johnson",
-          department_code: "FINANCE",
-          department_name: "Finance",
-          position_code: "STAFF",
-          position_name: "Staff",
-          placement_code: "AMORA_UBUD",
-          placement_name: "Amora Ubud",
-        },
-        {
-          employee_id: "EMP004",
-          name: "Sarah Wilson",
-          department_code: "IT",
-          department_name: "Information Technology",
-          position_code: "SUPERVISOR",
-          position_name: "Supervisor",
-          placement_code: "AMORA_UBUD",
-          placement_name: "Amora Ubud",
-        },
-        {
-          employee_id: "EMP005",
-          name: "Alex Brown",
-          department_code: "MARKETING",
-          department_name: "Marketing",
-          position_code: "STAFF",
-          position_name: "Staff",
-          placement_code: "AMORA_UBUD",
-          placement_name: "Amora Ubud",
-        },
-        {
-          employee_id: "EMP006",
-          name: "Lisa Anderson",
-          department_code: "HR",
-          department_name: "Human Resources",
-          position_code: "STAFF",
-          position_name: "Staff",
-          placement_code: "AMORA_UBUD",
-          placement_name: "Amora Ubud",
-        },
-        {
-          employee_id: "EMP007",
-          name: "David Chen",
-          department_code: "IT",
-          department_name: "Information Technology",
-          position_code: "STAFF",
-          position_name: "Staff",
-          placement_code: "AMORA_UBUD",
-          placement_name: "Amora Ubud",
-        },
-        {
-          employee_id: "EMP008",
-          name: "Emily Davis",
-          department_code: "FINANCE",
-          department_name: "Finance",
-          position_code: "STAFF",
-          position_name: "Staff",
-          placement_code: "AMORA_UBUD",
-          placement_name: "Amora Ubud",
-        },
-      ];
-
-      // Filter employee yang belum enrolled
-      this.employeeOptions = allEmployees.filter(
-        (emp) => !enrolledEmployeeIds.includes(emp.employee_id)
-      );
     } catch (error) {
       getError(error);
     }
@@ -842,110 +727,117 @@ export default class FingerprintEnrollment extends Vue {
 
   async insertData(formData: any) {
     try {
-      /*
-      const { status2 } = await salaryAdjustmentAPI.InsertSalaryAdjustment(formData);
+      this.isSaving = true;
+
+      const { status2 } =
+        await fingerprintEnrollmentAPI.InsertEmployeeEnrollment(formData);
       if (status2.status == 0) {
-        getToastSuccess(this.$t("messages.saveSuccess"));
+        getToastSuccess(this.$t("messages.attendance.success.enrolled"));
         this.showForm = false;
         this.loadDataGrid(this.searchDefault);
       }
-      */
 
-      const newId =
-        Math.max(...this.rowData.map((item: any) => item.id), 0) + 1;
+      // const newId =
+      //   Math.max(...this.rowData.map((item: any) => item.id), 0) + 1;
 
-      const newEnrollment = {
-        id: newId,
-        employee_id: formData.employee_id,
-        employee_name: formData.employee_name,
-        department_code: formData.department_code,
-        department_name: formData.department_name,
-        position_code: formData.position_code,
-        position_name: formData.position_name,
-        placement_code: formData.placement_code,
-        placement_name: formData.placement_name,
-        fingerprint_id: `FP${Date.now()}`,
-        device_id: formData.device_id,
-        device_name: formData.device_name,
-        device_model: formData.device_model,
-        device_ip: formData.device_ip,
-        enrollment_date: formData.enrollment_date,
-        enrollment_status: formData.enrollment_status,
-        template_count: formData.template_count,
-        finger_index: formData.finger_index,
-        quality_level: formData.quality_level,
-        last_verified: formData.last_verified,
-        remark: formData.remark,
-        created_at: formatDateTimeUTC(new Date()),
-        created_by: "Current User",
-        updated_at: formatDateTimeUTC(new Date()),
-        updated_by: "Current User",
-      };
+      // const newEnrollment = {
+      //   id: newId,
+      //   employee_id: formData.employee_id,
+      //   employee_name: formData.employee_name,
+      //   department_code: formData.department_code,
+      //   department_name: formData.department_name,
+      //   position_code: formData.position_code,
+      //   position_name: formData.position_name,
+      //   placement_code: formData.placement_code,
+      //   placement_name: formData.placement_name,
+      //   fingerprint_id: `FP${Date.now()}`,
+      //   device_id: formData.device_id,
+      //   device_name: formData.device_name,
+      //   device_model: formData.device_model,
+      //   device_ip: formData.device_ip,
+      //   enrollment_date: formData.enrollment_date,
+      //   enrollment_status: formData.enrollment_status,
+      //   template_count: formData.template_count,
+      //   finger_index: formData.finger_index,
+      //   quality_level: formData.quality_level,
+      //   last_verified: formData.last_verified,
+      //   remark: formData.remark,
+      //   created_at: formatDateTimeUTC(new Date()),
+      //   created_by: "Current User",
+      //   updated_at: formatDateTimeUTC(new Date()),
+      //   updated_by: "Current User",
+      // };
 
-      this.rowData.push(newEnrollment);
+      // this.rowData.push(newEnrollment);
 
-      await this.$nextTick();
-      await this.loadDataGrid(this.searchDefault);
+      // await this.$nextTick();
+      // await this.loadDataGrid(this.searchDefault);
 
-      getToastSuccess(this.$t("messages.attendance.success.enrolled"));
+      // getToastSuccess(this.$t("messages.attendance.success.enrolled"));
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
   async updateData(formData: any) {
     try {
-      /*
-      const { status2 } = await salaryAdjustmentAPI.UpdateSalaryAdjustment(formData);
+      this.isSaving = true;
+      const { status2 } =
+        await fingerprintEnrollmentAPI.UpdateEmployeeEnrollment(formData);
       if (status2.status == 0) {
+        getToastSuccess(
+          this.$t("messages.attendance.success.updateFingerprint")
+        );
         this.loadDataGrid(this.searchDefault);
         this.showForm = false;
-        getToastSuccess(this.$t("messages.saveSuccess"));
-      }
-      */
-
-      const index = this.rowData.findIndex(
-        (item: any) => item.id === formData.id
-      );
-      if (index !== -1) {
-        this.rowData[index] = {
-          ...this.rowData[index],
-          device_id: formData.device_id,
-          device_name: formData.device_name,
-          remark: formData.remark,
-          template_count:
-            formData.template_count || this.rowData[index].template_count,
-          updated_at: formatDateTimeUTC(new Date()),
-          updated_by: "Current User",
-        };
       }
 
-      await this.$nextTick();
-      await this.loadDataGrid(this.searchDefault);
-      getToastSuccess(this.$t("messages.attendance.success.updateFingerprint"));
+      // const index = this.rowData.findIndex(
+      //   (item: any) => item.id === formData.id
+      // );
+      // if (index !== -1) {
+      //   this.rowData[index] = {
+      //     ...this.rowData[index],
+      //     device_id: formData.device_id,
+      //     device_name: formData.device_name,
+      //     remark: formData.remark,
+      //     template_count:
+      //       formData.template_count || this.rowData[index].template_count,
+      //     updated_at: formatDateTimeUTC(new Date()),
+      //     updated_by: "Current User",
+      //   };
+      // }
+
+      // await this.$nextTick();
+      // await this.loadDataGrid(this.searchDefault);
+      // getToastSuccess(this.$t("messages.attendance.success.updateFingerprint"));
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
   async deleteData() {
     try {
-      /*
-      const { status2 } = await salaryAdjustmentAPI.DeleteSalaryAdjustment(this.deleteParam);
+      this.isSaving = true;
+      const { status2 } =
+        await fingerprintEnrollmentAPI.DeleteEmployeeEnrollment(
+          this.deleteParam
+        );
       if (status2.status == 0) {
+        getToastSuccess(
+          this.$t("messages.attendance.success.deleteFingerprint")
+        );
+        this.showDialog = false;
         this.loadDataGrid(this.searchDefault);
-        getToastSuccess(this.$t("messages.deleteSuccess"));
       }
-      */
-
-      this.rowData = this.rowData.filter(
-        (item: any) => item.id !== this.deleteParam
-      );
-
-      await this.loadDataGrid(this.searchDefault);
-      getToastSuccess(this.$t("messages.attendance.success.deleteFingerprint"));
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
@@ -1096,38 +988,5 @@ export default class FingerprintEnrollment extends Vue {
   // GETTER AND SETTER =======================================================
   get pinnedBottomRowData() {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
-  }
-
-  get deviceConnected(): boolean {
-    return this.devices.some((device: any) => device.connected);
-  }
-
-  get summaryData() {
-    const summary = {
-      total_employees: this.rowData.length,
-      enrolled: 0,
-      not_enrolled: 0,
-      pending: 0,
-      failed: 0,
-    };
-
-    this.rowData.forEach((item: any) => {
-      switch (item.enrollment_status) {
-        case "ENROLLED":
-          summary.enrolled++;
-          break;
-        case "NOT_ENROLLED":
-          summary.not_enrolled++;
-          break;
-        case "PENDING":
-          summary.pending++;
-          break;
-        case "FAILED":
-          summary.failed++;
-          break;
-      }
-    });
-
-    return summary;
   }
 }

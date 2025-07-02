@@ -2,14 +2,15 @@ import ActionGrid from "@/components/ag_grid-framework/action_grid.vue";
 import Checklist from "@/components/ag_grid-framework/checklist.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
-import { formatDateTimeUTC } from "@/utils/format";
+import HolidayCalenderAPI from "@/services/api/payroll/holiday-calender/holiday-calender";
+import { formatDateTime2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
   getError,
 } from "@/utils/general";
 import $global from "@/utils/global";
-import { getToastError, getToastSuccess } from "@/utils/toast";
+import { getToastSuccess } from "@/utils/toast";
 import CSearchFilter from "@/views/pages/components/filter/filter.vue";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
@@ -27,6 +28,8 @@ interface Holiday {
   status: string;
   is_recuring: boolean;
 }
+
+const holidayCalenderAPI = new HolidayCalenderAPI();
 
 @Options({
   components: {
@@ -50,6 +53,7 @@ export default class HolidayCalender extends Vue {
   public modeData: any;
   public showForm: boolean = false;
   public inputFormElement: any = ref();
+  public isSaving: boolean = false;
 
   // dialog
   public showDialog: boolean = false;
@@ -81,8 +85,8 @@ export default class HolidayCalender extends Vue {
   agGridSetting: any;
 
   // RECYCLE LIFE FUNCTION =======================================================
-  created(): void {
-    this.loadData();
+  mounted(): void {
+    this.loadDataGrid();
   }
 
   beforeMount(): void {
@@ -148,6 +152,38 @@ export default class HolidayCalender extends Vue {
         enableRowGroup: true,
         cellRenderer: "checklistRenderer",
       },
+      {
+        headerName: this.$t("commons.table.updatedAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "updated_at",
+        width: 120,
+        valueFormatter: formatDateTime2,
+      },
+      {
+        headerName: this.$t("commons.table.updatedBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "updated_by",
+        width: 120,
+        enableRowGroup: true,
+      },
+      {
+        headerName: this.$t("commons.table.createdAt"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "created_at",
+        width: 120,
+        valueFormatter: formatDateTime2,
+      },
+      {
+        headerName: this.$t("commons.table.createdBy"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
+        field: "created_by",
+        width: 120,
+        enableRowGroup: true,
+      },
     ];
     this.context = { componentParent: this };
     this.frameworkComponents = {
@@ -185,6 +221,12 @@ export default class HolidayCalender extends Vue {
     }
 
     const result = [
+      {
+        name: this.$t("commons.contextMenu.insert"),
+        icon: generateIconContextMenuAgGrid("add_icon24"),
+        action: () =>
+          this.handleShowForm(this.paramsData, $global.modeData.insert),
+      },
       {
         name: this.$t("commons.contextMenu.update"),
         disabled: !this.paramsData,
@@ -224,23 +266,21 @@ export default class HolidayCalender extends Vue {
       if (mode === $global.modeData.insert) {
         this.inputFormElement.initialize();
       } else {
-        this.loadEditData(params.id);
+        this.loadEditData(params);
       }
     });
     this.showForm = true;
   }
 
+  handleMenu() {}
+
   handleSave(formData: any) {
     const formattedData = this.formatData(formData);
 
     if (this.modeData === $global.modeData.insert) {
-      this.insertData(formattedData).then(() => {
-        this.showForm = false;
-      });
+      this.insertData(formattedData);
     } else {
-      this.updateData(formattedData).then(() => {
-        this.showForm = false;
-      });
+      this.updateData(formattedData);
     }
   }
 
@@ -255,21 +295,22 @@ export default class HolidayCalender extends Vue {
     this.showDialog = true;
   }
 
+  handleToHolidayType() {
+    this.$router.push({
+      name: "HolidayType",
+    });
+  }
+
   confirmAction() {
     if (this.dialogAction === "delete") {
       this.deleteData();
     }
-    this.showDialog = false;
   }
 
   refreshData(search: any) {
-    this.searchOptions = { ...search };
     this.loadDataGrid(search);
   }
 
-  onRefresh() {
-    this.loadDataGrid(this.searchDefault);
-  }
   // API REQUEST =======================================================
   async loadData() {
     try {
@@ -282,74 +323,30 @@ export default class HolidayCalender extends Vue {
 
   async loadDataGrid(search: any = this.searchDefault) {
     try {
-      /*
-        let params = {
-          Index: search.index,
-          Text: search.text,
-          IndexCheckBox: search.filter[0],
-        };
-        const { data } = await salaryAdjustmentAPI.GetSalaryAdjustmentList(params);
+      let params = {
+        Index: search.index,
+        Text: search.text,
+        IndexCheckBox: search.filter[0],
+      };
+      const { data } = await holidayCalenderAPI.GetHolidayCalenderList(params);
+      if (data) {
         this.rowData = data;
-        */
-
-      let filteredData = [...this.rowData];
-
-      if (search.text && search.text.trim()) {
-        let searchText = search.text.toLowerCase().trim();
-        let searchIndex = search.index;
-
-        filteredData = filteredData.filter((item: any) => {
-          switch (searchIndex) {
-            case 0:
-              return item.name.toLowerCase().includes(searchText);
-            case 1:
-              return item.type.toLowerCase().includes(searchText);
-            default:
-              return true;
-          }
-        });
+      } else {
+        this.rowData = [];
       }
 
-      if (search.filter && search.filter.length > 0) {
-        const statusFilter = parseInt(search.filter[0]);
-        if (statusFilter !== 0) {
-          filteredData = filteredData.filter((item: any) => {
-            switch (statusFilter) {
-              case 1:
-                return item.status === true;
-              case 2:
-                return item.status === false;
-              default:
-                return true;
-            }
-          });
-        }
-      }
-
-      if (this.gridApi) {
-        this.gridApi.setRowData(filteredData);
-      }
+      this.loadDropdown();
     } catch (error) {
       getError(error);
     }
   }
 
-  async loadEditData(id: any) {
+  async loadEditData(params: any) {
     try {
-      /*
-        const { data } = await salaryAdjustmentAPI.GetSalaryAdjustment(id);
-        this.populateForm(data);
-        */
-
-      const data = this.rowData.find((data: any) => data.id === id);
-
-      if (data) {
-        this.$nextTick(() => {
-          this.inputFormElement.form = this.populateForm(data);
-        });
-      } else {
-        getToastError(this.$t("messages.attendace.error.notHolidayFound"));
-      }
+      const { data } = await holidayCalenderAPI.GetHolidayCalender(params.id);
+      this.$nextTick(() => {
+        this.inputFormElement.form = this.populateForm(data[0]);
+      });
     } catch (error) {
       getError(error);
     }
@@ -413,65 +410,60 @@ export default class HolidayCalender extends Vue {
         status: false,
       },
     ];
+
+    // this.holidayTypeOptions = [
+    //   {
+    //     SubGroupName: "Type",
+    //     code: "HT01",
+    //     name: "National",
+    //   },
+    //   {
+    //     SubGroupName: "Type",
+    //     code: "HT02",
+    //     name: "Regional",
+    //   },
+    //   {
+    //     SubGroupName: "Type",
+    //     code: "HT03",
+    //     name: "Religious",
+    //   },
+    //   {
+    //     SubGroupName: "Type",
+    //     code: "HT04",
+    //     name: "Company",
+    //   },
+    //   {
+    //     SubGroupName: "Type",
+    //     code: "HT05",
+    //     name: "Collective Leave",
+    //   },
+    //   {
+    //     SubGroupName: "Type",
+    //     code: "HT06",
+    //     name: "Local",
+    //   },
+    //   {
+    //     SubGroupName: "Type",
+    //     code: "HT07",
+    //     name: "Observance",
+    //   },
+    //   {
+    //     SubGroupName: "Type",
+    //     code: "HT08",
+    //     name: "Optional",
+    //   },
+    // ];
   }
 
   async loadDropdown() {
     try {
-      /*
-        const promises = [
-          salaryAdjustmentAPI.GetEmployeeOptions().then(response => {
-            this.employeeOptions = response.data;
-          }),
-          salaryAdjustmentAPI.GetAdjustmentReasonOptions().then(response => {
-            this.adjustmentReasonOptions = response.data;
-          }),
-        ];
-  
-        await Promise.all(promises);
-        */
-
-      this.holidayTypeOptions = [
-        {
-          SubGroupName: "Type",
-          code: "HT01",
-          name: "National",
-        },
-        {
-          SubGroupName: "Type",
-          code: "HT02",
-          name: "Regional",
-        },
-        {
-          SubGroupName: "Type",
-          code: "HT03",
-          name: "Religious",
-        },
-        {
-          SubGroupName: "Type",
-          code: "HT04",
-          name: "Company",
-        },
-        {
-          SubGroupName: "Type",
-          code: "HT05",
-          name: "Collective Leave",
-        },
-        {
-          SubGroupName: "Type",
-          code: "HT06",
-          name: "Local",
-        },
-        {
-          SubGroupName: "Type",
-          code: "HT07",
-          name: "Observance",
-        },
-        {
-          SubGroupName: "Type",
-          code: "HT08",
-          name: "Optional",
-        },
+      const promises = [
+        holidayCalenderAPI.GetHolidayTypeList({}).then((response) => {
+          this.holidayTypeOptions = response.data;
+        }),
       ];
+
+      await Promise.all(promises);
     } catch (error) {
       getError(error);
     }
@@ -479,114 +471,74 @@ export default class HolidayCalender extends Vue {
 
   async insertData(formData: any) {
     try {
-      /*
-        const { status2 } = await salaryAdjustmentAPI.InsertSalaryAdjustment(formData);
-        if (status2.status == 0) {
-          getToastSuccess(this.$t("messages.saveSuccess"));
-          this.showForm = false;
-          this.loadDataGrid(this.searchDefault);
-        }
-        */
+      this.isSaving = true;
 
-      const newId = Math.max(...this.rowData.map((data: any) => data.id)) + 1;
-
-      const newHoliday = {
-        id: newId,
-        code: formData.code,
-        name: formData.name,
-        date: formData.date,
-        type_code: formData.type_code,
-        type_name: formData.type_name,
-        status: formData.status === "A",
-        remark: formData.remark,
-        created_at: formatDateTimeUTC(new Date()),
-        created_by: "Current User",
-        updated_at: formatDateTimeUTC(new Date()),
-        updated_by: "Current User",
-      };
-
-      this.rowData.push(newHoliday);
-
-      await this.$nextTick();
-      await this.loadDataGrid(this.searchDefault);
-
-      getToastSuccess(this.$t("messages.attendance.success.saveHoliday"));
+      const { status2 } = await holidayCalenderAPI.InsertHolidayCalender(
+        formData
+      );
+      if (status2.status == 0) {
+        getToastSuccess(this.$t("messages.attendance.success.saveHoliday"));
+        this.showForm = false;
+        this.loadDataGrid(this.searchDefault);
+      }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
   async updateData(formData: any) {
     try {
-      /*
-        const { status2 } = await salaryAdjustmentAPI.UpdateSalaryAdjustment(formData);
-        if (status2.status == 0) {
-          this.loadDataGrid(this.searchDefault);
-          this.showForm = false;
-          getToastSuccess(this.$t("messages.saveSuccess"));
-        }
-        */
-
-      const index = this.rowData.findIndex(
-        (data: any) => data.id === formData.id
+      this.isSaving = true;
+      const { status2 } = await holidayCalenderAPI.UpdateHolidayCalender(
+        formData
       );
-
-      if (index !== -1) {
-        this.rowData[index] = {
-          ...this.rowData[index],
-          code: formData.code,
-          name: formData.name,
-          date: formData.date,
-          type_code: formData.type_code,
-          type_name: formData.type_name,
-          status: formData.status === "A",
-          remark: formData.remark,
-          updated_at: formatDateTimeUTC(new Date()),
-          updated_by: "Current User",
-        };
+      if (status2.status == 0) {
+        getToastSuccess(this.$t("messages.attendance.success.updateHoliday"));
+        this.loadDataGrid(this.searchDefault);
+        this.showForm = false;
       }
-
-      await this.$nextTick();
-      await this.loadDataGrid(this.searchDefault);
-
-      getToastSuccess(this.$t("messages.attendance.success.updateHoliday"));
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
   async deleteData() {
     try {
-      /*
-        const { status2 } = await salaryAdjustmentAPI.DeleteSalaryAdjustment(this.deleteParam);
-        if (status2.status == 0) {
-          this.loadDataGrid(this.searchDefault);
-          getToastSuccess(this.$t("messages.deleteSuccess"));
-        }
-        */
-
-      this.rowData = this.rowData.filter(
-        (item: any) => item.id !== this.deleteParam
+      this.isSaving = true;
+      const { status2 } = await holidayCalenderAPI.DeleteHolidayCalender(
+        this.deleteParam
       );
-
-      await this.$nextTick();
-      await this.loadDataGrid(this.searchDefault);
-      getToastSuccess(this.$t("messages.attendance.success.deleteHoliday"));
+      if (status2.status == 0) {
+        getToastSuccess(this.$t("messages.attendance.success.deleteHoliday"));
+        this.showDialog = false;
+        this.loadDataGrid(this.searchDefault);
+      }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
   // HELPER =======================================================
   formatData(params: any) {
     return {
-      id: params.id,
+      id: params.id ? params.id : null,
       code: params.code,
       name: params.name,
       date: params.date,
       type_code: params.type_code,
-      type_name: params.type_name,
-      status: params.status,
+      status: parseInt(params.status),
       remark: params.remark,
+
+      // modified
+      created_at: params.created_at,
+      created_by: params.created_by,
+      updated_at: params.updated_at,
+      updated_by: params.updated_by,
     };
   }
 
@@ -597,9 +549,14 @@ export default class HolidayCalender extends Vue {
       name: params.name,
       date: params.date,
       type_code: params.type_code,
-      type_name: params.type_name,
-      status: params.status ? "A" : "I",
+      status: params.status,
       remark: params.remark,
+
+      // modified
+      created_at: params.created_at,
+      created_by: params.created_by,
+      updated_at: params.updated_at,
+      updated_by: params.updated_by,
     };
   }
 

@@ -136,30 +136,28 @@
           :label="$t('labels.payroll.employee.bankAccountNumber')"
         />
       </div>
-      <!-- <div class="col-md-4">
-        <c-select
-          offset="right"
+      <div class="col-md-4">
+        <c-input
+          disabled
+          id="taxIncomeType"
           class="row mb-1"
+          type="text"
           name="taxIncomeType"
-          labelName="name"
-          keyName="code"
-          v-model="payroll.tax_income_type"
+          v-model="taxIncomeType"
           :label="$t('labels.payroll.payroll.taxIncome')"
-          :options="taxIncomeOptions"
         />
       </div>
       <div class="col-md-4">
-        <c-select
-          offset="right"
+        <c-input
+          disabled
+          id="taxMethod"
           class="row mb-1"
+          type="text"
           name="taxMethod"
-          labelName="name"
-          keyName="code"
-          v-model="payroll.tax_method"
+          v-model="taxMethod"
           :label="$t('labels.payroll.payroll.taxMethod')"
-          :options="taxMethodOptions"
         />
-      </div> -->
+      </div>
     </div>
   </div>
 </div>
