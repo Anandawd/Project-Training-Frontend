@@ -249,6 +249,46 @@ class PayrollAPI extends ConfigurationResource {
       data: params,
     });
   }
+
+  // payroll disbursement
+  GetPaymentProcessingList(params: any) {
+    return request({
+      url: "GetPayPaymentProcessingList",
+      method: "get",
+      params: params,
+    });
+  }
+
+  InsertPaymentProcessing(params: any) {
+    return request({
+      url: "InsertPayPaymentProcessingList",
+      method: "post",
+      data: params,
+    });
+  }
+
+  GetPaymentProcessing(params: any) {
+    return request({
+      url: "GetPayPaymentProcessing/" + params,
+      method: "get",
+    });
+  }
+
+  UpdatePaymentProcessing(params: any) {
+    return request({
+      url: "UpdatePaymentProcessingList",
+      method: "put",
+      data: params,
+    });
+  }
+
+  DeletePaymentProcessing(params: any) {
+    return request({
+      url: "DeletePayPaymentProcessing/" + params,
+      method: "delete",
+    });
+  }
 }
 
 export { PayrollAPI as default };
+

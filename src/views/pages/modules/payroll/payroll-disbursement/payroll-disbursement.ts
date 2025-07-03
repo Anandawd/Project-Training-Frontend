@@ -3,6 +3,7 @@ import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
 import PayrollPeriodsAPI from "@/services/api/payroll/payroll-periods/payroll-periods";
+import PayrollAPI from "@/services/api/payroll/payroll/payroll";
 import { formatDate2, formatDateTime2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
@@ -10,12 +11,14 @@ import {
   getError,
 } from "@/utils/general";
 import $global from "@/utils/global";
+import { getToastSuccess } from "@/utils/toast";
 import CSearchFilter from "@/views/pages/components/filter/filter.vue";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
 import { ref } from "vue";
 import { Options, Vue } from "vue-class-component";
 
+const payrollAPI = new PayrollAPI();
 const payrollPeriodsAPI = new PayrollPeriodsAPI();
 
 @Options({
@@ -80,9 +83,12 @@ export default class PayrollDisbursement extends Vue {
   ColumnApi: any;
   agGridSetting: any;
 
+  cellSelected: any;
+
   // RECYCLE LIFE FUNCTION =======================================================
   mounted(): void {
-    this.loadMockData();
+    this.loadDataGrid();
+    // this.loadMockData();
   }
 
   beforeMount(): void {
@@ -340,10 +346,7 @@ export default class PayrollDisbursement extends Vue {
   handleToDisbursementDetail(params: any, mode: any) {
     console.log("handleToDisbursementDetail", { params, mode });
     if (mode === $global.modePayroll.process) {
-      this.$router.push({
-        name: "DisbursementProcess",
-        params: { periodCode: params.period_code },
-      });
+      this.insertData();
     } else {
       this.$router.push({
         name: "DisbursementProcess",
@@ -353,6 +356,13 @@ export default class PayrollDisbursement extends Vue {
   }
 
   handleMenu() {}
+
+  onSelectionChanged() {
+    const data = this.gridApi.getSelectedRows();
+    this.cellSelected = data[0];
+    this.enableProcess;
+    console.log("davif", this.cellSelected);
+  }
 
   refreshData(search: any) {
     // this.loadDataGrid(search);
@@ -425,16 +435,34 @@ export default class PayrollDisbursement extends Vue {
     ];
   }
 
-  async insertData(formData: any) {
+  async insertData() {
     try {
-      // const {status2} = await payrollAPI.InsertPayrollPeriod(formData)
-      // if(status2.status ==0){
-      //   getToastSuccess(this.$t('messages.saveSuccess'))
-      //   this.showForm = false
-      //   this.loadDataGrid()
-      // }
+      this.isSaving = true;
+      const formData = {
+        payment_processing_id: "payment+period_code+bank_name",
+        period_code: this.paramsData.payment_date,
+        payment_date: this.paramsData.payment_date,
+        bank_name: "",
+        current_step: 1,
+        file_format: "",
+        processing_method: "",
+        total_amount: 0,
+        total_employees: 0,
+        completion_time: "",
+        status: "Processing",
+        remark: "",
+      };
+      const { status2 } = await payrollAPI.InsertPaymentProcessing(formData);
+      if (status2.status == 0) {
+        getToastSuccess(
+          this.$t("messages.payroll.payroll.savePaymentProcessing")
+        );
+        this.handleToProcess();
+      }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
@@ -445,11 +473,13 @@ export default class PayrollDisbursement extends Vue {
     return generateTotalFooterAgGrid(this.rowData, this.columnDefs);
   }
 
-  get isProcessButton() {
-    if (this.paramsData) {
+  get enableProcess() {
+    console.log("enableProcess", this.cellSelected);
+    if (this.cellSelected) {
       return (
-        this.paramsData.status === "Ready To Payment" ||
-        this.paramsData.status === "READY TO PAYMENT"
+        this.cellSelected.status === "Ready To Payment" ||
+        this.cellSelected.status === "READY TO PAYMENT" ||
+        this.cellSelected.status === ""
       );
     }
     return false;

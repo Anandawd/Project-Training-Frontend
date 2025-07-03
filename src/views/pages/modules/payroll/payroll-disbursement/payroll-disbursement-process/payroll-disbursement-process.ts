@@ -31,6 +31,7 @@ export default class PayrollDisbursementProcess extends Vue {
   public modeData: any;
   public periodCode: any = ref("");
   public periodData: any = reactive({});
+  public disbursementData: any = reactive({});
   public rowSummaryBankData: any = reactive([]);
 
   // ui state
@@ -163,6 +164,15 @@ export default class PayrollDisbursementProcess extends Vue {
     try {
       this.isLoading = true;
       // const { data } = await payrollPeriodsAPI.GetPayrollPeriods(
+      //   this.periodCode
+      // );
+      // if (data) {
+      //   this.periodData = data[0];
+      // } else {
+      //   this.periodData = [];
+      // }
+
+      // const { data } = await payrollPeriodsAPI.Get(
       //   this.periodCode
       // );
       // if (data) {
