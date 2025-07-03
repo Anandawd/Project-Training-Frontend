@@ -360,7 +360,6 @@ export default class PayrollDisbursement extends Vue {
   onSelectionChanged() {
     const data = this.gridApi.getSelectedRows();
     this.cellSelected = data[0];
-    this.enableProcess;
     console.log("davif", this.cellSelected);
   }
 
@@ -476,13 +475,15 @@ export default class PayrollDisbursement extends Vue {
   get enableProcess() {
     console.log("enableProcess", this.cellSelected);
     if (this.cellSelected) {
-      return (
-        this.cellSelected.status === "Ready To Payment" ||
-        this.cellSelected.status === "READY TO PAYMENT" ||
-        this.cellSelected.status === ""
-      );
+      return true;
+      // return (
+      //   this.cellSelected.status === "Ready To Payment" ||
+      //   this.cellSelected.status === "READY TO PAYMENT" ||
+      //   this.cellSelected.status === ""
+      // );
+    } else {
+      return false;
     }
-    return false;
   }
 
   get isDetailButton() {
