@@ -4,7 +4,11 @@ import CModal from "@/components/modal/modal.vue";
 import EmployeeAPI from "@/services/api/payroll/employee/employee";
 import OrganizationAPI from "@/services/api/payroll/organization/organization";
 import PayrollPeriodsAPI from "@/services/api/payroll/payroll-periods/payroll-periods";
-import { formatDateTime2, formatDateTimeUTC } from "@/utils/format";
+import {
+  formatDate2,
+  formatDateTime2,
+  formatDateTimeUTC,
+} from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -152,10 +156,12 @@ export default class PayrollPeriods extends Vue {
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.paymentDate"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "payment_date",
         width: 120,
         enableRowGroup: true,
-        valueFormatter: formatDateTime2,
+        valueFormatter: formatDate2,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.status"),

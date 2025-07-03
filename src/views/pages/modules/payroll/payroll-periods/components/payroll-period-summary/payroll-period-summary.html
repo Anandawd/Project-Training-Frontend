@@ -1,47 +1,54 @@
-<div class="row">
-  <div class="col-md-6 col-lg-3 mb-3">
-    <div class="info-box bg-info">
-      <div class="info-box-content">
-        <span class="info-box-text"
-          >{{$t('labels.payroll.payroll.totalEmployees')}}</span
-        >
-        <span class="info-box-number">{{statusCounts.employee}}</span>
-      </div>
-    </div>
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">{{$t('title.periodSummary')}}</h3>
   </div>
-  <div class="col-md-6 col-lg-3 mb-3">
-    <div class="info-box bg-success">
-      <div class="info-box-content">
-        <span class="info-box-text"
-          >{{$t('labels.payroll.payroll.totalGrossSalary')}}</span
-        >
-        <span class="info-box-number"
-          >Rp {{formatCurrency(statusCounts.gross_salary)}}</span
-        >
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6 col-lg-3 md:mb-3">
+        <div class="info-box bg-info">
+          <div class="info-box-content">
+            <span class="info-box-text"
+              >{{$t('labels.payroll.payroll.totalEmployees')}}</span
+            >
+            <span class="info-box-number">{{statusCounts.employee}}</span>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-lg-3 mb-3">
-    <div class="info-box bg-danger">
-      <div class="info-box-content">
-        <span class="info-box-text"
-          >{{$t('labels.payroll.payroll.totalDeductionSalary')}}</span
-        >
-        <span class="info-box-number"
-          >Rp {{formatCurrency(statusCounts.total_deductions)}}</span
-        >
+      <div class="col-md-6 col-lg-3 md:mb-3">
+        <div class="info-box bg-success">
+          <div class="info-box-content">
+            <span class="info-box-text"
+              >{{$t('labels.payroll.payroll.totalGrossSalary')}}</span
+            >
+            <span class="info-box-number"
+              >Rp {{formatCurrency(statusCounts.gross_salary)}}</span
+            >
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-lg-3 mb-3">
-    <div class="info-box bg-warning">
-      <div class="info-box-content">
-        <span class="info-box-text"
-          >{{$t('labels.payroll.payroll.totalTakeHomePay')}}</span
-        >
-        <span class="info-box-number"
-          >Rp {{formatCurrency(statusCounts.net_salary)}}</span
-        >
+      <div class="col-md-6 col-lg-3 md:mb-3">
+        <div class="info-box bg-danger">
+          <div class="info-box-content">
+            <span class="info-box-text"
+              >{{$t('labels.payroll.payroll.totalDeductionSalary')}}</span
+            >
+            <span class="info-box-number"
+              >Rp {{formatCurrency(statusCounts.total_deductions)}}</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3 md:mb-3">
+        <div class="info-box bg-warning">
+          <div class="info-box-content">
+            <span class="info-box-text"
+              >{{$t('labels.payroll.payroll.totalTakeHomePay')}}</span
+            >
+            <span class="info-box-number"
+              >Rp {{formatCurrency(statusCounts.net_salary)}}</span
+            >
+          </div>
+        </div>
       </div>
     </div>
   </div>

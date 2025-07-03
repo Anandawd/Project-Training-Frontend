@@ -76,13 +76,6 @@ export default class ProrateModal extends Vue {
     this.resetForm();
   }
 
-  onWorkDaysChange() {
-    console.log("totalWorkdays", this.form.total_workdays);
-    console.log("actualWorkDays", this.form.actual_workdays);
-    console.log("prorateFactor", this.form.prorata_factor);
-    console.log("form", this.form);
-  }
-
   onActualWorkDaysChange() {
     if (this.form.actual_workdays > this.form.total_workdays) {
       this.form.actual_workdays = this.form.total_workdays;

@@ -3,7 +3,7 @@ import IconLockRenderer from "@/components/ag_grid-framework/lock_icon.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
 import PayrollPeriodsAPI from "@/services/api/payroll/payroll-periods/payroll-periods";
-import { formatDateTime2 } from "@/utils/format";
+import { formatDate2, formatDateTime2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -26,7 +26,7 @@ const payrollPeriodsAPI = new PayrollPeriodsAPI();
     CDialog,
   },
 })
-export default class PayrollApprovals extends Vue {
+export default class PayrollDisbursement extends Vue {
   // data
   public rowData: any = [];
   public deleteParam: any;
@@ -113,7 +113,7 @@ export default class PayrollApprovals extends Vue {
         sortable: false,
         cellRenderer: "actionGrid",
         colId: "params",
-        width: 80,
+        width: 100,
       },
       {
         headerName: this.$t("commons.table.payroll.employee.code"),
@@ -142,9 +142,11 @@ export default class PayrollApprovals extends Vue {
       {
         headerName: this.$t("commons.table.payroll.payroll.paymentDate"),
         field: "payment_date",
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         width: 120,
         enableRowGroup: true,
-        valueFormatter: formatDateTime2,
+        valueFormatter: formatDate2,
       },
       {
         headerName: this.$t("commons.table.payroll.payroll.status"),
@@ -321,6 +323,20 @@ export default class PayrollApprovals extends Vue {
     }
   }
 
+  handleToProcess() {
+    this.$router.push({
+      name: "DisbursementProcess",
+      params: { periodCode: this.paramsData.period_code },
+    });
+  }
+
+  handleToDetail() {
+    this.$router.push({
+      name: "DisbursementDetail",
+      params: { periodCode: this.paramsData.period_code },
+    });
+  }
+
   handleToDisbursementDetail(params: any, mode: any) {
     console.log("handleToDisbursementDetail", { params, mode });
     if (mode === $global.modePayroll.process) {
@@ -330,7 +346,7 @@ export default class PayrollApprovals extends Vue {
       });
     } else {
       this.$router.push({
-        name: "DisbursementDetail",
+        name: "DisbursementProcess",
         params: { periodCode: params.period_code },
       });
     }
@@ -339,7 +355,7 @@ export default class PayrollApprovals extends Vue {
   handleMenu() {}
 
   refreshData(search: any) {
-    this.loadDataGrid(search);
+    // this.loadDataGrid(search);
   }
 
   // API REQUEST =======================================================
@@ -431,14 +447,20 @@ export default class PayrollApprovals extends Vue {
 
   get isProcessButton() {
     if (this.paramsData) {
-      return this.paramsData.status === "Ready To Payment";
+      return (
+        this.paramsData.status === "Ready To Payment" ||
+        this.paramsData.status === "READY TO PAYMENT"
+      );
     }
     return false;
   }
 
   get isDetailButton() {
     if (this.paramsData) {
-      return this.paramsData.status === "Completed";
+      return (
+        this.paramsData.status === "Completed" ||
+        this.paramsData.status === "COMPLETED"
+      );
     }
     return false;
   }

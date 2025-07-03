@@ -120,7 +120,7 @@
         <div class="row mb-1">
           <div class="col-6">
             <c-input
-              :disabled="component.is_fixed"
+              :disabled="component.is_fixed || !isDraft"
               type="number"
               :name="component.Name"
               :id="component.Name"
@@ -131,12 +131,12 @@
               v-model="component.amount"
               formatted
               showZeroNumber
-              @change="onComponentAmountChange(component)"
+              @change="handleComponentAmountChange(component)"
             />
           </div>
           <div class="col-2">
             <c-input
-              :disabled="component.is_fixed"
+              :disabled="component.is_fixed || !isDraft"
               type="number"
               :name="component.Type"
               :id="component.Type"
@@ -144,7 +144,7 @@
               :label="$t('labels.payroll.payroll.qty')"
               v-model="component.quantity"
               showZeroNumber
-              @change="onComponentQuantityChange(component)"
+              @change="handleComponentQuantityChange(component)"
             />
           </div>
           <div class="col-4">

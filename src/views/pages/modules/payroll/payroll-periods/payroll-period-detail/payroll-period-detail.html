@@ -127,14 +127,7 @@
     </div>
 
     <!-- period summary -->
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title">{{$t('title.periodSummary')}}</h3>
-      </div>
-      <div class="card-body">
-        <payroll-period-summary :statusCounts="statusCounts" />
-      </div>
-    </div>
+    <payroll-period-summary :statusCounts="statusCounts" />
 
     <!-- employee payroll list -->
     <div class="card">
@@ -151,6 +144,7 @@
       </div>
     </div>
 
+    <!-- generate modal -->
     <generate-modal
       v-show="showGenerateModal"
       :isGenerating="isGenerating"

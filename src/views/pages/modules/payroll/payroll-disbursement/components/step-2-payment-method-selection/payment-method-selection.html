@@ -6,7 +6,7 @@
         title="Back"
         type="button"
         class="btn btn-secondary mr-1"
-        @click="handleAction('',$global.modePayroll.back)"
+        @click="handleAction($global.modePayroll.back)"
       >
         <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>{{
         $t('buttons.back') }}
@@ -16,19 +16,21 @@
         title="Continue"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleAction('',$global.modePayroll.next)"
+        @click="handleAction($global.modePayroll.next)"
       >
         {{ $t('buttons.continue') }}
         <i class="fa fa-arrow-right ml-1" aria-hidden="true"></i>
       </button>
     </div>
 
-    <!-- disbursement detail -->
+    <!-- select payment method -->
     <div class="card">
       <div class="card-body text-center">
-        <h4 class="mb-2">{{$t('title.selectPaymentMethod')}}</h4>
+        <h4 class="mb-2">
+          {{$t('labels.payroll.payroll.selectPaymentMethod')}}
+        </h4>
         <p class="mb-4">
-          Select how you want to process the payroll disbursement:
+          {{$t('labels.payroll.payroll.selectPaymentMethodInstruction')}}
         </p>
 
         <!-- Manual Bank Transfer Option -->
@@ -46,18 +48,22 @@
               v-model="selectedMethod"
             />
             <label class="form-check-label" for="manualTransfer">
-              <strong>Manual Bank Transfer</strong>
+              <strong
+                >{{$t('labels.payroll.payroll.manualBankTransfer')}}</strong
+              >
             </label>
           </div>
-          <p class="ms-3 mb-2">Generate transfer files for manual processing</p>
+          <p class="ms-3 mb-2">
+            {{$t('labels.payroll.payroll.manualBankTransferInstruction')}}
+          </p>
           <ul class="feature-list">
             <li>
-              <i class="fa fa-file-excel" aria-hidden="true"></i> Generate
-              CSV/Excel files per bank
+              <i class="fa fa-file-excel" aria-hidden="true"></i>
+              {{$t('labels.payroll.payroll.manualBankTransferInstruction2')}}
             </li>
             <li>
-              <i class="fa fa-download" aria-hidden="true"></i> Download and
-              process via your bank portal
+              <i class="fa fa-download" aria-hidden="true"></i>
+              {{$t('labels.payroll.payroll.manualBankTransferInstruction3')}}
             </li>
           </ul>
         </div>
@@ -77,19 +83,25 @@
               disabled
             />
             <label class="form-check-label" for="automaticPayment">
-              <strong>Automatic Payment Integration</strong>
-              <span class="badge text-bg-secondary ms-2">Coming Soon</span>
+              <strong
+                >{{$t('labels.payroll.payroll.automaticTransfer')}}</strong
+              >
+              <span class="badge text-bg-secondary ms-2"
+                >{{$t('labels.payroll.payroll.comingSoon')}}</span
+              >
             </label>
           </div>
-          <p class="ms-3 mb-2">Process payments through secured API</p>
+          <p class="ms-3 mb-2">
+            {{$t('labels.payroll.payroll.automaticTransferInstruction')}}
+          </p>
           <ul class="feature-list">
             <li>
-              <i class="fa fa-plug" aria-hidden="true"></i> Direct bank API
-              integration
+              <i class="fa fa-plug" aria-hidden="true"></i>
+              {{$t('labels.payroll.payroll.automaticTransferInstruction2')}}
             </li>
             <li>
-              <i class="fa fa-clock" aria-hidden="true"></i> Real-time
-              processing
+              <i class="fa fa-clock" aria-hidden="true"></i>
+              {{$t('labels.payroll.payroll.automaticTransferInstruction3')}}
             </li>
           </ul>
         </div>

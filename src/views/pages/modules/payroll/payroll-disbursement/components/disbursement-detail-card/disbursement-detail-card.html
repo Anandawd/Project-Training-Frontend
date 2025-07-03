@@ -1,0 +1,92 @@
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">{{$t('title.periodDetail')}}</h3>
+  </div>
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <div class="row mb-2">
+          <div class="col-4 text-muted">
+            <strong>{{$t('labels.payroll.payroll.periodName')}}</strong>
+          </div>
+          <div class="col-8">: {{periodData.period_name}}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4 text-muted">
+            <strong>Placement</strong>
+          </div>
+          <div class="col-8">: {{periodData.placement}}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4 text-muted">
+            <strong>{{$t('labels.payroll.payroll.periodType')}}</strong>
+          </div>
+          <div class="col-8">: {{periodData.period_type}}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4 text-muted">
+            <strong>{{$t('labels.payroll.payroll.periodDate')}}</strong>
+          </div>
+          <div class="col-8">
+            : {{periodData.start_date}} - {{periodData.end_date}}
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4 text-muted">
+            <strong>{{$t('labels.payroll.payroll.paymentDate')}}</strong>
+          </div>
+          <div class="col-8">: {{periodData.payment_date}}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4 text-muted">
+            <strong>{{$t('labels.payroll.payroll.totalEmployees')}}</strong>
+          </div>
+          <div class="col-8">: {{periodData.total_employees}}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4 text-muted">
+            <strong>{{$t('labels.payroll.payroll.totalPayment')}}</strong>
+          </div>
+          <div class="col-8">
+            : Rp{{formatCurrency(periodData.total_payment)}}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="row mb-2">
+          <div class="col-4 text-muted">
+            <strong>{{$t('labels.payroll.payroll.status')}}</strong>
+          </div>
+          <div class="col-8">
+            :
+            <span
+              class="badge text-bg-secondary px-3 py-1"
+              :class="getStatusBadgeClass(periodData.status)"
+              >{{periodData.status}}</span
+            >
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4 text-muted">
+            <strong>{{$t('labels.payroll.payroll.level')}}</strong>
+          </div>
+          <div class="col-8">
+            : {{periodData.current_level}} of {{periodData.total_level}}
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4 text-muted">
+            <strong>{{$t('labels.payroll.payroll.approver')}}</strong>
+          </div>
+          <div class="col-8">: {{periodData.approved_by}}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4 text-muted">
+            <strong>{{$t('labels.remark')}}</strong>
+          </div>
+          <div class="col-8">: {{periodData.remark}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

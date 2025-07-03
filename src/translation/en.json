@@ -286,13 +286,13 @@
         "color": "Color",
         "splitShift": "Split Shift"
       },
-
       "payroll": {
         "changeTaxConfiguration": "Change Tax Configuration",
         "applyProrate": "Apply Prorate",
         "total": "Total",
-        "pleaseWait": "Please Wait",
+        "pleaseWait": "Please wait...",
         "loadingPayrollData": "Loading Payroll Data",
+        "loadingDisbursementData": "Loading Disbursement Data",
         "minRange": "Min. Range",
         "maxRange": "Max. Range",
         "rate": "Rate",
@@ -440,7 +440,18 @@
         "generateSummaryInstruction": "Review settings before generating payroll",
         "generateActionsIntruction": "All calculations will be saved as draft and can be reviewed before submission",
         "prorate": "Prorate",
-        "prorateInstruction": "Enter total work days and actual work days to get the prorate factor"
+        "prorateInstruction": "Enter total work days and actual work days to get the prorate factor",
+        "selectPaymentMethod": "Select Payment Method",
+        "selectPaymentMethodInstruction": "Select how you want to process the payroll disbursement",
+        "manualBankTransfer": "Manual Bank Transfer",
+        "manualBankTransferInstruction": "Generate transfer files for manual processing",
+        "manualBankTransferInstruction2": "Generate CSV/Excel files per bank",
+        "manualBankTransferInstruction3": "Download and process via your bank portal",
+        "automaticTransfer": "Automatic Payment Integration",
+        "automaticTransferInstruction": "Process payments through secured API",
+        "automaticTransferInstruction2": "Direct bank API integration",
+        "automaticTransferInstruction3": "Real-time processing",
+        "comingSoon": "Coming Soon"
       },
       "reimbursement": {
         "reimbursement": "Reimbursement",
@@ -1866,6 +1877,7 @@
   },
   "title": {
     "t11": "t11",
+    "summaryOfPaymentsForEachBank": "Summary of Payments for Each Bank",
     "taxComponent": "Tax Component",
     "holidayType": "Holiday Type",
     "componentCategory": "Component Category",
@@ -2876,6 +2888,7 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "disbursementDetail": "Disbursement Detail",
     "component": "Component",
     "statutory": "Statutory",
     "taxConfiguration": "Tax Configuration",

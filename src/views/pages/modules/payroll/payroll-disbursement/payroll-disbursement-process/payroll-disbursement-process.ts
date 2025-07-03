@@ -6,6 +6,7 @@ import { getToastSuccess } from "@/utils/toast";
 import "ag-grid-enterprise";
 import { reactive, ref } from "vue";
 import { Options, Vue } from "vue-class-component";
+import CLoading from "../../payroll-periods/components/loading-component/loading-component.vue";
 import Step1DisbursementDetail from "../components/step-1-disbursement-detail/disbursement-detail.vue";
 import Step2PaymentMethodSelection from "../components/step-2-payment-method-selection/payment-method-selection.vue";
 import Step3FileDownloadOptions from "../components/step-3-file-download-options/file-download-options.vue";
@@ -22,14 +23,17 @@ const payrollPeriodsAPI = new PayrollPeriodsAPI();
     Step4Confirmation,
     Step5CompletionStatus,
     CDialog,
+    CLoading,
   },
 })
 export default class PayrollDisbursementProcess extends Vue {
   // data
-  public rowData: any = [];
   public modeData: any;
   public periodCode: any = ref("");
-  public disbursementData: any = reactive({});
+  public periodData: any = reactive({});
+  public rowSummaryBankData: any = reactive([]);
+
+  // ui state
   public currentStep: number = 1;
   public isSaving: boolean = false;
   public isLoading: boolean = false;
@@ -48,11 +52,11 @@ export default class PayrollDisbursementProcess extends Vue {
   // RECYCLE LIFE FUNCTION =======================================================
   beforeMount() {
     this.periodCode = this.$route.params.periodCode as string;
+    console.log("beforeMount", this.periodCode);
   }
 
   async mounted() {
-    this.loadMockdisbursementData();
-    // await this.loadData();
+    await this.loadData();
   }
 
   // GENERAL FUNCTION =======================================================
@@ -158,23 +162,27 @@ export default class PayrollDisbursementProcess extends Vue {
   async loadData() {
     try {
       this.isLoading = true;
-      const { data } = await payrollPeriodsAPI.GetPayrollPeriods(
-        this.periodCode
-      );
-      if (data) {
-        this.disbursementData = data[0];
-      } else {
-        this.disbursementData = [];
+      // const { data } = await payrollPeriodsAPI.GetPayrollPeriods(
+      //   this.periodCode
+      // );
+      // if (data) {
+      //   this.periodData = data[0];
+      // } else {
+      //   this.periodData = [];
+      // }
+
+      this.loadMockData();
+
+      if (this.periodData) {
+        this.isLoading = false;
       }
     } catch (error) {
       getError(error);
-    } finally {
-      this.isLoading = false;
     }
   }
 
-  async loadMockdisbursementData() {
-    this.disbursementData = {
+  async loadMockData() {
+    this.periodData = {
       period_code: this.periodCode,
       period_name: "April 2025",
       placement: "Amora Ubud",
@@ -193,6 +201,44 @@ export default class PayrollDisbursementProcess extends Vue {
       created_at: "25/04/2025",
       updated_at: "25/04/2025",
     };
+
+    this.rowSummaryBankData = [
+      {
+        id: 1,
+        bank_name: "BCA",
+        total_employees: 8,
+        total_amount: 40000000,
+        status: "Ready",
+      },
+      {
+        id: 2,
+        bank_name: "Mandiri",
+        total_employees: 5,
+        total_amount: 25000000,
+        status: "Ready",
+      },
+      {
+        id: 3,
+        bank_name: "BNI",
+        total_employees: 4,
+        total_amount: 20000000,
+        status: "Ready",
+      },
+      {
+        id: 4,
+        bank_name: "BRI",
+        total_employees: 3,
+        total_amount: 15000000,
+        status: "Ready",
+      },
+      {
+        id: 5,
+        bank_name: "Cash",
+        total_employees: 2,
+        total_amount: 10000000,
+        status: "Ready",
+      },
+    ];
   }
 
   async updateData(formData: any, step: any) {
@@ -235,7 +281,7 @@ export default class PayrollDisbursementProcess extends Vue {
     }
   }
 
-  // SETTER GETTER
+  // SETTER GETTER =======================================================
   get isShowStepper() {
     if (this.currentStep >= 1 && this.currentStep < 5) {
       return true;

@@ -240,6 +240,15 @@ class PayrollAPI extends ConfigurationResource {
       method: "get",
     });
   }
+
+  // employee payroll detail
+  InsertEmployeePayrollInEmployeePayrollDetail(params: any) {
+    return request({
+      url: "InsertEmployeePayrollComponent",
+      method: "post",
+      data: params,
+    });
+  }
 }
 
 export { PayrollAPI as default };

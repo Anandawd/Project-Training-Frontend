@@ -39,7 +39,6 @@ interface FileListItem {
   emits: ["back", "continue", "download"],
 })
 export default class FileDownloadOptions extends Vue {
-  public modeData: any;
   public fileList: any;
   public downloadOptions: any;
   public options: any = reactive({
@@ -60,8 +59,8 @@ export default class FileDownloadOptions extends Vue {
   }
 
   // GENERAL FUNCTION
-  handleAction(params: any, mode: any = null, ...additonalParams: any[]) {
-    const actionMode = mode || this.modeData;
+  handleAction(mode: any) {
+    const actionMode = mode;
 
     switch (actionMode) {
       case $global.modePayroll.back:

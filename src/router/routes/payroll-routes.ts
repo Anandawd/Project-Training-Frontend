@@ -465,24 +465,6 @@ export default [
     },
   },
   {
-    path: "approvals",
-    name: "PayrollApprovals",
-    component: () =>
-      import(
-        /*webpackChunkName: "sub-department"*/ "@/views/pages/modules/payroll/payroll-approvals/payroll-approvals.vue"
-      ),
-    meta: {
-      pageTitle: "title.approvals",
-      icon: getIconFromMenu(menu, 1),
-      breadcrumb: [
-        { title: "title.home", url: "/" },
-        { title: "title.payroll" },
-        { title: "title.approvals", active: true },
-      ],
-      menu: getRouterMenu(menu, 1),
-    },
-  },
-  {
     path: "disbursement",
     name: "Disbursement",
     component: () =>

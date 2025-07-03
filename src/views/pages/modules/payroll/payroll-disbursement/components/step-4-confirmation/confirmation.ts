@@ -38,6 +38,7 @@ interface FileListItem {
     periodData: {
       type: Object,
       required: true,
+      default: () => ({}),
     },
     selectedMethod: {
       type: String,
@@ -85,8 +86,8 @@ export default class Confirmation extends Vue {
   created(): void {}
 
   // GENERAL FUNCTION
-  handleAction(params: any, mode: any = null, ...additonalParams: any[]) {
-    const actionMode = mode || this.modeData;
+  handleAction(mode: any) {
+    const actionMode = mode;
 
     switch (actionMode) {
       case $global.modePayroll.back:

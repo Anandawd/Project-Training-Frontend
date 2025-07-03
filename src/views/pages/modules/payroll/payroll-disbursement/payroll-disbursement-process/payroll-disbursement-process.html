@@ -1,115 +1,136 @@
 <section class="content">
   <div class="container-fluid">
-    <!-- progress stepper -->
-    <transition name="fade">
-      <div v-show="isShowStepper" class="progress-stepper my-4">
-        <div class="step-wrapper">
-          <!-- step 1 -->
-          <div
-            class="step-item"
-            :class="{ 'completed': currentStep > 1, 'active': currentStep === 1 }"
-          >
-            <div class="step-icon">{{currentStep > 1 ? '✓' : '1'}}</div>
-            <div class="step-label">
-              {{$t('labels.payroll.payroll.disbursementDetail')}}
-            </div>
-          </div>
+    <!-- loading state -->
+    <c-loading
+      v-if="isLoading"
+      :title="$t('labels.payroll.payroll.loadingDisbursementData')"
+      :subtitle="$t('labels.payroll.payroll.pleaseWait')"
+    />
 
-          <!-- step 2 -->
-          <div class="step-line" :class="{ 'active': currentStep >= 2 }"></div>
-          <div
-            class="step-item"
-            :class="{ 'completed': currentStep > 2, 'active': currentStep === 2 }"
-          >
-            <div class="step-icon">{{currentStep > 2 ? '✓' : '2'}}</div>
-            <div class="step-label">
-              {{$t('labels.payroll.payroll.paymentMethod')}}
+    <!-- main content -->
+    <div v-else-if="!isLoading">
+      <!-- stepper indicator -->
+      <transition name="fade">
+        <div v-show="isShowStepper" class="progress-stepper my-4">
+          <div class="step-wrapper">
+            <!-- step 1 -->
+            <div
+              class="step-item"
+              :class="{ 'completed': currentStep > 1, 'active': currentStep === 1 }"
+            >
+              <div class="step-icon">{{currentStep > 1 ? '✓' : '1'}}</div>
+              <div class="step-label">
+                {{$t('labels.payroll.payroll.disbursementDetail')}}
+              </div>
             </div>
-          </div>
 
-          <!-- step 3 -->
-          <div class="step-line" :class="{ 'active': currentStep >= 3 }"></div>
-          <div
-            class="step-item"
-            :class="{ 'completed': currentStep > 3,'active': currentStep === 3 && selectedPaymentMethod === 'manual' }"
-          >
-            <div class="step-icon">{{currentStep > 3 ? '✓' : '3'}}</div>
-            <div class="step-label">
-              {{$t('labels.payroll.payroll.downloadOptions')}}
+            <!-- step 2 -->
+            <div
+              class="step-line"
+              :class="{ 'active': currentStep >= 2 }"
+            ></div>
+            <div
+              class="step-item"
+              :class="{ 'completed': currentStep > 2, 'active': currentStep === 2 }"
+            >
+              <div class="step-icon">{{currentStep > 2 ? '✓' : '2'}}</div>
+              <div class="step-label">
+                {{$t('labels.payroll.payroll.paymentMethod')}}
+              </div>
             </div>
-          </div>
 
-          <!-- step 4 -->
-          <div class="step-line" :class="{ 'active': currentStep >= 4 }"></div>
-          <div
-            class="step-item"
-            :class="{ 'completed': currentStep > 4, 'active': currentStep === 4 || (currentStep === 3 && selectedPaymentMethod !== 'manual') }"
-          >
-            <div class="step-icon">
-              {{currentStep > 4 ? '✓' : currentStep === 3 &&
-              selectedPaymentMethod !== 'manual' ? '3' : '4'}}
+            <!-- step 3 -->
+            <div
+              class="step-line"
+              :class="{ 'active': currentStep >= 3 }"
+            ></div>
+            <div
+              class="step-item"
+              :class="{ 'completed': currentStep > 3,'active': currentStep === 3 && selectedPaymentMethod === 'manual' }"
+            >
+              <div class="step-icon">{{currentStep > 3 ? '✓' : '3'}}</div>
+              <div class="step-label">
+                {{$t('labels.payroll.payroll.downloadOptions')}}
+              </div>
             </div>
-            <div class="step-label">
-              {{$t('labels.payroll.payroll.confirmation')}}
+
+            <!-- step 4 -->
+            <div
+              class="step-line"
+              :class="{ 'active': currentStep >= 4 }"
+            ></div>
+            <div
+              class="step-item"
+              :class="{ 'completed': currentStep > 4, 'active': currentStep === 4 || (currentStep === 3 && selectedPaymentMethod !== 'manual') }"
+            >
+              <div class="step-icon">
+                {{currentStep > 4 ? '✓' : currentStep === 3 &&
+                selectedPaymentMethod !== 'manual' ? '3' : '4'}}
+              </div>
+              <div class="step-label">
+                {{$t('labels.payroll.payroll.confirmation')}}
+              </div>
             </div>
           </div>
         </div>
+      </transition>
+
+      <!-- sliding panel -->
+      <div class="sliding-panels">
+        <!-- step 1: disbursement detail -->
+        <transition name="slide-fade">
+          <step-1-disbursement-detail
+            v-if="currentStep === 1"
+            :periodData="periodData"
+            :rowSummaryBankData="rowSummaryBankData"
+            @continue="handleAction('',$global.modePayroll.next)"
+            @return="handleAction('',$global.modePayroll.back)"
+          />
+        </transition>
+
+        <!-- step 2: payment method -->
+        <transition name="slide-fade">
+          <step-2-payment-method-selection
+            v-if="currentStep === 2"
+            :selectedMethod="selectedPaymentMethod"
+            @method-selected="(method) => handleAction('',$global.modePayroll.methodSelection, method)"
+            @continue="handleAction('',$global.modePayroll.next)"
+            @back="handleAction('',$global.modePayroll.back)"
+          />
+        </transition>
+
+        <!-- step 3: file download options -->
+        <transition name="slide-fade">
+          <step-3-file-download-options
+            v-if="currentStep === 3 && selectedPaymentMethod === 'manual'"
+            :downloadOptions="downloadOptions"
+            @download="(options) => handleAction('',$global.modePayroll.download, options)"
+            @continue="(options) => handleAction('',$global.modePayroll.downloadSelection, options)"
+            @back="handleAction('',$global.modePayroll.back)"
+          />
+        </transition>
+
+        <!-- Step 4: Confirmation -->
+        <transition name="slide-fade">
+          <step-4-confirmation
+            v-if="currentStep === 4 || (currentStep === 3 && selectedPaymentMethod !== 'manual')"
+            :periodData="periodData"
+            :selectedMethod="selectedPaymentMethod"
+            :downloadOptions="downloadOptions"
+            @complete="handleAction('',$global.modePayroll.complete)"
+            @back="handleAction('',$global.modePayroll.back)"
+          />
+        </transition>
+
+        <!-- Completion Status -->
+        <transition name="slide-fade">
+          <step-5-completion-status
+            v-if="currentStep === 5"
+            :periodData="periodData"
+            @return="handleAction('',$global.modePayroll.back)"
+          />
+        </transition>
       </div>
-    </transition>
-
-    <!-- sliding panel -->
-    <div class="sliding-panels">
-      <!-- step 1: disbursement detail -->
-      <transition name="slide-fade">
-        <step-1-disbursement-detail
-          v-if="currentStep === 1"
-          :period-data="disbursementData"
-          @continue="handleAction('',$global.modePayroll.next)"
-        />
-      </transition>
-
-      <!-- step 2: payment method -->
-      <transition name="slide-fade">
-        <step-2-payment-method-selection
-          v-if="currentStep === 2"
-          :selectedMethod="selectedPaymentMethod"
-          @method-selected="(method) => handleAction('',$global.modePayroll.methodSelection, method)"
-          @continue="handleAction('',$global.modePayroll.next)"
-          @back="handleAction('',$global.modePayroll.back)"
-        />
-      </transition>
-
-      <!-- step 3: file download options -->
-      <transition name="slide-fade">
-        <step-3-file-download-options
-          v-if="currentStep === 3 && selectedPaymentMethod === 'manual'"
-          :downloadOptions="downloadOptions"
-          @download="(options) => handleAction('',$global.modePayroll.download, options)"
-          @continue="(options) => handleAction('',$global.modePayroll.downloadSelection, options)"
-          @back="handleAction('',$global.modePayroll.back)"
-        />
-      </transition>
-
-      <!-- Step 4: Confirmation -->
-      <transition name="slide-fade">
-        <step-4-confirmation
-          v-if="currentStep === 4 || (currentStep === 3 && selectedPaymentMethod !== 'manual')"
-          :periodData="periodData"
-          :selectedMethod="selectedPaymentMethod"
-          :downloadOptions="downloadOptions"
-          @complete="handleAction('',$global.modePayroll.complete)"
-          @back="handleAction('',$global.modePayroll.back)"
-        />
-      </transition>
-
-      <!-- Completion Status -->
-      <transition name="slide-fade">
-        <step-5-completion-status
-          v-if="currentStep === 5"
-          :periodData="periodData"
-          @return="handleAction('',$global.modePayroll.back)"
-        />
-      </transition>
     </div>
 
     <!-- dialog -->

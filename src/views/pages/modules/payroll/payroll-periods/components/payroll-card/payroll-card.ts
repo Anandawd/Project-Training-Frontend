@@ -46,7 +46,7 @@ import { Options, Vue } from "vue-class-component";
       default: (): any => ({}),
     },
   },
-  emits: ["update", "delete"],
+  emits: ["component-amount-change", "component-quantity-change"],
 })
 export default class PayrollCard extends Vue {
   title!: string;
@@ -60,6 +60,14 @@ export default class PayrollCard extends Vue {
   public originalData: any = null;
 
   qty: number = 1;
+
+  handleComponentAmountChange(component: any) {
+    this.$emit("component-amount-change", component);
+  }
+
+  handleComponentQuantityChange(component: any) {
+    this.$emit("component-quantity-change", component);
+  }
 
   formatCurrency(value: any) {
     return formatCurrency(value);
@@ -97,5 +105,11 @@ export default class PayrollCard extends Vue {
 
   get showContent() {
     return this.showComponents || this.showStatutory;
+  }
+
+  get isDraft() {
+    return (
+      this.payrollData.status === "Draft" || this.payrollData.status === "DRAFT"
+    );
   }
 }

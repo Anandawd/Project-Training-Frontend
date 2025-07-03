@@ -56,6 +56,7 @@ export default class EmployeePayrollDetail extends Vue {
   // form
   public isSaving: boolean = false;
   public isLoading: boolean = false;
+  public isEditing: boolean = false;
   public hasError: boolean = false;
   public errorMessage: string = "";
   public dataType: any;
@@ -166,6 +167,10 @@ export default class EmployeePayrollDetail extends Vue {
     this.showDialog = true;
   }
 
+  handleSavePayroll() {
+    this.savePayroll();
+  }
+
   handleSaveTax(formData: any) {
     this.dataType = "TAX";
     const formattedData = this.formatModalData(formData);
@@ -195,37 +200,30 @@ export default class EmployeePayrollDetail extends Vue {
       case "submit":
         this.submitPayroll();
         break;
-      case "saveAndhandleBack":
+      case "saveAndBack":
         this.savePayroll().then(() => {
           this.$router.push({
             name: "PeriodDetail",
             params: { code: this.periodCode },
           });
+          this.isEditing = false;
         });
         break;
     }
   }
 
   handleBack() {
-    // if (this.form.status === "Draft") {
-    //   this.dialogMessage =
-    //     "You have unsaved changes. Do you want to save before going back?";
-    //   this.dialogAction = "saveAndhandleBack";
-    //   this.showDialog = true;
-    // } else {
-    //   this.$router.push({
-    //     name: "PeriodDetail",
-    //     params: { code: this.periodCode },
-    //   });
-    // }
-
-    this.$router.push({
-      name: "PeriodDetail",
-      params: { code: this.periodCode },
-    });
+    if (this.isEditing) {
+      this.dialogMessage = this.$t("messages.payroll.confirm.saveAndBack");
+      this.dialogAction = "saveAndBack";
+      this.showDialog = true;
+    } else {
+      this.$router.push({
+        name: "PeriodDetail",
+        params: { code: this.periodCode },
+      });
+    }
   }
-
-  onSave() {}
 
   // API REQUEST =======================================================
   async loadData() {
@@ -236,11 +234,11 @@ export default class EmployeePayrollDetail extends Vue {
       await this.loadAllComponents();
       await this.loadDropdown();
 
-      // this.isLoading = false;
+      if (this.employeeData || this.payrollData) {
+        this.isLoading = false;
+      }
     } catch (error) {
       getError(error);
-    } finally {
-      this.isLoading = false;
     }
   }
 
@@ -347,9 +345,15 @@ export default class EmployeePayrollDetail extends Vue {
     try {
       this.isSaving = true;
 
-      // this.calculateTotals();
-
-      getToastSuccess("Employee payroll submitted for approval");
+      const { status2: tax } = await payrollAPI.UpdateEmployeePayroll(
+        this.payrollData
+      );
+      if (tax.status === 0) {
+        getToastSuccess(this.$t("messages.payroll.success.savePayroll"));
+        this.$nextTick();
+        this.loadData();
+        this.isEditing = false;
+      }
     } catch (error) {
       getError(error);
     } finally {
@@ -389,9 +393,11 @@ export default class EmployeePayrollDetail extends Vue {
           }
           break;
         case "BENEFIT":
-          const { status2: benefit } = await payrollAPI.InsertEmployeePayroll(
-            formData
-          );
+          const { status2: benefit } =
+            await payrollAPI.InsertEmployeePayrollInEmployeePayrollDetail({
+              ...formData,
+              period_code: this.periodCode,
+            });
           if (benefit.status === 0) {
             getToastSuccess(this.$t("messages.employee.success.saveBenefit"));
             this.$nextTick();
@@ -551,6 +557,149 @@ export default class EmployeePayrollDetail extends Vue {
     }
   }
 
+  onComponentAmountChange(component: any) {
+    this.isEditing = true;
+    // Validasi minimum amount (opsional)
+    if (component.amount < 0) {
+      component.amount = 0;
+    }
+
+    // Hitung prorate amount berdasarkan apakah komponen ter-prorate atau tidak
+    if (component.is_prorated) {
+      component.prorate_amount =
+        component.amount * Number(this.payrollData.prorata_factor);
+    } else {
+      component.prorate_amount = component.amount;
+    }
+
+    // Hitung total amount (amount * quantity)
+    component.total_amount = component.amount * component.quantity;
+
+    // Update total keseluruhan payroll
+    // this.calculateTotals();
+  }
+
+  onComponentQuantityChange(component: any) {
+    console.log("onComponentQuantityChange before", component);
+    component.quantity = parseInt(component.quantity) || 0;
+    this.isEditing = true;
+
+    // Validasi quantity tidak boleh negatif
+    if (component.quantity < 0) {
+      component.quantity = 0;
+    }
+
+    // Hitung prorate amount berdasarkan apakah komponen ter-prorate atau tidak
+    if (component.is_prorated) {
+      component.prorate_amount =
+        component.amount * Number(this.payrollData.prorata_factor || 1);
+    } else {
+      component.prorate_amount = component.amount;
+    }
+
+    // Hitung total amount (amount * quantity)
+    component.total_amount = component.amount * component.quantity;
+
+    // Update total keseluruhan payroll
+    // this.calculateTotals();
+    // console.log("onComponentQuantityChange after", component);
+  }
+
+  calculateTotals() {
+    // Reset totals
+    let totalEarnings = 0;
+    let totalDeductions = 0;
+    let totalTaxableEarnings = 0;
+    let totalTaxableDeductions = 0;
+
+    // Hitung total earnings dari basic salary
+    totalEarnings += parseFloat(this.payrollData.basic_salary || 0);
+    if (this.payrollData.is_basic_salary_taxable) {
+      totalTaxableEarnings += parseFloat(this.payrollData.basic_salary || 0);
+    }
+
+    // Hitung total dari payroll components (earnings & deductions)
+    if (this.payrollData.components) {
+      this.payrollData.components.forEach((component: any) => {
+        const componentTotal = component.amount * (component.quantity || 1);
+        component.total_amount = componentTotal;
+
+        if (component.component_type === "Earnings") {
+          totalEarnings += componentTotal;
+          if (component.is_taxable) {
+            totalTaxableEarnings += componentTotal;
+          }
+        } else if (component.component_type === "Deductions") {
+          totalDeductions += componentTotal;
+          if (component.is_taxable) {
+            totalTaxableDeductions += componentTotal;
+          }
+        }
+      });
+    }
+
+    // Hitung total dari statutory components
+    if (this.statutoryDetail) {
+      this.statutoryDetail.forEach((component: any) => {
+        const componentTotal = component.amount * (component.quantity || 1);
+        component.total_amount = componentTotal;
+
+        if (component.Type === "Earnings") {
+          totalEarnings += componentTotal;
+          if (component.is_taxable) {
+            totalTaxableEarnings += componentTotal;
+          }
+        } else if (component.Type === "Deductions") {
+          totalDeductions += componentTotal;
+          if (component.is_taxable) {
+            totalTaxableDeductions += componentTotal;
+          }
+        }
+      });
+    }
+
+    // Update payroll data berdasarkan struktur yang ada
+    this.payrollData.gross_salary = totalEarnings.toFixed(2);
+    this.payrollData.total_deductions = totalDeductions.toFixed(2);
+    this.payrollData.gross_salary_taxable = totalTaxableEarnings.toFixed(2);
+    this.payrollData.total_deductions_taxable =
+      totalTaxableDeductions.toFixed(2);
+
+    // Hitung net salary
+    const netSalary =
+      totalEarnings -
+      totalDeductions -
+      parseFloat(this.payrollData.tax_amount || 0);
+    this.payrollData.net_salary = netSalary.toFixed(2);
+
+    // Trigger recalculation of tax jika diperlukan
+    this.calculateTax();
+  }
+
+  // Method untuk menghitung pajak berdasarkan gross salary taxable
+  calculateTax() {
+    if (this.payrollData.gross_salary_taxable && this.payrollData.tax_rate) {
+      const taxableAmount = parseFloat(this.payrollData.gross_salary_taxable);
+      const taxRate = parseFloat(this.payrollData.tax_rate);
+
+      // Hitung tax amount
+      this.payrollData.tax_amount = ((taxableAmount * taxRate) / 100).toFixed(
+        2
+      );
+
+      // Recalculate net salary
+      const grossSalary = parseFloat(this.payrollData.gross_salary);
+      const totalDeductions = parseFloat(this.payrollData.total_deductions);
+      const taxAmount = parseFloat(this.payrollData.tax_amount);
+
+      this.payrollData.net_salary = (
+        grossSalary -
+        totalDeductions -
+        taxAmount
+      ).toFixed(2);
+    }
+  }
+
   // GETTER AND SETTER =======================================================
   get earningsStatutoryDetail() {
     if (this.statutoryDetail) {
@@ -574,44 +723,10 @@ export default class EmployeePayrollDetail extends Vue {
     return this.hasError && !this.isLoading;
   }
 
-  get canEdit() {
+  get isDraft() {
     return (
-      this.payrollData.status === "Draft" || this.payrollData.status === "DRAFT"
+      // this.payrollData.status === "Draft" || this.payrollData.status === "DRAFT"
+      true
     );
   }
-
-  // onComponentAmountChange(component: any) {
-  //   if (component.is_fixed) {
-  //     component.amount = component.original_amount;
-  //     return;
-  //   }
-
-  //   if (component.is_prorated) {
-  //     component.prorate_amount =
-  //       component.amount * Number(this.form.prorate_factor);
-  //   } else {
-  //     component.prorate_amount = component.amount;
-  //   }
-
-  //   this.calculateTotals();
-  // }
-
-  // onComponentQuantityChange(component: AnyObject) {
-  //   if (component.quantity < 0) {
-  //     component.quantity = 0;
-  //   }
-
-  //   if (component.is_fixed) {
-  //     component.quantity = 1;
-  //   }
-
-  //   if (component.is_prorated) {
-  //     component.prorate_amount =
-  //       component.amount * Number(this.form.prorate_factor);
-  //   } else {
-  //     component.prorate_amount = component.amount;
-  //   }
-
-  //   this.calculateTotals();
-  // }
 }

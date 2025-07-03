@@ -13,13 +13,11 @@ import { Options, Vue } from "vue-class-component";
   emits: ["back", "continue", "method-selected"],
 })
 export default class PaymentMethodSelection extends Vue {
-  public modeData: any;
   public selectedMethod: string = "";
 
   // GENERAL FUNCTION
-  handleAction(params: any, mode: any = null, ...additonalParams: any[]) {
-    const actionMode = mode || this.modeData;
-
+  handleAction(mode: any = null) {
+    const actionMode = mode;
     switch (actionMode) {
       case $global.modePayroll.back:
         this.handleBack();

@@ -6,7 +6,7 @@
         title="Back"
         type="button"
         class="btn btn-secondary mr-1"
-        @click="handleAction('',$global.modePayroll.back)"
+        @click="handleAction($global.modePayroll.back)"
       >
         <i class="fa fa-arrow-left mr-1" aria-hidden="true"></i>{{
         $t('buttons.back') }}
@@ -16,7 +16,7 @@
           title="Complete Process"
           type="button"
           class="btn btn-primary"
-          @click="handleAction('',$global.modePayroll.complete)"
+          @click="handleAction($global.modePayroll.complete)"
           :disabled="!isFormValid"
         >
           {{ $t('buttons.complete') }}
