@@ -73,16 +73,6 @@
                 <div class="col-md-4">
                   <c-input
                     type="text"
-                    name="Model"
-                    id="Model"
-                    class="row mb-1"
-                    :label="$t('labels.payroll.attendance.model')"
-                    v-model="form.model"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    type="text"
                     name="Manufacturer"
                     id="Manufacturer"
                     class="row mb-1"
@@ -92,24 +82,12 @@
                 </div>
                 <div class="col-md-4">
                   <c-input
-                    required
                     type="text"
-                    name="IpAddress"
-                    id="IpAddress"
+                    name="Model"
+                    id="Model"
                     class="row mb-1"
-                    :label="$t('labels.payroll.attendance.ipAddress')"
-                    v-model="form.ip_address"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    required
-                    type="text"
-                    name="Port"
-                    id="Port"
-                    class="row mb-1"
-                    :label="$t('labels.payroll.attendance.port')"
-                    v-model="form.port"
+                    :label="$t('labels.payroll.attendance.model')"
+                    v-model="form.model"
                   />
                 </div>
                 <div class="col-md-4">
@@ -132,32 +110,7 @@
                     v-model="form.firmware_version"
                   />
                 </div>
-                <div class="col-md-4">
-                  <c-select
-                    required
-                    offset="right"
-                    class="row mb-1"
-                    selectType="column"
-                    name="DeviceType"
-                    labelName="name"
-                    keyName="code"
-                    v-model="form.device_type"
-                    :label="$t('labels.payroll.attendance.deviceType')"
-                    :columnOptions="columnOptions"
-                    :options="deviceTypeOptions"
-                  />
-                </div>
-                <div class="col-md-4">
-                  <c-input
-                    required
-                    type="number"
-                    name="MaxUsers"
-                    id="MaxUsers"
-                    class="row mb-1"
-                    :label="$t('labels.payroll.attendance.maxUsers')"
-                    v-model="form.max_users"
-                  />
-                </div>
+
                 <div class="col-md-4 mb-sm-1">
                   <div class="row">
                     <div class="col-sm-3 col-md-3">
@@ -190,6 +143,240 @@
           </div>
         </div>
 
+        <!-- network configuration -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemNetworkConfigurationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#networkConfiguration"
+              aria-controls="networkConfiguration"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.attendance.networkConfiguration')}}
+            </button>
+          </h6>
+          <div
+            id="networkConfiguration"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="networkConfigurationHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row"
+                    name="DeviceType"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.device_type"
+                    :label="$t('labels.payroll.attendance.deviceType')"
+                    :columnOptions="columnOptions"
+                    :options="deviceTypeOptions"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="text"
+                    name="IpAddress"
+                    id="IpAddress"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.ipAddress')"
+                    v-model="form.ip_address"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="text"
+                    name="Port"
+                    id="Port"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.port')"
+                    v-model="form.port"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    showZeroNumber
+                    type="number"
+                    name="MaxUsers"
+                    id="MaxUsers"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.maxUsers')"
+                    v-model="form.max_users"
+                    :min="1"
+                  />
+                </div>
+
+                <!-- connection test action -->
+                <div class="col-12">
+                  <div class="d-flex gap-2 mb-2">
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary btn-sm"
+                      @click="handleTestDeviceConnection"
+                      :disabled="!canAutoDetect || isTestingConnection"
+                    >
+                      <i
+                        class="fa"
+                        :class="isTestingConnection ? 'fa-spinner fa-spin' : 'fa-plug'"
+                      ></i>
+                      {{isTestingConnection ? $t('buttons.testing') :
+                      $t('buttons.testConnection')}}
+                    </button>
+                  </div>
+                  <small class="text-muted">
+                    {{ $t('labels.payroll.attendance.autoDetectionHelp') }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- device features -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemDeviceFeaturesHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#deviceFeatures"
+              aria-controls="deviceFeatures"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.attendance.deviceFeatures')}}
+            </button>
+          </h6>
+          <div
+            id="deviceFeatures"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="deviceFeaturesHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <h6>
+                    {{ $t('labels.payroll.attendance.biometricCapabilities') }}
+                  </h6>
+                  <ul class="list-unstyled">
+                    <li class="mb-1">
+                      <i
+                        class="fa"
+                        :class="detectedFeatures.biometric.fingerprint_support ? 'fa-check text-success' : 'fa-times text-danger'"
+                      ></i
+                      >{{$t('labels.payroll.attendance.fingerprintSupport')}}
+                    </li>
+                    <li class="mb-1">
+                      <i
+                        class="fa"
+                        :class="detectedFeatures.biometric.palm_support ? 'fa-check text-success' : 'fa-times text-danger'"
+                      ></i>
+                      {{ $t('labels.payroll.attendance.palmSupport') }}
+                    </li>
+                    <li class="mb-1">
+                      <i
+                        class="fa"
+                        :class="detectedFeatures.biometric.face_recognition ? 'fa-check text-success' : 'fa-times text-danger'"
+                      ></i>
+                      {{ $t('labels.payroll.attendance.faceRecognition') }}
+                    </li>
+                  </ul>
+
+                  <h6 class="mt-3">
+                    {{ $t('labels.payroll.attendance.enrollment') }}
+                  </h6>
+                  <ul class="list-unstyled">
+                    <li class="mb-1">
+                      <i
+                        class="fa"
+                        :class="detectedFeatures.enrollment.multiple_finger_support ? 'fa-check text-success' : 'fa-times text-danger'"
+                      ></i>
+                      {{ $t('labels.payroll.attendance.multipleFingerSupport')
+                      }}
+                    </li>
+                    <li class="mb-1">
+                      <i
+                        class="fa"
+                        :class="detectedFeatures.enrollment.quality_check ? 'fa-check text-success' : 'fa-times text-danger'"
+                      ></i>
+                      {{ $t('labels.payroll.attendance.qualityCheck') }}
+                    </li>
+                    <li class="mb-1">
+                      <span class="badge bg-info"
+                        >{{ detectedFeatures.enrollment.max_templates_per_finger
+                        }}</span
+                      >
+                      {{ $t('labels.payroll.attendance.maxTemplatesPerFinger')
+                      }}
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="col-md-6">
+                  <h6>{{ $t('labels.payroll.attendance.connectivity') }}</h6>
+                  <ul class="list-unstyled">
+                    <li class="mb-1">
+                      <i
+                        class="fa"
+                        :class="detectedFeatures.connectivity.tcp_ip ? 'fa-check text-success' : 'fa-times text-danger'"
+                      ></i>
+                      {{ $t('labels.payroll.attendance.tcpIpNetwork') }}
+                    </li>
+                    <li class="mb-1">
+                      <i
+                        class="fa"
+                        :class="detectedFeatures.connectivity.usb ? 'fa-check text-success' : 'fa-times text-danger'"
+                      ></i>
+                      {{ $t('labels.payroll.attendance.usbConnection') }}
+                    </li>
+                    <li class="mb-1">
+                      <i
+                        class="fa"
+                        :class="detectedFeatures.connectivity.wifi ? 'fa-check text-success' : 'fa-times text-danger'"
+                      ></i>
+                      {{ $t('labels.payroll.attendance.wifiSupport') }}
+                    </li>
+                  </ul>
+
+                  <h6 class="mt-3">
+                    {{ $t('labels.payroll.attendance.verification') }}
+                  </h6>
+                  <ul class="list-unstyled">
+                    <li class="mb-1">
+                      <i
+                        class="fa"
+                        :class="detectedFeatures.verification.one_to_one_matching ? 'fa-check text-success' : 'fa-times text-danger'"
+                      ></i>
+                      {{ $t('labels.payroll.attendance.oneToOneMatching') }}
+                    </li>
+                    <li class="mb-1">
+                      <i
+                        class="fa"
+                        :class="detectedFeatures.verification.one_to_n_matching ? 'fa-check text-success' : 'fa-times text-danger'"
+                      ></i>
+                      {{ $t('labels.payroll.attendance.oneToNMatching') }}
+                    </li>
+                    <li class="mb-1">
+                      <i
+                        class="fa"
+                        :class="detectedFeatures.verification.offline_verification ? 'fa-check text-success' : 'fa-times text-danger'"
+                      ></i>
+                      {{ $t('labels.payroll.attendance.offlineVerification') }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- device settings -->
         <div class="accordion-item">
           <h6 class="accordion-header" id="itemDeviceSettingsHeader">
@@ -210,37 +397,249 @@
             aria-labelledby="deviceSettingsHeader"
           >
             <div class="accordion-body">
-              <div class="col-md-4">
-                <c-input
-                  required
-                  type="text"
-                  name="DeviceId"
-                  id="DeviceId"
-                  class="row mb-1"
-                  :label="$t('labels.payroll.attendance.deviceId')"
-                  v-model="form.device_id"
-                />
+              <!-- Scanning Settings -->
+              <div class="row mb-4">
+                <div class="col-12">
+                  <h6 class="border-bottom pb-2">
+                    <i class="fa fa-fingerprint me-2"></i>
+                    {{ $t('labels.payroll.attendance.scanningConfiguration') }}
+                  </h6>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label"
+                    >{{ $t('labels.payroll.attendance.qualityThreshold') }}
+                    (%)</label
+                  >
+                  <input
+                    type="range"
+                    class="form-range mb-1"
+                    min="0"
+                    max="100"
+                    step="5"
+                    v-model="deviceSettings.scanning.quality_threshold"
+                  />
+                  <small class="text-muted"
+                    >{{ deviceSettings.scanning.quality_threshold }}%</small
+                  >
+                </div>
+                <div class="col-md-3">
+                  <c-input
+                    type="number"
+                    name="ScanTimeout"
+                    id="ScanTimeout"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.scanTimeout')"
+                    v-model="deviceSettings.scanning.template_timeout"
+                    :min="1000"
+                    :max="30000"
+                    :step="1000"
+                  />
+                  <small class="text-muted"
+                    >{{ $t('labels.payroll.attendance.milliseconds') }}</small
+                  >
+                </div>
+                <div class="col-md-3">
+                  <c-input
+                    type="number"
+                    name="RetryAttempts"
+                    id="RetryAttempts"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.retryAttempts')"
+                    v-model="deviceSettings.connection.retry_attempts"
+                    :min="1"
+                    :max="10"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">&nbsp;</label>
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="AutoCapture"
+                      v-model="deviceSettings.scanning.auto_capture"
+                    />
+                    <label class="form-check-label" for="AutoCapture">
+                      {{ $t('labels.payroll.attendance.autoCapture') }}
+                    </label>
+                  </div>
+                </div>
               </div>
-              <div class="col-md-4">
-                <c-input
-                  required
-                  type="text"
-                  name="Name"
-                  id="Name"
-                  class="row mb-1"
-                  :label="$t('labels.payroll.employee.name')"
-                  v-model="form.name"
-                />
+
+              <!-- Security Settings -->
+              <div class="row mb-4">
+                <div class="col-12">
+                  <h6 class="border-bottom pb-2">
+                    <i class="fa fa-shield-alt me-2"></i>
+                    {{ $t('labels.payroll.attendance.securityConfiguration') }}
+                  </h6>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="EncryptionEnabled"
+                      v-model="deviceSettings.security.encryption_enabled"
+                    />
+                    <label class="form-check-label" for="EncryptionEnabled">
+                      {{ $t('labels.payroll.attendance.enableEncryption') }}
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="PasswordProtected"
+                      v-model="deviceSettings.security.password_protected"
+                    />
+                    <label class="form-check-label" for="PasswordProtected">
+                      {{ $t('labels.payroll.attendance.passwordProtection') }}
+                    </label>
+                  </div>
+                </div>
+                <div
+                  class="col-md-4"
+                  v-if="deviceSettings.security.password_protected"
+                >
+                  <c-input
+                    type="password"
+                    name="AdminPassword"
+                    id="AdminPassword"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.adminPassword')"
+                    v-model="deviceSettings.security.admin_password"
+                    :placeholder="$t('placeholders.enterPassword')"
+                  />
+                </div>
               </div>
-              <div class="col-md-4">
-                <c-input
-                  type="text"
-                  name="Model"
-                  id="Model"
-                  class="row mb-1"
-                  :label="$t('labels.payroll.attendance.model')"
-                  v-model="form.model"
-                />
+
+              <!-- Performance Settings -->
+              <div class="row mb-4">
+                <div class="col-12">
+                  <h6 class="border-bottom pb-2">
+                    <i class="fa fa-tachometer-alt me-2"></i>
+                    {{ $t('labels.payroll.attendance.performanceConfiguration')
+                    }}
+                  </h6>
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    name="MatchingSpeed"
+                    id="MatchingSpeed"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.matchingSpeed')"
+                    :options="[
+                      { value: 'fast', label: $t('options.speed.fast') },
+                      { value: 'medium', label: $t('options.speed.medium') },
+                      { value: 'accurate', label: $t('options.speed.accurate') }
+                    ]"
+                    option-label="label"
+                    option-value="value"
+                    v-model="deviceSettings.performance.matching_speed"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    name="SensitivityLevel"
+                    id="SensitivityLevel"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.sensitivityLevel')"
+                    :options="[
+                      { value: 'low', label: $t('options.sensitivity.low') },
+                      { value: 'normal', label: $t('options.sensitivity.normal') },
+                      { value: 'high', label: $t('options.sensitivity.high') }
+                    ]"
+                    option-label="label"
+                    option-value="value"
+                    v-model="deviceSettings.performance.sensitivity_level"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    name="FalseAcceptanceRate"
+                    id="FalseAcceptanceRate"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.falseAcceptanceRate')"
+                    :options="[
+                      { value: '1:1000', label: '1:1,000 (' + $t('options.security.lesssecure') + ')' },
+                      { value: '1:10000', label: '1:10,000 (' + $t('options.security.recommended') + ')' },
+                      { value: '1:100000', label: '1:100,000 (' + $t('options.security.moresecure') + ')' }
+                    ]"
+                    option-label="label"
+                    option-value="value"
+                    v-model="deviceSettings.performance.false_acceptance_rate"
+                  />
+                </div>
+              </div>
+
+              <!-- Sync Settings -->
+              <div class="row mb-3">
+                <div class="col-12">
+                  <h6 class="border-bottom pb-2">
+                    <i class="fa fa-sync me-2"></i>
+                    {{ $t('labels.payroll.attendance.synchronizationSettings')
+                    }}
+                  </h6>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="AutoSync"
+                      v-model="deviceSettings.sync.auto_sync"
+                    />
+                    <label class="form-check-label" for="AutoSync">
+                      {{ $t('labels.payroll.attendance.autoSyncData') }}
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-4" v-if="deviceSettings.sync.auto_sync">
+                  <c-input
+                    type="number"
+                    name="SyncInterval"
+                    id="SyncInterval"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.syncInterval')"
+                    v-model="deviceSettings.sync.sync_interval"
+                    :min="60"
+                    :max="86400"
+                    :step="60"
+                  />
+                  <small class="text-muted"
+                    >{{ $t('labels.payroll.attendance.seconds') }}</small
+                  >
+                </div>
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="BackupEnabled"
+                      v-model="deviceSettings.sync.backup_enabled"
+                    />
+                    <label class="form-check-label" for="BackupEnabled">
+                      {{ $t('labels.payroll.attendance.enableBackup') }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Reset Settings Button -->
+              <div class="row">
+                <div class="col-12">
+                  <button
+                    type="button"
+                    class="btn btn-outline-warning btn-sm"
+                    @click="resetSettingsToDefault"
+                  >
+                    <i class="fa fa-undo"></i>
+                    {{ $t('buttons.resetToDefault') }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

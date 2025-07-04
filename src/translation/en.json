@@ -142,6 +142,63 @@
         "documentInformationInstruction": "Upload and manage employee legal documents for compliance and record keeping"
       },
       "attendance": {
+        "options": {
+          "speed": {
+            "fast": "Fast (Less Accurate)",
+            "medium": "Medium (Balanced)",
+            "accurate": "Accurate (Slower)"
+          },
+          "sensitivity": {
+            "low": "Low (Strict)",
+            "normal": "Normal (Recommended)",
+            "high": "High (Lenient)"
+          },
+          "security": {
+            "lesssecure": "Less Secure",
+            "recommended": "Recommended",
+            "moresecure": "More Secure"
+          }
+        },
+        "enrollment": "Enrollment",
+        "multipleFingerSupport": "Multiple Finger Support",
+        "qualityCheck": "Quality Check",
+        "maxTemplatesPerFinger": "Max Templates Per Finger",
+        "networkConfiguration": "Network Configuration",
+        "verification": "Verification",
+        "oneToOneMatching": "One To One Matching",
+        "oneToNMatching": "One To N Matching",
+        "offlineVerification": "Offline Verification",
+        "deviceFeatures": "Device Features",
+        "autoDetected": "Auto-detected",
+        "configurable": "Configurable",
+        "biometricCapabilities": "Biometric Capabilities",
+        "fingerprintSupport": "Fingerprint Support",
+        "palmSupport": "Palm Recognition",
+        "faceRecognition": "Face Recognition",
+        "connectivity": "Connectivity",
+        "tcpIpNetwork": "TCP/IP Network",
+        "usbConnection": "USB Connection",
+        "wifiSupport": "WiFi Support",
+        "scanningConfiguration": "Scanning Configuration",
+        "qualityThreshold": "Quality Threshold",
+        "scanTimeout": "Scan Timeout",
+        "retryAttempts": "Retry Attempts",
+        "autoCapture": "Auto Capture",
+        "securityConfiguration": "Security Configuration",
+        "enableEncryption": "Enable Encryption",
+        "passwordProtection": "Password Protection",
+        "adminPassword": "Admin Password",
+        "performanceConfiguration": "Performance Configuration",
+        "matchingSpeed": "Matching Speed",
+        "sensitivityLevel": "Sensitivity Level",
+        "falseAcceptanceRate": "False Acceptance Rate",
+        "synchronizationSettings": "Synchronization Settings",
+        "autoSyncData": "Auto Sync Data",
+        "syncInterval": "Sync Interval",
+        "enableBackup": "Enable Backup",
+        "milliseconds": "milliseconds",
+        "seconds": "seconds",
+        "autoDetectionHelp": "Auto-detection will connect to the device and discover its capabilities",
         "deviceInformation": "Device Information",
         "deviceId": "Device ID",
         "manufacturer": "Manufacturer",
@@ -2559,7 +2616,11 @@
         "verifyStep2": "Step 2: Quality check...",
         "verifyStep3": "Step 3: Final validation...",
         "approveLeave": "Leave request approved successfully",
-        "rejectLeave": "Leave request rejected successfully"
+        "rejectLeave": "Leave request rejected successfully",
+        "connectionTest": "Connection successful!",
+        "featuresDetected": "Device features detected successfully!",
+        "specsLoaded": "Loaded specifications for {manufacturer} {model}",
+        "settingsReset": "Settings reset to default values"
       },
       "error": {
         "deleteAttendance": "Failed to delete attendance record",
@@ -2575,11 +2636,15 @@
         "insufficientLeaveBalance": "Insufficient leave balance. Requested: {requested}, Available: {available}",
         "cannotDeleteApproved": "Cannot delete approved leave request",
         "cannotApproveNonPending": "Can only approve pending requests",
-        "cannotRejectNonPending": "Can only reject pending requests"
+        "cannotRejectNonPending": "Can only reject pending requests",
+        "ipPortRequired": "Please enter IP Address and Port first",
+        "connectionFailed": "Connection failed",
+        "requiredFieldsMissing": "Please fill all required fields"
       },
       "warning": {
         "lowLeaveBalance": "Low leave balance remaining: {remaining} days",
-        "noLeaveBalance": "No leave balance remaining"
+        "noLeaveBalance": "No leave balance remaining",
+        "genericSpecs": "Using generic device specifications"
       },
       "confirm": {
         "deleteAttendance": "Are you sure you want to delete this attendance record?",
@@ -2898,6 +2963,14 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "advancedSettings": "Advanced Settings",
+    "hideAdvanced": "Hide Advanced",
+    "testConnection": "Test Connection",
+    "autoDetectFeatures": "Auto-Detect Features",
+    "testing": "Testing...",
+    "detecting": "Detecting...",
+    "resetToDefault": "Reset to Default",
+    "saving": "Saving...",
     "fingerprintDevices": "Fingerprint Devices",
     "disbursementDetail": "Disbursement Detail",
     "component": "Component",

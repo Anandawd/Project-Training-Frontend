@@ -250,6 +250,14 @@ class PayrollAPI extends ConfigurationResource {
     });
   }
 
+  InsertEmployeeStatutoryInEmployeePayrollDetail(params: any) {
+    return request({
+      url: "InsertEmployeeStatutory",
+      method: "post",
+      data: params,
+    });
+  }
+
   // payroll disbursement
   GetPaymentProcessingList(params: any) {
     return request({
@@ -291,4 +299,3 @@ class PayrollAPI extends ConfigurationResource {
 }
 
 export { PayrollAPI as default };
-

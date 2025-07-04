@@ -408,7 +408,10 @@ export default class EmployeePayrollDetail extends Vue {
           break;
         case "STATUTORY":
           const { status2: statutory } =
-            await payrollAPI.InsertEmployeeStatutory(formData);
+            await payrollAPI.InsertEmployeeStatutoryInEmployeePayrollDetail({
+              ...formData,
+              period_code: this.periodCode,
+            });
           if (statutory.status === 0) {
             getToastSuccess(this.$t("messages.employee.success.saveStatutory"));
             this.$nextTick();
