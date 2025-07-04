@@ -142,6 +142,15 @@
         "documentInformationInstruction": "Upload and manage employee legal documents for compliance and record keeping"
       },
       "attendance": {
+        "deviceInformation": "Device Information",
+        "deviceId": "Device ID",
+        "manufacturer": "Manufacturer",
+        "port": "Port",
+        "serialNumber": "Serial Number",
+        "firmwareVersion": "Firmware Version",
+        "deviceType": "Device Type",
+        "maxUsers": "Max. Users",
+        "deviceSettings": "Device Settings",
         "attendanceAndLeave": "Attendance & Leave",
         "attendance": "Attendance",
         "attendanceSummary": "Attendance Summary",
@@ -1877,6 +1886,7 @@
   },
   "title": {
     "t11": "t11",
+    "fingerprintDevices": "Fingerprint Devices",
     "summaryOfPaymentsForEachBank": "Summary of Payments for Each Bank",
     "taxComponent": "Tax Component",
     "holidayType": "Holiday Type",
@@ -2888,6 +2898,7 @@
     "amountUseIsMoreThanTotalPayment": "You can not edit amount use, total amount use can not be greater than total payment"
   },
   "buttons": {
+    "fingerprintDevices": "Fingerprint Devices",
     "disbursementDetail": "Disbursement Detail",
     "component": "Component",
     "statutory": "Statutory",
@@ -3626,6 +3637,18 @@
           "deductionSalary": "Deduction Salary"
         },
         "attendance": {
+          "model": "Model",
+          "manufacturer": "Manufacturer",
+          "ipAddress": "IP Adress",
+          "port": "Port",
+          "serialNumber": "Serial Number",
+          "firmwareVersion": "Firmware Version",
+          "deviceType": "Device Type",
+          "maxUsers": "Max Users",
+          "enrolledUsers": "Enrolled User",
+          "lastSync": "Last Sync",
+          "active": "Active",
+          "deviceId": "Device Id",
           "cycleDays": "Cycle Days",
           "default": "Default",
           "date": "Date",
@@ -4626,6 +4649,7 @@
           "fileName": "File Name"
         },
         "attendance": {
+          "type": "Type",
           "enrolled": "Enrolled",
           "notEnrolled": "Not Enrolled",
           "pending": "Pending"

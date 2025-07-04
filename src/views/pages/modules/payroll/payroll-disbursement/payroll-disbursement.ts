@@ -83,7 +83,7 @@ export default class PayrollDisbursement extends Vue {
   ColumnApi: any;
   agGridSetting: any;
 
-  cellSelected: any;
+  cellSelected: any = ref();
 
   // RECYCLE LIFE FUNCTION =======================================================
   mounted(): void {
@@ -301,16 +301,22 @@ export default class PayrollDisbursement extends Vue {
       },
       "separator",
       {
-        name: this.$t("commons.contextMenu.downloadBulkPayslip"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("download_icon24"),
-        //  action: () => this.handleApprove(this.paramsData),
+        name: this.$t("commons.contextMenu.printPayslip"),
+        disabled:
+          !this.paramsData ||
+          this.paramsData.status !== "Completed" ||
+          this.paramsData.status !== "COMPLETED",
+        icon: generateIconContextMenuAgGrid("print_icon24"),
+        action: () => this.handlePrintPayslip(this.paramsData),
       },
       {
-        name: this.$t("commons.contextMenu.downloadBulkFormA1"),
-        disabled: !this.paramsData,
-        icon: generateIconContextMenuAgGrid("download_icon24"),
-        // action: () => this.handleShowDetail(this.paramsData),
+        name: this.$t("commons.contextMenu.printFormA1"),
+        disabled:
+          !this.paramsData ||
+          this.paramsData.status !== "Completed" ||
+          this.paramsData.status !== "COMPLETED",
+        icon: generateIconContextMenuAgGrid("print_icon24"),
+        action: () => this.handlePrintForm(this.paramsData),
       },
     ];
     return result;
@@ -346,7 +352,8 @@ export default class PayrollDisbursement extends Vue {
   handleToDisbursementDetail(params: any, mode: any) {
     console.log("handleToDisbursementDetail", { params, mode });
     if (mode === $global.modePayroll.process) {
-      this.insertData();
+      this.handleToProcess();
+      // this.insertData();
     } else {
       this.$router.push({
         name: "DisbursementProcess",
@@ -355,16 +362,19 @@ export default class PayrollDisbursement extends Vue {
     }
   }
 
+  handlePrintPayslip(params: any) {}
+
+  handlePrintForm(params: any) {}
+
   handleMenu() {}
 
   onSelectionChanged() {
     const data = this.gridApi.getSelectedRows();
     this.cellSelected = data[0];
-    console.log("davif", this.cellSelected);
   }
 
   refreshData(search: any) {
-    // this.loadDataGrid(search);
+    this.loadDataGrid(search);
   }
 
   // API REQUEST =======================================================
@@ -474,13 +484,13 @@ export default class PayrollDisbursement extends Vue {
 
   get enableProcess() {
     console.log("enableProcess", this.cellSelected);
+
     if (this.cellSelected) {
-      return true;
-      // return (
-      //   this.cellSelected.status === "Ready To Payment" ||
-      //   this.cellSelected.status === "READY TO PAYMENT" ||
-      //   this.cellSelected.status === ""
-      // );
+      return (
+        this.cellSelected.status === "Ready To Payment" ||
+        this.cellSelected.status === "READY TO PAYMENT" ||
+        this.cellSelected.status === "Draft"
+      );
     } else {
       return false;
     }

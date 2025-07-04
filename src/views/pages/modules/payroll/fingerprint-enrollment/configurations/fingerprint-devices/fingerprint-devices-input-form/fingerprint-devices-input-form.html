@@ -9,47 +9,261 @@
   <div class="card">
     <div class="card-header">{{title}}</div>
     <div class="card-body">
-      <div class="row mb-3">
-        <div class="col-md-4">
-          <c-input
-            required
-            type="text"
-            name="Code"
-            id="Code"
-            class="row mb-1"
-            :label="$t('labels.payroll.employee.code')"
-            v-model="form.code"
-          />
+      <div id="parrentAccordion" class="accordion">
+        <!-- device information -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemDeviceInformationHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#deviceInformation"
+              aria-controls="deviceInformation"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.attendance.deviceInformation')}}
+            </button>
+          </h6>
+          <div
+            id="deviceInformation"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="deviceInformationHeader"
+          >
+            <div class="accordion-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <c-select
+                    filter
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="Placement"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.placement_code"
+                    :label="$t('labels.payroll.employee.placement')"
+                    :columnOptions="columnOptions"
+                    :options="placementOptions"
+                  >
+                  </c-select>
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="text"
+                    name="DeviceId"
+                    id="DeviceId"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.deviceId')"
+                    v-model="form.device_id"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="text"
+                    name="Name"
+                    id="Name"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.employee.name')"
+                    v-model="form.name"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="Model"
+                    id="Model"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.model')"
+                    v-model="form.model"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="Manufacturer"
+                    id="Manufacturer"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.manufacturer')"
+                    v-model="form.manufacturer"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="text"
+                    name="IpAddress"
+                    id="IpAddress"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.ipAddress')"
+                    v-model="form.ip_address"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="text"
+                    name="Port"
+                    id="Port"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.port')"
+                    v-model="form.port"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="SerialNumber"
+                    id="SerialNumber"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.serialNumber')"
+                    v-model="form.serial_number"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    type="text"
+                    name="FirmwareVersion"
+                    id="FirmwareVersion"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.firmwareVersion')"
+                    v-model="form.firmware_version"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-select
+                    required
+                    offset="right"
+                    class="row mb-1"
+                    selectType="column"
+                    name="DeviceType"
+                    labelName="name"
+                    keyName="code"
+                    v-model="form.device_type"
+                    :label="$t('labels.payroll.attendance.deviceType')"
+                    :columnOptions="columnOptions"
+                    :options="deviceTypeOptions"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <c-input
+                    required
+                    type="number"
+                    name="MaxUsers"
+                    id="MaxUsers"
+                    class="row mb-1"
+                    :label="$t('labels.payroll.attendance.maxUsers')"
+                    v-model="form.max_users"
+                  />
+                </div>
+                <div class="col-md-4 mb-sm-1">
+                  <div class="row">
+                    <div class="col-sm-3 col-md-3">
+                      <label
+                        class="form-label"
+                        style="font-size: 12px; font-weight: 700; color: red"
+                        >{{$t('labels.payroll.employee.status')}}</label
+                      >
+                    </div>
+                    <div
+                      class="col-sm-9 col-md-9 d-flex align-items-center p-0"
+                    >
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.active')"
+                        v-model="form.is_active"
+                        value="1"
+                      ></c-radio>
+                      <c-radio
+                        class="me-3"
+                        :label="$t('labels.inactive')"
+                        v-model="form.is_active"
+                        value="0"
+                      ></c-radio>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-md-4">
-          <c-input
-            required
-            type="text"
-            name="Name"
-            id="Name"
-            class="row mb-1"
-            :label="$t('labels.payroll.employee.name')"
-            v-model="form.name"
-          />
-        </div>
-        <div class="col-md-4">
-          <c-input
-            type="text"
-            name="Description"
-            id="Description"
-            class="row mb-1"
-            :label="$t('labels.remark')"
-            v-model="form.remark"
-          />
+
+        <!-- device settings -->
+        <div class="accordion-item">
+          <h6 class="accordion-header" id="itemDeviceSettingsHeader">
+            <button
+              type="button"
+              class="accordion-button"
+              data-bs-toggle="collapse"
+              data-bs-target="#deviceSettings"
+              aria-controls="deviceSettings"
+              aria-expanded="false"
+            >
+              {{$t('labels.payroll.attendance.deviceSettings')}}
+            </button>
+          </h6>
+          <div
+            id="deviceSettings"
+            class="accordion-collapse collapse show p-3"
+            aria-labelledby="deviceSettingsHeader"
+          >
+            <div class="accordion-body">
+              <div class="col-md-4">
+                <c-input
+                  required
+                  type="text"
+                  name="DeviceId"
+                  id="DeviceId"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.attendance.deviceId')"
+                  v-model="form.device_id"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  required
+                  type="text"
+                  name="Name"
+                  id="Name"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.employee.name')"
+                  v-model="form.name"
+                />
+              </div>
+              <div class="col-md-4">
+                <c-input
+                  type="text"
+                  name="Model"
+                  id="Model"
+                  class="row mb-1"
+                  :label="$t('labels.payroll.attendance.model')"
+                  v-model="form.model"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
       <!-- buttons -->
       <div class="d-flex justify-content-end mt-2">
-        <button type="button" class="btn btn-danger mr-1 px-3" @click="onClose">
+        <button
+          type="button"
+          class="btn btn-danger mr-1 px-3"
+          @click="onClose"
+          :disabled="isSaving"
+        >
           <i class="fa fa-times" aria-hidden="true"></i>
           {{$t('buttons.close')}}
         </button>
-        <button type="button" class="btn btn-primary px-3" @click="onSubmit">
+        <button
+          type="button"
+          class="btn btn-primary px-3"
+          @click="onSubmit"
+          :disabled="isSaving"
+        >
           <i class="fa fa-save"></i>
           {{$t('buttons.save')}}
         </button>

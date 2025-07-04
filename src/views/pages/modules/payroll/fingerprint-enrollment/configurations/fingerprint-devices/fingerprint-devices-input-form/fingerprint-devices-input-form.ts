@@ -25,6 +25,11 @@ import * as Yup from "yup";
       type: Number,
       require: true,
     },
+    isSaving: {
+      type: Boolean,
+      require: true,
+      default: false,
+    },
     placementOptions: {
       type: Array,
       default: (): any[] => [],
@@ -39,6 +44,7 @@ import * as Yup from "yup";
 export default class InputForm extends Vue {
   inputFormValidation: any = ref();
   modeData: any;
+  isSaving!: boolean;
   placementOptions!: any[];
   deviceTypeOptions!: any[];
 
@@ -50,7 +56,6 @@ export default class InputForm extends Vue {
       field: "name",
       align: "left",
       width: "200",
-      filter: true,
     },
     {
       field: "code",
@@ -82,7 +87,7 @@ export default class InputForm extends Vue {
       last_sync: "",
       settings: "",
       features: "",
-      is_active: "",
+      is_active: 1,
       updated_at: "",
       updated_by: "",
       created_at: "",
@@ -117,8 +122,12 @@ export default class InputForm extends Vue {
   // validation
   get schema() {
     return Yup.object().shape({
-      Code: Yup.string().required(),
+      Placement: Yup.string().required(),
+      DeviceId: Yup.string().required(),
       Name: Yup.string().required(),
+      Port: Yup.string().required(),
+      DeviceType: Yup.string().required(),
+      MaxUsers: Yup.number().min(1).required(),
     });
   }
 

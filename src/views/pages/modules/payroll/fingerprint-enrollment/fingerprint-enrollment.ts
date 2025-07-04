@@ -85,6 +85,9 @@ export default class FingerprintEnrollment extends Vue {
 
   public filteredData: any = [];
 
+  // ui state
+  public isSaving: boolean = false;
+
   // options data
   public employeeOptions: any[] = [];
   public devicesOptions: any[] = [];
@@ -95,7 +98,6 @@ export default class FingerprintEnrollment extends Vue {
   public modeData: any;
   public showForm: boolean = false;
   public inputFormElement: any = ref();
-  public isSaving: boolean = false;
 
   // dialog & Modals
   public showDialog: boolean = false;

@@ -34,9 +34,13 @@ const fingerprintEnrollmentAPI = new FingerprintEnrollmentAPI();
   },
 })
 export default class FingerprintDevices extends Vue {
-  // Data
+  // data
   public rowData: any[] = [];
   public deleteParam: any;
+
+  // ui state
+  public isSaving: boolean = false;
+  public isLoading: boolean = false;
 
   // form
   public form: any = {};
@@ -164,15 +168,13 @@ export default class FingerprintDevices extends Vue {
         enableRowGroup: false,
       },
       {
-        headerName: this.$t(
-          "commons.table.payroll.attendance.firmware_version"
-        ),
+        headerName: this.$t("commons.table.payroll.attendance.firmwareVersion"),
         field: "firmware_version",
         width: 120,
         enableRowGroup: false,
       },
       {
-        headerName: this.$t("commons.table.payroll.attendance.deviceType "),
+        headerName: this.$t("commons.table.payroll.attendance.deviceType"),
         field: "device_type ",
         width: 150,
         enableRowGroup: false,
@@ -232,7 +234,7 @@ export default class FingerprintDevices extends Vue {
         enableRowGroup: false,
       },
       {
-        headerName: this.$t("commons.table.payroll.employee.active"),
+        headerName: this.$t("commons.table.payroll.attendance.active"),
         headerClass: "align-header-center",
         cellClass: "text-center",
         field: "is_active",
@@ -445,6 +447,7 @@ export default class FingerprintDevices extends Vue {
 
   async insertData(formData: any) {
     try {
+      this.isSaving = true;
       const { status2 } =
         await fingerprintEnrollmentAPI.InsertFingerprintDevice(formData);
       if (status2.status == 0) {
@@ -456,11 +459,14 @@ export default class FingerprintDevices extends Vue {
       }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
   async updateData(formData: any) {
     try {
+      this.isSaving = true;
       const { status2 } =
         await fingerprintEnrollmentAPI.UpdateFingerprintDevice(formData);
       if (status2.status == 0) {
@@ -472,11 +478,14 @@ export default class FingerprintDevices extends Vue {
       }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 
   async deleteData() {
     try {
+      this.isSaving = true;
       const { status2 } =
         await fingerprintEnrollmentAPI.DeleteFingerprintDevice(
           this.deleteParam
@@ -490,6 +499,8 @@ export default class FingerprintDevices extends Vue {
       }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isSaving = false;
     }
   }
 

@@ -7,7 +7,7 @@
         title="Process Disbursement"
         type="button"
         class="btn btn-primary mr-1"
-        @click="handleToProcess"
+        @click="handleToDisbursementDetail(cellSelected, $global.modePayroll.process)"
       >
         {{ $t('buttons.process') }}
         <i class="fa fa-arrow-right mr-1" aria-hidden="true"></i>

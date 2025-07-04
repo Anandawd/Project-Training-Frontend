@@ -20,6 +20,9 @@
         ref="inputFormElement"
         v-show="showForm"
         :modeData="modeData"
+        :isSaving="isSaving"
+        :placementOptions="placementOptions"
+        :deviceTypeOptions="deviceTypeOptions"
         @save="handleSave"
         @close="showForm=false"
       />

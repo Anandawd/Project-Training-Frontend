@@ -3,7 +3,7 @@ import Checklist from "@/components/ag_grid-framework/checklist.vue";
 import CDialog from "@/components/dialog/dialog.vue";
 import CModal from "@/components/modal/modal.vue";
 import HolidayCalenderAPI from "@/services/api/payroll/holiday-calender/holiday-calender";
-import { formatDateTime2 } from "@/utils/format";
+import { formatDate2, formatDateTime2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
   generateTotalFooterAgGrid,
@@ -45,6 +45,10 @@ export default class HolidayCalender extends Vue {
   public rowData: any = [];
   public deleteParam: any;
 
+  // ui state
+  public isSaving: boolean = false;
+  public isLoading: boolean = false;
+
   // options data
   public holidayTypeOptions: any = [];
 
@@ -53,7 +57,6 @@ export default class HolidayCalender extends Vue {
   public modeData: any;
   public showForm: boolean = false;
   public inputFormElement: any = ref();
-  public isSaving: boolean = false;
 
   // dialog
   public showDialog: boolean = false;
@@ -92,11 +95,13 @@ export default class HolidayCalender extends Vue {
   beforeMount(): void {
     this.searchOptions = [
       { text: this.$t("commons.filter.name"), value: 0 },
-      { text: this.$t("commons.filter.payroll.attendace.type"), value: 1 },
+      { text: this.$t("commons.filter.payroll.attendance.type"), value: 1 },
+      { text: this.$t("commons.filter.remark"), value: 3 },
     ];
     this.agGridSetting = $global.agGrid;
     this.gridOptions = {
       actionGrid: {
+        insert: true,
         edit: true,
         delete: true,
       },
@@ -117,18 +122,21 @@ export default class HolidayCalender extends Vue {
         sortable: false,
         cellRenderer: "actionGrid",
         colId: "params",
-        width: 80,
+        width: 100,
       },
       {
         headerName: this.$t("commons.table.payroll.attendance.date"),
+        headerClass: "align-header-center",
+        cellClass: "text-center",
         field: "date",
         width: 100,
         enableRowGroup: true,
+        valueFormatter: formatDate2,
       },
       {
         headerName: this.$t("commons.table.payroll.attendance.name"),
         field: "name",
-        width: 150,
+        width: 200,
         enableRowGroup: true,
       },
       {
@@ -147,7 +155,7 @@ export default class HolidayCalender extends Vue {
         headerName: this.$t("commons.table.status"),
         headerClass: "align-header-center",
         cellClass: "text-center",
-        field: "status",
+        field: "is_recurring",
         width: 100,
         enableRowGroup: true,
         cellRenderer: "checklistRenderer",
@@ -526,7 +534,7 @@ export default class HolidayCalender extends Vue {
   // HELPER =======================================================
   formatData(params: any) {
     return {
-      id: params.id ? params.id : null,
+      id: params.id,
       code: params.code,
       name: params.name,
       date: params.date,
