@@ -2689,6 +2689,7 @@
         "savePayrollPeriods": "Payroll periods has been successfully saved",
         "savePayroll": "Payroll of {employeeName} has been successfully saved",
         "saveGenerate": "Payroll has been successfully generated",
+        "saveProrate": "Prorate has been successfully applied",
         "deleteComponentCategory": "Component category has been successfully removed",
         "deleteTaxComponent": "Tax component has been successfully removed",
         "deleteEarnings": "Component earnings has been successfully removed",

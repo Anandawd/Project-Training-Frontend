@@ -36,11 +36,13 @@ async function getError(error: any) {
         message2 += `\n${i}`;
       }
     }
-  } else if (statusCode == 7) {
-    // Custom handling untuk duplicate code (Status Code 7)
-    message2 = i18n.global.t("messages.payroll.error.duplicateCode");
-    serverValidation.code = false;
-  } else if (message && statusCode == 11) {
+  }
+  // else if (statusCode == 7) {
+  //   // Custom handling untuk duplicate code (Status Code 7)
+  //   message2 = i18n.global.t("messages.payroll.error.duplicateCode");
+  //   serverValidation.code = false;
+  // }
+  else if (message && statusCode == 11) {
     serverValidation.Code = false;
   } else if (!message && statusCode) {
     message = i18n.global.t(`apiStatus[${statusCode.toString()}]`);

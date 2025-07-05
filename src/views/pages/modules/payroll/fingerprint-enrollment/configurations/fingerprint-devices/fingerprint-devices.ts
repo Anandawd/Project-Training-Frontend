@@ -5,6 +5,7 @@ import CInput from "@/components/input/input.vue";
 import CModal from "@/components/modal/modal.vue";
 import CSelect from "@/components/select/select.vue";
 import FingerprintEnrollmentAPI from "@/services/api/payroll/fingerprint-enrollment/fingerprint-enrollment";
+import FingerprintEnrollmentLocalAPI from "@/services/api/payroll/local/fingerprint-enrollment-local";
 import { formatDateTime2 } from "@/utils/format";
 import {
   generateIconContextMenuAgGrid,
@@ -12,7 +13,7 @@ import {
   getError,
 } from "@/utils/general";
 import $global from "@/utils/global";
-import { getToastSuccess } from "@/utils/toast";
+import { getToastError, getToastSuccess } from "@/utils/toast";
 import CSearchFilter from "@/views/pages/components/filter/filter.vue";
 import "ag-grid-enterprise";
 import { AgGridVue } from "ag-grid-vue3";
@@ -21,6 +22,7 @@ import { Options, Vue } from "vue-class-component";
 import CInputForm from "./fingerprint-devices-input-form/fingerprint-devices-input-form.vue";
 
 const fingerprintEnrollmentAPI = new FingerprintEnrollmentAPI();
+const fingerprintEnrollmentLocalAPI = new FingerprintEnrollmentLocalAPI();
 
 @Options({
   components: {
@@ -86,6 +88,7 @@ export default class FingerprintDevices extends Vue {
   mounted(): void {
     // this.loadDataGrid();
     this.loadMockData();
+    this.loadDropdown();
   }
 
   beforeMount(): void {
@@ -407,26 +410,41 @@ export default class FingerprintDevices extends Vue {
   }
 
   refreshData(search: any) {
-    // this.loadDataGrid(search);
+    this.loadDataGrid(search);
   }
 
   // API REQUEST =======================================================
   async loadDataGrid(search: any = this.searchDefault) {
     try {
-      let params = {
-        Index: search.index,
-        Text: search.text,
-      };
-      const { data } = await fingerprintEnrollmentAPI.GetFingerprintDeviceList(
-        params
-      );
-      if (data) {
-        this.rowData = data;
-      } else {
-        this.rowData = [];
+      this.isLoading = true;
+      // let params = {
+      //   Index: search.index,
+      //   Text: search.text,
+      // };
+      // const { data } = await fingerprintEnrollmentAPI.GetFingerprintDeviceList(
+      //   params
+      // );
+      // if (data) {
+      //   this.rowData = data;
+      // } else {
+      //   this.rowData = [];
+      // }
+      const response: any =
+        await fingerprintEnrollmentLocalAPI.GetPayFingerprintDevicesList({
+          ...search,
+          search: search.text || "",
+          page: search.index + 1 || 1,
+          per_page: search.paginationPageSize || 10,
+        });
+
+      if (response.status2.status === 0) {
+        this.rowData = response.data.data || [];
+        console.log("Loaded devices:", this.rowData);
       }
     } catch (error) {
       getError(error);
+    } finally {
+      this.isLoading = false;
     }
   }
 
@@ -1065,17 +1083,67 @@ export default class FingerprintDevices extends Vue {
     this.rowData = mockDevices;
   }
 
+  async loadDropdown() {
+    try {
+      const placement: any =
+        await fingerprintEnrollmentLocalAPI.GetPlacementOptions();
+      if (placement.status2.status === 0) {
+        this.placementOptions = placement.data.map((item: any) => ({
+          id: item.code,
+          value: item.code,
+          text: item.name,
+        }));
+      }
+
+      const type: any =
+        await fingerprintEnrollmentLocalAPI.GetDeviceTypeOptions();
+      if (type.status2.status === 0) {
+        this.deviceTypeOptions = type.data.map((item: any) => ({
+          id: item.code,
+          value: item.code,
+          text: item.name,
+        }));
+      }
+    } catch (error) {
+      getError(error);
+    }
+  }
+
   async insertData(formData: any) {
     try {
       this.isSaving = true;
-      const { status2 } =
-        await fingerprintEnrollmentAPI.InsertFingerprintDevice(formData);
-      if (status2.status == 0) {
-        getToastSuccess(
-          this.$t("messages.attendance.success.saveFingerprintDevice")
-        );
-        this.loadDataGrid(this.searchDefault);
-        this.showForm = false;
+      // const { status2 } =
+      //   await fingerprintEnrollmentAPI.InsertFingerprintDevice(formData);
+      // if (status2.status == 0) {
+      //   getToastSuccess(
+      //     this.$t("messages.attendance.success.saveFingerprintDevice")
+      //   );
+      //   this.loadDataGrid(this.searchDefault);
+      //   this.showForm = false;
+      // }
+
+      let response: any;
+
+      if (this.modeData === $global.modeData.insert) {
+        response =
+          await fingerprintEnrollmentLocalAPI.InsertPayFingerprintDevicesList(
+            formData
+          );
+        if (response.status2.status === 0) {
+          getToastSuccess(
+            this.$t("messages.attendance.success.createFingerprintDevice")
+          );
+        }
+      } else {
+        response =
+          await fingerprintEnrollmentLocalAPI.UpdateFingerprintDevicesList(
+            formData
+          );
+        if (response.status2.status === 0) {
+          getToastSuccess(
+            this.$t("messages.attendance.success.updateFingerprintDevice")
+          );
+        }
       }
     } catch (error) {
       getError(error);
@@ -1106,17 +1174,129 @@ export default class FingerprintDevices extends Vue {
   async deleteData() {
     try {
       this.isSaving = true;
-      const { status2 } =
-        await fingerprintEnrollmentAPI.DeleteFingerprintDevice(
+      // const { status2 } =
+      //   await fingerprintEnrollmentAPI.DeleteFingerprintDevice(
+      //     this.deleteParam
+      //   );
+      // if (status2.status == 0) {
+      //   getToastSuccess(
+      //     this.$t("messages.attendance.success.deleteFingerprintDevice")
+      //   );
+      //   this.loadDataGrid(this.searchDefault);
+      //   this.showDialog = false;
+      //   this.deleteParam = null;
+      // }
+
+      const response: any =
+        await fingerprintEnrollmentLocalAPI.DeletePayFingerprintDevices(
           this.deleteParam
         );
-      if (status2.status == 0) {
+      if (response.status2.status === 0) {
         getToastSuccess(
           this.$t("messages.attendance.success.deleteFingerprintDevice")
         );
         this.loadDataGrid(this.searchDefault);
         this.showDialog = false;
         this.deleteParam = null;
+      }
+    } catch (error) {
+      getError(error);
+    } finally {
+      this.isSaving = false;
+    }
+  }
+
+  async testDeviceConnection(deviceId: string) {
+    try {
+      this.isSaving = true;
+      const response: any =
+        await fingerprintEnrollmentLocalAPI.TestFingerprintDevice(deviceId);
+
+      if (response.status2.status === 0) {
+        if (response.data.success) {
+          getToastSuccess(response.data.message || "Device test successful");
+        } else {
+          getToastError(response.data.message || "Device test failed");
+        }
+        this.loadDataGrid(this.searchDefault);
+      }
+    } catch (error) {
+      getError(error);
+    } finally {
+      this.isSaving = false;
+    }
+  }
+
+  async connectDevice(deviceId: string) {
+    try {
+      this.isSaving = true;
+      const response: any =
+        await fingerprintEnrollmentLocalAPI.ConnectFingerprintDevice(deviceId);
+
+      if (response.status2.status === 0 && response.data.success) {
+        getToastSuccess("Device connected successfully");
+        this.loadDataGrid(this.searchDefault);
+      } else {
+        getToastError("Failed to connect device");
+      }
+    } catch (error) {
+      getError(error);
+    } finally {
+      this.isSaving = false;
+    }
+  }
+
+  async disconnectDevice(deviceId: string) {
+    try {
+      this.isSaving = true;
+      const response: any =
+        await fingerprintEnrollmentLocalAPI.DisconnectFingerprintDevice(
+          deviceId
+        );
+
+      if (response.status2.status === 0 && response.data.success) {
+        getToastSuccess("Device disconnected successfully");
+        this.loadDataGrid(this.searchDefault);
+      } else {
+        getToastError("Failed to disconnect device");
+      }
+    } catch (error) {
+      getError(error);
+    } finally {
+      this.isSaving = false;
+    }
+  }
+
+  async syncSingleDevice(deviceId: string) {
+    try {
+      this.isSaving = true;
+      const response: any =
+        await fingerprintEnrollmentLocalAPI.SyncFingerprintDevice(deviceId);
+
+      if (response.status2.status === 0 && response.data.success) {
+        getToastSuccess("Device synced successfully");
+        this.loadDataGrid(this.searchDefault);
+      } else {
+        getToastError("Failed to sync device");
+      }
+    } catch (error) {
+      getError(error);
+    } finally {
+      this.isSaving = false;
+    }
+  }
+
+  async syncAllDevices() {
+    try {
+      this.isSaving = true;
+      const response: any =
+        await fingerprintEnrollmentLocalAPI.SyncAllFingerprintDevices();
+
+      if (response.status2.status === 0) {
+        getToastSuccess(
+          `${response.data.synced_devices} devices synced successfully`
+        );
+        this.loadDataGrid(this.searchDefault);
       }
     } catch (error) {
       getError(error);
@@ -1135,7 +1315,7 @@ export default class FingerprintDevices extends Vue {
       model: params.model,
       manufacturer: params.manufacturer,
       ip_address: params.ip_address,
-      port: params.port,
+      port: parseInt(params.port),
       serial_number: params.serial_number,
       firmware_version: params.firmware_version,
       device_type: params.device_type,
@@ -1143,8 +1323,14 @@ export default class FingerprintDevices extends Vue {
       max_users: parseInt(params.max_users),
       enrolled_users: parseInt(params.enrolled_users),
       last_sync: params.last_sync,
-      settings: params.settings,
-      features: params.features,
+      settings:
+        typeof params.settings === "string"
+          ? JSON.parse(params.settings || "{}")
+          : params.settings || {},
+      features:
+        typeof params.features === "string"
+          ? JSON.parse(params.features || "{}")
+          : params.features || {},
       is_active: parseInt(params.is_active),
       updated_at: params.updated_at,
       updated_by: params.updated_by,

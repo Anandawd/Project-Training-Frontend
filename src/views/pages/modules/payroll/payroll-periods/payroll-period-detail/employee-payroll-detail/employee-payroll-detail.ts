@@ -381,9 +381,8 @@ export default class EmployeePayrollDetail extends Vue {
           }
           break;
         case "PRORATE":
-          const { status2: salary } = await payrollAPI.UpdateEmployeePayroll(
-            formData
-          );
+          const { status2: salary } =
+            await payrollAPI.UpdateProrateInEmployeePayrollDetail(formData);
           if (salary.status === 0) {
             getToastSuccess(this.$t("messages.employee.success.saveProrate"));
             this.$nextTick();
@@ -477,35 +476,35 @@ export default class EmployeePayrollDetail extends Vue {
         };
       case "PRORATE":
         return {
-          id: params.id,
+          // id: params.id,
           payroll_id: params.payroll_id,
-          employee_id: params.employee_id,
-          period_code: params.period_code,
+          // employee_id: params.employee_id,
+          // period_code: params.period_code,
 
-          payment_date: params.payment_date,
-          payment_method: params.payment_method,
-          payment_reference: params.payment_reference,
+          // payment_date: params.payment_date,
+          // payment_method: params.payment_method,
+          // payment_reference: params.payment_reference,
           total_workdays: params.total_workdays,
           actual_workdays: params.actual_workdays,
-          prorata_factor: params.prorata_factor,
+          prorata_factor: parseFloat(params.prorata_factor),
 
-          tax_income_type: params.tax_income_type,
-          tax_method: params.tax_method,
-          tax_amount: params.tax_amount,
-          basic_salary: params.basic_salary,
-          gross_salary: params.gross_salary,
-          gross_salary_taxable: params.gross_salary_taxable,
-          total_deductions: params.total_deductions,
-          total_deductions_taxable: params.total_deductions_taxable,
-          net_salary: params.net_salary,
+          // tax_income_type: params.tax_income_type,
+          // tax_method: params.tax_method,
+          // tax_amount: params.tax_amount,
+          // basic_salary: params.basic_salary,
+          // gross_salary: params.gross_salary,
+          // gross_salary_taxable: params.gross_salary_taxable,
+          // total_deductions: params.total_deductions,
+          // total_deductions_taxable: params.total_deductions_taxable,
+          // net_salary: params.net_salary,
 
-          remark: params.remark,
-          status: params.status,
-          // modified
-          created_at: formatDateTimeUTC(params.created_at),
-          created_by: params.created_by,
-          updated_at: formatDateTimeUTC(params.updated_at),
-          updated_by: params.updated_by,
+          // remark: params.remark,
+          // status: params.status,
+          // // modified
+          // created_at: formatDateTimeUTC(params.created_at),
+          // created_by: params.created_by,
+          // updated_at: formatDateTimeUTC(params.updated_at),
+          // updated_by: params.updated_by,
         };
       case "BENEFIT":
         return {

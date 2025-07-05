@@ -258,6 +258,14 @@ class PayrollAPI extends ConfigurationResource {
     });
   }
 
+  UpdateProrateInEmployeePayrollDetail(params: any) {
+    return request({
+      url: "UpdateProrateEmployeePayroll",
+      method: "put",
+      data: params,
+    });
+  }
+
   // payroll disbursement
   GetPaymentProcessingList(params: any) {
     return request({
